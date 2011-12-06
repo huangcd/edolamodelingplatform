@@ -1,0 +1,44 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
+
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.gef.commands.Command;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseConnectionModel;
+
+
+/**
+ * Created by Huangcd Date: 11-9-15 Time: ÏÂÎç8:42
+ */
+public class MoveBendPointCommand extends Command {
+    private BaseConnectionModel owner;
+    private Point               newLocation;
+    private Point               oldLocation;
+    private int                 index;
+
+    public void setOwner(BaseConnectionModel owner) {
+        this.owner = owner;
+    }
+
+    public void setNewLocation(Point newLocation) {
+        this.newLocation = newLocation;
+    }
+
+    public void setOldLocation(Point oldLocation) {
+        this.oldLocation = oldLocation;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    @Override
+    public void execute() {
+        setOldLocation(owner.getBendPoints().get(index));
+        owner.changeBendPoint(index, newLocation);
+    }
+
+    @Override
+    public void undo() {
+        owner.changeBendPoint(index, oldLocation);
+    }
+}

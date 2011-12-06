@@ -1,0 +1,56 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
+
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.FlowLayoutEditPolicy;
+import org.eclipse.gef.requests.CreateRequest;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateCompoundPriorityCommand;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundPriorityAreaModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundPriorityModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
+
+
+/**
+ * 
+ * @author: huangcd (huangcd.thu@gmail.com)
+ * @time: 2011-6-26 上午12:15:20
+ * @project: CereusBip
+ * @package: cereusbip.policies
+ * @class: PriorityAreaChildEditPolicy.java
+ * 
+ */
+public class CompoundPriorityAreaChildEditPolicy extends FlowLayoutEditPolicy {
+
+    @Override
+    protected Command createAddCommand(EditPart child, EditPart after) {
+        return null;
+    }
+
+    @Override
+    protected Command createMoveChildCommand(EditPart child, EditPart after) {
+        return null;
+    }
+
+    @Override
+    protected Command getCreateCommand(CreateRequest request) {
+        return null;
+    }
+
+    @Override
+    public Command getCommand(Request request) {
+        if (CreateCompoundPriorityCommand.CREATE_PRIORITY_COMMAND.equals(request.getType())) {
+            // 检查所在的Atomic是否有两个以上的port（如果没有的话不应该有priority）
+            if (((CompoundTypeModel) getHost().getParent().getModel()).getConnectors().size() < 2) {
+                return super.getCommand(request);
+            }
+            CreateCompoundPriorityCommand command = new CreateCompoundPriorityCommand();
+            CompoundPriorityModel child = new CompoundPriorityModel();
+            command.setChild(child);
+            command.setParent((CompoundPriorityAreaModel) getHost().getModel());
+            return command;
+        }
+        return super.getCommand(request);
+    }
+}

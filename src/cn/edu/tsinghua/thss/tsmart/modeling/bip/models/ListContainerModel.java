@@ -1,0 +1,61 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Huangcd Date: 11-9-18 Time: ÏÂÎç11:22
+ */
+@SuppressWarnings("rawtypes")
+public abstract class ListContainerModel<T extends ListDataModel, P extends ContainerModel>
+                extends BaseModel {
+    private List<T>            children = new ArrayList<T>();
+    private P                  parent;
+    private boolean            show;
+    public final static String CHILDREN = "ListContainerChildren";
+    public final static String SHOW     = "ShowListContainer";
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        if (show == this.show) {
+            return;
+        }
+        this.show = show;
+        firePropertyChange(SHOW, !show, show);
+    }
+
+    public List<T> getChildren() {
+        return children;
+    }
+
+    public boolean addChild(T child) {
+        children.add(child);
+        firePropertyChange(CHILDREN, null, null);
+        return true;
+    }
+
+    public boolean removeChild(T child) {
+        children.remove(child);
+        firePropertyChange(CHILDREN, null, child);
+        return true;
+    }
+
+    public void childUpdated(T child) {
+        firePropertyChange(CHILDREN, null, child);
+    }
+
+    public void childUpdated() {
+        firePropertyChange(CHILDREN, null, null);
+    }
+
+    public P getParent() {
+        return parent;
+    }
+
+    public void setParent(P parent) {
+        this.parent = parent;
+    }
+}

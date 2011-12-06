@@ -1,0 +1,144 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.ui.dialog;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.List;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.DataModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortAreaModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.util.MessageBoxUtil;
+
+import java.util.*;
+
+public class EditPortDialog extends Dialog {
+    private Text                        portNameText;
+    private List                        dataList;
+    private Combo                       exportCombo;
+
+    private java.util.List<DataModel>   datasInAtomic;
+    private HashMap<Integer, DataModel> dataIdxMap;
+    private PortAreaModel               _parent;
+    private PortModel                   owner;
+
+    public EditPortDialog(Shell parentShell, PortModel owner,
+                    java.util.List<DataModel> datasInAtomic, PortAreaModel parent) {
+        super(parentShell);
+        this.datasInAtomic = datasInAtomic;
+        this.owner = owner;
+        this._parent = parent;
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText("Edit port properties");
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite) super.createDialogArea(parent);
+        container.setLayout(new GridLayout(1, false));
+
+        Label lblPortName = new Label(container, SWT.NONE);
+        lblPortName.setText("Port name:");
+
+        portNameText = new Text(container, SWT.BORDER);
+        GridData gd_portNameText = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_portNameText.widthHint = 205;
+        portNameText.setLayoutData(gd_portNameText);
+        portNameText.setText("idle");
+
+        Label lblExport = new Label(container, SWT.NONE);
+        lblExport.setText("export:");
+
+        exportCombo = new Combo(container, SWT.READ_ONLY);
+        exportCombo.setItems(new String[] {"true", "false"});
+        exportCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        exportCombo.select(0);
+
+        Label lblNewLabel = new Label(container, SWT.NONE);
+        lblNewLabel.setText("Select associate datas:");
+
+        dataList = new List(container, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+        gd.heightHint = 295;
+        gd.widthHint = 185;
+        dataList.setLayoutData(gd);
+
+        dataIdxMap = new HashMap<Integer, DataModel>();
+        for (int i = 0; i < datasInAtomic.size(); i++) {
+            dataIdxMap.put(i, datasInAtomic.get(i));
+            dataList.add(datasInAtomic.get(i).getName());
+        }
+
+        initValues();
+        return container;
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    }
+
+    @Override
+    protected Point getInitialSize() {
+        return new Point(230, 467);
+    }
+
+    private boolean validateUserInput() {
+        if (nameExistsInParent(portNameText.getText())) return false;
+        return true;
+    }
+
+    public boolean nameExistsInParent(String name) {
+        for (PortModel child : _parent.getChildren()) {
+            if (child.equals(owner)) {
+                continue;
+            }
+            if (child.getName().equals(name)) {
+                MessageBoxUtil.ShowErrorMessage("Name conflict error",
+                                "Port name exists in this atomic");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void okPressed() {
+        if (_parent != null) {
+            if (!validateUserInput()) {
+                return;
+            }
+        }
+        java.util.List<DataModel> associateDatas = new ArrayList<DataModel>();
+        for (int idx : dataList.getSelectionIndices()) {
+            associateDatas.add(dataIdxMap.get(idx));
+        }
+        owner.setName(portNameText.getText());
+        owner.setDatas(associateDatas);
+        owner.setExport(exportCombo.getSelectionIndex() == 0);
+        super.okPressed();
+    }
+
+    private void initValues() {
+        portNameText.setText(owner.getName());
+        exportCombo.select(owner.isExport() ? 0 : 1);
+        if (owner.getDatas() != null) for (DataModel idx : owner.getDatas()) {
+            int index;
+            if ((index = getIndex(idx)) >= 0) dataList.select(index);
+        }
+    }
+
+    private int getIndex(DataModel dataModel) {
+        for (int i = 0; i < dataIdxMap.size(); i++)
+            if (dataModel == dataIdxMap.get(i)) return i;
+        return -1;
+    }
+}

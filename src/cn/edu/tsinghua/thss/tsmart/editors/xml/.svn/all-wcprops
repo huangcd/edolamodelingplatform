@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml
+END
+TagRule.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/TagRule.java
+END
+XMLDoubleClickStrategy.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLDoubleClickStrategy.java
+END
+XMLPartitionScanner.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLPartitionScanner.java
+END
+IXMLColorConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/IXMLColorConstants.java
+END
+XMLEditorAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLEditorAction.java
+END
+XMLTagScanner.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLTagScanner.java
+END
+XMLEditor.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLEditor.java
+END
+XMLFileEditorInput.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLFileEditorInput.java
+END
+XMLWhitespaceDetector.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLWhitespaceDetector.java
+END
+XMLConfiguration.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLConfiguration.java
+END
+ColorManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/ColorManager.java
+END
+XMLDocumentProvider.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLDocumentProvider.java
+END
+XMLScanner.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/XMLScanner.java
+END
+NonRuleBasedDamagerRepairer.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/tsmart/!svn/ver/11/trunk/dev/tsmart/modeling/src/cn/edu/tsinghua/thss/tsmart/editors/xml/NonRuleBasedDamagerRepairer.java
+END

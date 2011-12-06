@@ -1,0 +1,186 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+
+/**
+ * @author huangcd (huangcd.thu@gmail.com)
+ * @time 2011-6-22 上午08:55:54
+ * @project CereusBip
+ * @package cereusbip.model
+ * @class PlaceModel.java
+ */
+public class PlaceModel extends BaseModel {
+    private AtomicTypeModel             parent;
+    private boolean                     isInitialPlace;
+    public final static String          INITIAL           = "IsInitialPlace";
+    public final static String          SOURCE            = "PlaceSourceConnection";
+    public final static String          TARGET            = "PlaceTargetConnection";
+
+    private final List<TransitionModel> sourceConnections = new ArrayList<TransitionModel>();
+    private final List<TransitionModel> targetConnections = new ArrayList<TransitionModel>();
+
+    public List<TransitionModel> getSourceConnections() {
+        return sourceConnections;
+    }
+
+    public List<TransitionModel> getTargetConnections() {
+        return targetConnections;
+    }
+
+    public PlaceModel() {
+        setName("PLACE");
+        this.isInitialPlace = false;
+    }
+
+    public PlaceModel(String name) {
+        setName(name);
+    }
+
+    public PlaceModel(String name, AtomicTypeModel parent) {
+        setName(name);
+        setParent(parent);
+    }
+
+    public PlaceModel(String name, boolean isInitialPlace) {
+        setName(name);
+        this.isInitialPlace = isInitialPlace;
+    }
+
+    public void addSourceConnection(TransitionModel connection) {
+        sourceConnections.add(connection);
+        firePropertyChange(SOURCE, null, null);
+    }
+
+    public void removeSourceConnection(TransitionModel connection) {
+        sourceConnections.remove(connection);
+        firePropertyChange(SOURCE, null, null);
+    }
+
+    public void addTargetConnection(TransitionModel connection) {
+        targetConnections.add(connection);
+        firePropertyChange(TARGET, null, null);
+    }
+
+    public void removeTargetConnection(TransitionModel connection) {
+        targetConnections.remove(connection);
+        firePropertyChange(TARGET, null, null);
+    }
+
+    private boolean nameExistsInAtomic(String name) {
+        if (getParent() != null) for (BaseModel model : getParent().getChildren()) {
+            if (model instanceof PlaceModel && !this.equals(model)) {
+                if (model.getName().equals(name)) return true;
+            }
+        }
+        return false;
+    }
+
+    public void setName(String name) {
+        if (nameExistsInAtomic(name)) {
+            return;
+        }
+        super.setName(name);
+        firePropertyChange(NAME, null, getName());
+    }
+
+    public boolean isInitialPlace() {
+        return isInitialPlace;
+    }
+
+    public void setInitialPlace(boolean isInitialPlace) {
+        this.isInitialPlace = isInitialPlace;
+        firePropertyChange(INITIAL, null, this.isInitialPlace);
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "place name"),};
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        if (NAME.equals(id)) {
+            return getName();
+        } else if (INITIAL.equals(id)) {
+            /*
+             * INFORMATION 尽管 getPropertyDescriptors里面设置的是new String[] { "true", "false" },
+             * 但这里只能用返回一个整数（索引值）
+             */
+            return isInitialPlace ? new Integer(0) : new Integer(1);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        if (NAME.equals(id) || INITIAL.equals(id)) return true;
+        return false;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {}
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {
+        if (NAME.equals(id)) {
+            setName((String) value);
+        } else if (INITIAL.equals(id)) {
+            if (value instanceof Integer) {
+                int index = (Integer) value;
+                if (index == 0) // true
+                    setInitialPlace(true);
+                else if (index == 1)
+                    setInitialPlace(false);
+                else
+                    // INFORMATION initialLabel的索引只能是0和1。
+                    System.err.println("Some is wrong here");
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "PlaceModel [name=" + getName() + "]";
+    }
+
+    public AtomicTypeModel getParent() {
+        return parent;
+    }
+
+    public void setParent(AtomicTypeModel parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public Element toXML() {
+        Element element = DocumentHelper.createElement("place");
+        element.addAttribute("name", getName());
+        element.addAttribute("id", getId());
+        Rectangle rect = getPositionConstraint();
+        element.addAttribute("x", "" + rect.x());
+        element.addAttribute("y", "" + rect.y());
+        element.addAttribute("height", "" + rect.height());
+        element.addAttribute("width", "" + rect.width());
+        return element;
+    }
+
+    @Override
+    public String toBIP() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BaseModel fromXML() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}

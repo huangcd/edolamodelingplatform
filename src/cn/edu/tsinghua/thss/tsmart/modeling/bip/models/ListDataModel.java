@@ -1,0 +1,17 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models;
+
+/**
+ * Created by Huangcd Date: 11-9-18 Time: ÏÂÎç11:22
+ */
+@SuppressWarnings("rawtypes")
+public abstract class ListDataModel<T extends ListContainerModel> extends BaseModel {
+    private T parent;
+
+    public T getParent() {
+        return parent;
+    }
+
+    public void setParent(T parent) {
+        this.parent = parent;
+    }
+}

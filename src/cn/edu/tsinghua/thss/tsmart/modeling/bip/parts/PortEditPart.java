@@ -1,0 +1,75 @@
+/**
+ * 
+ */
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
+
+import java.beans.PropertyChangeEvent;
+
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.LineBorder;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ContainerModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortAreaModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.CustomDirectEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeletePortEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialog.EditPortDialog;
+
+
+/**
+ * @author: huangcd (huangcd.thu@gmail.com)
+ * @time: 2011-6-29 ÏÂÎç11:53:00
+ * @project: CereusBip
+ * @package: cereusbip.parts
+ * @class: PortEditPart.java
+ * 
+ */
+public class PortEditPart extends BaseEditableEditPart {
+    private Label label;
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        label.setText(getModel().toString());
+        refreshVisuals();
+    }
+
+    @Override
+    protected IFigure createFigure() {
+        label = new Label(getModel().toString());
+        LineBorder inner = new LineBorder(ColorConstants.lightBlue, 1);
+        // MarginBorder outer = new MarginBorder(3);
+        label.setBorder(inner);
+        return label;
+    }
+
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeletePortEditPolicy());
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new CustomDirectEditPolicy()); // Ö±½Ó±à¼­
+    }
+
+    // Ë«»÷±à¼­
+    @Override
+    protected void performDoubleClick() {
+        PortModel child = (PortModel) getModel();
+        PortAreaModel parent = child.getParent();
+        ContainerModel owner = child.getOwner();
+        if (owner instanceof AtomicTypeModel) {
+            Shell shell = Display.getDefault().getActiveShell();
+            if (shell != null) {
+                EditPortDialog dialog =
+                                new EditPortDialog(shell, child, ((AtomicTypeModel) owner)
+                                                .getDataAreaModel().getChildren(), parent);
+                dialog.setBlockOnOpen(true);
+                dialog.open();
+            }
+            parent.setShow(true);
+        }
+    }
+}

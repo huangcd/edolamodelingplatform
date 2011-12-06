@@ -1,0 +1,110 @@
+/**
+ * 
+ */
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.eclipse.draw2d.geometry.Rectangle;
+
+/**
+ * @author: huangcd (huangcd.thu@gmail.com)
+ * @time: 2011-7-3 ÉÏÎç10:29:01
+ * @project: CereusBip
+ * @package: cereusbip.models
+ * @class: PriorityAreaModel.java
+ */
+public class CompoundPriorityAreaModel extends BaseModel {
+    public final static String          CHILDREN = "PriorityAreaChildren";
+    public final static String          SHOW     = "PriorityAreaShow";
+    private List<CompoundPriorityModel> children = new ArrayList<CompoundPriorityModel>();
+    private CompoundTypeModel           parent;
+    private boolean                     show;
+
+    public CompoundPriorityAreaModel() {
+        setPositionConstraint(new Rectangle(0, 0, 40, 80));
+    }
+
+    public boolean addChild(CompoundPriorityModel child) {
+        children.add(child);
+        firePropertyChange(CHILDREN, null, null);
+        return true;
+    }
+
+    public void childUpdated() {
+        firePropertyChange(CHILDREN, null, null);
+    }
+
+    public void childUpdated(CompoundPriorityModel child) {
+        firePropertyChange(CHILDREN, null, null);
+    }
+
+    public List<CompoundPriorityModel> getChildren() {
+        return children;
+    }
+
+    public CompoundTypeModel getParent() {
+        return parent;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        return false;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public boolean removeChild(CompoundPriorityModel child) {
+        children.remove(child);
+        firePropertyChange(CHILDREN, null, null);
+        return true;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {}
+
+    public void setParent(CompoundTypeModel parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {
+
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+        firePropertyChange(SHOW, null, null);
+    }
+
+    @Override
+    public Element toXML() {
+        Element element = DocumentHelper.createElement("priorities");
+        for (CompoundPriorityModel model : getChildren()) {
+            element.add(model.toXML());
+        }
+        return element;
+    }
+
+    @Override
+    public String toBIP() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BaseModel fromXML() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+}
