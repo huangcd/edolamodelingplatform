@@ -52,5 +52,4 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
     }
-
 }
