@@ -1,0 +1,183 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
+
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * Created by Huangcd<br/>
+ * Date: 11-9-25<br/>
+ * Time: ÏÂÎç9:15<br/>
+ */
+@SuppressWarnings({"unused", "unchecked"})
+@Root
+public class CompoundTypeModel
+    extends BaseTypeModel<CompoundTypeModel, CompoundModel, IContainer>
+    implements IContainer<CompoundTypeModel, IContainer, IInstance>,
+               IComponentType<CompoundTypeModel, CompoundModel, IContainer, IInstance> {
+
+    @ElementList
+    private List<IComponentInstance> components;
+    @ElementList
+    private List<ConnectorModel> connectors;
+    @ElementList
+    private List<PriorityModel<CompoundTypeModel, ConnectorModel>> priorities;
+
+    public CompoundTypeModel() {
+        components = new ArrayList<IComponentInstance>();
+        connectors = new ArrayList<ConnectorModel>();
+        priorities = new ArrayList<PriorityModel<CompoundTypeModel, ConnectorModel>>();
+    }
+
+    @Override
+    public List<IInstance> getModelChildren() {
+        ArrayList<IInstance> children = new ArrayList<IInstance>();
+        children.addAll(components);
+        children.addAll(connectors);
+        children.addAll(priorities);
+        return children;
+    }
+
+    public void addComponent(IComponentInstance component) {
+        components.add(component);
+        firePropertyChange(CHILDREN);
+    }
+
+    public void addConnector(ConnectorModel connector) {
+        connectors.add(connector);
+        // TODO validate
+        firePropertyChange(CHILDREN);
+    }
+
+    public void addPriority(PriorityModel<CompoundTypeModel, ConnectorModel> priorityModel) {
+        priorities.add(priorityModel);
+        // TODO validate
+        firePropertyChange(CHILDREN);
+    }
+
+    @Override
+    public void addModelChild(IInstance child) {
+        if (child instanceof IComponentInstance) {
+            addComponent((IComponentInstance) child);
+        } else if (child instanceof ConnectorModel) {
+            addConnector((ConnectorModel) child);
+        } else if (child instanceof PriorityModel) {
+            addPriority((PriorityModel) child);
+        } else {
+            System.err.println("Invalidated child type to add:\n" + child);
+        }
+    }
+
+    @Override
+    public boolean removeModelChild(IInstance iInstance) {
+        if (iInstance instanceof IComponentInstance) {
+            removeComponent((IComponentInstance) iInstance);
+        } else if (iInstance instanceof ConnectorModel) {
+            removeConnector((ConnectorModel) iInstance);
+        } else if (iInstance instanceof PriorityModel) {
+            removePriority((PriorityModel) iInstance);
+        }
+        return false;
+    }
+
+    public boolean removePriority(PriorityModel child) {
+        if (child == null) {
+            return false;
+        }
+        int index = priorities.indexOf(child);
+        if (index < 0) {
+            return false;
+        }
+        priorities.remove(index);
+        firePropertyChange(CHILDREN);
+        return true;
+    }
+
+    public boolean removeConnector(ConnectorModel child) {
+        if (child == null) {
+            return false;
+        }
+        int index = connectors.indexOf(child);
+        if (index < 0) {
+            return false;
+        }
+        connectors.remove(index);
+        firePropertyChange(CHILDREN);
+        return true;
+    }
+
+    public boolean removeComponent(IComponentInstance child) {
+        if (child == null) {
+            return false;
+        }
+        int index = components.indexOf(child);
+        if (index < 0) {
+            return false;
+        }
+        components.remove(index);
+        firePropertyChange(CHILDREN);
+        return true;
+    }
+
+    @Override
+    public CompoundModel createInstance() {
+        if (instance == null) {
+            instance = new CompoundModel().setType(this);
+        }
+        return instance;
+    }
+
+    @Override
+    public CompoundTypeModel copy() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public String exportToBip() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("compound type ").append(getName()).append('\n');
+        for (IComponentInstance component : components) {
+            buffer.append('\t').append(component.exportToBip()).append('\n');
+        }
+        buffer.append('\n');
+        for (ConnectorModel connector : connectors) {
+            buffer.append('\t').append(connector.exportToBip()).append('\n');
+        }
+        buffer.append('\n');
+        for (ConnectorModel connector : connectors) {
+            buffer.append('\t').append(connector.exportPort()).append('\n');
+        }
+        buffer.append('\n');
+        for (PriorityModel<CompoundTypeModel, ConnectorModel> priority : priorities) {
+            buffer.append('\t').append(priority.exportToBip()).append('\n');
+        }
+        buffer.append("end\n");
+        return buffer.toString();
+    }
+
+    @Override
+    public boolean exportable() {
+        return true;
+    }
+
+    @Override
+    public List<IPort> getExportPorts() {
+        List<IPort> exportPorts = new ArrayList<IPort>();
+        for (ConnectorModel connector : connectors) {
+            if (connector.isExport()) {
+                exportPorts.add(connector);
+            }
+        }
+        return exportPorts;
+    }
+}

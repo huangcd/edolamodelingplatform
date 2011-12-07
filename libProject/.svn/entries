@@ -33,3 +33,17 @@ dir
 
 add
 
+commons-codec
+dir
+
+
+
+add
+
+org.simpleframework
+dir
+
+
+
+add
+

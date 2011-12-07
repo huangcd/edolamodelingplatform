@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Commons-codec
+Bundle-SymbolicName: commons-codec
+Bundle-Version: 1.0.0
+Bundle-ClassPath: commons-codec-1.6.jar
+Bundle-Vendor: commons-codec
+Export-Package: org.apache.commons.codec,
+ org.apache.commons.codec.binary,
+ org.apache.commons.codec.digest,
+ org.apache.commons.codec.language,
+ org.apache.commons.codec.language.bm,
+ org.apache.commons.codec.net
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
