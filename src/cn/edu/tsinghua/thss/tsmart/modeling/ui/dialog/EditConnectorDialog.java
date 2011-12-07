@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.*;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.MessageBoxUtil;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class EditConnectorDialog extends EditDialog {
+public class EditConnectorDialog extends AbstractEditDialog {
     private Text                       nameText;
     private Button                     isExportButton;
     private ConnectorTypeModel         owner;
@@ -31,10 +32,9 @@ public class EditConnectorDialog extends EditDialog {
 
     public EditConnectorDialog(Shell parentShell, ConnectorTypeModel owner,
                     CompoundTypeModel _parent) {
-        super(parentShell);
+        super(parentShell, "Edit Connector Properties");
         this.owner = owner;
         this._parent = _parent;
-        setTitle("Edit Connector Properties");
     }
 
     @Override
@@ -135,7 +135,7 @@ public class EditConnectorDialog extends EditDialog {
         scrolledComposite_1.setMinSize(actionTable.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         container.setTabList(new Control[] {nameText, isExportButton});
 
-        initValue();
+        initValues();
         return container;
     }
 
@@ -233,7 +233,7 @@ public class EditConnectorDialog extends EditDialog {
         };
     }
 
-    protected void initValue() {
+    protected void initValues() {
         nameText.setText(owner.getName() == null ? "" : owner.getName());
         isExportButton.setSelection(owner.isExport());
         defineExpressionText.setText(owner.getDefineExpression() == null ? "" : owner

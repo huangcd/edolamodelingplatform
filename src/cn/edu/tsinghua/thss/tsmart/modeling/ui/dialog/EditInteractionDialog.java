@@ -6,7 +6,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class EditInteractionDialog extends EditDialog {
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.AbstractEditDialog;
+
+public class EditInteractionDialog extends AbstractEditDialog {
 
     private String interaction;
     private String guard;
@@ -19,8 +21,7 @@ public class EditInteractionDialog extends EditDialog {
 
     public EditInteractionDialog(Shell shell, String interaction, String guard, String upAction,
                     String downAction) {
-        super(shell);
-        setTitle("Edit Interaction properties");
+        super(shell, "Edit Interaction properties");
         this.interaction = interaction;
         this.guard = guard;
         this.upAction = upAction;
@@ -100,12 +101,12 @@ public class EditInteractionDialog extends EditDialog {
         gd_downActionText.heightHint = 183;
         downActionText.setLayoutData(gd_downActionText);
 
-        initValue();
+        initValues();
         return container;
     }
 
     @Override
-    protected void initValue() {
+    protected void initValues() {
         interactionText.setText(interaction);
         guardText.setText(guard);
         upActionText.setText(upAction);

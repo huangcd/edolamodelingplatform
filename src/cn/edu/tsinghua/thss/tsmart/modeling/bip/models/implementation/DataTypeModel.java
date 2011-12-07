@@ -17,20 +17,23 @@ import java.util.HashSet;
  */
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
-public class DataTypeModel<P extends IContainer>
-    extends BaseTypeModel<DataTypeModel, DataModel, P> {
+public class DataTypeModel<P extends IContainer> extends BaseTypeModel<DataTypeModel, DataModel, P> {
 
     public static HashSet<String> getRegisterTypeNames() {
         return registerTypeNames;
     }
 
+    public static String[] getRegisterTypeNamesAsArray() {
+        return registerTypeNames.toArray(new String[registerTypeNames.size()]);
+    }
+
     @ElementList
     private final static HashSet<String> registerTypeNames = new HashSet<String>();
 
-    @Attribute(name="typeName")
-    private String typeName;
+    @Attribute(name = "typeName")
+    private String                       typeName;
 
-    public DataTypeModel(@Attribute(name="typeName") String typeName) {
+    public DataTypeModel(@Attribute(name = "typeName") String typeName) {
         this.setTypeName(typeName);
     }
 
@@ -51,8 +54,7 @@ public class DataTypeModel<P extends IContainer>
     }
 
     /**
-     * 复制dataTypeModel对象，同时复制instance对象的value。
-     * 但为了避免出现问题，不复制instance的name
+     * 复制dataTypeModel对象，同时复制instance对象的value。 但为了避免出现问题，不复制instance的name
      */
     public DataTypeModel copy() {
         DataTypeModel copyModel = new DataTypeModel(this.typeName);
@@ -103,12 +105,12 @@ public class DataTypeModel<P extends IContainer>
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
     }
 }

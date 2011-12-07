@@ -13,10 +13,11 @@ import org.eclipse.swt.widgets.Text;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.MessageBoxUtil;
 
 
-public class EditAtomicTypeDialog extends EditDialog {
+public class EditAtomicTypeDialog extends AbstractEditDialog {
     private Text              nameText;
     private Text              initActionText;
     private AtomicTypeModel   owner;
@@ -30,10 +31,9 @@ public class EditAtomicTypeDialog extends EditDialog {
      * @param parent
      */
     public EditAtomicTypeDialog(Shell parentShell, AtomicTypeModel owner, CompoundTypeModel parent) {
-        super(parentShell);
+        super(parentShell, "Edit Atomic properties");
         this.owner = owner;
         this._parent = parent;
-        setTitle("Edit Atomic properties");
     }
 
     /**
@@ -62,12 +62,12 @@ public class EditAtomicTypeDialog extends EditDialog {
         gd_initActionText.heightHint = 81;
         initActionText.setLayoutData(gd_initActionText);
 
-        initValue();
+        initValues();
         return container;
     }
 
     @Override
-    protected void initValue() {
+    protected void initValues() {
         nameText.setText(owner.getName());
         initActionText.setText(owner.getInitAction());
     }

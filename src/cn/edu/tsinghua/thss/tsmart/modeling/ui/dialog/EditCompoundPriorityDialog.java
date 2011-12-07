@@ -18,10 +18,11 @@ import org.eclipse.swt.widgets.Text;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundPriorityAreaModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundPriorityModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.MessageBoxUtil;
 
 
-public class EditCompoundPriorityDialog extends EditDialog {
+public class EditCompoundPriorityDialog extends AbstractEditDialog {
     private List<ConnectorTypeModel>             ports;
     private HashMap<Integer, ConnectorTypeModel> portIdxMap;
     private Text                                 conditionText;
@@ -38,11 +39,10 @@ public class EditCompoundPriorityDialog extends EditDialog {
      */
     public EditCompoundPriorityDialog(Shell parentShell, CompoundPriorityModel owner,
                     List<ConnectorTypeModel> ports, CompoundPriorityAreaModel parent) {
-        super(parentShell);
+        super(parentShell, "edit priority");
         this.ports = ports;
         this._parent = parent;
         this.owner = owner;
-        setTitle("edit priority");
     }
 
     /**
@@ -98,7 +98,7 @@ public class EditCompoundPriorityDialog extends EditDialog {
         leftCombo.select(0);
         rightCombo.select(ports.size() - 1);
 
-        initValue();
+        initValues();
         return container;
     }
 
@@ -162,7 +162,7 @@ public class EditCompoundPriorityDialog extends EditDialog {
         super.okPressed();
     }
 
-    protected void initValue() {
+    protected void initValues() {
         if (owner.getCondition() == null)
             conditionText.setText("true");
         else

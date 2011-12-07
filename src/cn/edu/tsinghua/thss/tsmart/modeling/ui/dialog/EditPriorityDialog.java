@@ -18,10 +18,11 @@ import org.eclipse.swt.widgets.Text;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PriorityAreaModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PriorityModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.MessageBoxUtil;
 
 
-public class EditPriorityDialog extends EditDialog {
+public class EditPriorityDialog extends AbstractEditDialog {
     private List<PortModel>             ports;
     private HashMap<Integer, PortModel> portIdxMap;
     private Text                        conditionText;
@@ -38,11 +39,10 @@ public class EditPriorityDialog extends EditDialog {
      */
     public EditPriorityDialog(Shell parentShell, PriorityModel owner, List<PortModel> ports,
                     PriorityAreaModel parent) {
-        super(parentShell);
+        super(parentShell, "edit priority");
         this.ports = ports;
         this._parent = parent;
         this.owner = owner;
-        setTitle("edit priority");
     }
 
     /**
@@ -98,7 +98,7 @@ public class EditPriorityDialog extends EditDialog {
         leftCombo.select(0);
         rightCombo.select(ports.size() - 1);
 
-        initValue();
+        initValues();
         return container;
     }
 
@@ -162,7 +162,7 @@ public class EditPriorityDialog extends EditDialog {
         super.okPressed();
     }
 
-    protected void initValue() {
+    protected void initValues() {
         if (owner.getCondition() == null)
             conditionText.setText("true");
         else

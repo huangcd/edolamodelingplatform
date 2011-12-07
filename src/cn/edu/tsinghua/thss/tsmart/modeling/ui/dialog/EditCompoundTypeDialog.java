@@ -17,10 +17,11 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BipModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.MessageBoxUtil;
 
 
-public class EditCompoundTypeDialog extends EditDialog {
+public class EditCompoundTypeDialog extends AbstractEditDialog {
     private Text              nameText;
     private CompoundTypeModel owner;
     private BaseModel         _parent;
@@ -33,10 +34,9 @@ public class EditCompoundTypeDialog extends EditDialog {
      * @param parent
      */
     public EditCompoundTypeDialog(Shell parentShell, CompoundTypeModel owner, BaseModel parent) {
-        super(parentShell);
+        super(parentShell, "Edit Compound properties");
         this.owner = owner;
         this._parent = parent;
-        setTitle("Edit Compound properties");
     }
 
     /**
@@ -60,7 +60,7 @@ public class EditCompoundTypeDialog extends EditDialog {
     }
 
     @Override
-    protected void initValue() {
+    protected void initValues() {
         nameText.setText(owner.getName());
     }
 
