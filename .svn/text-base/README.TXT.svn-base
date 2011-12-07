@@ -1,0 +1,2 @@
+为保证代码风格一致，在编辑项目之前请导入.settings/eclipse-java-google-style.xml。
+导入方法：Eclipse->window->preferences->Java->Code Style->Formatter->Import 选择eclipse-java-google-style.xml文件。
