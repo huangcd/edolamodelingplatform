@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -14,7 +15,7 @@ import java.util.HashSet;
  * Date: 11-9-26<br/>
  * Time: ÏÂÎç3:16<br/>
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
 public class DataTypeModel<P extends IContainer>
     extends BaseTypeModel<DataTypeModel, DataModel, P> {
@@ -73,5 +74,41 @@ public class DataTypeModel<P extends IContainer>
     @Override
     public String toString() {
         return "DataType{" + "typeName='" + getTypeName() + '\'' + '}';
+    }
+
+    @Override
+    public Object getEditableValue() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {
+        // TODO Auto-generated method stub
+        
     }
 }

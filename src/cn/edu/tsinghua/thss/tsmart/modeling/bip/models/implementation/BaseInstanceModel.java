@@ -2,8 +2,20 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 // import org.eclipse.draw2d.geometry.Rectangle;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -14,15 +26,8 @@ import org.simpleframework.xml.strategy.CycleStrategy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.UUID;
+import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateNotifier;
+import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateReceiver;
 
 
 
@@ -35,18 +40,22 @@ import java.util.UUID;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type extends IType, Parent extends IContainer>
                 implements
-                    IInstance<Model, Type, Parent> {
+                    IInstance<Model, Type, Parent>,
+                    IPropertySource,
+                    UpdateNotifier,
+                    UpdateReceiver {
 
-    private PropertyChangeSupport listeners  = new PropertyChangeSupport(this);
+    private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
+    private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
     protected Rectangle           positionConstraint;
     @Element(required = false)
     protected Parent              parent;
     @Attribute(required = false)
     protected String              name;
-    protected final UUID          uuid       = UUID.randomUUID();
+    protected final UUID          uuid            = UUID.randomUUID();
     @Element(required = false, name = "type")
     protected Type                type;
-    protected static Serializer   serializer = new Persister(new CycleStrategy());
+    protected static Serializer   serializer      = new Persister(new CycleStrategy());
 
     public Type getType() {
         return type;
@@ -161,5 +170,32 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public Model copy() {
         return (Model) getType().copy().getInstance().setName(getName());
+    }
+
+    @Override
+    public void updated() {
+        firePropertyChange(REFRESH);
+    }
+
+    @Override
+    public List<UpdateReceiver> getRegisterObjects() {
+        return registerObjects;
+    }
+
+    @Override
+    public void register(UpdateReceiver obj) {
+        if (obj != null) registerObjects.add(obj);
+    }
+
+    @Override
+    public void unRegister(UpdateReceiver obj) {
+        if (obj != null) registerObjects.remove(obj);
+    }
+
+    @Override
+    public void notifyRegisterObjects() {
+        for (UpdateReceiver receiver : getRegisterObjects()) {
+            receiver.updated();
+        }
     }
 }

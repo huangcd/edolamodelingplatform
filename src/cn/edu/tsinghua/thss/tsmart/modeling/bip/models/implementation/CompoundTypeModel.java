@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * Date: 11-9-25<br/>
  * Time: ÏÂÎç9:15<br/>
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
 public class CompoundTypeModel
     extends BaseTypeModel<CompoundTypeModel, CompoundModel, IContainer>
@@ -179,5 +180,41 @@ public class CompoundTypeModel
             }
         }
         return exportPorts;
+    }
+
+    @Override
+    public Object getEditableValue() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {
+        // TODO Auto-generated method stub
+        
     }
 }

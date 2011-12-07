@@ -13,7 +13,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BipChildEditPolicy;
 
 
 public class BipEditPart extends BaseGraphicalEditPart {
-    public BipEditPart() {}
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

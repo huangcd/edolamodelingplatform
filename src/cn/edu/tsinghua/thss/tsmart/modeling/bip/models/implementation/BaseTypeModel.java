@@ -7,11 +7,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -22,6 +24,8 @@ import org.simpleframework.xml.strategy.CycleStrategy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
+import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateNotifier;
+import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateReceiver;
 
 
 /**
@@ -33,16 +37,20 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 @Root
 public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extends IInstance, Parent extends IContainer>
                 implements
-                    IType<Model, Instance, Parent> {
+                    IType<Model, Instance, Parent>,
+                    IPropertySource,
+                    UpdateNotifier,
+                    UpdateReceiver {
 
-    private PropertyChangeSupport listeners  = new PropertyChangeSupport(this);
+    private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
+    private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
     @Element(required = false)
     protected Parent              parent;
     @Attribute(required = false)
     protected String              name;
     protected Instance            instance;
-    protected UUID                uuid       = UUID.randomUUID();
-    protected static Serializer   serializer = new Persister(new CycleStrategy());
+    protected UUID                uuid            = UUID.randomUUID();
+    protected static Serializer   serializer      = new Persister(new CycleStrategy());
 
     public BaseTypeModel() {}
 
@@ -150,6 +158,33 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         out.writeObject(this);
         out.close();
         return bytes.toByteArray();
+    }
+
+    @Override
+    public void updated() {
+        firePropertyChange(REFRESH);
+    }
+
+    @Override
+    public List<UpdateReceiver> getRegisterObjects() {
+        return registerObjects;
+    }
+
+    @Override
+    public void register(UpdateReceiver obj) {
+        if (obj != null) registerObjects.add(obj);
+    }
+
+    @Override
+    public void unRegister(UpdateReceiver obj) {
+        if (obj != null) registerObjects.remove(obj);
+    }
+
+    @Override
+    public void notifyRegisterObjects() {
+        for (UpdateReceiver receiver : getRegisterObjects()) {
+            receiver.updated();
+        }
     }
 
     public static void main(String[] args) throws Exception {

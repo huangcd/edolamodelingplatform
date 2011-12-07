@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -142,5 +143,41 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         List<DataTypeModel> dataTypes = new ArrayList<DataTypeModel>();
         dataTypes.addAll(arguments);
         return dataTypes;
+    }
+
+    @Override
+    public Object getEditableValue() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {
+        // TODO Auto-generated method stub
+        
     }
 }

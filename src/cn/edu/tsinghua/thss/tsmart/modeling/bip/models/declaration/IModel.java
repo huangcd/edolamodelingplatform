@@ -25,6 +25,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
     public final static String PARENT = "parent";
     public final static String NAME = "name";
     public final static String CREATE = "create";
+    public final static String REFRESH = "refresh";
 
     /** @return 返回模型的父模型 */
     Parent getParent();

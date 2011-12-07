@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementArray;
 import org.simpleframework.xml.ElementList;
@@ -24,7 +25,7 @@ import java.util.Stack;
  * Date: 11-9-26<br/>
  * Time: ÏÂÎç4:43<br/>
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root(name = "connectorType")
 public class ConnectorTypeModel
     extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IContainer>
@@ -327,6 +328,42 @@ public class ConnectorTypeModel
             dataTypes.add(data.getType());
         }
         return dataTypes;
+    }
+
+    @Override
+    public Object getEditableValue() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {
+        // TODO Auto-generated method stub
+        
     }
 }
 

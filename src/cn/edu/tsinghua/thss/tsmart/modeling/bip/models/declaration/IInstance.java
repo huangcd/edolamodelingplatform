@@ -9,10 +9,19 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
  * （如Atomic在其所属的Compound里面的名字：Component SyncScheduler scheduler 中的 scheduler、
  * Port在Atomic中关联了那些数据、Connector关联了那些Port等）
  */
+@SuppressWarnings("rawtypes")
 public interface IInstance<M extends IInstance, T extends IType, P extends IContainer>
         extends IModel<M, P>
 {
+    /**
+     * 
+     * @return 返回实例的类型
+     */
     T getType();
 
+    /**
+     * 
+     * @return 深度复制一个实例
+     */
     M copy();
 }
