@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Dom4j
 Bundle-SymbolicName: org.dom4j
 Bundle-Version: 1.0.0
+Bundle-ClassPath: commons-lang3-3.0.1.jar,
+ dom4j-1.6.1.jar
 Bundle-Vendor: org.dom4j
 Export-Package: org.apache.commons.lang3,
  org.apache.commons.lang3.builder,
