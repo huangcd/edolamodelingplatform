@@ -11,6 +11,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
  * Time: 18:48<br/>
  * 对外表现为 Port 形式的模型，包括 Port 和 Connector （不是Type）
  */
+@SuppressWarnings("rawtypes")
 public interface IPort<Model extends IPort, Type extends IPortType, Parent extends IComponentType, DataContainer extends IDataContainer>
     extends IInstance<Model, Type, Parent> {
 

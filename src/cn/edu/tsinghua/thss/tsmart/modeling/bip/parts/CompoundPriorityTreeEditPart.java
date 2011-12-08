@@ -1,25 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundPriorityModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ConnectorTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ContainerModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PriorityModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.AtomicChildEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.CustomDirectEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteAtomicEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteCompoundPriorityEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteConnectorEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeletePortEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeletePriorityEditPolicy;
 
 
 public class CompoundPriorityTreeEditPart extends BaseTreeEditPart {

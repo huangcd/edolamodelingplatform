@@ -16,9 +16,9 @@ import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.CustomDirectEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeletePlaceEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.TransitionEditPolicy;
@@ -29,7 +29,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected IFigure createFigure() {
-        PlaceModel model = (PlaceModel) getModel();
+        PlaceModel model = getModel();
         label = new Label(model.getName());
         label.setOpaque(true);
 
@@ -40,6 +40,11 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         }
         label.setBorder(new MarginBorder(3));
         return label;
+    }
+    
+    public PlaceModel getModel()
+    {
+        return (PlaceModel)super.getModel();
     }
 
     @Override
@@ -62,13 +67,13 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (BaseModel.CONSTRAINT.equals(evt.getPropertyName())) {
+        if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             ((BaseGraphicalEditPart) getParent()).refresh();
             refreshVisuals();
-        } else if (BaseModel.NAME.equals(evt.getPropertyName())) {
-            label.setText(((PlaceModel) getModel()).getName());
+        } else if (IModel.NAME.equals(evt.getPropertyName())) {
+            label.setText((getModel()).getName());
         } else if (PlaceModel.INITIAL.equals(evt.getPropertyName())) {
-            PlaceModel model = (PlaceModel) getModel();
+            PlaceModel model = getModel();
             if (model.isInitialPlace()) {
                 label.setBackgroundColor(ColorConstants.lightBlue);
             } else {
@@ -79,7 +84,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             refreshSourceConnections();
         } else if (PlaceModel.TARGET.equals(evt.getPropertyName())) {
             refreshTargetConnections();
-        } else if (BaseModel.REFRESH.equals(evt.getPropertyName())) {
+        } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
             refreshVisuals();
         }
     }
@@ -106,12 +111,12 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected List<TransitionModel> getModelSourceConnections() {
-        return ((PlaceModel) getModel()).getSourceConnections();
+        return (getModel()).getSourceConnections();
     }
 
     @Override
     protected List<TransitionModel> getModelTargetConnections() {
-        return ((PlaceModel) getModel()).getTargetConnections();
+        return (getModel()).getSourceConnections();
     }
 
     @Override

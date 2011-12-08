@@ -1,5 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.List;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
@@ -10,6 +12,10 @@ import org.simpleframework.xml.Root;
  */
 @Root
 public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, AtomicTypeModel> {
+    
+    public final static String INITIAL = "initial";
+    public final static String SOURCE = "source";
+    public final static String TARGET = "target";
 
     @Override
     public String exportToBip() {
@@ -19,6 +25,11 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     @Override
     public boolean exportable() {
         return true;
+    }
+    
+    public boolean isInitialPlace()
+    {
+        return getParent().getInitPlace().equals(this);
     }
 
     @Override
@@ -55,5 +66,10 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
         
+    }
+
+    public List<TransitionModel> getSourceConnections() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

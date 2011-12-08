@@ -112,4 +112,10 @@ public class EditAtomicTypeDialog extends AbstractEditDialog {
         }
         return false;
     }
+
+    @Override
+    protected void updateValues() {
+        // TODO Auto-generated method stub
+        
+    }
 }

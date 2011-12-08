@@ -137,4 +137,10 @@ public class EditInteractionDialog extends AbstractEditDialog {
     protected boolean validateUserInput() {
         return true;
     }
+
+    @Override
+    protected void updateValues() {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -1,0 +1,65 @@
+/**
+ * 
+ */
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
+
+import java.beans.PropertyChangeEvent;
+
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteTransitionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.SelectTransitionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialog.EditTransitionDialog;
+
+
+/**
+ * @author: huangcd (huangcd.thu@gmail.com)
+ * @time: 2011-6-26 下午01:50:09
+ * @project: CereusBip
+ * @package: cereusbip.parts
+ * @class: TransitionEditPart.java
+ * 
+ */
+public class TransitionEditPart extends BaseConnectionEditPart {
+    @Override
+    protected void createEditPolicies() {
+        super.createEditPolicies();
+        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new SelectTransitionEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new DeleteTransitionEditPolicy());
+    }
+
+    @Override
+    /**
+     * 针对TransitionModel的事件处理
+     */
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (TransitionModel.ACTION.equals(evt.getPropertyName())) {
+            label.setText(getModel().toString());
+        } else if (TransitionModel.GUARD.equals(evt.getPropertyName())) {
+            label.setText(getModel().toString());
+        } else if (TransitionModel.PORT.equals(evt.getPropertyName())) {
+            label.setText(getModel().toString());
+        } else {
+            super.propertyChange(evt);
+        }
+    }
+
+    // 双击弹出对话框
+    @Override
+    protected void performDoubleClicked() {
+        TransitionModel connection = (TransitionModel) getModel();
+        AtomicTypeModel parent = connection.getParent();
+        connection.attachSource();
+        connection.attachTarget();
+        Shell shell = Display.getDefault().getActiveShell();
+        if (shell != null) {
+            EditTransitionDialog dialog = new EditTransitionDialog(shell, connection, parent);
+            dialog.setBlockOnOpen(true);
+            dialog.open();
+        }
+    }
+}

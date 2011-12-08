@@ -21,9 +21,9 @@ public class AtomicTypeEditPart extends ContainerEditPart {
     @Override
     // 安装 edit policy
     protected void createEditPolicies() {
-        installEditPolicy(EditPolicy.LAYOUT_ROLE, new AtomicChildEditPolicy());
-        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new CustomDirectEditPolicy()); // 直接编辑
-        installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteAtomicEditPolicy());
+        //installEditPolicy(EditPolicy.LAYOUT_ROLE, new AtomicChildEditPolicy());
+        //installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new CustomDirectEditPolicy()); // 直接编辑
+        //installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteAtomicEditPolicy());
     }
 
     // 双击编辑

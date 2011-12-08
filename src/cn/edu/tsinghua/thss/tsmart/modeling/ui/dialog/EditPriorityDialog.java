@@ -179,4 +179,10 @@ public class EditPriorityDialog extends AbstractEditDialog {
             if (portModel == portIdxMap.get(i)) return i;
         return -1;
     }
+
+    @Override
+    protected void updateValues() {
+        // TODO Auto-generated method stub
+
+    }
 }

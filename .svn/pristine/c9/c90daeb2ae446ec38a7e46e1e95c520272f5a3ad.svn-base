@@ -1,0 +1,29 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
+
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.commands.Command;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
+
+public class MoveModelCommand extends Command {
+    private BaseModel model;
+    private Rectangle constraint;
+    private Rectangle oldConstraint;
+
+    public void execute() {
+        model.setPositionConstraint(constraint);
+    }
+
+    public void setConstraint(Rectangle rect) {
+        this.oldConstraint = model.getPositionConstraint();
+        this.constraint = rect;
+    }
+
+    public void setModel(BaseModel model) {
+        this.model = model;
+    }
+
+    public void undo() {
+        model.setPositionConstraint(oldConstraint);
+    }
+}

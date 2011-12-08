@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
@@ -69,6 +70,10 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         return uuid;
     }
 
+    public boolean hasName() {
+        return name != null;
+    }
+
     @Override
     public Model setName(String newName) {
         this.name = newName;
@@ -119,6 +124,18 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         }
     }
 
+    @Override
+    public Object getEditableValue() {
+        return this;
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        return new IPropertyDescriptor[0];
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {}
 
     /**
      * 从字符串中导入

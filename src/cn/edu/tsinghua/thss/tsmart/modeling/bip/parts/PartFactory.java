@@ -24,7 +24,7 @@ public class PartFactory implements EditPartFactory {
     private final static String      modelPackage =
                                                                   "cn\\.edu\\.tsinghua\\.thss\\.tsmart\\.modeling\\.bip\\.models\\.";
     private static Pattern           modelPattern = Pattern.compile(modelPackage
-                                                                  + "([A-Za-z0-9_]*)Model");
+                                                                  + "(?:implementation\\.)?([A-Za-z0-9_]*)Model");
 
     private final static PartFactory instance     = new PartFactory();
 

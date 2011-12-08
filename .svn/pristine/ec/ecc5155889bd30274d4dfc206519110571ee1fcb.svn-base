@@ -1,0 +1,59 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
+
+import java.beans.PropertyChangeEvent;
+
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.LineBorder;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PriorityAreaModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PriorityModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.CustomDirectEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeletePriorityEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialog.EditPriorityDialog;
+
+
+public class PriorityEditPart extends BaseEditableEditPart {
+    private Label label;
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        label.setText(getModel().toString());
+        refreshVisuals();
+    }
+
+    @Override
+    protected IFigure createFigure() {
+        label = new Label(getModel().toString());
+        LineBorder inner = new LineBorder(ColorConstants.lightBlue, 1);
+        // MarginBorder outer = new MarginBorder(3);
+        label.setBorder(inner);
+        return label;
+    }
+
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeletePriorityEditPolicy());
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new CustomDirectEditPolicy()); // Ö±½Ó±à¼­
+    }
+
+    // Ë«»÷±à¼­
+    @Override
+    protected void performDoubleClick() {
+        PriorityModel child = (PriorityModel) getModel();
+        PriorityAreaModel parent = child.getParent();
+        Shell shell = Display.getDefault().getActiveShell();
+        if (shell != null) {
+            EditPriorityDialog dialog =
+                            new EditPriorityDialog(shell, child, parent.getParent()
+                                            .getPortAreaModel().getChildren(), parent);
+            dialog.setBlockOnOpen(true);
+            dialog.open();
+        }
+        parent.setShow(true);
+    }
+}

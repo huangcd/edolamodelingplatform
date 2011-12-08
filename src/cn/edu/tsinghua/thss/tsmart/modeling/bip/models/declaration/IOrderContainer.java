@@ -8,7 +8,7 @@ import java.util.List;
  * Time: 下午7:11<br/>
  * 有序容器，模型里面各个子模型次序对模型有影响。如Connector Type的参数、Port Type的参数等。
  */
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings({"unchecked", "unused", "rawtypes"})
 public interface IOrderContainer<Child extends IModel> {
 
     /**

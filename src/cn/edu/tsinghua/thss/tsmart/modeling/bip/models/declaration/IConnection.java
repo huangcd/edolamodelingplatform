@@ -6,6 +6,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
  * Time: ÏÂÎç9:40<br/>
  * Connection Ä£ÐÍ
  */
+@SuppressWarnings("rawtypes")
 public interface IConnection<M extends IConnection, P extends IContainer, S extends IInstance, T extends IInstance>
         extends IModel<M, P>
 {

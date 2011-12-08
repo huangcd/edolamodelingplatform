@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
@@ -50,22 +49,22 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreateDataAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreatePortAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreatePriorityAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BipModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ConnectorPortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ConnectorTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
+@SuppressWarnings("rawtypes")
 public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
     private GraphicalViewer   viewer;
-    private BipModel          model;
-    private CompoundTypeModel child;
+    private IModel model;
 
     public BIPEditor() {
         setEditDomain(new DefaultEditDomain(this));
@@ -116,12 +115,7 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     @Override
     protected void initializeGraphicalViewer() {
         super.initializeGraphicalViewer();
-        model = new BipModel();
-        model.setName("EDOLA EDITOR");
-        child = new CompoundTypeModel("Compound");
-        child.setPositionConstraint(new Rectangle(10, 10, 800, 600));
-        model.addChild(child);
-        child.setParent(model);
+        model = new AtomicTypeModel();
         viewer = getGraphicalViewer();
         viewer.setContents(model);
         viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
@@ -361,13 +355,4 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             super.dispose();
         }
     }
-
-    public BipModel getModel() {
-        return model;
-    }
-
-    public void setModel(BipModel model) {
-        this.model = model;
-    }
-
 }

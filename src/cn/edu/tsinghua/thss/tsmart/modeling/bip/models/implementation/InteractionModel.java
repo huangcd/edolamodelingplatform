@@ -17,6 +17,7 @@ import java.util.List;
  * Time: обнГ3:01<br/>
  */
 @Root
+@SuppressWarnings("rawtypes")
 public class InteractionModel
     extends BaseInstanceModel<InteractionModel, InteractionTypeModel, ConnectorTypeModel> {
 

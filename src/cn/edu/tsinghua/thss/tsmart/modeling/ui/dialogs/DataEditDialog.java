@@ -14,20 +14,23 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 
 /**
  * 
  * @author huangcd
- * TODO：做简单类型的检查（如果DataModel是bool类型，则将textValue替换成一个只允许true和false的combo；如果DataModel是int类型，则在最后判断输入是否是一个数字）
+ *         TODO：做简单类型的检查（如果DataModel是bool类型，则将textValue替换成一个只允许true和false的combo；如果DataModel是int类型
+ *         ，则在最后判断输入是否是一个数字）
  */
 @SuppressWarnings("rawtypes")
 public class DataEditDialog extends AbstractEditDialog {
-    private Text      textName;
-    private Text      textValue;
-    private Combo     comboType;
-    private DataModel instance;
+    private Text           textName;
+    private Text           textValue;
+    private Combo          comboType;
+    private DataModel      instance;
+    private IDataContainer container;
 
     /**
      * Create the dialog.
@@ -37,6 +40,7 @@ public class DataEditDialog extends AbstractEditDialog {
     public DataEditDialog(Shell parentShell, DataModel data) {
         super(parentShell, "Edit Data Model");
         this.instance = data;
+        this.container = (IDataContainer) instance.getParent();
     }
 
     /**
@@ -109,8 +113,18 @@ public class DataEditDialog extends AbstractEditDialog {
             comboType.setItems(DataTypeModel.getRegisterTypeNamesAsArray());
             comboType.select(0);
         }
-        // TODO Auto-generated method stub
+        if (instance.hasName()) {
+            textName.setText(instance.getName());
+        }
+        if (instance.getValue() != null && !instance.getValue().isEmpty()) {
+            textValue.setText(instance.getValue());
+        }
+    }
 
+    @Override
+    protected void updateValues() {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override

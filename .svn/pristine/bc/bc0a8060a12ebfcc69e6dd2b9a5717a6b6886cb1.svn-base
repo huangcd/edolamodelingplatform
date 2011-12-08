@@ -1,0 +1,98 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models;
+
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+public class PortTypeModel extends BaseModel {
+    private String portTypeID = java.util.UUID.randomUUID().toString();
+
+    public PortModel getPortModel() {
+        return portModel;
+    }
+
+    public void setPortModel(PortModel portModel) {
+        this.portModel = portModel;
+    }
+
+    private PortModel                                portModel;
+    private static HashMap<PortModel, PortTypeModel> ports =
+                                                                           new HashMap<PortModel, PortTypeModel>();
+
+    public static void clear() {
+        ports.clear();
+    }
+
+    public static PortTypeModel getPortTypeModel(PortModel port) {
+        registerPortType(port);
+        return ports.get(port);
+    }
+
+    public static Collection<PortTypeModel> getAllPortTypeModels() {
+        return ports.values();
+    }
+
+    public static String registerPortType(PortModel port) {
+        if (ports.containsKey(port)) {
+            return ports.get(port).portTypeID;
+        }
+        PortTypeModel model = new PortTypeModel();
+        model.setPortModel(port);
+        ports.put(port, model);
+        return model.portTypeID;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        return null;
+    }
+
+    @Override
+    public boolean isPropertySet(Object id) {
+        return false;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {}
+
+    @Override
+    public void setPropertyValue(Object id, Object value) {}
+
+    private static long uniqueID = 0;
+
+    private synchronized static String getUniqueName() {
+        return "portType" + (++uniqueID);
+    }
+
+    public static void reset() {
+        uniqueID = 0;
+    }
+
+    @Override
+    public Element toXML() {
+        Element element = DocumentHelper.createElement("portType");
+        element.addAttribute("id", portTypeID);
+        element.addAttribute("name", getUniqueName());
+        List<DataModel> datas = portModel.getDatas();
+        for (int i = 1; i <= datas.size(); i++) {
+            DataModel data = datas.get(i - 1);
+            Element argument = element.addElement("argument");
+            argument.addAttribute("type", data.getType());
+            argument.addAttribute("name", "p" + i);
+        }
+        return element;
+    }
+
+    @Override
+    public String toBIP() {
+        return "";
+    }
+
+    @Override
+    public PortTypeModel fromXML() {
+        return null;
+    }
+}

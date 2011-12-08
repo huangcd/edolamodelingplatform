@@ -11,6 +11,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
  * Date: 11-11-7<br/>
  * Time: обнГ7:27<br/>
  */
+@SuppressWarnings("rawtypes")
 @Root
 public class GuardTypeModel extends BaseTypeModel<GuardTypeModel, GuardModel, IContainer> {
 

@@ -105,6 +105,10 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         return (Model) this;
     }
 
+    public boolean hasName() {
+        return name != null;
+    }
+
     @Override
     public String getName() {
         if (name == null) {

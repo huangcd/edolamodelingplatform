@@ -428,4 +428,10 @@ public class EditConnectorDialog extends AbstractEditDialog {
         }
         owner.setAssociateDatas(associateDatas);
     }
+
+    @Override
+    protected void updateValues() {
+        // TODO Auto-generated method stub
+        
+    }
 }

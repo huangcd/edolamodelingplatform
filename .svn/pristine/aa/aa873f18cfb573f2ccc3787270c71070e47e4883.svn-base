@@ -1,0 +1,41 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
+
+import org.eclipse.gef.commands.Command;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
+
+
+/**
+ * 
+ * @author huangcd (huangcd.thu@gmail.com)
+ * @time 2011-7-3 ÏÂÎç11:21:08
+ * @project CereusBip
+ * @package cereusbip.commands
+ * @class DeleteAtomicCommand.java
+ * 
+ */
+public class DeleteAtomicCommand extends Command {
+    private AtomicTypeModel   child;
+    private CompoundTypeModel parent;
+
+    @Override
+    public void execute() {
+        child.setParent(null);
+        parent.removeChild(child);
+    }
+
+    @Override
+    public void undo() {
+        parent.addChild(child);
+        child.setParent(parent);
+    }
+
+    public void setChild(AtomicTypeModel child) {
+        this.child = child;
+    }
+
+    public void setParent(CompoundTypeModel parent) {
+        this.parent = parent;
+    }
+}

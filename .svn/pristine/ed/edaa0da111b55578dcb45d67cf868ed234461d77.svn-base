@@ -1,0 +1,128 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.ui.dialog;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.TransitionModel;
+
+
+public class EditTransitionDialog extends Dialog {
+    private Text                        guardText;
+    private Text                        actionText;
+    private Combo                       portCombo;
+    private final List<PortModel>       ports;
+    private HashMap<Integer, PortModel> portIdxMap;
+    private TransitionModel             owner;
+    private AtomicTypeModel             _parent;
+
+    /**
+     * Create the dialog.
+     * 
+     * @param parentShell
+     * @wbp.parser.constructor
+     */
+    public EditTransitionDialog(Shell parentShell, TransitionModel owner, AtomicTypeModel _parent) {
+        super(parentShell);
+        this.owner = owner;
+        this._parent = _parent;
+        this.ports = this._parent.getPortAreaModel().getChildren();
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText("Edit Transition properties");
+    }
+
+
+    /**
+     * Create contents of the dialog.
+     * 
+     * @param parent
+     */
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite) super.createDialogArea(parent);
+        GridLayout gridLayout = (GridLayout) container.getLayout();
+        gridLayout.numColumns = 2;
+
+        Label lblGuard = new Label(container, SWT.NONE);
+        lblGuard.setAlignment(SWT.RIGHT);
+        lblGuard.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblGuard.setText("guard:");
+
+        guardText = new Text(container, SWT.BORDER);
+        guardText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        guardText.setText("true");
+
+        Label lblAction = new Label(container, SWT.NONE);
+        lblAction.setAlignment(SWT.RIGHT);
+        lblAction.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblAction.setText("action:");
+
+        actionText = new Text(container, SWT.BORDER);
+        actionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        Label lblPort = new Label(container, SWT.NONE);
+        lblPort.setAlignment(SWT.RIGHT);
+        lblPort.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblPort.setText("port:");
+
+        portCombo = new Combo(container, SWT.READ_ONLY);
+        portCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        container.setTabList(new Control[] {guardText, actionText, portCombo});
+
+        portIdxMap = new HashMap<Integer, PortModel>();
+        for (int i = 0; i < ports.size(); i++) {
+            portIdxMap.put(i, ports.get(i));
+            portCombo.add(ports.get(i).getName());
+        }
+
+        this.guardText.setText(owner.getGuard());
+        this.actionText.setText(owner.getAction());
+        if (portIdxMap.containsValue(owner.getPort()))
+            this.portCombo.setText(owner.getPort().getName());
+        return container;
+    }
+
+    /**
+     * Create contents of the button bar.
+     * 
+     * @param parent
+     */
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    }
+
+    /**
+     * Return the initial size of the dialog.
+     */
+    @Override
+    protected Point getInitialSize() {
+        return new Point(374, 215);
+    }
+
+    @Override
+    protected void okPressed() {
+        owner.setPort(portIdxMap.get(portCombo.getSelectionIndex()));
+        owner.setGuard(guardText.getText());
+        owner.setAction(actionText.getText());
+        super.okPressed();
+    }
+}

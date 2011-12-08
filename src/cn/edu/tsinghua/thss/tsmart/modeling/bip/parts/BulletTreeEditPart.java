@@ -1,20 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
-import org.eclipse.gef.EditPolicy;
-
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BulletModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ContainerModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.AtomicChildEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.CustomDirectEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteAtomicEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeletePlaceEditPolicy;
 
 
 public class BulletTreeEditPart extends BaseTreeEditPart {

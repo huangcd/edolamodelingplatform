@@ -17,7 +17,7 @@ import java.util.UUID;
  * <li>导出、导入功能</li>
  * </ul>
  */
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused","rawtypes"})
 public interface IModel<Model extends IModel, Parent extends IContainer> extends Serializable {
 
     public final static String POSITION = "position";
@@ -26,6 +26,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
     public final static String NAME = "name";
     public final static String CREATE = "create";
     public final static String REFRESH = "refresh";
+    public static final String CONSTRAINT = "constraint";
 
     /** @return 返回模型的父模型 */
     Parent getParent();

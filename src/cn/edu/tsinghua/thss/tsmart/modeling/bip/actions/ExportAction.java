@@ -50,16 +50,6 @@ public class ExportAction extends SelectionAction {
 
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter writer;
-        try {
-            BIPEditor editor = (BIPEditor) getWorkbenchPart();
-            Document doc = DocumentHelper.createDocument(editor.getModel().toXML());
-            doc.setXMLEncoding("UTF-8");
-            doc.setDocType(new DOMDocumentType("model", "BIPModel.dtd"));
-            writer = new XMLWriter(new FileOutputStream(file), format);
-            writer.write(doc);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // TODO output
     }
 }

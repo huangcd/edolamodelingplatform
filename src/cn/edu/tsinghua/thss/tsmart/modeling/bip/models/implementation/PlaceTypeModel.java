@@ -11,6 +11,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
  * Date: 11-11-5<br/>
  * Time: обнГ10:08<br/>
  */
+@SuppressWarnings("rawtypes")
 @Root
 public class PlaceTypeModel extends BaseTypeModel<PlaceTypeModel, PlaceModel, IContainer> {
 

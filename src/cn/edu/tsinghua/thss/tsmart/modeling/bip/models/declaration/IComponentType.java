@@ -7,6 +7,7 @@ import java.util.List;
  * Date: 11-11-17<br/>
  * Time: ионГ8:50<br/>
  */
+@SuppressWarnings("rawtypes")
 public interface IComponentType<Model extends IComponentType, Instance extends IComponentInstance, Parent extends IContainer, Child extends IModel>
     extends IContainer<Model, Parent, Child>, IType<Model, Instance, Parent> {
 

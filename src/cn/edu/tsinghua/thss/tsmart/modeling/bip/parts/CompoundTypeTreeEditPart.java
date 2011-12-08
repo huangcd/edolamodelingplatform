@@ -1,17 +1,13 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractTreeEditPart;
-import org.omg.CORBA.Object;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ContainerModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.CompoundChildEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteCompoundEditPolicy;
 
 

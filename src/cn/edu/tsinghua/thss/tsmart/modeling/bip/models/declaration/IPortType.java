@@ -10,6 +10,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeMo
  * Date: 11-11-18<br/>
  * Time: обнГ7:48<br/>
  */
+@SuppressWarnings("rawtypes")
 public interface IPortType<T extends IPortType<T, I, P>, I extends IPort, P extends IContainer>
     extends IType<T, I, P> {
 

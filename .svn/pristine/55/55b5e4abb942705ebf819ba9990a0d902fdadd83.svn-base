@@ -1,0 +1,66 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
+
+import org.eclipse.gef.commands.Command;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PlaceModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.TransitionModel;
+
+/**
+ * @author huangcd (huangcd.thu@gmail.com)
+ * @time 2011-6-26 ÏÂÎç09:37:06
+ * @project CereusBip
+ * @package cereusbip.commands
+ * @class ReconnectionTransitionCommand.java
+ */
+public class ReconnectTransitionCommand extends Command {
+    private PlaceModel      oldSource;
+    private PlaceModel      oldTarget;
+    private PlaceModel      newSource;
+    private PlaceModel      newTarget;
+    private TransitionModel connection;
+
+    public void execute() {
+        if (newSource != null) {
+            connection.detachSource();
+            connection.setSource(newSource);
+            connection.attachSource();
+        }
+        if (newTarget != null) {
+            connection.detachTarget();
+            connection.setTarget(newTarget);
+            connection.attachTarget();
+        }
+    }
+
+    public void undo() {
+        if (newSource != null) {
+            connection.detachSource();
+            connection.setSource(oldSource);
+            connection.attachSource();
+        }
+        if (newTarget != null) {
+            connection.detachTarget();
+            connection.setTarget(oldTarget);
+            connection.attachTarget();
+        }
+    }
+
+    public void setNewSource(PlaceModel source) {
+        this.newSource = source;
+        this.oldSource = connection.getSource();
+    }
+
+    public void setNewTarget(PlaceModel target) {
+        this.newTarget = target;
+        this.oldTarget = connection.getTarget();
+    }
+
+    public void setConnection(TransitionModel connection) {
+        this.connection = connection;
+    }
+
+    public void setParent(AtomicTypeModel parent) {
+        connection.setParent(parent);
+    }
+}

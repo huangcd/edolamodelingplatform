@@ -367,7 +367,7 @@ public class ConnectorTypeModel
     }
 }
 
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "rawtypes"})
 @Root
 class Interactor {
 

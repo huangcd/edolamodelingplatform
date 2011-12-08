@@ -15,7 +15,7 @@ import java.util.List;
  * Date: 11-9-25
  * Time: обнГ6:49
  */
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
 public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, AtomicTypeModel>
     implements IPort<PortModel, PortTypeModel, AtomicTypeModel, AtomicTypeModel> {

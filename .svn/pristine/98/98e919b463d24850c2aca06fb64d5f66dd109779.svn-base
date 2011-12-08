@@ -1,0 +1,61 @@
+package cn.edu.tsinghua.thss.tsmart.editors.xml;
+
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import cn.edu.tsinghua.thss.tsmart.platform.PlatformApplication;
+
+public class XMLEditorAction extends Action implements ISelectionListener, IWorkbenchAction {
+
+    private final IWorkbenchWindow window;
+    public static final String     ID = "cn.edu.tsinghua.thss.tsmart.XMLEditorAction";
+    private IStructuredSelection   selection;
+
+    public XMLEditorAction(IWorkbenchWindow window) {
+        this.window = window;
+        setId(ID);
+        setText("&XML Editor");
+        setToolTipText("Edit or View a XML File");
+        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+                        PlatformApplication.PLUGIN_ID, "icons/compound_16.png"));
+        window.getSelectionService().addSelectionListener(this);
+    }
+
+    @Override
+    public void dispose() {
+        window.getSelectionService().removePostSelectionListener(this);
+    }
+
+    @Override
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {}
+
+    @Override
+    public void run() {
+        String path = getFilePath();
+        if (path != null) {
+            try {
+                window.getActivePage().openEditor(new XMLFileEditorInput(new Path(path)),
+                                "cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditor");
+            } catch (PartInitException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getFilePath() {
+        FileDialog dialog = new FileDialog(window.getShell(), SWT.OPEN);
+        dialog.setText("XML File");
+        dialog.setFilterExtensions(new String[] {".xml"});
+        return dialog.open();
+    }
+}

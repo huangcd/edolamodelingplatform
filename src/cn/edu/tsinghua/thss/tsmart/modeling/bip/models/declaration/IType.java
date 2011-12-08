@@ -9,6 +9,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
  * 这样从上层用户的角度来看，模型（或者说模块）是可复制、而且复制后可修改的。
  * 对于下层而言，在生成代码的时候每一个实例对应着一个类型，也不会显得混乱。
  */
+@SuppressWarnings("rawtypes")
 public interface IType<Type extends IType, Instance extends IInstance, Parent extends IContainer>
     extends IModel<Type, Parent> {
 

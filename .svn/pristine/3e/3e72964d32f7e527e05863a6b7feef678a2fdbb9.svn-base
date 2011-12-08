@@ -1,0 +1,17 @@
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
+
+import java.util.List;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
+
+
+/**
+ * Created by Huangcd<br/>
+ * Date: 11-11-18<br/>
+ * Time: обнГ7:48<br/>
+ */
+public interface IPortType<T extends IPortType<T, I, P>, I extends IPort, P extends IContainer>
+    extends IType<T, I, P> {
+
+    List<DataTypeModel> getPortTypeArguments();
+}

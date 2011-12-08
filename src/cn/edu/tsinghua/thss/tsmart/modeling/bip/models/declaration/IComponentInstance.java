@@ -5,6 +5,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
  * Date: 11-11-17<br/>
  * Time: ионГ8:47<br/>
  */
+@SuppressWarnings("rawtypes")
 public interface IComponentInstance<M extends IInstance, T extends IComponentType, P extends IContainer>
     extends IInstance<M, T, P> {
 

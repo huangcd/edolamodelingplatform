@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
  * Date: 11-11-17<br/>
  * Time: обнГ3:01<br/>
  */
+@SuppressWarnings("rawtypes")
 @Root
 public class InteractionTypeModel
     extends BaseTypeModel<InteractionTypeModel, InteractionModel, IContainer> {

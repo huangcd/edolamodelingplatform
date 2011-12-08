@@ -9,7 +9,7 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 import cn.edu.tsinghua.thss.tsmart.platform.Properties;
 
 public abstract class AbstractEditDialog extends Dialog {
-    private String title = "{YOU NEED TO SET TITLE FIRST}";
+    private String       title      = "{YOU NEED TO SET TITLE FIRST}";
     protected Properties properties = new GlobalProperties();
 
     protected AbstractEditDialog(Shell shell, String title) {
@@ -32,9 +32,25 @@ public abstract class AbstractEditDialog extends Dialog {
     }
 
     /**
+     * 通过用户输入更新模型
+     */
+    protected abstract void updateValues();
+
+    /**
      * 对话框内容初始化
      */
     protected abstract void initValues();
+
+
+
+    @Override
+    protected void okPressed() {
+        if (!validateUserInput()) {
+            return;
+        }
+        updateValues();
+        super.okPressed();
+    }
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
@@ -42,7 +58,7 @@ public abstract class AbstractEditDialog extends Dialog {
     }
 
     /**
-     * 判断用户输入是否合法
+     * 判断用户输入是否合法。在用户点击ok按钮的时候调用，如果输入合法，将调用updateValues更新模型的值；如果不合法，直接返回（不更改模型）
      * 
      * @return
      */

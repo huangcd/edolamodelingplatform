@@ -1,6 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -25,21 +27,24 @@ import java.util.List;
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
 public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel, IContainer>
-    implements IDataContainer<AtomicTypeModel, IContainer, IInstance>,
-               IComponentType<AtomicTypeModel, AtomicModel, IContainer, IInstance> {
+                implements
+                    IDataContainer<AtomicTypeModel, IContainer, IInstance>,
+                    IComponentType<AtomicTypeModel, AtomicModel, IContainer, IInstance> {
 
+    public final static String                              INIT_PLACE  = "initPlace";
+    public final static String                              INIT_ACTION = "initAction";
     @Element(name = "initialPlace")
-    private PlaceModel initPlace;
+    private PlaceModel                                      initPlace;
     @Element(name = "initialAction", required = false)
-    private ActionModel initAction;
+    private ActionModel                                     initAction;
     @ElementList(entry = "place")
-    private List<PlaceModel> places;
+    private List<PlaceModel>                                places;
     @ElementList(entry = "data")
-    private List<DataModel<AtomicTypeModel>> datas;
+    private List<DataModel<AtomicTypeModel>>                datas;
     @ElementList(entry = "port")
-    private List<PortModel> ports;
+    private List<PortModel>                                 ports;
     @ElementList(entry = "transition")
-    private List<TransitionModel> transitions;
+    private List<TransitionModel>                           transitions;
     @ElementList(entry = "priority")
     private List<PriorityModel<AtomicTypeModel, PortModel>> priorities;
 
@@ -50,7 +55,8 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         transitions = new ArrayList<TransitionModel>();
         priorities = new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>();
         initPlace = new PlaceTypeModel().getInstance();
-        initPlace.setName("init");
+        initPlace.setName("init").setParent(this);
+        // initAction = new ActionTypeModel().getInstance();
         places.add(initPlace);
     }
 
@@ -58,10 +64,10 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     public List<IInstance> getModelChildren() {
         ArrayList<IInstance> children = new ArrayList<IInstance>(datas);
         children.addAll(places);
-        children.add(initAction);
         children.addAll(ports);
         children.addAll(transitions);
         children.addAll(priorities);
+        if (initAction != null) children.add(initAction);
         return children;
     }
 
@@ -226,6 +232,12 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         return initPlace;
     }
 
+    /**
+     * ÉèÖÃ³õÊ¼×´Ì¬
+     * 
+     * @param initPlace
+     * @return
+     */
     public AtomicTypeModel setInitPlace(PlaceModel initPlace) {
         this.initPlace = initPlace;
         firePropertyChange(CHILDREN);
@@ -266,7 +278,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             PortTypeModel oldPortType = port.getType();
             // TODO a mash
             PortTypeModel copyPortType = oldPortType;
-            //.copy(oldPortType.getPortTypeArguments());
+            // .copy(oldPortType.getPortTypeArguments());
             portMap.put(port, copyPortType.getInstance());
             copyModel.ports.add(copyPortType.getInstance());
         }
@@ -280,20 +292,18 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         // ¸´ÖÆ transitions
         copyModel.transitions = new ArrayList<TransitionModel>();
         for (TransitionModel transition : transitions) {
-            TransitionModel
-                copyTransition =
-                transition.copy(placeMap.get(transition.getSource()),
-                                placeMap.get(transition.getTarget()),
-                                portMap.get(transition.getPort()),
-                                transition.getAction(),
-                                transition.getGuard());
+            TransitionModel copyTransition =
+                            transition.copy(placeMap.get(transition.getSource()),
+                                            placeMap.get(transition.getTarget()),
+                                            portMap.get(transition.getPort()),
+                                            transition.getAction(), transition.getGuard());
             // copyModel.transitions.add(transitionMap.get(transition));
         }
 
         copyModel.priorities =
-            new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>(this.priorities);
+                        new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>(this.priorities);
         for (PriorityModel<AtomicTypeModel, PortModel> priority : priorities) {
-            //copyModel.priorities.add(priorityMap.get(priority));
+            // copyModel.priorities.add(priorityMap.get(priority));
         }
         copyModel.initAction = this.initAction;
         copyModel.initPlace = this.initPlace;
@@ -322,7 +332,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         }
         buffer.append('\n');
         buffer.append('\t').append("initial to ").append(initPlace.getName()).append("do {")
-            .append(initAction.exportToBip()).append("}\n\n");
+                        .append(initAction.exportToBip()).append("}\n\n");
         for (TransitionModel transition : transitions) {
             buffer.append('\t').append(transition.exportToBip()).append('\n');
         }
@@ -355,38 +365,40 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        int placesCount = places.size();
+        String[] placeNames = new String[placesCount];
+        for (int i = 0; i < placesCount; i++) {
+            PlaceModel place = places.get(i);
+            placeNames[i] = place.getName();
+        }
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "component name"),
+                        new ComboBoxPropertyDescriptor(INIT_PLACE, "init place", placeNames)};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (NAME.equals(id)) {
+            return hasName() ? getName() : "";
+        }
+        if (INIT_PLACE.equals(id)) {
+            return places.indexOf(initPlace);
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
+        return NAME.equals(id) || INIT_PLACE.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-        
+        if (NAME.equals(id)) {
+            setName((String) value);
+        } else if (INIT_PLACE.equals(id)) {
+            int index = (Integer) value;
+            setInitPlace(places.get(index));
+        }
     }
 }

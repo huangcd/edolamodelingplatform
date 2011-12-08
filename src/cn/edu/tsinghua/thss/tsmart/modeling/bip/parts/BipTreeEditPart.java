@@ -3,11 +3,8 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Widget;
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BipModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ContainerModel;
 
 
