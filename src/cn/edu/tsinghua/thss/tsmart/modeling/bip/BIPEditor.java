@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
@@ -116,8 +117,9 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     protected void initializeGraphicalViewer() {
         super.initializeGraphicalViewer();
         model = new AtomicTypeModel();
+        model.setPositionConstraint(new Rectangle(10, 10, 600, 600));
         viewer = getGraphicalViewer();
-        viewer.setContents(model);
+        viewer.setContents(((AtomicTypeModel)model));
         viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
     }
 

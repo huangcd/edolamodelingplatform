@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
@@ -37,15 +39,40 @@ public abstract class ContainerEditPart extends BaseEditableEditPart {
     }
 
     public IComponentType<IComponentType, IComponentInstance, IContainer, IInstance> getModel() {
-        return (IComponentType<IComponentType, IComponentInstance, IContainer, IInstance>) super.getModel();
+        return (IComponentType<IComponentType, IComponentInstance, IContainer, IInstance>) super
+                        .getModel();
     }
 
     @Override
     // TODO 新的Container没有框框这种东西。。。
     protected void refreshVisuals() {
-        IComponentType<IComponentType, IComponentInstance, IContainer, IInstance> model = getModel();
-        // 新的
+        IComponentType<IComponentType, IComponentInstance, IContainer, IInstance> model =
+                        getModel();
+        Rectangle rect = model.getPositionConstraint();
+        int x = rect.x;
+        int y = rect.y;
+        int width = rect.width;
+        int height = rect.height;
+        // 有改变的时候才刷新
+        boolean needRefresh = false;
+        for (IInstance child : model.getModelChildren()) {
+                child.setPositionConstraint(new Rectangle(10, 10, -1, -1));
+        }
+        if (getParent() instanceof BipEditPart) {
+            if (x < 0) {
+                x = 0;
+                needRefresh = true;
+            }
+            if (y < 0) {
+                y = 0;
+                needRefresh = true;
+            }
+        }
+        rect = new Rectangle(x, y, width, height);
+        if (needRefresh) model.setPositionConstraint(rect);
+        ((BaseGraphicalEditPart) getParent()).setLayoutConstraint(this, getFigure(), rect);
     }
+
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
 
+import org.eclipse.draw2d.geometry.Rectangle;
+
 /**
  * Created by Huangcd<br/>
  * Date: 11-9-25<br/>
@@ -62,5 +64,9 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
 
     /** @return 返回模型全局唯一ID的字符串表示 */
     String getStringID();
+
+    public Rectangle getPositionConstraint();
+
+    public void setPositionConstraint(Rectangle positionConstraint);
 
 }

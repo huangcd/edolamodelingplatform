@@ -150,6 +150,15 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         listeners.removePropertyChangeListener(listener);
     }
 
+    @Override
+    public Object getEditableValue() {
+        return this;
+    }
+
+    @Override
+    public void resetPropertyValue(Object id) {
+    }
+
     /**
      * 从byte数组中导入对象
      * 

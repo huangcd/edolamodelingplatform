@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
@@ -45,6 +46,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
     private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
+    protected Rectangle           positionConstraint;
     @Element(required = false)
     protected Parent              parent;
     @Attribute(required = false)
@@ -136,6 +138,15 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     @Override
     public void resetPropertyValue(Object id) {}
+
+    public Rectangle getPositionConstraint() {
+        return positionConstraint;
+    }
+
+    public void setPositionConstraint(Rectangle positionConstraint) {
+        this.positionConstraint = positionConstraint;
+        firePropertyChange(POSITION);
+    }
 
     /**
      * 从字符串中导入

@@ -3,6 +3,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
 /**
@@ -12,10 +13,10 @@ import org.simpleframework.xml.Root;
  */
 @Root
 public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, AtomicTypeModel> {
-    
+
     public final static String INITIAL = "initial";
-    public final static String SOURCE = "source";
-    public final static String TARGET = "target";
+    public final static String SOURCE  = "source";
+    public final static String TARGET  = "target";
 
     @Override
     public String exportToBip() {
@@ -26,46 +27,32 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     public boolean exportable() {
         return true;
     }
-    
-    public boolean isInitialPlace()
-    {
+
+    public boolean isInitialPlace() {
         return getParent().getInitPlace().equals(this);
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "place name")};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (NAME.equals(id)) return getName();
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
+        return NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-        
+        if (NAME.equals(id)) {
+            setName((String) value);
+        }
     }
 
     public List<TransitionModel> getSourceConnections() {

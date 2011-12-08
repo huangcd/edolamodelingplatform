@@ -26,6 +26,12 @@ public class AtomicTypeEditPart extends ContainerEditPart {
         //installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteAtomicEditPolicy());
     }
 
+    @Override
+    public void refresh() {
+        // TODO Auto-generated method stub
+        super.refresh();
+    }
+
     // Ë«»÷±à¼­
     @Override
     protected void performDoubleClick() {
