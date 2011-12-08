@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -55,13 +56,12 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         transitions = new ArrayList<TransitionModel>();
         priorities = new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>();
         initPlace = new PlaceTypeModel().getInstance();
-        initPlace.setName("init").setParent(this);
-        // initAction = new ActionTypeModel().getInstance();
-        places.add(initPlace);
+        initPlace.setName("init").setPositionConstraint(new Rectangle(100, 100, 30, 30));
+        addChild(initPlace);
     }
 
     @Override
-    public List<IInstance> getModelChildren() {
+    public List<IInstance> getChildren() {
         ArrayList<IInstance> children = new ArrayList<IInstance>(datas);
         children.addAll(places);
         children.addAll(ports);
@@ -73,20 +73,26 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
 
     @Override
     @SuppressWarnings("unchecked")
-    public void addModelChild(IInstance child) {
+    public AtomicTypeModel addChild(IInstance child) {
         if (child instanceof PlaceModel) {
             addPlace((PlaceModel) child);
+            child.setParent(this);
         } else if (child instanceof DataModel) {
             addData((DataModel<AtomicTypeModel>) child);
+            child.setParent(this);
         } else if (child instanceof PortModel) {
             addPort((PortModel) child);
+            child.setParent(this);
         } else if (child instanceof TransitionModel) {
             addTransition((TransitionModel) child);
+            child.setParent(this);
         } else if (child instanceof PriorityModel) {
             addPriority((PriorityModel) child);
+            child.setParent(this);
         } else {
             System.err.println("Invalidated child type to add:\n" + child);
         }
+        return this;
     }
 
     @Override
@@ -95,7 +101,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
      * 初始Place不可删除
      * 如果Place有连着Transition
      */
-    public boolean removeModelChild(IInstance child) {
+    public boolean removeChild(IInstance child) {
         if (child instanceof PlaceModel) {
             return removePlace((PlaceModel) child);
         } else if (child instanceof DataModel) {

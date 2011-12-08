@@ -133,21 +133,25 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         return positionConstraint;
     }
 
-    public void setPositionConstraint(Rectangle positionConstraint) {
+    public Model setPositionConstraint(Rectangle positionConstraint) {
         this.positionConstraint = positionConstraint;
         firePropertyChange(POSITION);
+        return (Model) this;
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public Model addPropertyChangeListener(PropertyChangeListener listener) {
         listeners.addPropertyChangeListener(listener);
+        return (Model) this;
     }
 
-    public void firePropertyChange(String propertyName) {
+    public Model firePropertyChange(String propertyName) {
         listeners.firePropertyChange(propertyName, null, null);
+        return (Model) this;
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public Model removePropertyChangeListener(PropertyChangeListener listener) {
         listeners.removePropertyChangeListener(listener);
+        return (Model) this;
     }
 
     @Override

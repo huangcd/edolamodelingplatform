@@ -1,12 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.actions;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.dom.DOMDocumentType;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.eclipse.gef.ui.actions.SelectionAction;
@@ -15,8 +10,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
-
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor;
 
 
 /**

@@ -1,10 +1,10 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
-
-import java.beans.PropertyChangeListener;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 /**
  * @author huangcd (huangcd.thu@gmail.com)
@@ -13,18 +13,21 @@ import java.beans.PropertyChangeListener;
  * @package cereusbip.parts
  * @class BaseGraphicalEditPart.java
  */
+@SuppressWarnings("rawtypes")
 public abstract class BaseGraphicalEditPart extends AbstractGraphicalEditPart
                 implements
                     PropertyChangeListener {
     public void activate() {
         super.activate();
-        if (getModel() instanceof BaseModel)
-            ((BaseModel) getModel()).addPropertyChangeListener(this);
+        getModel().addPropertyChangeListener(this);
+    }
+
+    public IModel getModel() {
+        return (IModel) super.getModel();
     }
 
     public void deactivate() {
         super.deactivate();
-        if (getModel() instanceof BaseModel)
-            ((BaseModel) getModel()).removePropertyChangeListener(this);
+        getModel().removePropertyChangeListener(this);
     }
 }

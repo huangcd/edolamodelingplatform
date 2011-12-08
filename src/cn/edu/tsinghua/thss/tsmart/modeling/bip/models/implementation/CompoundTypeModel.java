@@ -40,7 +40,7 @@ public class CompoundTypeModel
     }
 
     @Override
-    public List<IInstance> getModelChildren() {
+    public List<IInstance> getChildren() {
         ArrayList<IInstance> children = new ArrayList<IInstance>();
         children.addAll(components);
         children.addAll(connectors);
@@ -66,7 +66,7 @@ public class CompoundTypeModel
     }
 
     @Override
-    public void addModelChild(IInstance child) {
+    public CompoundTypeModel addChild(IInstance child) {
         if (child instanceof IComponentInstance) {
             addComponent((IComponentInstance) child);
         } else if (child instanceof ConnectorModel) {
@@ -76,10 +76,11 @@ public class CompoundTypeModel
         } else {
             System.err.println("Invalidated child type to add:\n" + child);
         }
+        return this;
     }
 
     @Override
-    public boolean removeModelChild(IInstance iInstance) {
+    public boolean removeChild(IInstance iInstance) {
         if (iInstance instanceof IComponentInstance) {
             removeComponent((IComponentInstance) iInstance);
         } else if (iInstance instanceof ConnectorModel) {

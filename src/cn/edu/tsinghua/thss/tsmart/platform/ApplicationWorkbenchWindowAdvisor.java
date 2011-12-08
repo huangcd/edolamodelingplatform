@@ -42,14 +42,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     public void postWindowOpen() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
-        // try {
-        // page.openEditor(new BIPFileEditorInput(new Path("")),
-        // "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor", true);
-        // } catch (PartInitException e) {
-        // MessageBox errorBox = new MessageBox(window.getShell());
-        // errorBox.setMessage(e.getMessage());
-        // errorBox.open();
-        // }
+        try {
+            page.openEditor(new BIPFileEditorInput(new Path("")),
+                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor", true);
+        } catch (PartInitException e) {
+            MessageBox errorBox = new MessageBox(window.getShell());
+            errorBox.setMessage(e.getMessage());
+            errorBox.open();
+        }
     }
 
 

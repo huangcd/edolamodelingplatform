@@ -44,19 +44,15 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreateDataAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreatePortAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreatePriorityAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ConnectorPortModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ConnectorTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BipModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
@@ -64,8 +60,8 @@ import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 @SuppressWarnings("rawtypes")
 public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
-    private GraphicalViewer   viewer;
-    private IModel model;
+    private GraphicalViewer viewer;
+    private IModel          model;
 
     public BIPEditor() {
         setEditDomain(new DefaultEditDomain(this));
@@ -109,17 +105,17 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         getGraphicalViewer().setKeyHandler(
                         new GraphicalViewerKeyHandler(getGraphicalViewer())
                                         .setParent(getCommonKeyHandler()));
-
         loadProperties();
     }
 
     @Override
     protected void initializeGraphicalViewer() {
         super.initializeGraphicalViewer();
-        model = new AtomicTypeModel();
-        model.setPositionConstraint(new Rectangle(10, 10, 600, 600));
+        AtomicTypeModel atomic = new AtomicTypeModel();
+        atomic.setPositionConstraint(new Rectangle(0, 0, 1000, 800));
+        model = new BipModel().addChild(atomic);
         viewer = getGraphicalViewer();
-        viewer.setContents(((AtomicTypeModel)model));
+        viewer.setContents(model);
         viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
     }
 
@@ -166,15 +162,15 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                                         new SimpleFactory(ConnectorTypeModel.class), descriptor,
                                         descriptor);
         descriptor = Activator.getImageDescriptor("icons/connectorline_16.png");
-        ConnectionCreationToolEntry creationConnectorLineEntry =
-                        new ConnectionCreationToolEntry("Connector line",
-                                        "create a new connector line", new SimpleFactory(
-                                                        ConnectorPortModel.class), descriptor,
-                                        descriptor);
+        // ConnectionCreationToolEntry creationConnectorLineEntry =
+        // new ConnectionCreationToolEntry("Connector line",
+        // "create a new connector line", new SimpleFactory(
+        // ConnectorPortModel.class), descriptor,
+        // descriptor);
         drawer.add(creationAtomicEntry);
         drawer.add(creationCompoundEntry);
         drawer.add(creationConnectorEntry);
-        drawer.add(creationConnectorLineEntry);
+        // drawer.add(creationConnectorLineEntry);
         root.add(drawer);
         return root;
     }
@@ -196,13 +192,16 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     protected void createActions() {
         super.createActions();
         ActionRegistry registry = getActionRegistry();
-        IAction action = new CreateDataAction(this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-        action = new CreatePriorityAction(this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-        action = new ExportAction(this);
+
+        // IAction action = new CreateDataAction(this);
+        // registry.registerAction(action);
+        // getSelectionActions().add(action.getId());
+        //
+        // action = new CreatePriorityAction(this);
+        // registry.registerAction(action);
+        // getSelectionActions().add(action.getId());
+
+        IAction action = new ExportAction(this);
         getActionRegistry().registerAction(action);
         getSelectionActions().add(action.getId());
 
@@ -238,9 +237,10 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         action = new MatchHeightAction((IWorkbenchPart) this);
         getActionRegistry().registerAction(action);
         getSelectionActions().add(action.getId());
-        action = new CreatePortAction(this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
+
+        // action = new CreatePortAction(this);
+        // registry.registerAction(action);
+        // getSelectionActions().add(action.getId());
 
     }
 
@@ -251,9 +251,9 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             return ((ScalableFreeformRootEditPart) getGraphicalViewer().getRootEditPart())
                             .getZoomManager();
         // 如果是 IContentOutlinePage 类型，则返回该 ContentOutlinePage
-        if (type == IContentOutlinePage.class) {
-            return new BIPContentOutlinePage(new TreeViewer());
-        }
+        // if (type == IContentOutlinePage.class) {
+        // return new BIPContentOutlinePage(new TreeViewer());
+        // }
         return super.getAdapter(type);
     }
 

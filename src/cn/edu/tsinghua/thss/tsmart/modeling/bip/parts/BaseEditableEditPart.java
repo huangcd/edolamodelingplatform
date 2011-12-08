@@ -2,10 +2,9 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
-import org.eclipse.jface.viewers.TextCellEditor;
 
 public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
-    private CustomDirectEditManager directManager = null; // 编辑文本
+    //private CustomDirectEditManager directManager = null; // 编辑文本
 
     // 重载 ，用于处理特殊的request，如直接编辑文本
     public void performRequest(Request req) {
@@ -22,13 +21,13 @@ public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
     }
 
     protected void performDirectEdit() {
-        if (directManager == null) {
-            // 如果还没有 directManager，则创建一个：类型是 Text，位置由图形决定
-            directManager =
-                            new CustomDirectEditManager(this, TextCellEditor.class,
-                                            new CustomCellEditorLocator(getFigure()));
-        }
-        directManager.show(); // 显示这个 directManager
+        // if (directManager == null) {
+        // // 如果还没有 directManager，则创建一个：类型是 Text，位置由图形决定
+        // directManager =
+        // new CustomDirectEditManager(this, TextCellEditor.class,
+        // new CustomCellEditorLocator(getFigure()));
+        // }
+        // directManager.show(); // 显示这个 directManager
     }
 
     // 双击对话框

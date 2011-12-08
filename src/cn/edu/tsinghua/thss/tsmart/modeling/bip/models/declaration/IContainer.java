@@ -14,14 +14,14 @@ public interface IContainer<Model extends IContainer, Parent extends IContainer,
                     IModel<Model, Parent> {
 
     /** @return 返回所有的子模型 */
-    List<Child> getModelChildren();
+    List<Child> getChildren();
 
     /**
      * 增加一个子模型
      * 
      * @param child 要添加的子模型
      */
-    void addModelChild(Child child);
+    Model addChild(Child child);
 
     /**
      * 删除一个子模型
@@ -30,5 +30,5 @@ public interface IContainer<Model extends IContainer, Parent extends IContainer,
      * 
      * @return 如果要删除的模型不存在或者不能被删除，返回false；否则返回true。
      */
-    boolean removeModelChild(Child child);
+    boolean removeChild(Child child);
 }

@@ -39,7 +39,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (NAME.equals(id)) return getName();
+        if (NAME.equals(id)) return hasName() ? getName() : "";
         return null;
     }
 

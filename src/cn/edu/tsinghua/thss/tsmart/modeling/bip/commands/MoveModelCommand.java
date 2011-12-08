@@ -3,10 +3,11 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
+@SuppressWarnings("rawtypes")
 public class MoveModelCommand extends Command {
-    private BaseModel model;
+    private IModel    model;
     private Rectangle constraint;
     private Rectangle oldConstraint;
 
@@ -19,7 +20,7 @@ public class MoveModelCommand extends Command {
         this.constraint = rect;
     }
 
-    public void setModel(BaseModel model) {
+    public void setModel(IModel model) {
         this.model = model;
     }
 

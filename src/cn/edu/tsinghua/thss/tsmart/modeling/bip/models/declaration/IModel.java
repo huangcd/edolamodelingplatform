@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
@@ -19,15 +20,15 @@ import org.eclipse.draw2d.geometry.Rectangle;
  * <li>导出、导入功能</li>
  * </ul>
  */
-@SuppressWarnings({"unused","rawtypes"})
+@SuppressWarnings({"unused", "rawtypes"})
 public interface IModel<Model extends IModel, Parent extends IContainer> extends Serializable {
 
-    public final static String POSITION = "position";
-    public final static String CHILDREN = "children";
-    public final static String PARENT = "parent";
-    public final static String NAME = "name";
-    public final static String CREATE = "create";
-    public final static String REFRESH = "refresh";
+    public final static String POSITION   = "position";
+    public final static String CHILDREN   = "children";
+    public final static String PARENT     = "parent";
+    public final static String NAME       = "name";
+    public final static String CREATE     = "create";
+    public final static String REFRESH    = "refresh";
     public static final String CONSTRAINT = "constraint";
 
     /** @return 返回模型的父模型 */
@@ -44,14 +45,14 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
 
     /**
      * 导出成byte数组
-     *
+     * 
      * @return 返回实例对象的byte数组描述
      */
     byte[] exportToBytes() throws IOException;
 
     /**
      * 指示实例是否可被导出
-     *
+     * 
      * @return 如果导出成BIP文件时当前实例会被导出，则返回true；否则返回false
      */
     boolean exportable();
@@ -67,6 +68,11 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
 
     public Rectangle getPositionConstraint();
 
-    public void setPositionConstraint(Rectangle positionConstraint);
+    public Model setPositionConstraint(Rectangle positionConstraint);
 
+    public Model addPropertyChangeListener(PropertyChangeListener listener);
+
+    public Model firePropertyChange(String propertyName);
+
+    public Model removePropertyChangeListener(PropertyChangeListener listener);
 }

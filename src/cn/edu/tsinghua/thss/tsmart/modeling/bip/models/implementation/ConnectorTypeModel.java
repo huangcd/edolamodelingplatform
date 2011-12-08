@@ -139,20 +139,21 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public List<IInstance> getModelChildren() {
+    public List<IInstance> getChildren() {
         List<IInstance> list = new ArrayList<IInstance>(interactions);
         list.addAll(datas);
         return list;
     }
 
     @Override
-    public void addModelChild(IInstance child) {
+    public ConnectorTypeModel addChild(IInstance child) {
         if (child instanceof DataModel) {
             addData((DataModel<ConnectorTypeModel>) child);
         }
         if (child instanceof InteractionModel) {
             addInteraction((InteractionModel) child);
         }
+        return this;
     }
 
     public void addInteraction(InteractionModel child) {
@@ -272,7 +273,7 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public boolean removeModelChild(IInstance iInstance) {
+    public boolean removeChild(IInstance iInstance) {
         if (iInstance instanceof DataModel) {
             return removeData((DataModel<ConnectorTypeModel>) iInstance);
         } else if (iInstance instanceof InteractionModel) {

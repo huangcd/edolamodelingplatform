@@ -3,21 +3,18 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import org.eclipse.gef.EditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.ContainerModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteAtomicEditPolicy;
-
-
+@SuppressWarnings("rawtypes")
 public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
 
     private AtomicTypeModel getCastedModel() {
         return (AtomicTypeModel) getModel();
     }
 
-    protected List getModelChildren() {
+    protected List<IInstance> getModelChildren() {
         return getCastedModel().getChildren(); // return a list of activities
     }
 
@@ -27,8 +24,8 @@ public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(ContainerModel.CHILDREN)) refresh();
-        if (evt.getPropertyName().equals(BaseModel.NAME)) refreshVisuals();
+        if (evt.getPropertyName().equals(IModel.CHILDREN)) refresh();
+        if (evt.getPropertyName().equals(IModel.NAME)) refreshVisuals();
     }
 
     @Override
@@ -46,10 +43,10 @@ public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
         List children = getModelChildren();
         if (children != null)
             for (int i = 0; i < children.size(); i++) {
-                System.out.println(i + " " + ((BaseModel) children.get(i)).toString());
+                System.out.println(i + " " + children.get(i).toString());
                 if (children.get(i) instanceof AtomicTypeModel
                                 || children.get(i).equals(getCastedModel())) {
-                    System.out.println(i + " " + ((BaseModel) children.get(i)).toString());
+                    System.out.println(i + " " + children.get(i).toString());
                     getCastedModel().removeChild(getCastedModel().getChildren().get(0));
                 }
             }
@@ -61,7 +58,7 @@ public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
     @Override
     // װedit policy
     protected void createEditPolicies() {
-        installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteAtomicEditPolicy());
+        // installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteAtomicEditPolicy());
     }
 
 }

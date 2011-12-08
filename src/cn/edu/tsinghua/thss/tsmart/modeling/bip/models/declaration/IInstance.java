@@ -1,7 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
-import org.eclipse.draw2d.geometry.Rectangle;
-
 /**
  * Created by Huangcd<br/>
  * Date: 11-9-25<br/>

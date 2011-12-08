@@ -66,7 +66,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
             PortTypeModel copyModel = new PortTypeModel();
             copyModel.setName(getName());
             for (DataTypeModel<PortTypeModel> child : arguments) {
-                copyModel.addModelChild(child);
+                copyModel.addChild(child);
             }
             return copyModel;
         }
@@ -93,7 +93,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         return buffer.toString();
     }
 
-    public List<DataTypeModel<PortTypeModel>> getModelChildren() {
+    public List<DataTypeModel<PortTypeModel>> getChildren() {
         return getOrderList();
     }
 
@@ -108,14 +108,15 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
     }
 
     @Override
-    public boolean removeModelChild(DataTypeModel<PortTypeModel> child) {
+    public boolean removeChild(DataTypeModel<PortTypeModel> child) {
         firePropertyChange(CHILDREN);
         return arguments.remove(child);
     }
 
-    public void addModelChild(DataTypeModel<PortTypeModel> child) {
+    public PortTypeModel addChild(DataTypeModel<PortTypeModel> child) {
         arguments.add(child);
         firePropertyChange(CHILDREN);
+        return this;
     }
 
     public void setOrderModelChild(DataTypeModel<PortTypeModel> child, int index) {

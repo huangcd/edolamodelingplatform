@@ -5,9 +5,9 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef.editparts.AbstractTreeEditPart;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.BaseModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
-
+@SuppressWarnings("rawtypes")
 public abstract class BaseTreeEditPart extends AbstractTreeEditPart
                 implements
                     PropertyChangeListener {
@@ -15,19 +15,17 @@ public abstract class BaseTreeEditPart extends AbstractTreeEditPart
     // override
     public void activate() {
         super.activate();
-        if (getModel() instanceof BaseModel)
-            ((BaseModel) getModel()).addPropertyChangeListener(this);
-        else
-            System.err.println("model + " + getModel() + " is not a sub class of AbstractModel");
+        getModel().addPropertyChangeListener(this);
+    }
+
+    public IModel getModel() {
+        return (IModel) super.getModel();
     }
 
     // override
     public void deactivate() {
         super.deactivate();
-        if (getModel() instanceof BaseModel)
-            ((BaseModel) getModel()).removePropertyChangeListener(this);
-        else
-            System.err.println("model + " + getModel() + " is not a sub class of AbstractModel");
+        getModel().removePropertyChangeListener(this);
     }
 
     public void propertyChange(PropertyChangeEvent evt) {

@@ -1,27 +1,24 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialog.EditAtomicTypeDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 public class CreateAtomicCommand extends Command {
     private CompoundTypeModel parent;
-    private AtomicTypeModel   child;
+    private AtomicModel       child;
 
     @Override
     public void execute() {
         child.setParent(parent);
         parent.addChild(child);
-        Shell shell = Display.getDefault().getActiveShell();
-        if (shell != null) {
-            EditAtomicTypeDialog dialog = new EditAtomicTypeDialog(shell, child, parent);
-            dialog.setBlockOnOpen(true);
-            dialog.open();
-        }
+        // Shell shell = Display.getDefault().getActiveShell();
+        // if (shell != null) {
+        // EditAtomicTypeDialog dialog = new EditAtomicTypeDialog(shell, child, parent);
+        // dialog.setBlockOnOpen(true);
+        // dialog.open();
+        // }
     }
 
     @Override
@@ -40,7 +37,7 @@ public class CreateAtomicCommand extends Command {
         this.parent = parent;
     }
 
-    public void setChild(AtomicTypeModel child) {
+    public void setChild(AtomicModel child) {
         this.child = child;
     }
 }

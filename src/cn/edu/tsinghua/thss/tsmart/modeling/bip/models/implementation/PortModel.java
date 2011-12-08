@@ -71,7 +71,7 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
         ArrayList<DataModel<AtomicTypeModel>>
             arguments =
             new ArrayList<DataModel<AtomicTypeModel>>();
-        for (DataTypeModel<PortTypeModel> dataTypeModel : getType().getModelChildren()) {
+        for (DataTypeModel<PortTypeModel> dataTypeModel : getType().getChildren()) {
             arguments.add(dataTypeModel.getInstance());
         }
         return arguments;
