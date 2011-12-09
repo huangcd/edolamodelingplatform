@@ -7,17 +7,13 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPModuleEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 
 public class AtomicEditPart extends BaseEditableEditPart {
     private Label typeLabel;
@@ -58,33 +54,12 @@ public class AtomicEditPart extends BaseEditableEditPart {
 
     @Override
     protected void createEditPolicies() {
-        // TODO Auto-generated method stub
-
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteModelEditPolicy());
     }
 
     @Override
     protected void performDoubleClick() {
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        IWorkbenchPage page = window.getActivePage();
-        try {
-            // 如果页面已经打开，则跳转到指定页面
-            for (IEditorReference reference : page.getEditorReferences()) {
-                if (reference.getEditorInput() instanceof BIPModuleEditorInput) {
-                    BIPModuleEditorInput editorInput =
-                                    (BIPModuleEditorInput) reference.getEditorInput();
-                    if (editorInput.getModel().equals(getModel().getType())) {
-                        page.openEditor(editorInput,
-                                        "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
-                        return;
-                    }
-                }
-            }
-            page.openEditor(new BIPModuleEditorInput(getModel().getType()),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
-        } catch (PartInitException e) {
-            MessageBox errorBox = new MessageBox(window.getShell());
-            errorBox.setMessage(e.getMessage());
-            errorBox.open();
-        }
+        AtomicTypeModel container = getModel().getType();
+        BIPEditor.openBIPEditor(container);
     }
 }

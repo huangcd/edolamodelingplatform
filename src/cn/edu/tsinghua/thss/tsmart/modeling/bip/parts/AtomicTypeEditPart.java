@@ -43,15 +43,5 @@ public class AtomicTypeEditPart extends PageContainerEditPart {
 
     // Ë«»÷±à¼­
     @Override
-    protected void performDoubleClick() {
-        // AtomicTypeModel child = (AtomicTypeModel) getModel();
-        //
-        // Shell shell = Display.getDefault().getActiveShell();
-        // if (shell != null) {
-        // EditAtomicTypeDialog dialog = new EditAtomicTypeDialog(shell, child,
-        // child.getParent());
-        // dialog.setBlockOnOpen(true);
-        // dialog.open();
-        // }
-    }
+    protected void performDoubleClick() {}
 }

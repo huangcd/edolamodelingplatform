@@ -1,5 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.DefaultEditDomain;
@@ -39,14 +42,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
@@ -64,9 +70,38 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                                                                                 new HashMap<EditPartViewer, BIPEditor>();
     private GraphicalViewer                           viewer;
     private IModel                                    model;
+    private PaletteRoot                               paletteRoot;
 
     public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
         return viewerMap.get(viewer);
+    }
+
+    /**
+     * 打开一个编辑模型的页面
+     * 
+     * @param container 待编辑模型
+     */
+    public static void openBIPEditor(IContainer container) {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
+        try {
+            // 如果页面已经打开，则跳转到指定页面
+            for (IEditorReference reference : page.getEditorReferences()) {
+                if (reference.getEditorInput() instanceof BIPModuleEditorInput) {
+                    BIPModuleEditorInput editorInput =
+                                    (BIPModuleEditorInput) reference.getEditorInput();
+                    if (editorInput.getModel().equals(container)) {
+                        page.openEditor(editorInput,
+                                        "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+                        return;
+                    }
+                }
+            }
+            page.openEditor(new BIPModuleEditorInput(container),
+                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+        } catch (PartInitException e) {
+            e.printStackTrace();
+        }
     }
 
     public BIPEditor() {
@@ -77,106 +112,62 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         setPartName(title);
     }
 
-    @Override
-    protected void configureGraphicalViewer() {
-        super.configureGraphicalViewer();
-        ScalableFreeformRootEditPart rootEditPart = new ScalableFreeformRootEditPart();
-        getGraphicalViewer().setRootEditPart(rootEditPart);
-        getGraphicalViewer().setEditPartFactory(PartFactory.getInstance());
-
-        ZoomManager manager = rootEditPart.getZoomManager();
-
-        // 放大比例数组
-        double[] zoomLevels = new double[] {
-                        // 缩放比例是从 25％－2000％
-                        0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 10.0, 20.0};
-        manager.setZoomLevels(zoomLevels); // 添加放大比例
-
-        // 设置非百分比缩放
-        ArrayList<String> zoomContributions = new ArrayList<String>();
-        zoomContributions.add(ZoomManager.FIT_ALL);
-        zoomContributions.add(ZoomManager.FIT_HEIGHT);
-        zoomContributions.add(ZoomManager.FIT_WIDTH);
-        manager.setZoomLevelContributions(zoomContributions);
-
-        IAction action = new ZoomInAction(manager);
-        getActionRegistry().registerAction(action);
-        action = new ZoomOutAction(manager);
-        getActionRegistry().registerAction(action);
-
-        // 网格
-        action = new ToggleGridAction(getGraphicalViewer());
-        getActionRegistry().registerAction(action);
-
-        // CTRL+鼠标滑轮实现缩放
-        getGraphicalViewer().setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.CTRL),
-                        MouseWheelZoomHandler.SINGLETON);
-        // 采用公共的快捷键
-        getGraphicalViewer().setKeyHandler(
-                        new GraphicalViewerKeyHandler(getGraphicalViewer())
-                                        .setParent(getCommonKeyHandler()));
-        loadProperties();
+    protected IModel getModel() {
+        if (model == null) {
+            IEditorInput editorInput = getEditorInput();
+            if (editorInput instanceof BIPModuleEditorInput) {
+                BIPModuleEditorInput bipModuleEditorInput = (BIPModuleEditorInput) editorInput;
+                model = bipModuleEditorInput.getModel();
+            }
+        }
+        return model;
     }
 
     @Override
     protected void initializeGraphicalViewer() {
         super.initializeGraphicalViewer();
-        IEditorInput editorInput = getEditorInput();
-        if (editorInput instanceof BIPModuleEditorInput) {
-            BIPModuleEditorInput bipModuleEditorInput = (BIPModuleEditorInput) editorInput;
-            model = bipModuleEditorInput.getModel();
-            setEditorTitle(model.getName());
-            viewer = getGraphicalViewer();
-            viewerMap.put(viewer, this);
-            viewer.setContents(model);
-        } else {
-            // TODO BIPFileEditorInput
-        }
+        setEditorTitle(getModel().getName());
+        viewer = getGraphicalViewer();
+        viewerMap.put(viewer, this);
+        viewer.setContents(getModel());
         viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
+        if (getModel() instanceof AtomicTypeModel) {
+            createAtomicPaletteDrawer(paletteRoot);
+        }
+        if (getModel() instanceof CompoundTypeModel) {
+            createCompoundPaletteDrawer(paletteRoot);
+        }
     }
 
     @Override
     protected PaletteRoot getPaletteRoot() {
-        PaletteRoot root = new PaletteRoot();
-        PaletteGroup toolGroup = new PaletteGroup("tools");
+        paletteRoot = new PaletteRoot();
 
-        ToolEntry tool = new SelectionToolEntry();
+        PaletteGroup toolGroup = new PaletteGroup("选择工具");
+        ToolEntry tool = new SelectionToolEntry("选择");
         toolGroup.add(tool);
-
-        tool = new MarqueeToolEntry("");
+        tool = new MarqueeToolEntry("选择多个");
         toolGroup.add(tool);
+        paletteRoot.add(toolGroup);
+        return paletteRoot;
+    }
 
-        root.add(toolGroup);
-
-        PaletteDrawer drawer = new PaletteDrawer("atomic");
-        ImageDescriptor descriptor = Activator.getImageDescriptor("icons/place_16.png");
-        CreationToolEntry creationPlaceEntry =
-                        new CreationToolEntry("Place", "create a new place", new SimpleFactory(
-                                        PlaceModel.class), descriptor, descriptor);
-        descriptor = Activator.getImageDescriptor("icons/transition_16.png");
-        ConnectionCreationToolEntry connectionCreationEntry =
-                        new ConnectionCreationToolEntry("Transition", "create a new transition",
-                                        new SimpleFactory(TransitionModel.class), descriptor,
-                                        descriptor);
-        drawer.add(creationPlaceEntry);
-        drawer.add(connectionCreationEntry);
-        root.add(drawer);
-
-        drawer = new PaletteDrawer("component");
+    private void createCompoundPaletteDrawer(PaletteRoot root) {
+        PaletteDrawer drawer;
+        ImageDescriptor descriptor;
+        drawer = new PaletteDrawer("复合组件");
         descriptor = Activator.getImageDescriptor("icons/atomic_16.png");
         CreationToolEntry creationAtomicEntry =
-                        new CreationToolEntry("Atomic", "create a new atomic", new SimpleFactory(
+                        new CreationToolEntry("原子组件", "新建一个原子组件", new SimpleFactory(
                                         AtomicTypeModel.class), descriptor, descriptor);
         descriptor = Activator.getImageDescriptor("icons/compound_16.png");
         CreationToolEntry creationCompoundEntry =
-                        new CreationToolEntry("Compound", "create a new compound",
-                                        new SimpleFactory(CompoundTypeModel.class), descriptor,
-                                        descriptor);
+                        new CreationToolEntry("复合组件", "新建一个复合组件", new SimpleFactory(
+                                        CompoundTypeModel.class), descriptor, descriptor);
         descriptor = Activator.getImageDescriptor("icons/connector_16.png");
         CreationToolEntry creationConnectorEntry =
-                        new CreationToolEntry("Connector", "create a new connector",
-                                        new SimpleFactory(ConnectorTypeModel.class), descriptor,
-                                        descriptor);
+                        new CreationToolEntry("连接子", "新建一个连接子", new SimpleFactory(
+                                        ConnectorTypeModel.class), descriptor, descriptor);
         descriptor = Activator.getImageDescriptor("icons/connectorline_16.png");
         // ConnectionCreationToolEntry creationConnectorLineEntry =
         // new ConnectionCreationToolEntry("Connector line",
@@ -188,7 +179,21 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         drawer.add(creationConnectorEntry);
         // drawer.add(creationConnectorLineEntry);
         root.add(drawer);
-        return root;
+    }
+
+    private void createAtomicPaletteDrawer(PaletteRoot root) {
+        PaletteDrawer drawer = new PaletteDrawer("原子组件");
+        ImageDescriptor descriptor = Activator.getImageDescriptor("icons/place_16.png");
+        CreationToolEntry placeCreationEntry =
+                        new CreationToolEntry("状态", "新建一个状态", new SimpleFactory(PlaceModel.class),
+                                        descriptor, descriptor);
+        descriptor = Activator.getImageDescriptor("icons/transition_16.png");
+        ConnectionCreationToolEntry connectionCreationEntry =
+                        new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
+                                        TransitionModel.class), descriptor, descriptor);
+        drawer.add(placeCreationEntry);
+        drawer.add(connectionCreationEntry);
+        root.add(drawer);
     }
 
     @Override
@@ -218,40 +223,40 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         // getSelectionActions().add(action.getId());
 
         IAction action = new ExportAction(this);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         //
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.LEFT);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.CENTER);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.RIGHT);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.TOP);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.MIDDLE);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.BOTTOM);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new MatchWidthAction((IWorkbenchPart) this);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         action = new MatchHeightAction((IWorkbenchPart) this);
-        getActionRegistry().registerAction(action);
+        registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
         // action = new CreatePortAction(this);
@@ -371,5 +376,46 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
             super.dispose();
         }
+    }
+
+    @Override
+    protected void configureGraphicalViewer() {
+        super.configureGraphicalViewer();
+        ScalableFreeformRootEditPart rootEditPart = new ScalableFreeformRootEditPart();
+        getGraphicalViewer().setRootEditPart(rootEditPart);
+        getGraphicalViewer().setEditPartFactory(PartFactory.getInstance());
+
+        ZoomManager manager = rootEditPart.getZoomManager();
+
+        // 放大比例数组
+        double[] zoomLevels = new double[] {
+                        // 缩放比例是从 25％－2000％
+                        0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 10.0, 20.0};
+        manager.setZoomLevels(zoomLevels); // 添加放大比例
+
+        // 设置非百分比缩放
+        ArrayList<String> zoomContributions = new ArrayList<String>();
+        zoomContributions.add(ZoomManager.FIT_ALL);
+        zoomContributions.add(ZoomManager.FIT_HEIGHT);
+        zoomContributions.add(ZoomManager.FIT_WIDTH);
+        manager.setZoomLevelContributions(zoomContributions);
+
+        IAction action = new ZoomInAction(manager);
+        getActionRegistry().registerAction(action);
+        action = new ZoomOutAction(manager);
+        getActionRegistry().registerAction(action);
+
+        // 网格
+        action = new ToggleGridAction(getGraphicalViewer());
+        getActionRegistry().registerAction(action);
+
+        // CTRL+鼠标滑轮实现缩放
+        getGraphicalViewer().setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.CTRL),
+                        MouseWheelZoomHandler.SINGLETON);
+        // 采用公共的快捷键
+        getGraphicalViewer().setKeyHandler(
+                        new GraphicalViewerKeyHandler(getGraphicalViewer())
+                                        .setParent(getCommonKeyHandler()));
+        loadProperties();
     }
 }
