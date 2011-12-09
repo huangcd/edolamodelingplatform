@@ -23,7 +23,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTy
 
 @SuppressWarnings("rawtypes")
 public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
-    private final static Pattern componentNamePattern = Pattern.compile("^COMPONENT(\\d*)$");
+    private final static Pattern componentNamePattern = Pattern.compile("^component(\\d*)$");
 
     @Override
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child,
@@ -48,6 +48,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
             AtomicModel child =
                             new AtomicTypeModel().createInstance().setName(
                                             getAppropriateComponentName(parent));
+            child.getType().setName(child.getName() + "Type");
             Point location = request.getLocation().getCopy();
             // COMMENT œ‡∂‘Œª÷√
             getHostFigure().translateToRelative(location);
@@ -70,7 +71,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
                 maxNumber = Math.max(number + 1, maxNumber);
             }
         }
-        return "COMPONENT" + maxNumber;
+        return "component" + maxNumber;
     }
 
     @Override

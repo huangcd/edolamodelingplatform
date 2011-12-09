@@ -3,7 +3,6 @@ package cn.edu.tsinghua.thss.tsmart.editors.xml;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.ISelectionListener;
@@ -18,13 +17,12 @@ import cn.edu.tsinghua.thss.tsmart.platform.PlatformApplication;
 public class XMLEditorAction extends Action implements ISelectionListener, IWorkbenchAction {
 
     private final IWorkbenchWindow window;
-    public static final String     ID = "cn.edu.tsinghua.thss.tsmart.XMLEditorAction";
-    private IStructuredSelection   selection;
+    public static final String     ID = "cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditorAction";
 
     public XMLEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("&XML Editor");
+        setText("XMLÎÄµµ");
         setToolTipText("Edit or View a XML File");
         setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
                         PlatformApplication.PLUGIN_ID, "icons/compound_16.png"));

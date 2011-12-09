@@ -2,7 +2,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -15,22 +14,21 @@ import cn.edu.tsinghua.thss.tsmart.platform.PlatformApplication;
 
 /**
  * 定义了菜单和对应的工具按钮的显示字符串和图标，以 及其ID 等等。
- *
+ * 
  * @author Huangcd
  */
-public class BIPEditorAction extends Action implements ISelectionListener, IWorkbenchAction {
+public class NewAtomicEditorAction extends Action implements ISelectionListener, IWorkbenchAction {
 
     private final IWorkbenchWindow window;
-    public static final String ID = "cn.edu.tsinghua.thss.tsmart.BIPEditAction";
-    private IStructuredSelection selection;
+    public static final String     ID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.NewAtomicEditorAction";
 
-    public BIPEditorAction(IWorkbenchWindow window) {
+    public NewAtomicEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("&BIP Editor");
-        setToolTipText("Draw a BIP model");
-        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(PlatformApplication.PLUGIN_ID,
-                                                                      "icons/compound_16.png"));
+        setText("原子组件");
+        setToolTipText("新建原子组件");
+        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+                        PlatformApplication.PLUGIN_ID, "icons/atomic_16.png"));
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -40,15 +38,13 @@ public class BIPEditorAction extends Action implements ISelectionListener, IWork
     }
 
     @Override
-    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-        // TODO Auto-generated method stub
-    }
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {}
 
     @Override
     public void run() {
         try {
-            window.getActivePage()
-                .openEditor(new BIPModuleEditorInput(new AtomicTypeModel().setName("test atomic")),
+            window.getActivePage().openEditor(
+                            new BIPModuleEditorInput(new AtomicTypeModel().setName("atomic")),
                             "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
         } catch (PartInitException e) {
             e.printStackTrace();

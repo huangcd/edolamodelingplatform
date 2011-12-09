@@ -10,7 +10,8 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
 import cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditorAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.NewAtomicEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.NewCompoundEditorAction;
 
 /**
  * 主界面的菜单栏
@@ -19,10 +20,11 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditorAction;
  * 
  */
 public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
-    private IWorkbenchAction exitAction;
-    private IWorkbenchAction aboutAction;
-    private BIPEditorAction  bipAction;
-    private XMLEditorAction  xmlAction;
+    private IWorkbenchAction        exitAction;
+    private IWorkbenchAction        aboutAction;
+    private NewAtomicEditorAction   newAtomicAction;
+    private NewCompoundEditorAction newCompoundAction;
+    private XMLEditorAction         xmlAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -33,20 +35,32 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(exitAction);
         aboutAction = ActionFactory.ABOUT.create(window);
         register(aboutAction);
-        bipAction = new BIPEditorAction(window);
-        register(bipAction);
+        newAtomicAction = new NewAtomicEditorAction(window);
+        register(newAtomicAction);
+        newCompoundAction = new NewCompoundEditorAction(window);
+        register(newCompoundAction);
         xmlAction = new XMLEditorAction(window);
         register(xmlAction);
     }
 
     protected void fillMenuBar(IMenuManager menuBar) {
-        MenuManager fileMenu = new MenuManager("&File", "File");
-        fileMenu.add(bipAction);
-        fileMenu.add(xmlAction);
+        MenuManager fileMenu = new MenuManager("文件", "文件");
+        
+        MenuManager newMenu = new MenuManager("新建", "new");
+        
+        MenuManager openMenu = new MenuManager("打开", "open");
+        
+        fileMenu.add(newMenu);
+        newMenu.add(newAtomicAction);
+        newMenu.add(newCompoundAction);
+        
+        fileMenu.add(openMenu);
+        openMenu.add(xmlAction);
+        
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
 
-        MenuManager helpMenu = new MenuManager("&Help", "Help");
+        MenuManager helpMenu = new MenuManager("帮助", "help");
         helpMenu.add(aboutAction);
 
         menuBar.add(fileMenu);

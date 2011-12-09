@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ValidationError;
+
 /**
  * Created by Huangcd<br/>
  * Date: 11-9-25<br/>
@@ -65,13 +67,16 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
     /** @return 返回模型全局唯一ID的字符串表示 */
     String getStringID();
 
-    public Rectangle getPositionConstraint();
+    Rectangle getPositionConstraint();
 
-    public Model setPositionConstraint(Rectangle positionConstraint);
+    Model setPositionConstraint(Rectangle positionConstraint);
 
-    public Model addPropertyChangeListener(PropertyChangeListener listener);
+    Model addPropertyChangeListener(PropertyChangeListener listener);
 
-    public Model firePropertyChange(String propertyName);
+    Model firePropertyChange(String propertyName);
 
-    public Model removePropertyChangeListener(PropertyChangeListener listener);
+    Model removePropertyChangeListener(PropertyChangeListener listener);
+
+    // void validateOnTheFly() throws ValidationError;
+    // void validate() throws ValidationError;
 }
