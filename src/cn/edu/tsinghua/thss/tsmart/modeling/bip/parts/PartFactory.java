@@ -56,7 +56,7 @@ public class PartFactory implements EditPartFactory {
                             "cn.edu.tsinghua.thss.tsmart.modeling.bip.parts." + matcher.group(1)
                                             + "EditPart";
             try {
-                System.out.println("try to create EditPart:" + partName);
+                //System.out.println("try to create EditPart:" + partName);
                 return (EditPart) Class.forName(partName).newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();

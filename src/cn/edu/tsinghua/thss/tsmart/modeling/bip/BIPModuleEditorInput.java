@@ -62,4 +62,9 @@ public class BIPModuleEditorInput implements IEditorInput {
     public Object getAdapter(Class aClass) {
         return null;
     }
+
+    @Override
+    public int hashCode() {
+        return model.hashCode();
+    }    
 }

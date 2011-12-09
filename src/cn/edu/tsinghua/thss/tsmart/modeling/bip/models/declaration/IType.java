@@ -12,6 +12,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 @SuppressWarnings("rawtypes")
 public interface IType<Type extends IType, Instance extends IInstance, Parent extends IContainer>
     extends IModel<Type, Parent> {
+    public final static String INSTANCE_NAME = "instanceName";
 
     /**
      * 创建一个类型实例，在创建之前，必须先复制 IType自身，然后将新的IInstance实例和IType实例关联起来。

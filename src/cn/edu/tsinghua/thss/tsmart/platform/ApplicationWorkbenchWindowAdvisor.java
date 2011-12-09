@@ -13,6 +13,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPModuleEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 /**
  * 设置工作台窗口属性，
@@ -43,7 +44,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
         try {
-            page.openEditor(new BIPModuleEditorInput(new AtomicTypeModel().setName("atomic")),
+            page.openEditor(new BIPModuleEditorInput(new CompoundTypeModel().setName("compound")),
                             "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
         } catch (PartInitException e) {
             MessageBox errorBox = new MessageBox(window.getShell());

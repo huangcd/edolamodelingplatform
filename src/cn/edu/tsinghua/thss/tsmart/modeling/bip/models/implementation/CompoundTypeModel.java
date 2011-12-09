@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -21,15 +22,15 @@ import java.util.List;
  */
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
-public class CompoundTypeModel
-    extends BaseTypeModel<CompoundTypeModel, CompoundModel, IContainer>
-    implements IContainer<CompoundTypeModel, IContainer, IInstance>,
-               IComponentType<CompoundTypeModel, CompoundModel, IContainer, IInstance> {
+public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, CompoundModel, IContainer>
+                implements
+                    IContainer<CompoundTypeModel, IContainer, IInstance>,
+                    IComponentType<CompoundTypeModel, CompoundModel, IContainer, IInstance> {
 
     @ElementList
-    private List<IComponentInstance> components;
+    private List<IComponentInstance>                               components;
     @ElementList
-    private List<ConnectorModel> connectors;
+    private List<ConnectorModel>                                   connectors;
     @ElementList
     private List<PriorityModel<CompoundTypeModel, ConnectorModel>> priorities;
 
@@ -63,6 +64,10 @@ public class CompoundTypeModel
         priorities.add(priorityModel);
         // TODO validate
         firePropertyChange(CHILDREN);
+    }
+
+    public List<IComponentInstance> getComponents() {
+        return components;
     }
 
     @Override
@@ -140,7 +145,7 @@ public class CompoundTypeModel
 
     @Override
     public CompoundTypeModel copy() {
-        //TODO
+        // TODO
         return null;
     }
 
@@ -184,38 +189,27 @@ public class CompoundTypeModel
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "compound name")};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (NAME.equals(id)) {
+            return hasName() ? getName() : "";
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
+        return NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-        
+        if (NAME.equals(id)) {
+            setName((String) value);
+        }
     }
 }

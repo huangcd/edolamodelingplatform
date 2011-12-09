@@ -59,7 +59,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     protected void createEditPolicies() {
         // installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeletePlaceEditPolicy());
         // installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new TransitionEditPolicy());
-        // installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new CustomDirectEditPolicy()); // ֱ�ӱ༭
     }
 
     @Override

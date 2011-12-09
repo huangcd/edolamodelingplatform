@@ -12,6 +12,8 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 public interface IInstance<M extends IInstance, T extends IType, P extends IContainer>
                 extends
                     IModel<M, P> {
+    public final static String TYPE_NAME = "typeName";
+
     /**
      * 
      * @return 返回实例的类型

@@ -15,15 +15,15 @@ import org.eclipse.gef.requests.CreateRequest;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveModelCommand;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 @SuppressWarnings("rawtypes")
-public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
-    private final static Pattern placeNamePattern = Pattern.compile("^PLACE(\\d*)$");
+public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
+    private final static Pattern componentNamePattern = Pattern.compile("^COMPONENT(\\d*)$");
 
     @Override
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child,
@@ -38,31 +38,16 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
         return super.createChangeConstraintCommand(request, child, constraint);
     }
 
-    private String getAppropriatePlaceName(AtomicTypeModel parent) {
-        int maxNumber = 0;
-        for (IInstance model : parent.getChildren()) {
-            if (model instanceof PlaceModel) {
-                PlaceModel place = (PlaceModel) model;
-                Matcher mat = placeNamePattern.matcher(place.getName());
-                if (mat.matches()) {
-                    int number = Integer.parseInt(mat.group(1));
-                    maxNumber = Math.max(number + 1, maxNumber);
-                }
-            }
-        }
-        return "PLACE" + maxNumber;
-    }
-
     @Override
     protected Command getCreateCommand(CreateRequest request) {
-        if (request.getNewObjectType().equals(PlaceModel.class)) {
+        if (request.getNewObjectType().equals(AtomicTypeModel.class)) {
             CreateModelCommand command = new CreateModelCommand();
             Object obj = getHost().getModel();
-            if (!(obj instanceof AtomicTypeModel)) return null;
-            AtomicTypeModel parent = (AtomicTypeModel) obj;
-            PlaceModel child =
-                            new PlaceTypeModel().createInstance().setName(
-                                            getAppropriatePlaceName(parent));
+            if (!(obj instanceof CompoundTypeModel)) return null;
+            CompoundTypeModel parent = (CompoundTypeModel) obj;
+            AtomicModel child =
+                            new AtomicTypeModel().createInstance().setName(
+                                            getAppropriateComponentName(parent));
             Point location = request.getLocation().getCopy();
             // COMMENT 相对位置
             getHostFigure().translateToRelative(location);
@@ -76,11 +61,20 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
         return null;
     }
 
-    @Override
-    public Command getCommand(Request request) {
-        // 不允许改变Atomic内部元素的大小
-        if (REQ_RESIZE_CHILDREN.equals(request.getType())) return null;
-        return super.getCommand(request);
+    private String getAppropriateComponentName(CompoundTypeModel parent) {
+        int maxNumber = 0;
+        for (IComponentInstance model : parent.getComponents()) {
+            Matcher mat = componentNamePattern.matcher(model.getName());
+            if (mat.matches()) {
+                int number = Integer.parseInt(mat.group(1));
+                maxNumber = Math.max(number + 1, maxNumber);
+            }
+        }
+        return "COMPONENT" + maxNumber;
     }
 
+    @Override
+    public Command getCommand(Request request) {
+        return super.getCommand(request);
+    }
 }
