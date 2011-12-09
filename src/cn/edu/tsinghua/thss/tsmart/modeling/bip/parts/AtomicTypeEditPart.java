@@ -2,15 +2,11 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.util.List;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.gef.EditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.AtomicChildrenEditPolicy;
 
 
 /**
@@ -25,7 +21,7 @@ public class AtomicTypeEditPart extends PageContainerEditPart {
     @Override
     // 安装 edit policy
     protected void createEditPolicies() {
-        // installEditPolicy(EditPolicy.LAYOUT_ROLE, new AtomicChildEditPolicy());
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, new AtomicChildrenEditPolicy());
         // installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new CustomDirectEditPolicy()); // 直接编辑
         // installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteAtomicEditPolicy());
     }
@@ -42,20 +38,6 @@ public class AtomicTypeEditPart extends PageContainerEditPart {
     @Override
     public void refresh() {
         refreshChildren();
-        for (Object obj : getChildren()) {
-            if (obj instanceof PlaceEditPart) {
-                PlaceEditPart placeEditPart = (PlaceEditPart) obj;
-                Rectangle base = placeEditPart.getModel().getPositionConstraint();
-                System.out.println(base);
-                Label name = new Label(placeEditPart.getModel().getName());
-                Dimension size = new Dimension(20, 18);
-                int x = base.x + base.width / 2 - size.width / 2;
-                int y = base.y - size.width;
-                base = new Rectangle(new Point(x, y), size);
-                System.out.println(base);
-                getFigure().add(name, new Rectangle(new Point(x, y), size));
-            }
-        }
         super.refresh();
     }
 

@@ -16,31 +16,38 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 
 
 public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart {
     private Ellipse figure;
-    private Label   label;
+    private Label   tooltipLabel;
+
+    protected void setAsInitialPlace() {
+        figure.setForegroundColor(ColorConstants.green);
+    }
+
+    protected void setAsNormalPlace() {
+        figure.setForegroundColor(ColorConstants.gray);
+    }
 
     @Override
     protected IFigure createFigure() {
         PlaceModel model = getModel();
 
         figure = new Ellipse();
-        figure.setSize(10, 10);
         figure.setOpaque(true);
+        figure.setLineWidth(2);
 
         if (model.isInitialPlace()) {
-            figure.setForegroundColor(ColorConstants.lightBlue);
-            figure.setBackgroundColor(ColorConstants.lightBlue);
+            setAsInitialPlace();
         } else {
-            figure.setForegroundColor(ColorConstants.lightGreen);
-            figure.setBackgroundColor(ColorConstants.lightGreen);
+            setAsNormalPlace();
         }
-        label = new Label(getModel().getName());
-        figure.setToolTip(label);
+        tooltipLabel = new Label(getModel().getName());
+        figure.setToolTip(tooltipLabel);
         return figure;
     }
 
@@ -68,13 +75,13 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             ((BaseGraphicalEditPart) getParent()).refresh();
             refreshVisuals();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            label.setText((getModel()).getName());
-        } else if (PlaceModel.INITIAL.equals(evt.getPropertyName())) {
+            tooltipLabel.setText((getModel()).getName());
+        } else if (AtomicTypeModel.INIT_PLACE.equals(evt.getPropertyName())) {
             PlaceModel model = getModel();
             if (model.isInitialPlace()) {
-                label.setBackgroundColor(ColorConstants.lightBlue);
+                setAsInitialPlace();
             } else {
-                label.setBackgroundColor(ColorConstants.lightGreen);
+                setAsNormalPlace();
             }
             refresh();
         } else if (PlaceModel.SOURCE.equals(evt.getPropertyName())) {
@@ -113,7 +120,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected List<TransitionModel> getModelTargetConnections() {
-        return (getModel()).getSourceConnections();
+        return (getModel()).getTargetConnections();
     }
 
     @Override

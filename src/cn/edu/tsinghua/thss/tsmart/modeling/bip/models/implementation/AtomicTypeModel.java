@@ -56,7 +56,8 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         transitions = new ArrayList<TransitionModel>();
         priorities = new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>();
         initPlace = new PlaceTypeModel().getInstance();
-        initPlace.setName("init").setPositionConstraint(new Rectangle(100, 100, 30, 30));
+        initPlace.setName("init").setPositionConstraint(new Rectangle(100, 100, 30, 30))
+                        .setParent(this);
         addChild(initPlace);
     }
 
@@ -68,6 +69,9 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         children.addAll(transitions);
         children.addAll(priorities);
         if (initAction != null) children.add(initAction);
+        for (PlaceModel place : places) {
+            children.add(place.getLabel());
+        }
         return children;
     }
 
@@ -76,19 +80,14 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     public AtomicTypeModel addChild(IInstance child) {
         if (child instanceof PlaceModel) {
             addPlace((PlaceModel) child);
-            child.setParent(this);
         } else if (child instanceof DataModel) {
             addData((DataModel<AtomicTypeModel>) child);
-            child.setParent(this);
         } else if (child instanceof PortModel) {
             addPort((PortModel) child);
-            child.setParent(this);
         } else if (child instanceof TransitionModel) {
             addTransition((TransitionModel) child);
-            child.setParent(this);
         } else if (child instanceof PriorityModel) {
             addPriority((PriorityModel) child);
-            child.setParent(this);
         } else {
             System.err.println("Invalidated child type to add:\n" + child);
         }
@@ -241,16 +240,18 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     /**
      * 设置初始状态
      * 
-     * @param initPlace
+     * @param newInitPlace
      * @return
      */
-    public AtomicTypeModel setInitPlace(PlaceModel initPlace) {
-        this.initPlace = initPlace;
-        firePropertyChange(CHILDREN);
-        // 检查初始位置是否存在于位置列表中。如果不是，将其加入列表
-        if (!this.places.contains(initPlace)) {
-            addPlace(initPlace);
+    public AtomicTypeModel setInitPlace(PlaceModel newInitPlace) {
+        if (newInitPlace.equals(this.initPlace)) return this;
+        if (!places.contains(newInitPlace)) {
+            addPlace(newInitPlace);
         }
+        PlaceModel oldInitPlace = this.initPlace;
+        initPlace = newInitPlace;
+        oldInitPlace.firePropertyChange(INIT_PLACE);
+        newInitPlace.firePropertyChange(INIT_PLACE);
         return this;
     }
 

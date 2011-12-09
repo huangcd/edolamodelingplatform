@@ -1,10 +1,14 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import java.util.List;
-
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
+
+import java.util.List;
 
 /**
  * Created by Huangcd<br/>
@@ -14,9 +18,15 @@ import org.simpleframework.xml.Root;
 @Root
 public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, AtomicTypeModel> {
 
-    public final static String INITIAL = "initial";
-    public final static String SOURCE  = "source";
-    public final static String TARGET  = "target";
+    public final static String    SOURCE  = "source";
+    public final static String    TARGET  = "target";
+    public final static Dimension SIZE    = new Dimension(20, 20);
+    private LabelModel            label;
+
+    protected PlaceModel() {
+        label = new LabelModel();
+        label.setTextColor(ColorConstants.blue);
+    }
 
     @Override
     public String exportToBip() {
@@ -39,7 +49,9 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (NAME.equals(id)) return hasName() ? getName() : "";
+        if (NAME.equals(id)) {
+            return hasName() ? getName() : "";
+        }
         return null;
     }
 
@@ -55,8 +67,49 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
         }
     }
 
+    public PlaceModel setName(String name) {
+        label.setLabel(name);
+        firePropertyChange(CHILDREN);
+        return super.setName(name);
+    }
+
     public List<TransitionModel> getSourceConnections() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public List<TransitionModel> getTargetConnections() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * 更改对应标签位置
+     * 
+     * @param rect place的位置
+     */
+    private void setLabelPositionConstraint(Rectangle rect) {
+        Dimension size = label.getLabelSize();
+        Point location = new Point(rect.x + rect.width / 2 - size.width / 2, rect.y - size.height);
+        label.setPositionConstraint(new Rectangle(location, size));
+
+    }
+
+    @Override
+    public PlaceModel setPositionConstraint(Rectangle positionConstraint) {
+        Rectangle rect = new Rectangle(positionConstraint.getLocation(), SIZE);
+        if (rect.equals(getPositionConstraint())) {
+            return this;
+        }
+        setLabelPositionConstraint(rect);
+        return super.setPositionConstraint(rect);
+    }
+
+    public LabelModel getLabel() {
+        return label;
+    }
+
+    public void setLabel(LabelModel label) {
+        this.label = label;
     }
 }

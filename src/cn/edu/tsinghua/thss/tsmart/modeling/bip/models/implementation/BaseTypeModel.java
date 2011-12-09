@@ -1,5 +1,16 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.apache.commons.codec.binary.Base64;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.strategy.CycleStrategy;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
@@ -11,17 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.commons.codec.binary.Base64;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.CycleStrategy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
@@ -120,7 +120,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     public Model setPositionConstraint(Rectangle positionConstraint) {
         this.positionConstraint = positionConstraint;
-        firePropertyChange(POSITION);
+        firePropertyChange(CONSTRAINT);
         return (Model) this;
     }
 
@@ -160,7 +160,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
      * @return 新的模型
      */
     public static <M> M importFromString(String string) throws IOException, ClassNotFoundException {
-        return importFromBytes(Base64.decodeBase64(string));
+        return importFromBytes(Base64.decodeBase64(string.getBytes()));
     }
 
     /**

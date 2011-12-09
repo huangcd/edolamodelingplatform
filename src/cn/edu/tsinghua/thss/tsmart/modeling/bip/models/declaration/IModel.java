@@ -23,7 +23,6 @@ import org.eclipse.draw2d.geometry.Rectangle;
 @SuppressWarnings({"unused", "rawtypes"})
 public interface IModel<Model extends IModel, Parent extends IContainer> extends Serializable {
 
-    public final static String POSITION   = "position";
     public final static String CHILDREN   = "children";
     public final static String PARENT     = "parent";
     public final static String NAME       = "name";

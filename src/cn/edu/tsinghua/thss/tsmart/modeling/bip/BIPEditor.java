@@ -1,10 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
@@ -41,14 +38,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BipModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
@@ -60,11 +60,21 @@ import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 @SuppressWarnings("rawtypes")
 public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
-    private GraphicalViewer viewer;
-    private IModel          model;
+    private static HashMap<EditPartViewer, BIPEditor> viewerMap =
+                                                                                new HashMap<EditPartViewer, BIPEditor>();
+    private GraphicalViewer                           viewer;
+    private IModel                                    model;
+
+    public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
+        return viewerMap.get(viewer);
+    }
 
     public BIPEditor() {
         setEditDomain(new DefaultEditDomain(this));
+    }
+
+    public void setEditorTitle(String title) {
+        setPartName(title);
     }
 
     @Override
@@ -111,11 +121,17 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     @Override
     protected void initializeGraphicalViewer() {
         super.initializeGraphicalViewer();
-        AtomicTypeModel atomic = new AtomicTypeModel();
-        atomic.setPositionConstraint(new Rectangle(0, 0, 1000, 800));
-        model = new BipModel().addChild(atomic);
-        viewer = getGraphicalViewer();
-        viewer.setContents(model);
+        IEditorInput editorInput = getEditorInput();
+        if (editorInput instanceof BIPModuleEditorInput) {
+            BIPModuleEditorInput bipModuleEditorInput = (BIPModuleEditorInput) editorInput;
+            model = bipModuleEditorInput.getModel();
+            setEditorTitle(model.getName());
+            viewer = getGraphicalViewer();
+            viewerMap.put(viewer, this);
+            viewer.setContents(model);
+        } else {
+            // TODO BIPFileEditorInput
+        }
         viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
     }
 
@@ -247,9 +263,10 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     // 缩放
     @SuppressWarnings("rawtypes")
     public Object getAdapter(Class type) {
-        if (type == ZoomManager.class)
+        if (type == ZoomManager.class) {
             return ((ScalableFreeformRootEditPart) getGraphicalViewer().getRootEditPart())
                             .getZoomManager();
+        }
         // 如果是 IContentOutlinePage 类型，则返回该 ContentOutlinePage
         // if (type == IContentOutlinePage.class) {
         // return new BIPContentOutlinePage(new TreeViewer());
@@ -257,16 +274,12 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         return super.getAdapter(type);
     }
 
-    /**
-     * Save properties to model
-     */
+    /** Save properties to model */
     protected void saveProperties() {
 
     }
 
-    /**
-     * Load properties
-     */
+    /** Load properties */
     protected void loadProperties() {
 
     }
@@ -336,7 +349,9 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             // getViewer().setEditPartFactory(new TreeEditPartFactory());
             getViewer().setEditPartFactory(TreeEditPartFactory.getInstance());
             // 本视图中对应于 BIPModel的内容
-            if (model != null) getViewer().setContents(model);
+            if (model != null) {
+                getViewer().setContents(model);
+            }
             // 选择同步：在 Graphical editor 中选择图形，则大纲视图选择对应的节点；反之亦然
             getSelectionSynchronizer().addViewer(getViewer());
 

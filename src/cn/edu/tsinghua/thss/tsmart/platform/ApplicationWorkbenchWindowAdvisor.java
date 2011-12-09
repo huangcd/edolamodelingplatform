@@ -1,6 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.platform;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchPage;
@@ -12,7 +11,8 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPFileEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPModuleEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 
 /**
  * 设置工作台窗口属性，
@@ -32,7 +32,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
     public void preWindowOpen() {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-        configurer.setInitialSize(new Point(800, 600));
+        configurer.setInitialSize(new Point(1000, 800));
         configurer.setShowCoolBar(true);
         configurer.setShowStatusLine(true);
         configurer.setTitle("EDOLA Modelling Platform");
@@ -43,8 +43,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
         try {
-            page.openEditor(new BIPFileEditorInput(new Path("")),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor", true);
+            page.openEditor(new BIPModuleEditorInput(new AtomicTypeModel().setName("atomic")),
+                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
         } catch (PartInitException e) {
             MessageBox errorBox = new MessageBox(window.getShell());
             errorBox.setMessage(e.getMessage());

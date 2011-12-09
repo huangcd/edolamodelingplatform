@@ -2,6 +2,17 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 // import org.eclipse.draw2d.geometry.Rectangle;
 
+import org.apache.commons.codec.binary.Base64;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.strategy.CycleStrategy;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
@@ -13,21 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.CycleStrategy;
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateNotifier;
 import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateReceiver;
+import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 
 
@@ -56,6 +58,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Element(required = false, name = "type")
     protected Type                type;
     protected static Serializer   serializer      = new Persister(new CycleStrategy());
+    protected GlobalProperties    prorerties      = GlobalProperties.getInstance();
 
     public Type getType() {
         return type;
@@ -85,7 +88,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
      * @return 新的模型
      */
     public static <M> M importFromString(String string) throws IOException, ClassNotFoundException {
-        return importFromBytes(Base64.decodeBase64(string));
+        return importFromBytes(Base64.decodeBase64(string.getBytes()));
     }
 
     @Override
@@ -135,7 +138,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     public Model setPositionConstraint(Rectangle positionConstraint) {
         this.positionConstraint = positionConstraint;
-        firePropertyChange(POSITION);
+        firePropertyChange(CONSTRAINT);
         return (Model) this;
     }
 
@@ -160,8 +163,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     }
 
     @Override
-    public void resetPropertyValue(Object id) {
-    }
+    public void resetPropertyValue(Object id) {}
 
     /**
      * 从byte数组中导入对象
@@ -214,5 +216,10 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         for (UpdateReceiver receiver : getRegisterObjects()) {
             receiver.updated();
         }
+    }
+
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        return new IPropertyDescriptor[0];
     }
 }
