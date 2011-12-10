@@ -8,6 +8,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,14 +19,18 @@ import java.util.List;
 @Root
 public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, AtomicTypeModel> {
 
-    public final static String    SOURCE  = "source";
-    public final static String    TARGET  = "target";
-    public final static Dimension SIZE    = new Dimension(20, 20);
+    public final static String    SOURCE = "source";
+    public final static String    TARGET = "target";
+    public final static Dimension SIZE   = new Dimension(20, 20);
     private LabelModel            label;
+    private List<TransitionModel> sourceConnections;
+    private List<TransitionModel> targetConnections;
 
     protected PlaceModel() {
         label = new LabelModel();
         label.setTextColor(ColorConstants.blue);
+        sourceConnections = new ArrayList<TransitionModel>();
+        targetConnections = new ArrayList<TransitionModel>();
     }
 
     @Override
@@ -39,6 +44,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     }
 
     public boolean isInitialPlace() {
+        if (getParent() == null) return false;
         return getParent().getInitPlace().equals(this);
     }
 
@@ -74,13 +80,39 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     }
 
     public List<TransitionModel> getSourceConnections() {
-        // TODO Auto-generated method stub
-        return null;
+        return sourceConnections;
     }
 
     public List<TransitionModel> getTargetConnections() {
-        // TODO Auto-generated method stub
-        return null;
+        return targetConnections;
+    }
+
+    public PlaceModel addSourceConnection(TransitionModel connection) {
+        sourceConnections.add(connection);
+        firePropertyChange(SOURCE);
+        return this;
+    }
+
+    public PlaceModel removeSourceConnection(TransitionModel connection) {
+        boolean result = sourceConnections.remove(connection);
+        if (result) {
+            firePropertyChange(SOURCE);
+        }
+        return this;
+    }
+
+    public PlaceModel removeTargetConnection(TransitionModel connection) {
+        boolean result = targetConnections.remove(connection);
+        if (result) {
+            firePropertyChange(TARGET);
+        }
+        return this;
+    }
+
+    public PlaceModel addTargetConnection(TransitionModel connection) {
+        targetConnections.add(connection);
+        firePropertyChange(TARGET);
+        return this;
     }
 
     /**
@@ -92,7 +124,6 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
         Dimension size = label.getLabelSize();
         Point location = new Point(rect.x + rect.width / 2 - size.width / 2, rect.y - size.height);
         label.setPositionConstraint(new Rectangle(location, size));
-
     }
 
     @Override

@@ -51,6 +51,4 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             errorBox.open();
         }
     }
-
-
 }

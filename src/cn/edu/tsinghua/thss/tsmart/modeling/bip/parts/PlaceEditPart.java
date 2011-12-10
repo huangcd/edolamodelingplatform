@@ -21,6 +21,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicType
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.TransitionEditPolicy;
 
 
 public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart {
@@ -60,7 +61,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     @Override
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteModelEditPolicy());
-        // installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new TransitionEditPolicy());
+        installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new TransitionEditPolicy());
     }
 
     @Override
@@ -92,6 +93,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
             refreshVisuals();
         }
+        refreshVisuals();
     }
 
     @Override

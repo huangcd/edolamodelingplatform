@@ -15,26 +15,24 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 @SuppressWarnings({"unused", "unchecked"})
 @Root
 public class TransitionModel
-    extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
-    implements IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
+                extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
+                implements
+                    IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
+    public static final String BEND_POINTS = "bendPoints";
     @Element
-    private PlaceModel source;
+    private PlaceModel         source;
     @Element
-    private PlaceModel target;
+    private PlaceModel         target;
     @Element
-    private PortModel port;
+    private PortModel          port;
     @Element
-    private ActionModel action;
+    private ActionModel        action;
     @Element
-    private GuardModel guard;
+    private GuardModel         guard;
 
-    public TransitionModel copy(
-        PlaceModel source,
-        PlaceModel target,
-        PortModel port,
-        ActionModel action,
-        GuardModel guard) {
+    public TransitionModel copy(PlaceModel source, PlaceModel target, PortModel port,
+                    ActionModel action, GuardModel guard) {
         TransitionModel model = this.copy();
         model.source = source;
         model.target = target;
@@ -42,6 +40,11 @@ public class TransitionModel
         model.action = action;
         model.guard = guard;
         return model;
+    }
+
+    protected TransitionModel() {
+        action = new ActionModel();
+        guard = new GuardModel();
     }
 
     public PlaceModel getSource() {
@@ -59,6 +62,14 @@ public class TransitionModel
     public void setPort(PortModel port) {
         this.port = port;
         firePropertyChange(CHILDREN);
+    }
+
+    public void setSource(PlaceModel source) {
+        this.source = source;
+    }
+
+    public void setTarget(PlaceModel target) {
+        this.target = target;
     }
 
     public ActionModel getAction() {
@@ -79,16 +90,24 @@ public class TransitionModel
         firePropertyChange(CHILDREN);
     }
 
-    @Override
-    public void attachSource(PlaceModel source) {
-        this.source = source;
-        firePropertyChange(CHILDREN);
+    public PlaceModel attachSource() {
+        if (!source.getSourceConnections().contains(this)) source.addSourceConnection(this);
+        return source;
     }
 
-    @Override
-    public void attachTarget(PlaceModel target) {
-        this.target = target;
-        firePropertyChange(CHILDREN);
+    public PlaceModel attachTarget() {
+        if (!target.getTargetConnections().contains(this)) target.addTargetConnection(this);
+        return target;
+    }
+
+    public PlaceModel detachSource() {
+        source.removeSourceConnection(this);
+        return source;
+    }
+
+    public PlaceModel detachTarget() {
+        target.removeTargetConnection(this);
+        return target;
     }
 
     @Override
@@ -98,12 +117,9 @@ public class TransitionModel
 
     @Override
     public String exportToBip() {
-        return String.format("on %s from %s to %s provided %s do {%s}",
-                             getPort().getName(),
-                             getSource().getName(),
-                             getTarget().getName(),
-                             getGuard().exportToBip(),
-                             getAction().exportToBip());
+        return String.format("on %s from %s to %s provided %s do {%s}", getPort().getName(),
+                        getSource().getName(), getTarget().getName(), getGuard().exportToBip(),
+                        getAction().exportToBip());
     }
 
     @Override
@@ -133,12 +149,12 @@ public class TransitionModel
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
     }
 }

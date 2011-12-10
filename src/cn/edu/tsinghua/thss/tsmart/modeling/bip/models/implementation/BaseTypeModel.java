@@ -271,9 +271,11 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         run.setAction(new ActionTypeModel().getInstance().setAction("counter += 1;"));
         run.setGuard(new GuardTypeModel().getInstance().setGuard("count >= 0"));
         run.setPort(runPort);
-        run.attachSource(idle);
-        run.attachTarget(busy);
-        machineType.addTransition(run);
+        run.setSource(idle);
+        run.setTarget(busy);
+        run.attachSource();
+        run.attachTarget();
+        // machineType.addTransition(run);
 
         // atomic priority
 

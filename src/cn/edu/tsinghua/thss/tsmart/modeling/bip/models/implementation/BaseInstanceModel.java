@@ -128,7 +128,6 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public Model setParent(Parent parent) {
         this.parent = parent;
-        firePropertyChange(PARENT);
         return (Model) this;
     }
 
@@ -149,6 +148,11 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     public Model firePropertyChange(String propertyName) {
         listeners.firePropertyChange(propertyName, null, null);
+        return (Model) this;
+    }
+
+    public Model firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        listeners.firePropertyChange(propertyName, oldValue, newValue);
         return (Model) this;
     }
 

@@ -16,8 +16,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 @Root
 public class GuardModel extends BaseInstanceModel<GuardModel, GuardTypeModel, IContainer> {
 
+    public final static String GUARD = "guard";
     @Element
-    private String guard;
+    private String             guard;
 
     public String getGuard() {
         return guard;
@@ -65,12 +66,12 @@ public class GuardModel extends BaseInstanceModel<GuardModel, GuardTypeModel, IC
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
     }
 }

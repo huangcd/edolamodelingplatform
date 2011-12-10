@@ -58,7 +58,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicType
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
@@ -190,7 +190,7 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         descriptor = Activator.getImageDescriptor("icons/transition_16.png");
         ConnectionCreationToolEntry connectionCreationEntry =
                         new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
-                                        TransitionModel.class), descriptor, descriptor);
+                                        TransitionTypeModel.class), descriptor, descriptor);
         drawer.add(placeCreationEntry);
         drawer.add(connectionCreationEntry);
         root.add(drawer);

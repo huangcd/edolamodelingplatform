@@ -38,11 +38,5 @@ public class ExportAction extends SelectionAction {
         if (path == null) {
             return;
         }
-        if (!path.endsWith(".xml")) path = path + ".xml";
-        File file = new File(path);
-
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer;
-        // TODO output
     }
 }

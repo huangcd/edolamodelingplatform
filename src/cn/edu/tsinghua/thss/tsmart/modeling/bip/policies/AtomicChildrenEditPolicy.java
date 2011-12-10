@@ -82,5 +82,4 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
         if (REQ_RESIZE_CHILDREN.equals(request.getType())) return null;
         return super.getCommand(request);
     }
-
 }

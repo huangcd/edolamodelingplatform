@@ -44,8 +44,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     private List<DataModel<AtomicTypeModel>>                datas;
     @ElementList(entry = "port")
     private List<PortModel>                                 ports;
-    @ElementList(entry = "transition")
-    private List<TransitionModel>                           transitions;
     @ElementList(entry = "priority")
     private List<PriorityModel<AtomicTypeModel, PortModel>> priorities;
 
@@ -53,7 +51,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         places = new ArrayList<PlaceModel>();
         datas = new ArrayList<DataModel<AtomicTypeModel>>();
         ports = new ArrayList<PortModel>();
-        transitions = new ArrayList<TransitionModel>();
         priorities = new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>();
         initPlace = new PlaceTypeModel().getInstance();
         initPlace.setName("init").setPositionConstraint(new Rectangle(100, 100, 30, 30))
@@ -66,7 +63,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         ArrayList<IInstance> children = new ArrayList<IInstance>(datas);
         children.addAll(places);
         children.addAll(ports);
-        children.addAll(transitions);
         children.addAll(priorities);
         if (initAction != null) children.add(initAction);
         for (PlaceModel place : places) {
@@ -84,8 +80,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             addData((DataModel<AtomicTypeModel>) child);
         } else if (child instanceof PortModel) {
             addPort((PortModel) child);
-        } else if (child instanceof TransitionModel) {
-            addTransition((TransitionModel) child);
         } else if (child instanceof PriorityModel) {
             addPriority((PriorityModel) child);
         } else {
@@ -105,8 +99,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             return removePlace((PlaceModel) child);
         } else if (child instanceof DataModel) {
             return removeData((DataModel<AtomicTypeModel>) child);
-        } else if (child instanceof TransitionModel) {
-            return removeTransition((TransitionModel) child);
         } else if (child instanceof PriorityModel) {
             return removePriority((PriorityModel) child);
         } else if (child instanceof PortModel) {
@@ -125,19 +117,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             return false;
         }
         priorities.remove(index);
-        firePropertyChange(CHILDREN);
-        return true;
-    }
-
-    public boolean removeTransition(TransitionModel child) {
-        if (child == null) {
-            return false;
-        }
-        int index = transitions.indexOf(child);
-        if (index < 0) {
-            return false;
-        }
-        transitions.remove(index);
         firePropertyChange(CHILDREN);
         return true;
     }
@@ -203,12 +182,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
 
     public AtomicTypeModel addPriority(PriorityModel<AtomicTypeModel, PortModel> child) {
         priorities.add(child);
-        firePropertyChange(CHILDREN);
-        return this;
-    }
-
-    public AtomicTypeModel addTransition(TransitionModel child) {
-        transitions.add(child);
         firePropertyChange(CHILDREN);
         return this;
     }
@@ -297,15 +270,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         }
 
         // ¸´ÖÆ transitions
-        copyModel.transitions = new ArrayList<TransitionModel>();
-        for (TransitionModel transition : transitions) {
-            TransitionModel copyTransition =
-                            transition.copy(placeMap.get(transition.getSource()),
-                                            placeMap.get(transition.getTarget()),
-                                            portMap.get(transition.getPort()),
-                                            transition.getAction(), transition.getGuard());
-            // copyModel.transitions.add(transitionMap.get(transition));
-        }
 
         copyModel.priorities =
                         new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>(this.priorities);
@@ -340,9 +304,10 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         buffer.append('\n');
         buffer.append('\t').append("initial to ").append(initPlace.getName()).append("do {")
                         .append(initAction.exportToBip()).append("}\n\n");
-        for (TransitionModel transition : transitions) {
-            buffer.append('\t').append(transition.exportToBip()).append('\n');
-        }
+        // TODO transition
+        // for (TransitionModel transition : transitions) {
+        // buffer.append('\t').append(transition.exportToBip()).append('\n');
+        // }
         buffer.append('\n');
         for (PriorityModel priority : priorities) {
             buffer.append('\t').append(priority.exportToBip()).append('\n');

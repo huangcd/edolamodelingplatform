@@ -11,22 +11,21 @@ import java.util.List;
 
 
 /**
- * Created by Huangcd
- * Date: 11-9-25
- * Time: обнГ6:49
+ * Created by Huangcd Date: 11-9-25 Time: обнГ6:49
  */
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
 public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, AtomicTypeModel>
-    implements IPort<PortModel, PortTypeModel, AtomicTypeModel, AtomicTypeModel> {
+                implements
+                    IPort<PortModel, PortTypeModel, AtomicTypeModel, AtomicTypeModel> {
 
+    public final static String PORT = "port";
     @Element
-    private boolean export;
+    private boolean            export;
 
     public PortModel copy(List<DataModel> datas) {
-        List<DataTypeModel<PortTypeModel>>
-            dataTypes =
-            new ArrayList<DataTypeModel<PortTypeModel>>();
+        List<DataTypeModel<PortTypeModel>> dataTypes =
+                        new ArrayList<DataTypeModel<PortTypeModel>>();
         for (DataModel<AtomicTypeModel> data : datas) {
             dataTypes.add(data.getType());
         }
@@ -68,9 +67,8 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
     @Override
     @SuppressWarnings("unchecked")
     public List<DataModel<AtomicTypeModel>> getPortArguments() {
-        ArrayList<DataModel<AtomicTypeModel>>
-            arguments =
-            new ArrayList<DataModel<AtomicTypeModel>>();
+        ArrayList<DataModel<AtomicTypeModel>> arguments =
+                        new ArrayList<DataModel<AtomicTypeModel>>();
         for (DataTypeModel<PortTypeModel> dataTypeModel : getType().getChildren()) {
             arguments.add(dataTypeModel.getInstance());
         }
@@ -104,12 +102,12 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
     }
 }

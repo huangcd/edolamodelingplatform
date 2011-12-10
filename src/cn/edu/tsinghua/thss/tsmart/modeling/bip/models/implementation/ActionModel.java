@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -16,8 +17,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 @Root
 public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel, IContainer> {
 
+    public final static String ACTION = "action";
     @Element(required = false)
-    private String action;
+    private String             action;
 
     public String getAction() {
         return action;
@@ -40,36 +42,30 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(ACTION, "action")};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (id.equals(ACTION)) {
+            return action;
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
+        return id.equals(ACTION);
     }
 
     @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-    }
+    public void resetPropertyValue(Object id) {}
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
+        if (id.equals(ACTION)) {
+            setAction((String) value);
+        }
     }
 }

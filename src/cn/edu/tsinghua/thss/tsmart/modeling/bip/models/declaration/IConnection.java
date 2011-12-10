@@ -8,13 +8,13 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
  */
 @SuppressWarnings("rawtypes")
 public interface IConnection<M extends IConnection, P extends IContainer, S extends IInstance, T extends IInstance>
-        extends IModel<M, P>
-{
+                extends
+                    IModel<M, P> {
     S getSource();
 
     T getTarget();
 
-    void attachSource(S source);
+    S attachSource();
 
-    void attachTarget(T target);
+    T attachTarget();
 }

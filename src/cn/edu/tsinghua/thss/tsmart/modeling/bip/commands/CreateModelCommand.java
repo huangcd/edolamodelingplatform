@@ -14,12 +14,6 @@ public class CreateModelCommand extends Command {
     public void execute() {
         child.setParent(parent);
         parent.addChild(child);
-        // Shell shell = Display.getDefault().getActiveShell();
-        // if (shell != null) {
-        // EditAtomicTypeDialog dialog = new EditAtomicTypeDialog(shell, child, parent);
-        // dialog.setBlockOnOpen(true);
-        // dialog.open();
-        // }
     }
 
     @Override
