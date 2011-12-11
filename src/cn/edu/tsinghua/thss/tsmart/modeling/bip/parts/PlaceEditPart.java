@@ -9,6 +9,7 @@ import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
@@ -22,11 +23,14 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.TransitionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.FigureLocator;
 
 
 public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart {
-    private Ellipse figure;
-    private Label   tooltipLabel;
+    private Ellipse       figure;
+    private Label         nameLabel;
+    private FigureLocator labelLocator;
+    private Label         tooltipLabel;
 
     protected void setAsInitialPlace() {
         figure.setForegroundColor(ColorConstants.green);
@@ -49,9 +53,19 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         } else {
             setAsNormalPlace();
         }
+
         tooltipLabel = new Label(getModel().getName());
+        tooltipLabel.setFont(properties.getDefaultEditorFont());
         figure.setToolTip(tooltipLabel);
-        
+
+        nameLabel = new Label(getModel().getName());
+        nameLabel.setFont(properties.getDefaultEditorFont());
+        nameLabel.setForegroundColor(ColorConstants.blue);
+        addFigureMouseEvent(nameLabel);
+        labelLocator = new FigureLocator(figure, nameLabel, PositionConstants.NORTH);
+        labelLocator.relocate(getModel().getPositionConstraint());
+        getParent().getFigure().add(nameLabel);
+
         return figure;
     }
 
@@ -74,11 +88,16 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        // 位置变更，同时重定位标签的位置
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
-            refreshVisuals();
-        } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            tooltipLabel.setText((getModel()).getName());
+            labelLocator.relocate((Rectangle) evt.getNewValue());
+        }
+        // 名字变更，同时修改标签和toolTip的名字
+        else if (IModel.NAME.equals(evt.getPropertyName())) {
+            nameLabel.setText(getModel().getName());
+            tooltipLabel.setText(getModel().getName());
+            labelLocator.relocate();
         } else if (AtomicTypeModel.INIT_PLACE.equals(evt.getPropertyName())) {
             PlaceModel model = getModel();
             if (model.isInitialPlace()) {

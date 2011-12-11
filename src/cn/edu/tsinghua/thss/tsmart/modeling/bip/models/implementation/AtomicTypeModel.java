@@ -65,9 +65,9 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         children.addAll(ports);
         children.addAll(priorities);
         if (initAction != null) children.add(initAction);
-        for (PlaceModel place : places) {
-            children.add(place.getLabel());
-        }
+        // for (PlaceModel place : places) {
+        // children.add(place.getLabel());
+        // }
         return children;
     }
 

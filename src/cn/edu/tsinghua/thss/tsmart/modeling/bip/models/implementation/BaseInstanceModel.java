@@ -136,8 +136,9 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     }
 
     public Model setPositionConstraint(Rectangle positionConstraint) {
+        Rectangle oldPositionConstraint = this.positionConstraint;
         this.positionConstraint = positionConstraint;
-        firePropertyChange(CONSTRAINT);
+        firePropertyChange(CONSTRAINT, oldPositionConstraint, this.positionConstraint);
         return (Model) this;
     }
 

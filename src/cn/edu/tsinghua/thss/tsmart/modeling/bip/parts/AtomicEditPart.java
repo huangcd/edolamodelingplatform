@@ -46,7 +46,6 @@ public class AtomicEditPart extends BaseEditableEditPart {
         panel.setLayoutManager(new GridLayout(1, true));
         typeLabel = new Label(getModel().getType().getName());
         instanceLabel = new Label(getModel().getName());
-        System.out.println(getModel().getPositionConstraint());
         panel.add(typeLabel);
         panel.add(instanceLabel);
         return panel;
