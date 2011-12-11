@@ -62,10 +62,11 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         nameLabel.setFont(properties.getDefaultEditorFont());
         nameLabel.setForegroundColor(ColorConstants.blue);
         addFigureMouseEvent(nameLabel);
+        
         labelLocator = new FigureLocator(figure, nameLabel, PositionConstants.NORTH);
         labelLocator.relocate(getModel().getPositionConstraint());
+        
         getParent().getFigure().add(nameLabel);
-
         return figure;
     }
 

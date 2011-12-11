@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.ui.handles;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -24,9 +25,25 @@ public class FigureLocator extends RelativeHandleLocator {
      */
     public void relocate(IFigure target, Rectangle refRect) {
         Dimension size = target.getPreferredSize();
-        Point location =
-                        new Point(refRect.x + refRect.width / 2 - size.width / 2, refRect.y
-                                        - size.height);
+
+        int x = target.getBounds().x;
+        int y = target.getBounds().y;
+
+        if (location == PositionConstants.NORTH) {
+            x = refRect.x + refRect.width / 2 - size.width / 2;
+            y = refRect.y - size.height;
+        } else if (location == PositionConstants.SOUTH) {
+            x = refRect.x + refRect.width / 2 - size.width / 2;
+            y = refRect.y + refRect.height;
+        } else if (location == PositionConstants.WEST) {
+            x = refRect.x - size.width;
+            y = refRect.y + refRect.height / 2 - size.height / 2;
+        } else if (location == PositionConstants.EAST) {
+            x = refRect.x + refRect.width;
+            y = refRect.y + refRect.height / 2 - size.height / 2;
+        }
+
+        Point location = new Point(x, y);
         target.setBounds(new Rectangle(location, size));
     }
 
