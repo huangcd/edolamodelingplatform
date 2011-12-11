@@ -3,7 +3,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.GroupRequest;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteTransitionCommand;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection.DeleteTransitionCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TransitionEditPart;
 

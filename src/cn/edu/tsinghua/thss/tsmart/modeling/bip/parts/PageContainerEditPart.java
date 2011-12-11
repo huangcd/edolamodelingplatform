@@ -8,7 +8,6 @@ import org.eclipse.draw2d.FanRouter;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
@@ -53,6 +52,8 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
             // 反锯齿，连线稍微好看一点点
             if ((getViewer().getControl().getStyle() & SWT.MIRRORED) == 0)
                 cLayer.setAntialias(SWT.ON);
+
+            // 设置Router样式
             BendpointConnectionRouter bendpointConnectionRouter = new BendpointConnectionRouter();
             FanRouter fanRouter = new FanRouter();
             fanRouter.setSeparation(20);

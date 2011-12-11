@@ -5,8 +5,8 @@ import org.eclipse.gef.editpolicies.GraphicalNodeEditPolicy;
 import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateTransitionCommand;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.ReconnectTransitionCommand;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection.CreateTransitionCommand;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection.ReconnectTransitionCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;

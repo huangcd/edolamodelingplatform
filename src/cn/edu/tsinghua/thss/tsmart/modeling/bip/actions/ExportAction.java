@@ -1,9 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.actions;
 
-import java.io.File;
-
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;

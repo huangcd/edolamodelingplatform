@@ -1,8 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import org.eclipse.draw2d.geometry.Point;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.RelativeBendpointModel;
 
 /**
  * Created by Huangcd<br/>
@@ -21,6 +21,14 @@ public interface IConnection<M extends IConnection, P extends IContainer, S exte
     S attachSource();
 
     T attachTarget();
+
+    ArrayList<RelativeBendpointModel> getBendpoints();
     
-    //List<Point> getBendpoints();
+    RelativeBendpointModel getBendpoint(int index);
+
+    M setBendpoint(int index, RelativeBendpointModel bendpoint);
+
+    M addBendpoint(int index, RelativeBendpointModel bendpoint);
+
+    M removeBendpoint(int index);
 }

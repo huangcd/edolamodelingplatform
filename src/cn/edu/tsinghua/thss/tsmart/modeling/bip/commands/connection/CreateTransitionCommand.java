@@ -1,4 +1,4 @@
-package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection;
 
 import org.eclipse.gef.commands.Command;
 
@@ -16,7 +16,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.Transition
  * 
  */
 public class CreateTransitionCommand extends Command {
-    private AtomicTypeModel parent;
     private PlaceModel      source;
     private PlaceModel      target;
     private TransitionModel connection;
@@ -54,7 +53,6 @@ public class CreateTransitionCommand extends Command {
     }
 
     public void setParent(AtomicTypeModel parent) {
-        this.parent = parent;
         connection.setParent(parent);
     }
 }

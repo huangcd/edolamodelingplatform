@@ -9,12 +9,20 @@ import org.eclipse.gef.handles.RelativeHandleLocator;
 
 public class FigureLocator extends RelativeHandleLocator {
     private int     location;
+    private int     gap;
     private IFigure target;
 
     public FigureLocator(IFigure reference, IFigure target, int location) {
         super(reference, location);
         this.target = target;
         this.location = location;
+    }
+
+    public FigureLocator(IFigure reference, IFigure target, int location, int gap) {
+        super(reference, location);
+        this.target = target;
+        this.location = location;
+        this.gap = gap;
     }
 
     /**
@@ -31,15 +39,15 @@ public class FigureLocator extends RelativeHandleLocator {
 
         if (location == PositionConstants.NORTH) {
             x = refRect.x + refRect.width / 2 - size.width / 2;
-            y = refRect.y - size.height;
+            y = refRect.y - size.height - gap;
         } else if (location == PositionConstants.SOUTH) {
             x = refRect.x + refRect.width / 2 - size.width / 2;
-            y = refRect.y + refRect.height;
+            y = refRect.y + refRect.height + gap;
         } else if (location == PositionConstants.WEST) {
-            x = refRect.x - size.width;
+            x = refRect.x - size.width - gap;
             y = refRect.y + refRect.height / 2 - size.height / 2;
         } else if (location == PositionConstants.EAST) {
-            x = refRect.x + refRect.width;
+            x = refRect.x + refRect.width + gap;
             y = refRect.y + refRect.height / 2 - size.height / 2;
         }
 

@@ -1,4 +1,4 @@
-package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
+package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection;
 
 import org.eclipse.gef.commands.Command;
 

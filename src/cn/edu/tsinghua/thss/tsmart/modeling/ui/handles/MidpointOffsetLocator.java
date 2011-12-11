@@ -1,4 +1,4 @@
-package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
+package cn.edu.tsinghua.thss.tsmart.modeling.ui.handles;
 
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.MidpointLocator;

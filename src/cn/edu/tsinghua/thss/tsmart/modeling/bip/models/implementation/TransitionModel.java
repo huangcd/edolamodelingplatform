@@ -1,8 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
@@ -16,34 +19,32 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 @SuppressWarnings({"unused", "unchecked"})
 @Root
 public class TransitionModel
-    extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
-    implements IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
+                extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
+                implements
+                    IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
-    public static final String BEND_POINTS = "bendPoints";
+    public static final String                BEND_POINTS = "bendPoints";
     @Element
-    private PlaceModel source;
+    private PlaceModel                        source;
     @Element
-    private PlaceModel target;
+    private PlaceModel                        target;
     @Element
-    private PortModel port;
+    private PortModel                         port;
     @Element
-    private ActionModel action;
+    private ActionModel                       action;
     @Element
-    private GuardModel guard;
+    private GuardModel                        guard;
+    @ElementList
+    private ArrayList<RelativeBendpointModel> bendpoints;
 
-    /** action 的标签，用于显示 */
-    private LabelModel actionLabel;
-    /** guard 的标签，用于显示 */
-    private LabelModel guardLabel;
-    /** port 的标签，用于显示 */
-    private LabelModel portLabel;
+    protected TransitionModel() {
+        action = new ActionModel();
+        guard = new GuardModel();
+        bendpoints = new ArrayList<RelativeBendpointModel>();
+    }
 
-    public TransitionModel copy(
-        PlaceModel source,
-        PlaceModel target,
-        PortModel port,
-        ActionModel action,
-        GuardModel guard) {
+    public TransitionModel copy(PlaceModel source, PlaceModel target, PortModel port,
+                    ActionModel action, GuardModel guard) {
         TransitionModel model = this.copy();
         model.source = source;
         model.target = target;
@@ -51,14 +52,6 @@ public class TransitionModel
         model.action = action;
         model.guard = guard;
         return model;
-    }
-
-    protected TransitionModel() {
-        action = new ActionModel();
-        guard = new GuardModel();
-        actionLabel = new LabelModel();
-        guardLabel = new LabelModel();
-        portLabel = new LabelModel();
     }
 
     public PlaceModel getSource() {
@@ -75,7 +68,7 @@ public class TransitionModel
 
     public void setPort(PortModel port) {
         this.port = port;
-        firePropertyChange(CHILDREN);
+        firePropertyChange(PortModel.PORT);
     }
 
     public void setSource(PlaceModel source) {
@@ -86,22 +79,38 @@ public class TransitionModel
         this.target = target;
     }
 
+    public String getActionString() {
+        return action == null ? "" : action.getAction();
+    }
+
     public ActionModel getAction() {
         return action;
     }
 
-    public void setAction(ActionModel action) {
-        this.action = action;
-        firePropertyChange(CHILDREN);
+    public void setActionString(String action) {
+        this.action.setAction(action);
+        firePropertyChange(ActionModel.ACTION);
+    }
+
+    public String getGuardString() {
+        return guard == null ? "" : guard.getGuard();
     }
 
     public GuardModel getGuard() {
         return guard;
     }
 
-    public void setGuard(GuardModel guard) {
-        this.guard = guard;
-        firePropertyChange(CHILDREN);
+    public void setGuardString(String guard) {
+        this.guard.setGuard(guard);
+        firePropertyChange(GuardModel.GUARD);
+    }
+
+    public String getPortString() {
+        return port == null ? "" : port.getName();
+    }
+
+    public String getFriendlyString() {
+        return String.format("{%s} %s {%s}", getGuardString(), getPortString(), getActionString());
     }
 
     public PlaceModel attachSource() {
@@ -135,18 +144,15 @@ public class TransitionModel
 
     @Override
     public String exportToBip() {
-        return String.format("on %s from %s to %s provided %s do {%s}",
-                             getPort().getName(),
-                             getSource().getName(),
-                             getTarget().getName(),
-                             getGuard().exportToBip(),
-                             getAction().exportToBip());
+        return String.format("on %s from %s to %s provided %s do {%s}", getPort().getName(),
+                        getSource().getName(), getTarget().getName(), getGuard().exportToBip(),
+                        getAction().exportToBip());
     }
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[]{new TextPropertyDescriptor(ActionModel.ACTION, "action"),
-                                         new TextPropertyDescriptor(GuardModel.GUARD, "guard")};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "action"),
+                        new TextPropertyDescriptor(GuardModel.GUARD, "guard")};
     }
 
     @Override
@@ -165,32 +171,47 @@ public class TransitionModel
 
     @Override
     public boolean isPropertySet(Object id) {
-        return ActionModel.ACTION.equals(id) || GuardModel.GUARD.equals(id) || PortModel.PORT
-            .equals(id);
+        return ActionModel.ACTION.equals(id) || GuardModel.GUARD.equals(id)
+                        || PortModel.PORT.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (ActionModel.ACTION.equals(id)) {
-            action.setAction((String) value);
-            actionLabel.setLabel(action.getAction());
+            setActionString((String) value);
         } else if (GuardModel.GUARD.equals(id)) {
-            guard.setGuard((String) value);
-            guardLabel.setLabel(guard.getGuard());
+            setGuardString((String) value);
         } else if (PortModel.PORT.equals(id)) {
             // TODO set port
         }
     }
 
-    public LabelModel getActionLabel() {
-        return actionLabel;
+    @Override
+    public ArrayList<RelativeBendpointModel> getBendpoints() {
+        return bendpoints;
     }
 
-    public LabelModel getGuardLabel() {
-        return guardLabel;
+    public TransitionModel setBendpoint(int index, RelativeBendpointModel bendpoint) {
+        getBendpoints().set(index, bendpoint);
+        firePropertyChange(BEND_POINTS);
+        return this;
     }
 
-    public LabelModel getPortLabel() {
-        return portLabel;
+    public TransitionModel addBendpoint(int index, RelativeBendpointModel bendpoint) {
+        getBendpoints().add(index, bendpoint);
+        firePropertyChange(BEND_POINTS);
+        return this;
+    }
+
+    @Override
+    public TransitionModel removeBendpoint(int index) {
+        getBendpoints().remove(index);
+        firePropertyChange(BEND_POINTS);
+        return this;
+    }
+
+    @Override
+    public RelativeBendpointModel getBendpoint(int index) {
+        return getBendpoints().get(index);
     }
 }

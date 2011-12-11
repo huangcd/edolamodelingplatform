@@ -155,7 +155,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         if (index < 0) {
             return false;
         }
-        // TODO check whether place contains transitions
         places.remove(index);
         firePropertyChange(CHILDREN);
         return true;
@@ -170,7 +169,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             return false;
         }
         places.remove(index);
-        // TODO remove associated transitions
         firePropertyChange(CHILDREN);
         return true;
     }

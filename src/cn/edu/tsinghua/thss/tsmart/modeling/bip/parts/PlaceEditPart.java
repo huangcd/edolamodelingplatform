@@ -60,12 +60,12 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
         nameLabel = new Label(getModel().getName());
         nameLabel.setFont(properties.getDefaultEditorFont());
-        nameLabel.setForegroundColor(ColorConstants.blue);
+        nameLabel.setForegroundColor(properties.getPlaceLabelColor());
         addFigureMouseEvent(nameLabel);
-        
+
         labelLocator = new FigureLocator(figure, nameLabel, PositionConstants.NORTH);
         labelLocator.relocate(getModel().getPositionConstraint());
-        
+
         getParent().getFigure().add(nameLabel);
         return figure;
     }
@@ -94,7 +94,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             getParent().refresh();
             labelLocator.relocate((Rectangle) evt.getNewValue());
         }
-        // 名字变更，同时修改标签和toolTip的名字
+        // 名字变更，同时修改标签和toolTip的名字,并重定位标签的位置
         else if (IModel.NAME.equals(evt.getPropertyName())) {
             nameLabel.setText(getModel().getName());
             tooltipLabel.setText(getModel().getName());
@@ -112,7 +112,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         } else if (PlaceModel.TARGET.equals(evt.getPropertyName())) {
             refreshTargetConnections();
         } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
-            refreshVisuals();
+            refresh();
         }
         refreshVisuals();
     }
