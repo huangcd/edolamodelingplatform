@@ -3,29 +3,36 @@
  */
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
-import java.beans.PropertyChangeEvent;
-
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.PolygonDecoration;
+import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
+
+import java.beans.PropertyChangeEvent;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ActionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.GuardModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 
-/**
- * @author: huangcd (huangcd.thu@gmail.com)
- * @time: 2011-6-26 ÏÂÎç01:50:09
- * @project: CereusBip
- * @package: cereusbip.parts
- * @class: TransitionEditPart.java
- * 
- */
 public class TransitionEditPart extends BaseConnectionEditPart {
+    private Label toolTipLabel;
+
     protected void createEditPolicies() {
         // super.createEditPolicies();
-        //installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new SelectTransitionEditPolicy());
-        //installEditPolicy(EditPolicy.CONNECTION_ROLE, new DeleteTransitionEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new ConnectionEditPolicy());
+    }
+
+    @Override
+    protected IFigure createFigure() {
+        PolylineConnection connection = new PolylineConnection();
+        connection.setTargetDecoration(new PolygonDecoration());
+        return connection;
     }
 
     /**

@@ -51,6 +51,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         }
         tooltipLabel = new Label(getModel().getName());
         figure.setToolTip(tooltipLabel);
+        
         return figure;
     }
 
@@ -66,7 +67,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected void refreshVisuals() {
-        Rectangle constraint = ((PlaceModel) getModel()).getPositionConstraint();
+        Rectangle constraint = getModel().getPositionConstraint();
         ((AbstractGraphicalEditPart) getParent())
                         .setLayoutConstraint(this, getFigure(), constraint);
     }
@@ -74,7 +75,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
-            ((BaseGraphicalEditPart) getParent()).refresh();
+            getParent().refresh();
             refreshVisuals();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
             tooltipLabel.setText((getModel()).getName());

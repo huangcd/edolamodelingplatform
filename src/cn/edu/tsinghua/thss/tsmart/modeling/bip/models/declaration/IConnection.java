@@ -1,5 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
+import java.util.List;
+
+import org.eclipse.draw2d.geometry.Point;
+
 /**
  * Created by Huangcd<br/>
  * Date: 11-9-25<br/>
@@ -17,4 +21,6 @@ public interface IConnection<M extends IConnection, P extends IContainer, S exte
     S attachSource();
 
     T attachTarget();
+    
+    //List<Point> getBendpoints();
 }

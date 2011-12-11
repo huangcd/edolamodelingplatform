@@ -18,7 +18,7 @@ public class GuardModel extends BaseInstanceModel<GuardModel, GuardTypeModel, IC
 
     public final static String GUARD = "guard";
     @Element
-    private String             guard;
+    private String             guard = "";
 
     public String getGuard() {
         return guard;

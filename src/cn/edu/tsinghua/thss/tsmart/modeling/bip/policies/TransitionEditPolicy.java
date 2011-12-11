@@ -6,19 +6,12 @@ import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateTransitionCommand;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.ReconnectTransitionCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
 
-/**
- * 
- * @author: huangcd (huangcd.thu@gmail.com)
- * @time: 2011-6-27 ÏÂÎç02:59:13
- * @project: CereusBip
- * @package: cereusbip.policies
- * @class: TransitionEditPolicy.java
- * 
- */
 public class TransitionEditPolicy extends GraphicalNodeEditPolicy {
     @Override
     protected Command getConnectionCompleteCommand(CreateConnectionRequest request) {
@@ -27,8 +20,6 @@ public class TransitionEditPolicy extends GraphicalNodeEditPolicy {
         command.setTarget(target);
         return command;
     }
-    
-    
 
     @Override
     protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
@@ -46,20 +37,17 @@ public class TransitionEditPolicy extends GraphicalNodeEditPolicy {
 
     @Override
     protected Command getReconnectTargetCommand(ReconnectRequest request) {
-        // ReconnectTransitionCommand command = new ReconnectTransitionCommand();
-        // command.setConnection((TransitionModel) request.getConnectionEditPart()
-        // .getModel());
-        // command.setNewTarget((PlaceModel) getHost().getModel());
-        // return command;
-        return null;
+        ReconnectTransitionCommand command = new ReconnectTransitionCommand();
+        command.setConnection((TransitionModel) request.getConnectionEditPart().getModel());
+        command.setNewTarget((PlaceModel) getHost().getModel());
+        return command;
     }
 
     @Override
     protected Command getReconnectSourceCommand(ReconnectRequest request) {
-        // ReconnectTransitionCommand command = new ReconnectTransitionCommand();
-        // command.setConnection((TransitionModel) request.getConnectionEditPart().getModel());
-        // command.setNewSource((PlaceModel) getHost().getModel());
-        // return command;
-        return null;
+        ReconnectTransitionCommand command = new ReconnectTransitionCommand();
+        command.setConnection((TransitionModel) request.getConnectionEditPart().getModel());
+        command.setNewSource((PlaceModel) getHost().getModel());
+        return command;
     }
 }

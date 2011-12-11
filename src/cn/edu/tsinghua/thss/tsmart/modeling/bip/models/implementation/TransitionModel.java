@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -15,24 +16,34 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 @SuppressWarnings({"unused", "unchecked"})
 @Root
 public class TransitionModel
-                extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
-                implements
-                    IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
+    extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
+    implements IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
     public static final String BEND_POINTS = "bendPoints";
     @Element
-    private PlaceModel         source;
+    private PlaceModel source;
     @Element
-    private PlaceModel         target;
+    private PlaceModel target;
     @Element
-    private PortModel          port;
+    private PortModel port;
     @Element
-    private ActionModel        action;
+    private ActionModel action;
     @Element
-    private GuardModel         guard;
+    private GuardModel guard;
 
-    public TransitionModel copy(PlaceModel source, PlaceModel target, PortModel port,
-                    ActionModel action, GuardModel guard) {
+    /** action 的标签，用于显示 */
+    private LabelModel actionLabel;
+    /** guard 的标签，用于显示 */
+    private LabelModel guardLabel;
+    /** port 的标签，用于显示 */
+    private LabelModel portLabel;
+
+    public TransitionModel copy(
+        PlaceModel source,
+        PlaceModel target,
+        PortModel port,
+        ActionModel action,
+        GuardModel guard) {
         TransitionModel model = this.copy();
         model.source = source;
         model.target = target;
@@ -45,6 +56,9 @@ public class TransitionModel
     protected TransitionModel() {
         action = new ActionModel();
         guard = new GuardModel();
+        actionLabel = new LabelModel();
+        guardLabel = new LabelModel();
+        portLabel = new LabelModel();
     }
 
     public PlaceModel getSource() {
@@ -91,12 +105,16 @@ public class TransitionModel
     }
 
     public PlaceModel attachSource() {
-        if (!source.getSourceConnections().contains(this)) source.addSourceConnection(this);
+        if (!source.getSourceConnections().contains(this)) {
+            source.addSourceConnection(this);
+        }
         return source;
     }
 
     public PlaceModel attachTarget() {
-        if (!target.getTargetConnections().contains(this)) target.addTargetConnection(this);
+        if (!target.getTargetConnections().contains(this)) {
+            target.addTargetConnection(this);
+        }
         return target;
     }
 
@@ -117,44 +135,62 @@ public class TransitionModel
 
     @Override
     public String exportToBip() {
-        return String.format("on %s from %s to %s provided %s do {%s}", getPort().getName(),
-                        getSource().getName(), getTarget().getName(), getGuard().exportToBip(),
-                        getAction().exportToBip());
-    }
-
-    @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
+        return String.format("on %s from %s to %s provided %s do {%s}",
+                             getPort().getName(),
+                             getSource().getName(),
+                             getTarget().getName(),
+                             getGuard().exportToBip(),
+                             getAction().exportToBip());
     }
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        return new IPropertyDescriptor[]{new TextPropertyDescriptor(ActionModel.ACTION, "action"),
+                                         new TextPropertyDescriptor(GuardModel.GUARD, "guard")};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (ActionModel.ACTION.equals(id)) {
+            return action.getAction();
+        }
+        if (GuardModel.GUARD.equals(id)) {
+            return guard.getGuard();
+        }
+        if (PortModel.PORT.equals(id)) {
+            return port.getName();
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-
+        return ActionModel.ACTION.equals(id) || GuardModel.GUARD.equals(id) || PortModel.PORT
+            .equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
+        if (ActionModel.ACTION.equals(id)) {
+            action.setAction((String) value);
+            actionLabel.setLabel(action.getAction());
+        } else if (GuardModel.GUARD.equals(id)) {
+            guard.setGuard((String) value);
+            guardLabel.setLabel(guard.getGuard());
+        } else if (PortModel.PORT.equals(id)) {
+            // TODO set port
+        }
+    }
 
+    public LabelModel getActionLabel() {
+        return actionLabel;
+    }
+
+    public LabelModel getGuardLabel() {
+        return guardLabel;
+    }
+
+    public LabelModel getPortLabel() {
+        return portLabel;
     }
 }

@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 
@@ -28,6 +29,11 @@ public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
         // new CustomCellEditorLocator(getFigure()));
         // }
         // directManager.show(); // 显示这个 directManager
+    }
+    
+    public GraphicalEditPart getParent()
+    {
+        return (GraphicalEditPart) super.getParent();
     }
 
     // 双击对话框

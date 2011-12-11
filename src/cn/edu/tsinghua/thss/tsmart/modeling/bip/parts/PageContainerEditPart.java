@@ -1,12 +1,18 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
+import java.beans.PropertyChangeEvent;
+
+import org.eclipse.draw2d.BendpointConnectionRouter;
+import org.eclipse.draw2d.ConnectionLayer;
+import org.eclipse.draw2d.FanRouter;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ManhattanConnectionRouter;
+import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
-
-import java.beans.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
@@ -34,11 +40,28 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
 
     @Override
     protected IFigure createFigure() {
-
         FreeformLayer figure = new FreeformLayer();
         figure.setLayoutManager(new FreeformLayout());
         return figure;
         // return new ComponentFigure(this);
+    }
+
+    public IFigure getFigure() {
+        if (figure == null) {
+            setFigure(createFigure());
+            ConnectionLayer cLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
+            // 反锯齿，连线稍微好看一点点
+            if ((getViewer().getControl().getStyle() & SWT.MIRRORED) == 0)
+                cLayer.setAntialias(SWT.ON);
+            BendpointConnectionRouter bendpointConnectionRouter = new BendpointConnectionRouter();
+            FanRouter fanRouter = new FanRouter();
+            fanRouter.setSeparation(20);
+            // ManhattanConnectionRouter manhattanRouter = new ManhattanConnectionRouter();
+            // fanRouter.setNextRouter(new ShortestPathConnectionRouter(getFigure()));
+            fanRouter.setNextRouter(bendpointConnectionRouter);
+            cLayer.setConnectionRouter(fanRouter);
+        }
+        return figure;
     }
 
     // 重载 ，用于处理特殊的request，如直接编辑文本

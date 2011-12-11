@@ -19,7 +19,7 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
 
     public final static String ACTION = "action";
     @Element(required = false)
-    private String             action;
+    private String             action = "";
 
     public String getAction() {
         return action;

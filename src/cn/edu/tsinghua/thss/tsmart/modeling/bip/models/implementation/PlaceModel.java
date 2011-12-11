@@ -44,8 +44,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     }
 
     public boolean isInitialPlace() {
-        if (getParent() == null) return false;
-        return getParent().getInitPlace().equals(this);
+        return getParent() != null && getParent().getInitPlace().equals(this);
     }
 
     @Override
@@ -138,9 +137,5 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     public LabelModel getLabel() {
         return label;
-    }
-
-    public void setLabel(LabelModel label) {
-        this.label = label;
     }
 }
