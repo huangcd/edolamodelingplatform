@@ -28,30 +28,26 @@ import java.util.Stack;
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root(name = "connectorType")
 public class ConnectorTypeModel
-    extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IContainer>
-    implements IDataContainer<ConnectorTypeModel, IContainer, IInstance>,
-               IPortType<ConnectorTypeModel, ConnectorModel, IContainer>,
-               IOrderContainer<IPortType> {
+                extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IContainer>
+                implements
+                    IDataContainer<ConnectorTypeModel, IContainer, IInstance>,
+                    IPortType<ConnectorTypeModel, ConnectorModel, IContainer>,
+                    IOrderContainer<IPortType> {
 
     @ElementList
-    private
-    List<DataModel<ConnectorTypeModel>>
-        datas =
-        new ArrayList<DataModel<ConnectorTypeModel>>();
+    private List<DataModel<ConnectorTypeModel>> datas         =
+                                                                              new ArrayList<DataModel<ConnectorTypeModel>>();
     @ElementList
-    private
-    List<DataModel<ConnectorTypeModel>>
-        exportDatas =
-        new ArrayList<DataModel<ConnectorTypeModel>>();
+    private List<DataModel<ConnectorTypeModel>> exportDatas   =
+                                                                              new ArrayList<DataModel<ConnectorTypeModel>>();
     @ElementList
-    private List<InteractionModel> interactions = new ArrayList<InteractionModel>();
+    private List<InteractionModel>              interactions  = new ArrayList<InteractionModel>();
     @ElementList
-    private List<IPortType> portArguments = new ArrayList<IPortType>();
+    private List<IPortType>                     portArguments = new ArrayList<IPortType>();
     @Element(required = false)
-    private Interactor interactor;
+    private Interactor                          interactor;
 
-    public ConnectorTypeModel() {
-    }
+    public ConnectorTypeModel() {}
 
     protected List<DataModel<ConnectorTypeModel>> getExportDatas() {
         return exportDatas;
@@ -85,7 +81,7 @@ public class ConnectorTypeModel
             for (int i = 1, size = portArguments.size(); i < size; i++) {
                 portType = portArguments.get(0);
                 buffer.append(", ").append(portType.getName()).append(' ')
-                    .append(portType.getInstance().getName());
+                                .append(portType.getInstance().getName());
             }
         }
         buffer.append(")\n");
@@ -102,12 +98,10 @@ public class ConnectorTypeModel
 
     /**
      * 检查connector的端口参数和实例端口的类型是否一致
-     *
-     * @param port
-     *     实例端口
-     * @param index
-     *     实例端口位置
-     *
+     * 
+     * @param port 实例端口
+     * @param index 实例端口位置
+     * 
      * @return 如果一致，返回true；否则返回false
      */
     public boolean validateArguments(IPort port, int index) {
@@ -126,7 +120,7 @@ public class ConnectorTypeModel
         }
         for (int i = 0, max = portTypeArguments.size(); i < max; i++) {
             if (!portTypeArguments.get(i).getTypeName()
-                .equals(portArguments.get(i).getType().getName())) {
+                            .equals(portArguments.get(i).getType().getName())) {
                 return false;
             }
         }
@@ -181,10 +175,9 @@ public class ConnectorTypeModel
 
     /**
      * 解析 define [p1' p2]' p3 样式的语句
-     *
-     * @param string
-     *     [p1' p2]' p3 样式的语句
-     *
+     * 
+     * @param string [p1' p2]' p3 样式的语句
+     * 
      * @return 模型本身，用于串接调用
      */
     public ConnectorTypeModel parseInteractor(String string) {
@@ -358,24 +351,35 @@ public class ConnectorTypeModel
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @Override
+    public boolean isNewNameAlreadyExistsInParent(IInstance child, String newName) {
+        for (IInstance instance : getChildren()) {
+            if (!instance.equals(child) && instance.getName().equals(newName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
+
 
 @SuppressWarnings({"unused", "rawtypes"})
 @Root
 class Interactor {
 
     @Element(required = false, name = "content")
-    private IPortType content;
+    private IPortType    content;
     @Element(required = false, name = "trigger")
-    private Interactor completePort;
+    private Interactor   completePort;
     @ElementArray(required = false, name = "ports")
     private Interactor[] incompletePorts;
 
@@ -385,9 +389,8 @@ class Interactor {
         this.incompletePorts = null;
     }
 
-    public Interactor(
-        @Element(name = "trigger") Interactor completePort,
-        @ElementArray(name = "ports") Interactor... incompletePorts) {
+    public Interactor(@Element(name = "trigger") Interactor completePort,
+                    @ElementArray(name = "ports") Interactor... incompletePorts) {
         this.completePort = completePort;
         this.incompletePorts = incompletePorts;
     }

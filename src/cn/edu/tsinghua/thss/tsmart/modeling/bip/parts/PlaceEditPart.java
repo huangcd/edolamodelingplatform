@@ -149,6 +149,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected void performDoubleClick() {
-        performDirectEdit();
+        // TODO
     }
 }

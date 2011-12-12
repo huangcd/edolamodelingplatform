@@ -1,9 +1,13 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.DataValueNotMatchException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -14,10 +18,12 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
  */
 @SuppressWarnings("rawtypes")
 public class DataModel<Parent extends IDataContainer>
-    extends BaseInstanceModel<DataModel, DataTypeModel, Parent> {
+                extends BaseInstanceModel<DataModel, DataTypeModel, Parent> {
 
+    public final static String DATA_TYPE  = "dataType";
+    public final static String DATA_VALUE = "dataValue";
     @Element(required = false)
-    private String value;
+    private String             value;
 
     protected DataModel() {
         this.value = "";
@@ -33,16 +39,17 @@ public class DataModel<Parent extends IDataContainer>
             try {
                 Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                return false;
+                throw new DataValueNotMatchException("int", value);
             }
         }
-        if (typeString.equals("boolean")) {
+        if (typeString.equals("bool")) {
             value = value.toLowerCase();
             if (!value.equals("true") && !value.equals("false")) {
-                return false;
+                throw new DataValueNotMatchException("bool", value);
             }
         }
         this.value = value;
+        firePropertyChange(DATA_VALUE);
         return true;
     }
 
@@ -60,39 +67,65 @@ public class DataModel<Parent extends IDataContainer>
         }
     }
 
-    @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getFriendlyString() {
+        if (value == null || value.isEmpty()) {
+            return String.format("%s %s", getType().getTypeName(), getName());
+        } else {
+            return String.format("%s %s = %s", getType().getTypeName(), getName(), getValue());
+        }
     }
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        if (!prorerties.isMultipleDataTypeAvailble()) {
+            // TODO 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
+            return new IPropertyDescriptor[] {
+                            new TextPropertyDescriptor(IModel.NAME, "name"),
+                            new ComboBoxPropertyDescriptor(DATA_VALUE, "value", new String[] {
+                                            "true", "false"})};
+        } else {
+            return new IPropertyDescriptor[] {new TextPropertyDescriptor(DATA_TYPE, "type"),
+                            new TextPropertyDescriptor(IModel.NAME, "name"),
+                            new TextPropertyDescriptor(DATA_VALUE, "value")};
+        }
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (DATA_TYPE.equals(id)) {
+            return getType().getTypeName();
+        }
+        if (DATA_VALUE.equals(id)) {
+            if (!prorerties.isMultipleDataTypeAvailble()) {
+                return getValue().equals("true") ? 0 : 1;
+            }
+            return getValue();
+        }
+        if (NAME.equals(id)) {
+            return hasName() ? getName() : "";
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
+        return DATA_TYPE.equals(id) || DATA_VALUE.equals(id) || NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-        
+        if (DATA_TYPE.equals(id)) {
+            getType().setTypeName((String) value);
+        }
+        if (DATA_VALUE.equals(id)) {
+            if (value instanceof Integer) {
+                setValue(0 - (Integer) id == 0 ? "true" : "false");
+            } else {
+                setValue((String) value);
+            }
+        }
+        if (NAME.equals(id)) {
+            setName((String) value);
+        }
     }
 }

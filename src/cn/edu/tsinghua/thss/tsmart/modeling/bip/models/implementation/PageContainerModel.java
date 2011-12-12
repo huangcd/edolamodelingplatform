@@ -96,4 +96,14 @@ public class PageContainerModel extends BaseTypeModel<PageContainerModel, IInsta
     public PageContainerModel copy() {
         return new PageContainerModel();
     }
+
+    @Override
+    public boolean isNewNameAlreadyExistsInParent(IModel child, String newName) {
+        for (IModel instance : getChildren()) {
+            if (!instance.equals(child) && instance.getName().equals(newName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

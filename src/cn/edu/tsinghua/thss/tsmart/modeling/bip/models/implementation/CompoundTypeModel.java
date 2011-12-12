@@ -212,4 +212,14 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
             setName((String) value);
         }
     }
+
+    @Override
+    public boolean isNewNameAlreadyExistsInParent(IInstance child, String newName) {
+        for (IInstance instance : getChildren()) {
+            if (!instance.equals(child) && instance.getName().equals(newName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

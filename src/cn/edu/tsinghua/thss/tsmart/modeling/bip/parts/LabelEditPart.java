@@ -9,7 +9,7 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.LabelModel;
 
 public class LabelEditPart extends BaseGraphicalEditPart {
-    Label label;
+    private Label label;
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

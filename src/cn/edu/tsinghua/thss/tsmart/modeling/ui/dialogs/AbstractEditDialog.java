@@ -32,7 +32,7 @@ public abstract class AbstractEditDialog extends Dialog {
     }
 
     /**
-     * 通过用户输入更新模型
+     * 通过用户输入更新模型，在validateUserInput返回为true之后调用
      */
     protected abstract void updateValues();
 

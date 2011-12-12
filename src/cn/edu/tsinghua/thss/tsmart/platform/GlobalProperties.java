@@ -31,6 +31,7 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public Color                    actionLabelColor        = ColorConstants.cyan;
     public Color                    guardLabelColor         = ColorConstants.green;
     public Color                    portLabelColor          = ColorConstants.gray;
+    public Color                    dataLabelColor          = ColorConstants.darkGray;
     private static GlobalProperties instance;
 
     public final static GlobalProperties getInstance() {
@@ -95,5 +96,9 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     @Override
     public Color getPortLabelColor() {
         return portLabelColor;
+    }
+
+    public Color getDataLabelColor() {
+        return dataLabelColor;
     }
 }

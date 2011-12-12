@@ -371,4 +371,14 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             setInitPlace(places.get(index));
         }
     }
+
+    @Override
+    public boolean isNewNameAlreadyExistsInParent(IInstance child, String newName) {
+        for (IInstance instance : getChildren()) {
+            if (!instance.equals(child) && instance.getName().equals(newName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

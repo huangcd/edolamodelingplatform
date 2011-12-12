@@ -13,4 +13,6 @@ public interface PlatformProperties {
     Color getGuardLabelColor();
 
     Color getPortLabelColor();
+
+    Color getDataLabelColor();
 }

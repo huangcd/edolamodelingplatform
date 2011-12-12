@@ -10,6 +10,7 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
 
@@ -22,9 +23,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
 @SuppressWarnings({"rawtypes"})
 @Root
 public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IContainer>
-    implements IContainer<PortTypeModel, IContainer, DataTypeModel<PortTypeModel>>,
-               IOrderContainer<DataTypeModel<PortTypeModel>>,
-               IPortType<PortTypeModel, PortModel, IContainer> {
+                implements
+                    IDataContainer<PortTypeModel, IContainer, DataTypeModel<PortTypeModel>>,
+                    IOrderContainer<DataTypeModel<PortTypeModel>>,
+                    IPortType<PortTypeModel, PortModel, IContainer> {
 
     @ElementList
     private ArrayList<DataTypeModel<PortTypeModel>> arguments;
@@ -41,10 +43,9 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
 
     /**
      * 深度根据给出的data参数列表复制一个新的PortTypeModel
-     *
-     * @param dataTypes
-     *     data参数，应该是新的data
-     *
+     * 
+     * @param dataTypes data参数，应该是新的data
+     * 
      * @return 新的portTypeModel
      */
     public PortTypeModel copy(List<DataTypeModel<PortTypeModel>> dataTypes) {
@@ -60,7 +61,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             serializer.write(this, out);
             return serializer
-                .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
+                            .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
         } catch (Exception e) {
             e.printStackTrace();
             PortTypeModel copyModel = new PortTypeModel();
@@ -173,12 +174,28 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @Override
+    public List<DataModel<PortTypeModel>> getDatas() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isNewNameAlreadyExistsInParent(DataTypeModel<PortTypeModel> child, String newName) {
+        for (DataTypeModel<PortTypeModel> instance : getChildren()) {
+            if (!instance.equals(child) && instance.getName().equals(newName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

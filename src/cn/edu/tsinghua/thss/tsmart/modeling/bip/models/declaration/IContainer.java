@@ -31,4 +31,13 @@ public interface IContainer<Model extends IContainer, Parent extends IContainer,
      * @return 如果要删除的模型不存在或者不能被删除，返回false；否则返回true。
      */
     boolean removeChild(Child child);
+
+    /**
+     * 在改变组件名字之前，判断新的名字是否在容器中存在
+     * 
+     * @param child 待改名字的组件
+     * @param newName 新的名字
+     * @return 如果名字在组件中已经存在，则返回true（表示修改动作不可进行）
+     */
+    boolean isNewNameAlreadyExistsInParent(Child child, String newName);
 }

@@ -1,13 +1,13 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.HashSet;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
-
-import java.util.HashSet;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 
 
 /**
@@ -17,7 +17,8 @@ import java.util.HashSet;
  */
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
-public class DataTypeModel<P extends IContainer> extends BaseTypeModel<DataTypeModel, DataModel, P> {
+public class DataTypeModel<P extends IDataContainer>
+                extends BaseTypeModel<DataTypeModel, DataModel, P> {
 
     public static HashSet<String> getRegisterTypeNames() {
         return registerTypeNames;
@@ -44,12 +45,13 @@ public class DataTypeModel<P extends IContainer> extends BaseTypeModel<DataTypeM
     public void setTypeName(String typeName) {
         this.typeName = typeName;
         registerTypeNames.add(typeName);
+        getInstance().firePropertyChange(DataModel.DATA_TYPE);
         firePropertyChange(NAME);
     }
 
     @Override
     public DataModel createInstance() {
-        instance = (DataModel) new DataModel().setType(this);
+        instance = (DataModel) new DataModel<P>().setType(this);
         return instance;
     }
 

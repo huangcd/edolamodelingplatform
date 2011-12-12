@@ -8,12 +8,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
@@ -49,7 +47,6 @@ public class DataEditDialog extends AbstractEditDialog {
      * @param parent
      */
     @Override
-    // TODO 在使能modelChecking或者codeCeneration的情况下，comboType应该只能选择bool类型
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
         container.setLayout(new GridLayout(4, false));
@@ -109,6 +106,7 @@ public class DataEditDialog extends AbstractEditDialog {
         if (!properties.isMultipleDataTypeAvailble()) {
             comboType.setItems(new String[] {"bool"});
             comboType.select(0);
+            comboType.setEnabled(true);
         } else {
             comboType.setItems(DataTypeModel.getRegisterTypeNamesAsArray());
             comboType.select(0);
@@ -123,29 +121,39 @@ public class DataEditDialog extends AbstractEditDialog {
 
     @Override
     protected void updateValues() {
-        // TODO Auto-generated method stub
-        
+        String newType = comboType.getText().toLowerCase().trim();
+        String newName = textName.getText().trim();
+        String newValue = textValue.getText().trim();
+        if (!newType.equals(((DataTypeModel) instance.getType()).getTypeName())) {
+            ((DataTypeModel) instance.getType()).setTypeName(newType);
+        }
+        if (!newName.equals(instance.getName())) {
+            instance.setName(newName);
+        }
+        if (!newValue.equals(instance.getValue())) {
+            instance.setValue(newValue);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected boolean validateUserInput() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public static void main(String[] args) {
-        Display display = new Display();
-        Shell shell = new Shell(display);
-        DataModel data = new DataTypeModel<IContainer>("int").createInstance();
-        DataEditDialog dialog = new DataEditDialog(shell, data);
-
-        shell.open();
-        dialog.open();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
+        if (container.isNewNameAlreadyExistsInParent(instance, textName.getText().trim())) {
+            // TODO 弹出错误提示
+            return false;
+        } else if (comboType.getText().toLowerCase().trim().equals("bool")
+                        && !textValue.getText().toLowerCase().trim().equals("true")
+                        && !textValue.getText().toLowerCase().trim().equals("false")) {
+            // TODO 弹出错误提示
+            return false;
+        } else if (comboType.getText().toLowerCase().trim().equals("int")) {
+            try {
+                Integer.parseInt(textValue.getText().toLowerCase().trim());
+            } catch (NumberFormatException e) {
+                // TODO 弹出错误提示
+                return false;
             }
         }
-        display.dispose();
+        return true;
     }
 }

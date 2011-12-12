@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ValidationError;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.ValidationError;
 
 /**
  * Created by Huangcd<br/>
