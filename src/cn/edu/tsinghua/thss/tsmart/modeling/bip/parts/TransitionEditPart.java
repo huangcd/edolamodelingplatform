@@ -47,10 +47,18 @@ public class TransitionEditPart extends BaseConnectionEditPart {
                         new ConnectionBendpointEditPolicy());
     }
 
+    private void handleLoop() {}
+
     @Override
     protected IFigure createFigure() {
         connection = new PolylineConnection();
-        connection.setTargetDecoration(new PolygonDecoration());
+        PolygonDecoration decoration = new PolygonDecoration();
+        decoration.setSize(100, 100);
+        connection.setTargetDecoration(decoration);
+
+        if (getModel().getSource().equals(getModel().getTarget())) {
+            handleLoop();
+        }
 
         tooltipLabel = new Label(getModel().getFriendlyString());
         connection.setToolTip(tooltipLabel);
@@ -75,12 +83,12 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         guardLocator = new FigureLocator(portLabel, guardLabel, PositionConstants.WEST, 5);
         addFigureMouseEvent(guardLabel);
 
-        relocatePortLabel(getBendpoints());
+        relocateLabels(getBendpoints());
 
         return connection;
     }
 
-    private void relocatePortLabel(ArrayList<RelativeBendpoint> bendpoints) {
+    private void relocateLabels(ArrayList<RelativeBendpoint> bendpoints) {
         if (bendpoints.isEmpty()) {
             Point ref1 = getModel().getSource().getPositionConstraint().getLocation();
             Point ref2 = getModel().getTarget().getPositionConstraint().getLocation();
@@ -117,8 +125,28 @@ public class TransitionEditPart extends BaseConnectionEditPart {
 
     protected void refreshBendpoints() {
         ArrayList<RelativeBendpoint> bendpoints = getBendpoints();
-        getConnectionFigure().setRoutingConstraint(bendpoints);
-        relocatePortLabel(bendpoints);
+        if (bendpoints.isEmpty() && getModel().isLoop()) {
+            System.out.println(connection.getPoints().size());
+            Point center = getModel().getSource().getPositionConstraint().getCenter();
+            RelativeBendpointModel bendpoint = new RelativeBendpointModel();
+            Point point = new Point(center.x - 30, center.y + 30);
+            connection.insertPoint(point, 1);
+            // bendpoint.setRelativeDimensions(point.getDifference(center),
+            // point.getDifference(center));
+            // getModel().getBendpoints().add(bendpoint);
+
+            center = getModel().getTarget().getPositionConstraint().getCenter();
+            bendpoint = new RelativeBendpointModel();
+            point = new Point(center.x + 30, center.y + 30);
+            connection.insertPoint(point, 2);
+            connection.repaint();
+            // bendpoint.setRelativeDimensions(point.getDifference(center),
+            // point.getDifference(center));
+            // getModel().getBendpoints().add(bendpoint);
+        } else {
+            getConnectionFigure().setRoutingConstraint(bendpoints);
+        }
+        relocateLabels(bendpoints);
     }
 
     public TransitionModel getModel() {

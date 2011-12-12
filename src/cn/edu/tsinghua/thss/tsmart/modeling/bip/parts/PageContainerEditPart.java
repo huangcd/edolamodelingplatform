@@ -2,7 +2,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
 
-import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FanRouter;
 import org.eclipse.draw2d.FreeformLayer;
@@ -15,6 +14,7 @@ import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.BetterBendpointConnectionRouter;
 
 /**
  * 页面容器类
@@ -40,6 +40,7 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
     @Override
     protected IFigure createFigure() {
         FreeformLayer figure = new FreeformLayer();
+        figure.setFont(properties.getDefaultEditorFont());
         figure.setLayoutManager(new FreeformLayout());
         return figure;
         // return new ComponentFigure(this);
@@ -49,17 +50,17 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
         if (figure == null) {
             setFigure(createFigure());
             ConnectionLayer cLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
-            // 反锯齿，连线稍微好看一点点
+            // 反锯齿，连线稍微好看一点
             if ((getViewer().getControl().getStyle() & SWT.MIRRORED) == 0)
                 cLayer.setAntialias(SWT.ON);
 
             // 设置Router样式
-            BendpointConnectionRouter bendpointConnectionRouter = new BendpointConnectionRouter();
+            BetterBendpointConnectionRouter bendpointRouter = new BetterBendpointConnectionRouter();
             FanRouter fanRouter = new FanRouter();
             fanRouter.setSeparation(20);
             // ManhattanConnectionRouter manhattanRouter = new ManhattanConnectionRouter();
             // fanRouter.setNextRouter(new ShortestPathConnectionRouter(getFigure()));
-            fanRouter.setNextRouter(bendpointConnectionRouter);
+            fanRouter.setNextRouter(bendpointRouter);
             cLayer.setConnectionRouter(fanRouter);
         }
         return figure;

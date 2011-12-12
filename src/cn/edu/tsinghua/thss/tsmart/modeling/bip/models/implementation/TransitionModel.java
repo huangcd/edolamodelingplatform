@@ -109,6 +109,11 @@ public class TransitionModel
         return port == null ? "" : port.getName();
     }
 
+    /**
+     * 友好的信息显示方式
+     * 
+     * @return
+     */
     public String getFriendlyString() {
         return String.format("{%s} %s {%s}", getGuardString(), getPortString(), getActionString());
     }
@@ -135,6 +140,10 @@ public class TransitionModel
     public PlaceModel detachTarget() {
         target.removeTargetConnection(this);
         return target;
+    }
+
+    public boolean isLoop() {
+        return source != null && source.equals(target);
     }
 
     @Override
