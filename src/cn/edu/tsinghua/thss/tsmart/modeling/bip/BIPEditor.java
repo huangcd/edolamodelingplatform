@@ -167,13 +167,12 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         CreationToolEntry creationConnectorEntry =
                         new CreationToolEntry("连接子", "新建一个连接子", new SimpleFactory(
                                         ConnectorTypeModel.class), descriptor, descriptor);
-        descriptor = Activator.getImageDescriptor("icons/connectorline_16.png");
 
         // ConnectionCreationToolEntry creationConnectorLineEntry =
         // new ConnectionCreationToolEntry("Connector line",
         // "create a new connector line", new SimpleFactory(
-        // ConnectorPortModel.class), descriptor,
-        // descriptor);
+        // ConnectorPortModel.class), Activator.getImageDescriptor("icons/connectorline_16.png"),
+        // Activator.getImageDescriptor("icons/connectorline_32.png"));
         compoundPalette.add(creationAtomicEntry);
         compoundPalette.add(creationCompoundEntry);
         compoundPalette.add(creationConnectorEntry);
@@ -183,17 +182,16 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
     private void createAtomicPaletteDrawer() {
         PaletteDrawer atomicPalette = new PaletteDrawer("原子组件");
-        ImageDescriptor descriptor = Activator.getImageDescriptor("icons/place_16.png");
         CreationToolEntry placeCreationEntry =
                         new CreationToolEntry("状态", "新建一个状态", new SimpleFactory(
-                                        PlaceTypeModel.class), descriptor, descriptor);
-        descriptor = Activator.getImageDescriptor("icons/transition_16.png");
+                                        PlaceTypeModel.class),
+                                        Activator.getImageDescriptor("icons/place_16.png"),
+                                        Activator.getImageDescriptor("icons/place_32.png"));
         ConnectionCreationToolEntry connectionCreationEntry =
                         new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
                                         TransitionTypeModel.class),
                                         Activator.getImageDescriptor("icons/transition_16.png"),
                                         Activator.getImageDescriptor("icons/transition_32.png"));
-
         CreationToolEntry dataCreationEntry =
                         new CreationToolEntry("变量", "增加一个变量",
                                         new SimpleFactory(DataTypeModel.class),
@@ -202,6 +200,26 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         atomicPalette.add(placeCreationEntry);
         atomicPalette.add(connectionCreationEntry);
         atomicPalette.add(dataCreationEntry);
+        // PaletteStack portStack =
+        // new PaletteStack("端口", "端口",
+        // Activator.getImageDescriptor("icons/new_data_16.png"));
+        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
+        // SimpleFactory(DataTypeModel.class),
+        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
+        // .getImageDescriptor("icons/new_data_32.png")));
+        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
+        // SimpleFactory(DataTypeModel.class),
+        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
+        // .getImageDescriptor("icons/new_data_32.png")));
+        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
+        // SimpleFactory(DataTypeModel.class),
+        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
+        // .getImageDescriptor("icons/new_data_32.png")));
+        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
+        // SimpleFactory(DataTypeModel.class),
+        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
+        // .getImageDescriptor("icons/new_data_32.png")));
+        // atomicPalette.add(portStack);
         paletteRoot.add(atomicPalette);
     }
 

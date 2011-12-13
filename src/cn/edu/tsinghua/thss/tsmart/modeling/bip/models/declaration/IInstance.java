@@ -19,10 +19,4 @@ public interface IInstance<M extends IInstance, T extends IType, P extends ICont
      * @return 返回实例的类型
      */
     T getType();
-
-    /**
-     * 
-     * @return 深度复制一个实例
-     */
-    M copy();
 }

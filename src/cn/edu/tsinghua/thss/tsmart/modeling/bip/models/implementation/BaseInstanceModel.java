@@ -193,7 +193,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     @Override
     public Model copy() {
-        return (Model) getType().copy().getInstance().setName(getName());
+        return (Model) ((IType) getType().copy()).getInstance().setName(getName());
     }
 
     @Override

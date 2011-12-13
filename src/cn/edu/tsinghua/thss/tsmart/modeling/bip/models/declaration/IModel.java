@@ -79,4 +79,11 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
 
     // void validateOnTheFly() throws ValidationError;
     // void validate() throws ValidationError;
+
+    /**
+     * 深度复制模型，包括所有子模型
+     * 
+     * @return 返回模型的深度复制
+     */
+    Model copy();
 }

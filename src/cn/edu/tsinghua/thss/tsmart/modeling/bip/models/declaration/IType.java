@@ -23,11 +23,4 @@ public interface IType<Type extends IType, Instance extends IInstance, Parent ex
 
     /** @return 返回 IType 模型对应的 IInstance 模型 */
     Instance getInstance();
-
-    /**
-     * 深度复制模型，包括所有子模型
-     *
-     * @return 返回模型的深度复制
-     */
-    Type copy();
 }
