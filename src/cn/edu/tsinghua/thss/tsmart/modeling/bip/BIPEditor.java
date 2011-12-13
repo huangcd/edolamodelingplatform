@@ -3,32 +3,21 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPartViewer;
-import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.KeyHandler;
 import org.eclipse.gef.KeyStroke;
 import org.eclipse.gef.MouseWheelHandler;
 import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
-import org.eclipse.gef.palette.ConnectionCreationToolEntry;
-import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.gef.palette.MarqueeToolEntry;
-import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteGroup;
 import org.eclipse.gef.palette.PaletteRoot;
-import org.eclipse.gef.palette.PaletteStack;
 import org.eclipse.gef.palette.SelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
-import org.eclipse.gef.requests.SimpleFactory;
 import org.eclipse.gef.ui.actions.ActionRegistry;
-import org.eclipse.gef.ui.actions.AlignmentAction;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
-import org.eclipse.gef.ui.actions.MatchHeightAction;
-import org.eclipse.gef.ui.actions.MatchWidthAction;
 import org.eclipse.gef.ui.actions.ToggleGridAction;
 import org.eclipse.gef.ui.actions.ZoomInAction;
 import org.eclipse.gef.ui.actions.ZoomOutAction;
@@ -45,38 +34,39 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
-import cn.edu.tsinghua.thss.tsmart.modeling.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 @SuppressWarnings("rawtypes")
-public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
+public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
-    private static HashMap<EditPartViewer, BIPEditor> viewerMap =
-                                                                                new HashMap<EditPartViewer, BIPEditor>();
-    private GraphicalViewer                           viewer;
-    private IModel                                    model;
-    private PaletteRoot                               paletteRoot;
+    protected static HashMap<EditPartViewer, BIPEditor> viewerMap;
+    private IModel                                      model;
+    private PaletteRoot                                 paletteRoot;
 
     public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
+        if (viewerMap == null) {
+            viewerMap = new HashMap<EditPartViewer, BIPEditor>();
+        }
         return viewerMap.get(viewer);
+    }
+
+    public static void putViewerEditorEntry(EditPartViewer viewer, BIPEditor editor) {
+        if (viewerMap == null) {
+            viewerMap = new HashMap<EditPartViewer, BIPEditor>();
+        }
+        viewerMap.put(viewer, editor);
     }
 
     /**
@@ -87,6 +77,12 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     public static void openBIPEditor(IContainer container) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
+        String editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor";
+        if (container instanceof AtomicTypeModel) {
+            editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor";
+        } else if (container instanceof CompoundTypeModel) {
+            editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor";
+        }
         try {
             // 如果页面已经打开，则跳转到指定页面
             for (IEditorReference reference : page.getEditorReferences()) {
@@ -94,14 +90,12 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                     BIPModuleEditorInput editorInput =
                                     (BIPModuleEditorInput) reference.getEditorInput();
                     if (editorInput.getModel().equals(container)) {
-                        page.openEditor(editorInput,
-                                        "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+                        page.openEditor(editorInput, editorID);
                         return;
                     }
                 }
             }
-            page.openEditor(new BIPModuleEditorInput(container),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+            page.openEditor(new BIPModuleEditorInput(container), editorID);
         } catch (PartInitException e) {
             e.printStackTrace();
         }
@@ -126,191 +120,23 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         return model;
     }
 
-    @Override
-    protected void initializeGraphicalViewer() {
-        super.initializeGraphicalViewer();
-        setEditorTitle(getModel().getName());
-        viewer = getGraphicalViewer();
-        viewerMap.put(viewer, this);
-        viewer.setContents(getModel());
-        viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
-        if (getModel() instanceof AtomicTypeModel) {
-            createAtomicPaletteDrawer();
-        }
-        if (getModel() instanceof CompoundTypeModel) {
-            createCompoundPaletteDrawer();
-        }
+    public static ImageDescriptor getImage(String location) {
+        return Activator.getImageDescriptor(location);
     }
 
     @Override
     protected PaletteRoot getPaletteRoot() {
-        paletteRoot = new PaletteRoot();
+        if (paletteRoot == null) {
+            paletteRoot = new PaletteRoot();
 
-        PaletteGroup toolGroup = new PaletteGroup("选择工具");
-        ToolEntry tool = new SelectionToolEntry("选择");
-        toolGroup.add(tool);
-        tool = new MarqueeToolEntry("选择多个");
-        toolGroup.add(tool);
-        paletteRoot.add(toolGroup);
+            PaletteGroup toolGroup = new PaletteGroup("选择工具");
+            ToolEntry tool = new SelectionToolEntry("选择");
+            toolGroup.add(tool);
+            tool = new MarqueeToolEntry("选择多个");
+            toolGroup.add(tool);
+            paletteRoot.add(toolGroup);
+        }
         return paletteRoot;
-    }
-
-    private void createCompoundPaletteDrawer() {
-        PaletteDrawer compoundPalette = new PaletteDrawer("复合组件");
-        ImageDescriptor descriptor = Activator.getImageDescriptor("icons/atomic_16.png");
-        CreationToolEntry creationAtomicEntry =
-                        new CreationToolEntry("原子组件", "新建一个原子组件", new SimpleFactory(
-                                        AtomicTypeModel.class), descriptor, descriptor);
-        descriptor = Activator.getImageDescriptor("icons/compound_16.png");
-        CreationToolEntry creationCompoundEntry =
-                        new CreationToolEntry("复合组件", "新建一个复合组件", new SimpleFactory(
-                                        CompoundTypeModel.class), descriptor, descriptor);
-        descriptor = Activator.getImageDescriptor("icons/connector_16.png");
-        CreationToolEntry creationConnectorEntry =
-                        new CreationToolEntry("连接子", "新建一个连接子", new SimpleFactory(
-                                        ConnectorTypeModel.class), descriptor, descriptor);
-
-        // ConnectionCreationToolEntry creationConnectorLineEntry =
-        // new ConnectionCreationToolEntry("Connector line",
-        // "create a new connector line", new SimpleFactory(
-        // ConnectorPortModel.class), Activator.getImageDescriptor("icons/connectorline_16.png"),
-        // Activator.getImageDescriptor("icons/connectorline_32.png"));
-        compoundPalette.add(creationAtomicEntry);
-        compoundPalette.add(creationCompoundEntry);
-        compoundPalette.add(creationConnectorEntry);
-        // drawer.add(creationConnectorLineEntry);
-        paletteRoot.add(compoundPalette);
-    }
-
-    private void createAtomicPaletteDrawer() {
-        PaletteDrawer atomicPalette = new PaletteDrawer("原子组件");
-        CreationToolEntry placeCreationEntry =
-                        new CreationToolEntry("状态", "新建一个状态", new SimpleFactory(
-                                        PlaceTypeModel.class),
-                                        Activator.getImageDescriptor("icons/place_16.png"),
-                                        Activator.getImageDescriptor("icons/place_32.png"));
-        ConnectionCreationToolEntry connectionCreationEntry =
-                        new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
-                                        TransitionTypeModel.class),
-                                        Activator.getImageDescriptor("icons/transition_16.png"),
-                                        Activator.getImageDescriptor("icons/transition_32.png"));
-
-        PaletteStack dataStack =
-                        new PaletteStack("变量", "增加一个变量",
-                                        Activator.getImageDescriptor("icons/new_data_32.png"));
-        CreationToolEntry boolCreationEntry =
-                        new CreationToolEntry("布尔", "增加一个布尔变量", new CopyFactory(
-                                        new DataTypeModel<AtomicTypeModel>("bool")),
-                                        Activator.getImageDescriptor("icons/bool_16.png"),
-                                        Activator.getImageDescriptor("icons/bool_32.png"));
-        CreationToolEntry intCreationEntry =
-                        new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
-                                        new DataTypeModel<AtomicTypeModel>("int")),
-                                        Activator.getImageDescriptor("icons/int_16.png"),
-                                        Activator.getImageDescriptor("icons/int_32.png"));
-        CreationToolEntry dataCreationEntry =
-                        new CreationToolEntry("其它", "增加一个自定义变量", new CopyFactory(
-                                        new DataTypeModel<AtomicTypeModel>("")),
-                                        Activator.getImageDescriptor("icons/new_data_16.png"),
-                                        Activator.getImageDescriptor("icons/new_data_32.png"));
-
-        dataStack.add(boolCreationEntry);
-        dataStack.add(intCreationEntry);
-        dataStack.add(dataCreationEntry);
-
-        atomicPalette.add(placeCreationEntry);
-        atomicPalette.add(connectionCreationEntry);
-        atomicPalette.add(dataStack);
-        // PaletteStack portStack =
-        // new PaletteStack("端口", "端口",
-        // Activator.getImageDescriptor("icons/new_data_16.png"));
-        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
-        // SimpleFactory(DataTypeModel.class),
-        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
-        // .getImageDescriptor("icons/new_data_32.png")));
-        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
-        // SimpleFactory(DataTypeModel.class),
-        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
-        // .getImageDescriptor("icons/new_data_32.png")));
-        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
-        // SimpleFactory(DataTypeModel.class),
-        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
-        // .getImageDescriptor("icons/new_data_32.png")));
-        // portStack.add(new CreationToolEntry("变量", "增加一个变量", new
-        // SimpleFactory(DataTypeModel.class),
-        // Activator.getImageDescriptor("icons/new_data_16.png"), Activator
-        // .getImageDescriptor("icons/new_data_32.png")));
-        // atomicPalette.add(portStack);
-        paletteRoot.add(atomicPalette);
-    }
-
-    @Override
-    public void doSave(IProgressMonitor monitor) {
-        saveProperties();
-        new ExportAction(this).run();
-    }
-
-    public void doSaveAs() {}
-
-    public boolean isSaveAsAllowed() {
-        return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void createActions() {
-        super.createActions();
-        ActionRegistry registry = getActionRegistry();
-
-        // IAction action = new CreateDataAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
-        //
-        // action = new CreatePriorityAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
-
-        IAction action = new ExportAction(this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        //
-        action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.LEFT);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.CENTER);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.RIGHT);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.TOP);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.MIDDLE);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.BOTTOM);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new MatchWidthAction((IWorkbenchPart) this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        action = new MatchHeightAction((IWorkbenchPart) this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
-
-        // action = new CreatePortAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
-
     }
 
     // 缩放
@@ -328,36 +154,19 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     }
 
     /** Save properties to model */
-    protected void saveProperties() {
-
-    }
+    protected abstract void saveProperties();
 
     /** Load properties */
-    protected void loadProperties() {
-
-    }
+    protected abstract void loadProperties();
 
     // 公共的快捷键
     protected KeyHandler getCommonKeyHandler() {
-
         KeyHandler sharedKeyHandler = null;
         if (sharedKeyHandler == null) {
-
             sharedKeyHandler = new KeyHandler();
-
-            sharedKeyHandler.put(
-
-            KeyStroke.getPressed(SWT.F2, 0),
-
-            getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
-
-            /*
-             * sharedKeyHandler.put(KeyStroke.getReleased(SWT.CTRL, SWT.ARROW_LEFT
-             * ),getActionRegistry().getAction(GEFActionConstants.ALIGN_LEFT));
-             */
-
+            sharedKeyHandler.put(KeyStroke.getPressed(SWT.F2, 0),
+                            getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
         }
-
         return sharedKeyHandler;
 
     }

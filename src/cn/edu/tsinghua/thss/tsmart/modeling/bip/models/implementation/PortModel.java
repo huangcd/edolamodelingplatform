@@ -19,7 +19,8 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
                 implements
                     IPort<PortModel, PortTypeModel, AtomicTypeModel, AtomicTypeModel> {
 
-    public final static String PORT = "port";
+    public final static String PORT   = "port";
+    public final static String EXPORT = "export";
     @Element
     private boolean            export;
 
@@ -38,6 +39,7 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
 
     public PortModel setExport(boolean export) {
         this.export = export;
+        firePropertyChange(EXPORT);
         return this;
     }
 
@@ -102,12 +104,18 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
     @Override
     public void resetPropertyValue(Object id) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
 
+    }
+
+    public String getFriendlyString() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("port type ").append(getType().getName()).append(" ").append(getName());
+        // TODO
+        return buffer.toString();
     }
 }

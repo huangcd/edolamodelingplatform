@@ -268,8 +268,8 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
         // atomic transition
         TransitionModel run = new TransitionTypeModel().getInstance();
-        //run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
-        //run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
+        // run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
+        // run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
         run.setPort(runPort);
         run.setSource(idle);
         run.setTarget(busy);
@@ -279,7 +279,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
         // atomic priority
 
-        CompoundTypeModel all = new CompoundTypeModel().setName("all");
+        // CompoundTypeModel all = new CompoundTypeModel().setName("all");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         serializer.write(machineType.getInstance(), out);

@@ -20,6 +20,11 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
 
+    @ElementList
+    private final static HashSet<String> registerTypeNames = new HashSet<String>();
+    public final static DataTypeModel    boolData          = new DataTypeModel("bool");
+    public final static DataTypeModel    intData           = new DataTypeModel("int");
+
     public static HashSet<String> getRegisterTypeNames() {
         return registerTypeNames;
     }
@@ -28,11 +33,8 @@ public class DataTypeModel<P extends IDataContainer>
         return registerTypeNames.toArray(new String[registerTypeNames.size()]);
     }
 
-    @ElementList
-    private final static HashSet<String> registerTypeNames = new HashSet<String>();
-
     @Attribute(name = "typeName")
-    private String                       typeName;
+    private String typeName;
 
     public DataTypeModel(@Attribute(name = "typeName") String typeName) {
         this.setTypeName(typeName);
@@ -121,6 +123,5 @@ public class DataTypeModel<P extends IDataContainer>
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-
     }
 }

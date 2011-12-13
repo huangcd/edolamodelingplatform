@@ -44,7 +44,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchPage page = window.getActivePage();
         try {
             page.openEditor(new BIPModuleEditorInput(new CompoundTypeModel().setName("compound")),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor");
         } catch (PartInitException e) {
             MessageBox errorBox = new MessageBox(window.getShell());
             errorBox.setMessage(e.getMessage());

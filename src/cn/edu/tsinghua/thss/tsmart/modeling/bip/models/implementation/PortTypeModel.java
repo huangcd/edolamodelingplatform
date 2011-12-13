@@ -20,13 +20,22 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
  * Date: 11-9-26<br/>
  * Time: ÏÂÎç3:26<br/>
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Root
 public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IContainer>
                 implements
                     IDataContainer<PortTypeModel, IContainer, DataTypeModel<PortTypeModel>>,
                     IOrderContainer<DataTypeModel<PortTypeModel>>,
                     IPortType<PortTypeModel, PortModel, IContainer> {
+
+    public final static PortTypeModel               ePort = new PortTypeModel().setName("ePort");
+    public final static PortTypeModel               bPort = new PortTypeModel().setName("boolPort");
+    public final static PortTypeModel               iPort = new PortTypeModel().setName("intPort");
+
+    static {
+        bPort.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData);
+        iPort.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData);
+    }
 
     @ElementList
     private ArrayList<DataTypeModel<PortTypeModel>> arguments;
@@ -50,7 +59,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
      */
     public PortTypeModel copy(List<DataTypeModel<PortTypeModel>> dataTypes) {
         PortTypeModel copyModel = new PortTypeModel();
-        copyModel.setName(getName());
+        copyModel.setName("copyOf" + getName());
         copyModel.arguments.addAll(dataTypes);
         return copyModel;
     }
