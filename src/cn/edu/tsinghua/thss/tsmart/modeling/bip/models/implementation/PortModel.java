@@ -9,10 +9,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * Created by Huangcd Date: 11-9-25 Time: обнГ6:49
- */
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
 public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, AtomicTypeModel>
