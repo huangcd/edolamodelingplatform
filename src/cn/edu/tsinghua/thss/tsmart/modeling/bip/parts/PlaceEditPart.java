@@ -97,6 +97,12 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
             labelLocator.relocate((Rectangle) evt.getNewValue());
+            for (TransitionModel transition : getModel().getSourceConnections()) {
+                transition.firePropertyChange(PlaceModel.SOURCE);
+            }
+            for (TransitionModel transition : getModel().getTargetConnections()) {
+                transition.firePropertyChange(PlaceModel.TARGET);
+            }
         }
         // 名字变更，同时修改标签和toolTip的名字,并重定位标签的位置
         else if (IModel.NAME.equals(evt.getPropertyName())) {
