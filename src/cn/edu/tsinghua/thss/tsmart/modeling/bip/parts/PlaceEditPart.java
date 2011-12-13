@@ -7,6 +7,7 @@ import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Ellipse;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
@@ -16,6 +17,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
@@ -33,26 +35,28 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     private Label         tooltipLabel;
 
     protected void setAsInitialPlace() {
-        figure.setForegroundColor(ColorConstants.green);
+        // figure.setForegroundColor(ColorConstants.green);
     }
 
     protected void setAsNormalPlace() {
-        figure.setForegroundColor(ColorConstants.gray);
+        // figure.setForegroundColor(ColorConstants.gray);
     }
 
     @Override
     protected IFigure createFigure() {
         PlaceModel model = getModel();
 
-        figure = new Ellipse();
-        figure.setOpaque(true);
-        figure.setLineWidth(2);
-
+        // figure = new INITFigure();
+        figure = new PlaceFigure();
+        figure.setForegroundColor(ColorConstants.gray);
         if (model.isInitialPlace()) {
             setAsInitialPlace();
         } else {
             setAsNormalPlace();
         }
+
+        figure.setOpaque(true);
+        figure.setLineWidth(2);
 
         tooltipLabel = new Label(getModel().getName());
         tooltipLabel.setFont(properties.getDefaultEditorFont());
@@ -106,6 +110,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             } else {
                 setAsNormalPlace();
             }
+            figure.repaint();
             refresh();
         } else if (PlaceModel.SOURCE.equals(evt.getPropertyName())) {
             refreshSourceConnections();
@@ -150,5 +155,36 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     @Override
     protected void performDoubleClick() {
         // TODO
+    }
+
+    // 定义INIT的图形，两个叠加的椭圆
+    class PlaceFigure extends Ellipse {
+        public PlaceFigure() {
+            super();
+        }
+
+        private Rectangle getInnerBounds() {
+            float lineInset = Math.max(1.0f, getLineWidthFloat()) / 2.0f;
+            int inset1 = (int) Math.floor(lineInset);
+            int inset2 = (int) Math.ceil(lineInset);
+
+            Rectangle r = Rectangle.SINGLETON.setBounds(getBounds());
+            r.x += 2 * (inset1 + inset2);
+            r.y += 2 * (inset1 + inset2);
+            r.width -= 4 * (inset1 + inset2);
+            r.height -= 4 * (inset1 + inset2);
+            return r;
+        }
+
+        /**
+         * Outlines the ellipse.
+         */
+        protected void outlineShape(Graphics graphics) {
+            graphics.setAntialias(SWT.ON);
+            super.outlineShape(graphics);
+            if (getModel().isInitialPlace()) {
+                graphics.drawOval(getInnerBounds());
+            }
+        }
     }
 }

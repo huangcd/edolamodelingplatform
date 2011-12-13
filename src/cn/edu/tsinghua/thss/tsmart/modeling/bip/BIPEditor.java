@@ -168,7 +168,7 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                         new CreationToolEntry("连接子", "新建一个连接子", new SimpleFactory(
                                         ConnectorTypeModel.class), descriptor, descriptor);
         descriptor = Activator.getImageDescriptor("icons/connectorline_16.png");
-     
+
         // ConnectionCreationToolEntry creationConnectorLineEntry =
         // new ConnectionCreationToolEntry("Connector line",
         // "create a new connector line", new SimpleFactory(
@@ -190,9 +190,10 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         descriptor = Activator.getImageDescriptor("icons/transition_16.png");
         ConnectionCreationToolEntry connectionCreationEntry =
                         new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
-                                        TransitionTypeModel.class), descriptor, descriptor);
+                                        TransitionTypeModel.class),
+                                        Activator.getImageDescriptor("icons/transition_16.png"),
+                                        Activator.getImageDescriptor("icons/transition_32.png"));
 
-        // TODO 换一个Data的图标
         CreationToolEntry dataCreationEntry =
                         new CreationToolEntry("变量", "增加一个变量",
                                         new SimpleFactory(DataTypeModel.class),
