@@ -54,6 +54,7 @@ public class DataTypeModel<P extends IDataContainer>
     @Override
     public DataModel createInstance() {
         instance = (DataModel) new DataModel<P>().setType(this);
+        // 给常用类型赋初值
         if (typeName.equals("bool")) {
             instance.setValue("false");
         } else if (typeName.equals("int")) {

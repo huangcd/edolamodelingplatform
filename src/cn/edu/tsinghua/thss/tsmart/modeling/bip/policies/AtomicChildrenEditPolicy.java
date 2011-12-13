@@ -47,6 +47,7 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
             command.setChild(child);
             return command;
         } else if (request.getNewObjectType().equals(DataTypeModel.class)) {
+            // TODO 判断getNewObject().getTypeName()是否为空，如果是空的话，弹出对话框提示用户设置
             DataModel<AtomicTypeModel> child =
                             ((DataTypeModel<AtomicTypeModel>) request.getNewObject()).getInstance();
             child.setName(getAppropriateDataName(parent));
