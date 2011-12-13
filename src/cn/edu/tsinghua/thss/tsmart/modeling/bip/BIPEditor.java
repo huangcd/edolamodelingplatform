@@ -20,6 +20,7 @@ import org.eclipse.gef.palette.MarqueeToolEntry;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteGroup;
 import org.eclipse.gef.palette.PaletteRoot;
+import org.eclipse.gef.palette.PaletteStack;
 import org.eclipse.gef.palette.SelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.SimpleFactory;
@@ -62,6 +63,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeM
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 @SuppressWarnings("rawtypes")
@@ -192,14 +194,33 @@ public class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                                         TransitionTypeModel.class),
                                         Activator.getImageDescriptor("icons/transition_16.png"),
                                         Activator.getImageDescriptor("icons/transition_32.png"));
+
+        PaletteStack dataStack =
+                        new PaletteStack("变量", "增加一个变量",
+                                        Activator.getImageDescriptor("icons/new_data_32.png"));
+        CreationToolEntry boolCreationEntry =
+                        new CreationToolEntry("布尔", "增加一个布尔变量", new CopyFactory(
+                                        new DataTypeModel<AtomicTypeModel>("bool")),
+                                        Activator.getImageDescriptor("icons/bool_16.png"),
+                                        Activator.getImageDescriptor("icons/bool_32.png"));
+        CreationToolEntry intCreationEntry =
+                        new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
+                                        new DataTypeModel<AtomicTypeModel>("int")),
+                                        Activator.getImageDescriptor("icons/int_16.png"),
+                                        Activator.getImageDescriptor("icons/int_32.png"));
         CreationToolEntry dataCreationEntry =
-                        new CreationToolEntry("变量", "增加一个变量",
-                                        new SimpleFactory(DataTypeModel.class),
+                        new CreationToolEntry("其它", "增加一个自定义变量", new CopyFactory(
+                                        new DataTypeModel<AtomicTypeModel>("")),
                                         Activator.getImageDescriptor("icons/new_data_16.png"),
                                         Activator.getImageDescriptor("icons/new_data_32.png"));
+
+        dataStack.add(boolCreationEntry);
+        dataStack.add(intCreationEntry);
+        dataStack.add(dataCreationEntry);
+
         atomicPalette.add(placeCreationEntry);
         atomicPalette.add(connectionCreationEntry);
-        atomicPalette.add(dataCreationEntry);
+        atomicPalette.add(dataStack);
         // PaletteStack portStack =
         // new PaletteStack("端口", "端口",
         // Activator.getImageDescriptor("icons/new_data_16.png"));

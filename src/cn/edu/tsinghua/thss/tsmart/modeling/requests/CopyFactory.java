@@ -21,5 +21,4 @@ public class CopyFactory implements CreationFactory {
     public Object getObjectType() {
         return model.getClass();
     }
-
 }

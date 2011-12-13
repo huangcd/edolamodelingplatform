@@ -48,7 +48,7 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
             return command;
         } else if (request.getNewObjectType().equals(DataTypeModel.class)) {
             DataModel<AtomicTypeModel> child =
-                            new DataTypeModel<AtomicTypeModel>("bool").getInstance();
+                            ((DataTypeModel<AtomicTypeModel>) request.getNewObject()).getInstance();
             child.setName(getAppropriateDataName(parent));
             Point location = request.getLocation().getCopy();
             // œ‡∂‘Œª÷√

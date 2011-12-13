@@ -159,11 +159,11 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     }
 
     @Override
-    protected void performDoubleClick() {
-        // TODO
-    }
+    protected void performDoubleClick() {}
 
-    // 定义INIT的图形，两个叠加的椭圆
+    /**
+     * place的形状，根据place的状态不同而不一样。
+     */
     class PlaceFigure extends Ellipse {
         public PlaceFigure() {
             super();
@@ -182,9 +182,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             return r;
         }
 
-        /**
-         * Outlines the ellipse.
-         */
         protected void outlineShape(Graphics graphics) {
             graphics.setAntialias(SWT.ON);
             super.outlineShape(graphics);

@@ -44,7 +44,9 @@ public class DataTypeModel<P extends IDataContainer>
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
-        registerTypeNames.add(typeName);
+        if (!typeName.isEmpty()) {
+            registerTypeNames.add(typeName);
+        }
         getInstance().firePropertyChange(DataModel.DATA_TYPE);
         firePropertyChange(NAME);
     }
@@ -52,6 +54,11 @@ public class DataTypeModel<P extends IDataContainer>
     @Override
     public DataModel createInstance() {
         instance = (DataModel) new DataModel<P>().setType(this);
+        if (typeName.equals("bool")) {
+            instance.setValue("false");
+        } else if (typeName.equals("int")) {
+            instance.setValue("0");
+        }
         return instance;
     }
 
