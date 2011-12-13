@@ -2,6 +2,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
 
+import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
@@ -35,12 +36,12 @@ public class TransitionModel
     @Element
     private GuardModel                        guard;
     @ElementList
-    private ArrayList<RelativeBendpointModel> bendpoints;
+    private ArrayList<Bendpoint> bendpoints;
 
     protected TransitionModel() {
         action = new ActionModel();
         guard = new GuardModel();
-        bendpoints = new ArrayList<RelativeBendpointModel>();
+        bendpoints = new ArrayList<Bendpoint>();
     }
 
     public TransitionModel copy(PlaceModel source, PlaceModel target, PortModel port,
@@ -196,17 +197,17 @@ public class TransitionModel
     }
 
     @Override
-    public ArrayList<RelativeBendpointModel> getBendpoints() {
+    public ArrayList<Bendpoint> getBendpoints() {
         return bendpoints;
     }
 
-    public TransitionModel setBendpoint(int index, RelativeBendpointModel bendpoint) {
+    public TransitionModel setBendpoint(int index, Bendpoint bendpoint) {
         getBendpoints().set(index, bendpoint);
         firePropertyChange(BEND_POINTS);
         return this;
     }
 
-    public TransitionModel addBendpoint(int index, RelativeBendpointModel bendpoint) {
+    public TransitionModel addBendpoint(int index, Bendpoint bendpoint) {
         getBendpoints().add(index, bendpoint);
         firePropertyChange(BEND_POINTS);
         return this;
@@ -220,7 +221,7 @@ public class TransitionModel
     }
 
     @Override
-    public RelativeBendpointModel getBendpoint(int index) {
+    public Bendpoint getBendpoint(int index) {
         return getBendpoints().get(index);
     }
 }

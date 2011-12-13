@@ -1,9 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.RelativeBendpointModel;
+import org.eclipse.draw2d.Bendpoint;
 
 public class DeleteBendpointCommand extends BendpointCommand {
-    RelativeBendpointModel oldBendpoint;
+    Bendpoint oldBendpoint;
     @Override
     public void execute() {
         oldBendpoint = connection.getBendpoint(index);

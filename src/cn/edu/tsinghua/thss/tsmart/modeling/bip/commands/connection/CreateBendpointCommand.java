@@ -1,13 +1,14 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.RelativeBendpointModel;
+import org.eclipse.draw2d.AbsoluteBendpoint;
 
 @SuppressWarnings("rawtypes")
 public class CreateBendpointCommand extends BendpointCommand {
     @Override
     public void execute() {
-        connection.addBendpoint(index,
-                        new RelativeBendpointModel().setRelativeDimensions(dimension1, dimension2));
+        AbsoluteBendpoint bendpoint = new AbsoluteBendpoint(point);
+        //bendpoint.setRelativeDimensions(dimension1, dimension2);
+        connection.addBendpoint(index, bendpoint);
     }
 
     @Override
