@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Display;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs.DataEditDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.DataEditDialog;
 
 @SuppressWarnings("rawtypes")
 public class DataEditPart extends BaseEditableEditPart {

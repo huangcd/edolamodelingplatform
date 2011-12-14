@@ -10,10 +10,10 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Display;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.requests.CopyFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 
 @SuppressWarnings("rawtypes")
 public class CreateDataTypeCommand extends Command {

@@ -12,9 +12,9 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.swt.SWT;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.BetterBendpointConnectionRouter;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.BetterBendpointConnectionRouter;
 
 /**
  * Ò³ÃæÈÝÆ÷Àà

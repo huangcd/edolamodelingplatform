@@ -28,7 +28,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.FigureLocator;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class TransitionEditPart extends BaseConnectionEditPart {

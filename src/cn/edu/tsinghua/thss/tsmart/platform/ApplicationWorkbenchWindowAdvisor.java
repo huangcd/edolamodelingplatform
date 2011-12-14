@@ -11,7 +11,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPModuleEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 /**

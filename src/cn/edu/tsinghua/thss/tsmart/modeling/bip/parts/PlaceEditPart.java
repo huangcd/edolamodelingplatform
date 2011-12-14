@@ -25,7 +25,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.TransitionEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.FigureLocator;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 
 public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart {

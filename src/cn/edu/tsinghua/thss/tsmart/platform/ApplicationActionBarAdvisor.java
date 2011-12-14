@@ -10,8 +10,8 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
 import cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditorAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.NewAtomicEditorAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.NewCompoundEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewAtomicEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewCompoundEditorAction;
 
 /**
  * 主界面的菜单栏

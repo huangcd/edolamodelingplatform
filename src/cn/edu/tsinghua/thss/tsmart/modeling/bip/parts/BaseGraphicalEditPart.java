@@ -7,7 +7,7 @@ import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.FigureMouseListener;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureMouseListener;
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 /**
