@@ -69,13 +69,10 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         viewerMap.put(viewer, editor);
     }
 
-<<<<<<< HEAD
     public static void removeViewerEditEntry(EditPartViewer viewer) {
         viewerMap.remove(viewer);
     }
 
-=======
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     /**
      * 打开一个编辑模型的页面
      * 
@@ -108,6 +105,38 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         }
     }
 
+    /**
+     * 返回当前所有的AtomicEditor
+     */
+    public static ArrayList<AtomicEditor> getAtomicEditors() {
+        ArrayList<AtomicEditor> list = new ArrayList<AtomicEditor>();
+        for (BIPEditor part : viewerMap.values()) {
+            if (part instanceof AtomicEditor) {
+                AtomicEditor editor = (AtomicEditor) part;
+                list.add(editor);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 返回当前所有的CompoundEditor
+     */
+    public static ArrayList<CompoundEditor> getCompoundEditors() {
+        ArrayList<CompoundEditor> list = new ArrayList<CompoundEditor>();
+        for (BIPEditor part : viewerMap.values()) {
+            if (part instanceof CompoundEditor) {
+                CompoundEditor editor = (CompoundEditor) part;
+                list.add(editor);
+            }
+        }
+        return list;
+    }
+
+    public static ImageDescriptor getImage(String location) {
+        return Activator.getImageDescriptor(location);
+    }
+
     public BIPEditor() {
         setEditDomain(new DefaultEditDomain(this));
     }
@@ -125,10 +154,6 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             }
         }
         return model;
-    }
-
-    public static ImageDescriptor getImage(String location) {
-        return Activator.getImageDescriptor(location);
     }
 
     @Override

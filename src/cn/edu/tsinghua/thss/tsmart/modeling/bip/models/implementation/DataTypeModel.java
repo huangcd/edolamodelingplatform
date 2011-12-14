@@ -1,8 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -18,19 +21,38 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
 @Root
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
-
     @ElementList
-    private final static HashSet<String> registerTypeNames = new HashSet<String>();
-    public final static String           BOUND             = "bound";
-    public final static DataTypeModel    boolData          = new DataTypeModel("bool");
-    public final static DataTypeModel    intData           = new DataTypeModel("int");
+    private final static HashSet<String>               registerTypeNames = new HashSet<String>();
+    public final static String                         BOUND             = "bound";
+    public final static DataTypeModel                  boolData;
+    public final static DataTypeModel                  intData;
+    public final static HashMap<String, DataTypeModel> typeSources;
 
-    public static HashSet<String> getRegisterTypeNames() {
-        return registerTypeNames;
+    static {
+        boolData = new DataTypeModel("bool");
+        intData = new DataTypeModel("int");
+        typeSources = new HashMap<String, DataTypeModel>();
+        typeSources.put("bool", boolData);
+        typeSources.put("int", intData);
+    }
+
+    public static boolean addTypeSources(String type, DataTypeModel dataType) {
+        if (typeSources.containsKey(type)) return false;
+        typeSources.put(type, dataType);
+        return true;
+    }
+
+    public static boolean removeTypeSources(String type) {
+        if (type.equals("int") || type.equals("bool") || !typeSources.containsKey(type))
+            return false;
+        typeSources.remove(type);
+        return true;
     }
 
     public static String[] getRegisterTypeNamesAsArray() {
-        return registerTypeNames.toArray(new String[registerTypeNames.size()]);
+        ArrayList<String> list = new ArrayList<String>(typeSources.keySet());
+        Collections.sort(list);
+        return list.toArray(new String[list.size()]);
     }
 
     @Attribute(name = "typeName")

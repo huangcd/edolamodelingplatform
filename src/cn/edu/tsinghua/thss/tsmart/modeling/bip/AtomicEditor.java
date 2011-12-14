@@ -1,5 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.EditPartViewer;
@@ -30,12 +32,9 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreateDataTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-<<<<<<< HEAD
-=======
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
@@ -43,10 +42,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.Transition
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.PlaceCreationTool;
-<<<<<<< HEAD
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
-=======
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
 
 @SuppressWarnings("rawtypes")
 public class AtomicEditor extends BIPEditor {
@@ -62,11 +58,7 @@ public class AtomicEditor extends BIPEditor {
         viewer = getGraphicalViewer();
         putViewerEditorEntry(viewer, this);
         viewer.setContents(getModel());
-<<<<<<< HEAD
         viewer.setContextMenu(new AtomicEditorContextMenuProvider(viewer, getActionRegistry()));
-=======
-        viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
         initPaletteRoot();
         initDataCreationEntry();
         initPortCreationEntry();
@@ -81,6 +73,9 @@ public class AtomicEditor extends BIPEditor {
         dataStack.add(entry);
     }
 
+    public void removeDataCreationToolEntry(CreationToolEntry entry) {
+        dataStack.remove(entry);
+    }
 
     /**
      * 动态增加一个port创建按钮
@@ -97,33 +92,26 @@ public class AtomicEditor extends BIPEditor {
                                         DataTypeModel.boolData), getImage("icons/bool_16.png"),
                                         getImage("icons/bool_32.png"));
         addDataCreationToolEntry(boolCreationEntry);
-<<<<<<< HEAD
         if (GlobalProperties.getInstance().isMultipleDataTypeAvailble()) {
             CreationToolEntry intCreationEntry =
                             new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
                                             DataTypeModel.intData), getImage("icons/int_16.png"),
                                             getImage("icons/int_32.png"));
             addDataCreationToolEntry(intCreationEntry);
+            // TODO 有一致性的问题（增加了一个数据类型以后再删除，这里可能还会有）
+            // FIXME 将增加数据类型从右键菜单命令改成全局菜单命令
+            for (Map.Entry<String, DataTypeModel> entry : DataTypeModel.typeSources.entrySet()) {
+                if (entry.getKey().equals("int") || entry.getKey().equals("bool")) {
+                    continue;
+                }
+                CreationToolEntry creationToolEntry =
+                                new CreationToolEntry(entry.getKey(), "新建一个" + entry.getKey()
+                                                + "变量", new CopyFactory(model),
+                                                BIPEditor.getImage("icons/new_data_16.png"),
+                                                BIPEditor.getImage("icons/new_data_32.png"));
+                addDataCreationToolEntry(creationToolEntry);
+            }
         }
-        // CreationToolEntry dataCreationEntry =
-        // new CreationToolEntry("其它", "增加一个自定义变量", new CopyFactory(
-        // new DataTypeModel<AtomicTypeModel>("")),
-        // getImage("icons/new_data_16.png"),
-        // getImage("icons/new_data_32.png"));
-        // addDataCreationToolEntry(dataCreationEntry);
-=======
-        CreationToolEntry intCreationEntry =
-                        new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
-                                        DataTypeModel.intData), getImage("icons/int_16.png"),
-                                        getImage("icons/int_32.png"));
-        addDataCreationToolEntry(intCreationEntry);
-        CreationToolEntry dataCreationEntry =
-                        new CreationToolEntry("其它", "增加一个自定义变量", new CopyFactory(
-                                        new DataTypeModel<AtomicTypeModel>("")),
-                                        getImage("icons/new_data_16.png"),
-                                        getImage("icons/new_data_32.png"));
-        addDataCreationToolEntry(dataCreationEntry);
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     }
 
     private void initPortCreationEntry() {
@@ -171,15 +159,12 @@ public class AtomicEditor extends BIPEditor {
         getPaletteRoot().add(atomicPalette);
     }
 
-<<<<<<< HEAD
     public void dispose() {
         removeViewerEditEntry(viewer);
         System.out.println("remove viewer from viewerEditorMap");
         super.dispose();
     }
 
-=======
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     @Override
     public void doSave(IProgressMonitor monitor) {
         saveProperties();
@@ -198,6 +183,10 @@ public class AtomicEditor extends BIPEditor {
         super.createActions();
         ActionRegistry registry = getActionRegistry();
 
+        IAction action = new CreateDataTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
         // IAction action = new CreateDataAction(this);
         // registry.registerAction(action);
         // getSelectionActions().add(action.getId());
@@ -206,7 +195,7 @@ public class AtomicEditor extends BIPEditor {
         // registry.registerAction(action);
         // getSelectionActions().add(action.getId());
 
-        IAction action = new ExportAction(this);
+        action = new ExportAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 

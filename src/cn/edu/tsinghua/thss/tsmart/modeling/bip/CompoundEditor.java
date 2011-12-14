@@ -141,15 +141,12 @@ public class CompoundEditor extends BIPEditor {
 
     }
 
-<<<<<<< HEAD
     public void dispose() {
         removeViewerEditEntry(viewer);
         System.out.println("remove viewer from viewerEditorMap");
         super.dispose();
     }
 
-=======
->>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     /** Save properties to model */
     protected void saveProperties() {}
 

@@ -77,13 +77,14 @@ public class DataModel<Parent extends IDataContainer>
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
+        // 不管什么情况都不允许修改数据类型
         if (!getProrerties().isMultipleDataTypeAvailble()) {
             // TODO 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
             return new IPropertyDescriptor[] {new TextPropertyDescriptor(IModel.NAME, "name"),
                             new ComboBoxPropertyDescriptor(DATA_VALUE, "value", trueFalseArray)};
         } else {
-            return new IPropertyDescriptor[] {new TextPropertyDescriptor(DATA_TYPE, "type"),
-                            new TextPropertyDescriptor(IModel.NAME, "name"),
+            return new IPropertyDescriptor[] {// new TextPropertyDescriptor(DATA_TYPE, "type"),
+            new TextPropertyDescriptor(IModel.NAME, "name"),
                             new TextPropertyDescriptor(DATA_VALUE, "value")};
         }
     }

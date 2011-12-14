@@ -3,14 +3,12 @@ package cn.edu.tsinghua.thss.tsmart.modeling.ui.dialogs;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
@@ -26,8 +24,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeMo
 public class DataEditDialog extends AbstractEditDialog {
     private Text           textName;
     private Text           textValue;
-    private Combo          comboType;
     private DataModel      instance;
+    private Label          labelTypeName;
+    private Label          labelError;
     private IDataContainer container;
 
     /**
@@ -49,36 +48,34 @@ public class DataEditDialog extends AbstractEditDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
-        container.setLayout(new GridLayout(4, false));
-        new Label(container, SWT.NONE);
+        container.setLayout(null);
 
         Label labelType = new Label(container, SWT.NONE);
+        labelType.setBounds(15, 5, 30, 18);
         labelType.setText("type");
 
         Label labelName = new Label(container, SWT.NONE);
+        labelName.setBounds(92, 5, 37, 18);
         labelName.setText("name");
 
         Label labelValue = new Label(container, SWT.NONE);
+        labelValue.setBounds(216, 5, 35, 18);
         labelValue.setText("value");
-        new Label(container, SWT.NONE);
 
-        if (!properties.isMultipleDataTypeAvailble()) {
-            comboType = new Combo(container, SWT.READ_ONLY | SWT.DROP_DOWN);
-        } else {
-            comboType = new Combo(container, SWT.NONE);
-        }
-        GridData gd_comboType = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-        gd_comboType.widthHint = 100;
-        comboType.setLayoutData(gd_comboType);
+        labelTypeName = new Label(container, SWT.NONE);
+        labelTypeName.setBounds(15, 32, 72, 18);
 
         textName = new Text(container, SWT.BORDER);
-        textName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        textName.setBounds(92, 28, 119, 27);
 
         textValue = new Text(container, SWT.BORDER);
-        textValue.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        textValue.setBounds(216, 28, 119, 27);
+
+        labelError = new Label(container, SWT.NONE);
+        labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+        labelError.setBounds(17, 63, 297, 18);
 
         initValues();
-
         return container;
     }
 
@@ -98,19 +95,12 @@ public class DataEditDialog extends AbstractEditDialog {
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(340, 153);
+        return new Point(340, 168);
     }
 
     @Override
     protected void initValues() {
-        if (!properties.isMultipleDataTypeAvailble()) {
-            comboType.setItems(new String[] {"bool"});
-            comboType.select(0);
-            comboType.setEnabled(true);
-        } else {
-            comboType.setItems(DataTypeModel.getRegisterTypeNamesAsArray());
-            comboType.select(0);
-        }
+        labelTypeName.setText(((DataTypeModel) instance.getType()).getTypeName());
         if (instance.hasName()) {
             textName.setText(instance.getName());
         }
@@ -121,12 +111,8 @@ public class DataEditDialog extends AbstractEditDialog {
 
     @Override
     protected void updateValues() {
-        String newType = comboType.getText().toLowerCase().trim();
         String newName = textName.getText().trim();
         String newValue = textValue.getText().trim();
-        if (!newType.equals(((DataTypeModel) instance.getType()).getTypeName())) {
-            ((DataTypeModel) instance.getType()).setTypeName(newType);
-        }
         if (!newName.equals(instance.getName())) {
             instance.setName(newName);
         }
@@ -139,18 +125,19 @@ public class DataEditDialog extends AbstractEditDialog {
     @Override
     protected boolean validateUserInput() {
         if (container.isNewNameAlreadyExistsInParent(instance, textName.getText().trim())) {
+            labelError.setText("组件中存在相同名字的变量");
             // TODO 弹出错误提示
             return false;
-        } else if (comboType.getText().toLowerCase().trim().equals("bool")
+        } else if (labelTypeName.getText().toLowerCase().trim().equals("bool")
                         && !textValue.getText().toLowerCase().trim().equals("true")
                         && !textValue.getText().toLowerCase().trim().equals("false")) {
-            // TODO 弹出错误提示
+            labelError.setText("bool类型的值只能是true或者false");
             return false;
-        } else if (comboType.getText().toLowerCase().trim().equals("int")) {
+        } else if (labelTypeName.getText().toLowerCase().trim().equals("int")) {
             try {
                 Integer.parseInt(textValue.getText().toLowerCase().trim());
             } catch (NumberFormatException e) {
-                // TODO 弹出错误提示
+                labelError.setText("int类型的值必须是整数");
                 return false;
             }
         }
