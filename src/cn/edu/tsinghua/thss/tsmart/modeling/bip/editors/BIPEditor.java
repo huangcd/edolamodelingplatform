@@ -85,9 +85,9 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         IWorkbenchPage page = window.getActivePage();
         String editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor";
         if (container instanceof AtomicTypeModel) {
-            editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor";
+            editorID = AtomicEditor.id;
         } else if (container instanceof CompoundTypeModel) {
-            editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor";
+            editorID = CompoundEditor.id;
         }
         try {
             // 如果页面已经打开，则跳转到指定页面

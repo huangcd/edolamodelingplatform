@@ -7,11 +7,11 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.platform.PlatformApplication;
+import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 /**
  * 定义了菜单和对应的工具按钮的显示字符串和图标，以 及其ID 等等。
@@ -21,16 +21,14 @@ import cn.edu.tsinghua.thss.tsmart.platform.PlatformApplication;
 public class NewAtomicEditorAction extends Action implements ISelectionListener, IWorkbenchAction {
 
     private final IWorkbenchWindow window;
-    public static final String     ID =
-                                                      "cn.edu.tsinghua.thss.tsmart.modeling.bip.NewAtomicEditorAction";
+    public static final String     ID = NewAtomicEditorAction.class.getCanonicalName();
 
     public NewAtomicEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
         setText("原子组件");
         setToolTipText("新建原子组件");
-        setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-                        PlatformApplication.PLUGIN_ID, "icons/atomic_16.png"));
+        setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png"));
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -47,7 +45,7 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
         try {
             window.getActivePage().openEditor(
                             new BIPModuleEditorInput(new AtomicTypeModel().setName("atomic")),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor");
+                            AtomicEditor.id);
         } catch (PartInitException e) {
             e.printStackTrace();
         }

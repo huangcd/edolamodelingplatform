@@ -42,19 +42,19 @@
             name="XML Editor">
       </editor>
       <editor
-            class="cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor"
-            contributorClass="cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditorActionBarContributor"
+            class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
+            contributorClass="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditorActionBarContributor"
             default="false"
             icon="icons/compound_16.png"
-            id="cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor"
+            id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
             name="Compound Editor">
       </editor>
       <editor
-            class="cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor"
-            contributorClass="cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditorActionBarContributor"
+            class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
+            contributorClass="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditorActionBarContributor"
             default="false"
             icon="icons/atomic_16.png"
-            id="cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor"
+            id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
             name="Atomic Editor">
       </editor>
    </extension>

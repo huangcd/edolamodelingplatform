@@ -47,10 +47,11 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 @SuppressWarnings("rawtypes")
 public class AtomicEditor extends BIPEditor {
-    private GraphicalViewer viewer;
-    private IModel          model;
-    private PaletteStack    dataStack;
-    private PaletteStack    portStack;
+    public final static String id = AtomicEditor.class.getCanonicalName();
+    private GraphicalViewer    viewer;
+    private IModel             model;
+    private PaletteStack       dataStack;
+    private PaletteStack       portStack;
 
     @Override
     protected void initializeGraphicalViewer() {

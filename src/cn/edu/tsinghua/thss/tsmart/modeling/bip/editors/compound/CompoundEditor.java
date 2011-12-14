@@ -33,8 +33,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 
 @SuppressWarnings("rawtypes")
 public class CompoundEditor extends BIPEditor {
-    private GraphicalViewer viewer;
-    private IModel          model;
+    public final static String id = CompoundEditor.class.getCanonicalName();
+    private GraphicalViewer    viewer;
+    private IModel             model;
 
     @Override
     protected void initializeGraphicalViewer() {

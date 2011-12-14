@@ -12,6 +12,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 /**
@@ -44,7 +45,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchPage page = window.getActivePage();
         try {
             page.openEditor(new BIPModuleEditorInput(new CompoundTypeModel().setName("compound")),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor");
+                            CompoundEditor.id);
         } catch (PartInitException e) {
             MessageBox errorBox = new MessageBox(window.getShell());
             errorBox.setMessage(e.getMessage());
