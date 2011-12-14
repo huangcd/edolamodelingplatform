@@ -24,19 +24,19 @@ public class TransitionModel
                 implements
                     IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
-    public static final String                BEND_POINTS = "bendPoints";
+    public static final String         BEND_POINTS = "bendPoints";
     @Element
-    private PlaceModel                        source;
+    private PlaceModel                 source;
     @Element
-    private PlaceModel                        target;
+    private PlaceModel                 target;
     @Element
-    private PortModel                         port;
+    private PortModel<AtomicTypeModel> port;
     @Element
-    private ActionModel                       action;
+    private ActionModel                action;
     @Element
-    private GuardModel                        guard;
+    private GuardModel                 guard;
     @ElementList
-    private ArrayList<Bendpoint> bendpoints;
+    private ArrayList<Bendpoint>       bendpoints;
 
     protected TransitionModel() {
         action = new ActionModel();
@@ -44,8 +44,8 @@ public class TransitionModel
         bendpoints = new ArrayList<Bendpoint>();
     }
 
-    public TransitionModel copy(PlaceModel source, PlaceModel target, PortModel port,
-                    ActionModel action, GuardModel guard) {
+    public TransitionModel copy(PlaceModel source, PlaceModel target,
+                    PortModel<AtomicTypeModel> port, ActionModel action, GuardModel guard) {
         TransitionModel model = this.copy();
         model.source = source;
         model.target = target;
@@ -63,11 +63,11 @@ public class TransitionModel
         return target;
     }
 
-    public PortModel getPort() {
+    public PortModel<AtomicTypeModel> getPort() {
         return port;
     }
 
-    public void setPort(PortModel port) {
+    public void setPort(PortModel<AtomicTypeModel> port) {
         this.port = port;
         firePropertyChange(PortModel.PORT);
     }

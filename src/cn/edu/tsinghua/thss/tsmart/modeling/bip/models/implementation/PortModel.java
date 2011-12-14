@@ -86,26 +86,52 @@ public class PortModel<P extends IComponentType>
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (NAME.equals(id)) {
+            return getName();
+        }
+        if (EXPORT.equals(id)) {
+            return Boolean.toString(export).equals(trueFalseArray[0]) ? 0 : 1;
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
+        return NAME.equals(id) || EXPORT.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
+        if (NAME.equals(id)) {
+            setName((String) value);
+        } else if (EXPORT.equals(id)) {
+            setExport(Boolean.parseBoolean(trueFalseArray[(Integer) value]));
+        }
+    }
 
+    private StringBuilder appendData(StringBuilder buffer, DataModel<IDataContainer> data) {
+        if (data.getType().isBounded()) {
+            buffer.append(data.getType().getTypeName()).append(' ').append(data.getName());
+        } else {
+            buffer.append(data.getType().getTypeName()).append(" $$UNBOUNDED$$");
+        }
+        return buffer;
     }
 
     public String getFriendlyString() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("port type ").append(getType().getName()).append(" ").append(getName());
-        // TODO
+        if (isExport()) buffer.append("export ");
+        buffer.append(getType().getName()).append(' ').append(getName()).append('(');
+        List<DataModel<IDataContainer>> datas = getPortArguments();
+        if (datas.isEmpty()) {
+            buffer.append(")");
+        } else {
+            for (DataModel<IDataContainer> data : datas) {
+                appendData(buffer, data).append(", ");
+            }
+            int size = buffer.length();
+            buffer.replace(size - 2, size, ")");
+        }
         return buffer.toString();
     }
 }

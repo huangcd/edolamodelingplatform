@@ -73,8 +73,9 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         return uuid;
     }
 
-    public void resetID() {
+    public Model resetID() {
         uuid = UUID.randomUUID();
+        return (Model) this;
     }
 
     public boolean hasName() {
@@ -186,6 +187,18 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
             map.put(t, (T) t.copy());
         }
         return map;
+    }
+
+    public Model copy() {
+        try {
+            byte[] bytes = exportToBytes();
+            Model model = importFromBytes(bytes);
+            model.resetID();
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

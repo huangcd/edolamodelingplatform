@@ -70,7 +70,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
     /** @return 返回模型的全局唯一ID */
     UUID getID();
 
-    void resetID();
+    Model resetID();
 
     /** @return 返回模型全局唯一ID的字符串表示 */
     String getStringID();

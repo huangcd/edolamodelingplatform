@@ -5,6 +5,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 /**
  * Created by Huangcd<br/>
@@ -35,7 +37,14 @@ public class BIPModuleEditorInput implements IEditorInput {
 
     @Override
     public ImageDescriptor getImageDescriptor() {
-        // TODO
+        if (model == null) {
+            return null;
+        }
+        if (model instanceof AtomicTypeModel) {
+            return BIPEditor.getImage("icons/atomic_16.png");
+        } else if (model instanceof CompoundTypeModel) {
+            return BIPEditor.getImage("icons/compound_16.png");
+        }
         return null;
     }
 
@@ -66,5 +75,5 @@ public class BIPModuleEditorInput implements IEditorInput {
     @Override
     public int hashCode() {
         return model.hashCode();
-    }    
+    }
 }

@@ -39,6 +39,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeMo
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.requests.CopyFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.PlaceCreationTool;
 
 @SuppressWarnings("rawtypes")
 public class AtomicEditor extends BIPEditor {

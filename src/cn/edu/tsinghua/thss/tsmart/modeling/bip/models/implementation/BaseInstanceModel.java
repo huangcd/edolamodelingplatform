@@ -46,21 +46,60 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
                     IPropertySource,
                     UpdateNotifier,
                     UpdateReceiver {
+    protected final static String[] trueFalseArray = new String[] {"true", "false"};
+    private static Serializer       serializer     = new Persister(new CycleStrategy());
+    private static GlobalProperties prorerties     = GlobalProperties.getInstance();
 
-    protected final static String[] trueFalseArray  = new String[] {"true", "false"};
-    private PropertyChangeSupport   listeners       = new PropertyChangeSupport(this);
-    private List<UpdateReceiver>    registerObjects = new ArrayList<UpdateReceiver>();
-    protected Rectangle             positionConstraint;
+    public static Serializer getSerializer() {
+        return serializer;
+    }
+
+    public static void setSerializer(Serializer serializer) {
+        BaseInstanceModel.serializer = serializer;
+    }
+
+    public static GlobalProperties getProrerties() {
+        return prorerties;
+    }
+
+    public static void setProrerties(GlobalProperties prorerties) {
+        BaseInstanceModel.prorerties = prorerties;
+    }
+
+    /**
+     * 从字符串中导入
+     * 
+     * @param string 需要导入的字符串
+     * 
+     * @return 新的模型
+     */
+    public static <M> M importFromString(String string) throws IOException, ClassNotFoundException {
+        return importFromBytes(Base64.decodeBase64(string.getBytes()));
+    }
+
+    /**
+     * 从byte数组中导入对象
+     * 
+     * @param bytes 用ObjectOutStream导出的byte数组
+     * 
+     * @return 一个IType的实例
+     */
+    public static <M> M importFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes));
+        return (M) in.readObject();
+    }
+
+    private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
+    private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
+    protected Rectangle           positionConstraint;
     @Element(required = false)
-    protected Parent                parent;
+    protected Parent              parent;
     @Attribute(required = false)
-    protected String                name;
-    protected UUID                  uuid            = UUID.randomUUID();
+    protected String              name;
+    protected UUID                uuid            = UUID.randomUUID();
     @Element(required = false, name = "type")
-    protected Type                  type;
-    protected static Serializer     serializer      = new Persister(new CycleStrategy());
-    protected GlobalProperties      prorerties      = GlobalProperties.getInstance();
-    protected boolean               editable        = true;
+    protected Type                type;
+    protected boolean             editable        = true;
 
     public Type getType() {
         return type;
@@ -82,17 +121,6 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         }
     }
 
-    /**
-     * 从字符串中导入
-     * 
-     * @param string 需要导入的字符串
-     * 
-     * @return 新的模型
-     */
-    public static <M> M importFromString(String string) throws IOException, ClassNotFoundException {
-        return importFromBytes(Base64.decodeBase64(string.getBytes()));
-    }
-
     @Override
     public String getStringID() {
         return uuid.toString().replaceAll("-", "");
@@ -103,8 +131,9 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         return uuid;
     }
 
-    public void resetID() {
+    public Model resetID() {
         uuid = UUID.randomUUID();
+        return (Model) this;
     }
 
     @Override
@@ -176,18 +205,6 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public void resetPropertyValue(Object id) {}
 
-    /**
-     * 从byte数组中导入对象
-     * 
-     * @param bytes 用ObjectOutStream导出的byte数组
-     * 
-     * @return 一个IType的实例
-     */
-    public static <M> M importFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes));
-        return (M) in.readObject();
-    }
-
     @Override
     public byte[] exportToBytes() throws IOException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -199,7 +216,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     @Override
     public Model copy() {
-        return (Model) ((IType) getType().copy()).getInstance().setName(getName());
+        return (Model) ((IType) getType().copy()).getInstance().setName(getName()).resetID();
     }
 
     @Override

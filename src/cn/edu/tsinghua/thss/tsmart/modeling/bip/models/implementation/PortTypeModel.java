@@ -34,8 +34,10 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         ePortType = new PortTypeModel().setName("ePort");
         bPortType = new PortTypeModel().setName("boolPort");
         iPortType = new PortTypeModel().setName("intPort");
-        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData);
-        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData);
+        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData.copy().setBounded(
+                        false));
+        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData.copy().setBounded(
+                        false));
     }
 
     @ElementList

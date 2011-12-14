@@ -144,12 +144,6 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
     }
 
     @Override
-    public CompoundTypeModel copy() {
-        // TODO
-        return null;
-    }
-
-    @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("compound type ").append(getName()).append('\n');
