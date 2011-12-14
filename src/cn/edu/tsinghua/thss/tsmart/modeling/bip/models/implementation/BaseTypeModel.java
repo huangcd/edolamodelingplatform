@@ -53,6 +53,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     protected String              name;
     protected Instance            instance;
     protected UUID                uuid            = UUID.randomUUID();
+    private boolean               editable        = true;
     protected static Serializer   serializer      = new Persister(new CycleStrategy());
 
     public BaseTypeModel() {}
@@ -70,6 +71,10 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     public UUID getID() {
         return uuid;
+    }
+
+    public void resetID() {
+        uuid = UUID.randomUUID();
     }
 
     public boolean hasName() {
@@ -219,6 +224,15 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         }
     }
 
+    @Override
+    public boolean editable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
     public static void main(String[] args) throws Exception {
         Serializer serializer = new Persister(new CycleStrategy());
 
@@ -256,7 +270,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
                         "counter"));
 
         // atomic port
-        PortModel runPort = intPort.getInstance().copy().setName("run");
+        PortModel runPort = (PortModel) intPort.getInstance().copy().setName("run");
         machineType.addPort(runPort);
 
         // atomic place

@@ -10,7 +10,10 @@ import org.eclipse.gef.palette.ConnectionCreationToolEntry;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteStack;
+import org.eclipse.gef.palette.ToolEntry;
+import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.gef.requests.SimpleFactory;
+import org.eclipse.gef.tools.CreationTool;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.AlignmentAction;
 import org.eclipse.gef.ui.actions.MatchHeightAction;
@@ -18,6 +21,7 @@ import org.eclipse.gef.ui.actions.MatchWidthAction;
 import org.eclipse.gef.ui.parts.ContentOutlinePage;
 import org.eclipse.gef.ui.parts.TreeViewer;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
@@ -97,17 +101,17 @@ public class AtomicEditor extends BIPEditor {
     private void initPortCreationEntry() {
         CreationToolEntry ePortCreationEntry =
                         new CreationToolEntry("ePort", "增加一个空端口", new CopyFactory(
-                                        PortTypeModel.ePort), getImage("icons/port_16.png"),
+                                        PortTypeModel.ePortType), getImage("icons/port_16.png"),
                                         getImage("icons/port_32.png"));
         addPortCreationToolEntry(ePortCreationEntry);
         CreationToolEntry bPortCreationEntry =
                         new CreationToolEntry("bPort", "增加一个带一个bool参数的端口", new CopyFactory(
-                                        PortTypeModel.bPort), getImage("icons/port_16.png"),
+                                        PortTypeModel.bPortType), getImage("icons/port_16.png"),
                                         getImage("icons/port_32.png"));
         addPortCreationToolEntry(bPortCreationEntry);
         CreationToolEntry iPortCreationEntry =
                         new CreationToolEntry("iPort", "增加一个带一个int参数的端口", new CopyFactory(
-                                        PortTypeModel.iPort), getImage("icons/port_16.png"),
+                                        PortTypeModel.iPortType), getImage("icons/port_16.png"),
                                         getImage("icons/port_32.png"));
         addPortCreationToolEntry(iPortCreationEntry);
         CreationToolEntry dataCreationEntry =
@@ -119,10 +123,11 @@ public class AtomicEditor extends BIPEditor {
 
     private void initPaletteRoot() {
         PaletteDrawer atomicPalette = new PaletteDrawer("原子组件");
-        CreationToolEntry placeCreationEntry =
-                        new CreationToolEntry("状态", "新建一个状态", new SimpleFactory(
+        PlaceCreationToolEntry placeCreationEntry =
+                        new PlaceCreationToolEntry("状态", "新建一个状态", new SimpleFactory(
                                         PlaceTypeModel.class), getImage("icons/place_16.png"),
                                         getImage("icons/place_32.png"));
+
         ConnectionCreationToolEntry connectionCreationEntry =
                         new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
                                         TransitionTypeModel.class),
@@ -134,6 +139,7 @@ public class AtomicEditor extends BIPEditor {
         atomicPalette.add(connectionCreationEntry);
         atomicPalette.add(dataStack);
         atomicPalette.add(portStack);
+        // getPaletteRoot().setDefaultEntry(placeCreationEntry);
         getPaletteRoot().add(atomicPalette);
     }
 
@@ -284,6 +290,17 @@ public class AtomicEditor extends BIPEditor {
             // 从 TreeViewer 中删除 SelectionSynchronizer
             getSelectionSynchronizer().removeViewer(getViewer());
             super.dispose();
+        }
+    }
+
+    class PlaceCreationToolEntry extends ToolEntry {
+        protected final CreationFactory factory;
+
+        public PlaceCreationToolEntry(String label, String shortDesc, CreationFactory factory,
+                        ImageDescriptor iconSmall, ImageDescriptor iconLarge) {
+            super(label, shortDesc, iconSmall, iconLarge, PlaceCreationTool.class);
+            this.factory = factory;
+            setToolProperty(CreationTool.PROPERTY_CREATION_FACTORY, factory);
         }
     }
 }

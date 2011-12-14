@@ -47,18 +47,20 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
                     UpdateNotifier,
                     UpdateReceiver {
 
-    private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
-    private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
-    protected Rectangle           positionConstraint;
+    protected final static String[] trueFalseArray  = new String[] {"true", "false"};
+    private PropertyChangeSupport   listeners       = new PropertyChangeSupport(this);
+    private List<UpdateReceiver>    registerObjects = new ArrayList<UpdateReceiver>();
+    protected Rectangle             positionConstraint;
     @Element(required = false)
-    protected Parent              parent;
+    protected Parent                parent;
     @Attribute(required = false)
-    protected String              name;
-    protected final UUID          uuid            = UUID.randomUUID();
+    protected String                name;
+    protected UUID                  uuid            = UUID.randomUUID();
     @Element(required = false, name = "type")
-    protected Type                type;
-    protected static Serializer   serializer      = new Persister(new CycleStrategy());
-    protected GlobalProperties    prorerties      = GlobalProperties.getInstance();
+    protected Type                  type;
+    protected static Serializer     serializer      = new Persister(new CycleStrategy());
+    protected GlobalProperties      prorerties      = GlobalProperties.getInstance();
+    protected boolean               editable        = true;
 
     public Type getType() {
         return type;
@@ -99,6 +101,10 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public UUID getID() {
         return uuid;
+    }
+
+    public void resetID() {
+        uuid = UUID.randomUUID();
     }
 
     @Override
@@ -226,5 +232,14 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         return new IPropertyDescriptor[0];
+    }
+
+    @Override
+    public boolean editable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

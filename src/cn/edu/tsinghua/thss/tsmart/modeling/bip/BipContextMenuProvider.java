@@ -11,15 +11,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.actions.ActionFactory;
 
-
-/**
- * @author: huangcd (huangcd.thu@gmail.com)
- * @time: 2011-7-3 обнГ08:27:10
- * @project: CereusBip
- * @package: cereusbip.ui
- * @class: BipContextMenuProvider.java
- * 
- */
 public class BipContextMenuProvider extends ContextMenuProvider {
     private ActionRegistry actionRegistry;
 

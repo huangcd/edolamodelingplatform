@@ -1,19 +1,25 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
-
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
+
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
-public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, AtomicTypeModel>
+public class PortModel<P extends IComponentType>
+                extends BaseInstanceModel<PortModel, PortTypeModel, P>
                 implements
-                    IPort<PortModel, PortTypeModel, AtomicTypeModel, AtomicTypeModel> {
+                    IPort<PortModel, PortTypeModel, P, IDataContainer> {
 
     public final static String PORT   = "port";
     public final static String EXPORT = "export";
@@ -51,7 +57,7 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
             buffer.append("export ");
         }
         buffer.append("port ").append(getName()).append('(');
-        List<DataModel<AtomicTypeModel>> datas = getPortArguments();
+        List<DataModel<IDataContainer>> datas = getPortArguments();
         if (!datas.isEmpty()) {
             buffer.append(datas.get(0).getName());
             for (int i = 1, size = datas.size(); i < size; i++) {
@@ -64,9 +70,8 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DataModel<AtomicTypeModel>> getPortArguments() {
-        ArrayList<DataModel<AtomicTypeModel>> arguments =
-                        new ArrayList<DataModel<AtomicTypeModel>>();
+    public List<DataModel<IDataContainer>> getPortArguments() {
+        ArrayList<DataModel<IDataContainer>> arguments = new ArrayList<DataModel<IDataContainer>>();
         for (DataTypeModel<PortTypeModel> dataTypeModel : getType().getChildren()) {
             arguments.add(dataTypeModel.getInstance());
         }
@@ -74,15 +79,9 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "name"),
+                        new ComboBoxPropertyDescriptor(EXPORT, "exportable", trueFalseArray),};
     }
 
     @Override
@@ -95,11 +94,6 @@ public class PortModel extends BaseInstanceModel<PortModel, PortTypeModel, Atomi
     public boolean isPropertySet(Object id) {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
     }
 
     @Override

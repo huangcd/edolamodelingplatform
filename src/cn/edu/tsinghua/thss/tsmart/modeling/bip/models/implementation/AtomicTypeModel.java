@@ -56,6 +56,11 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         initPlace.setName("init").setPositionConstraint(new Rectangle(100, 100, 30, 30))
                         .setParent(this);
         addChild(initPlace);
+        PortTypeModel ePortType = PortTypeModel.ePortType.copy();
+        PortModel<AtomicTypeModel> ePort =
+                        (PortModel<AtomicTypeModel>) ePortType.getInstance().setName("idle");
+        ePort.setPositionConstraint(new Rectangle(120, 220, -1, -1));
+        ports.add(ePort);
     }
 
     @Override
@@ -253,7 +258,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         // ¸´ÖÆ ports
         copyModel.ports = new ArrayList<PortModel>();
         for (PortModel port : ports) {
-            PortTypeModel oldPortType = port.getType();
+            PortTypeModel oldPortType = (PortTypeModel) port.getType();
             // TODO a mash
             PortTypeModel copyPortType = oldPortType;
             // .copy(oldPortType.getPortTypeArguments());

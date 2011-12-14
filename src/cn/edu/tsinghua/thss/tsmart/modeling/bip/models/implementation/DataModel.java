@@ -79,10 +79,8 @@ public class DataModel<Parent extends IDataContainer>
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (!prorerties.isMultipleDataTypeAvailble()) {
             // TODO 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
-            return new IPropertyDescriptor[] {
-                            new TextPropertyDescriptor(IModel.NAME, "name"),
-                            new ComboBoxPropertyDescriptor(DATA_VALUE, "value", new String[] {
-                                            "true", "false"})};
+            return new IPropertyDescriptor[] {new TextPropertyDescriptor(IModel.NAME, "name"),
+                            new ComboBoxPropertyDescriptor(DATA_VALUE, "value", trueFalseArray)};
         } else {
             return new IPropertyDescriptor[] {new TextPropertyDescriptor(DATA_TYPE, "type"),
                             new TextPropertyDescriptor(IModel.NAME, "name"),
@@ -97,7 +95,7 @@ public class DataModel<Parent extends IDataContainer>
         }
         if (DATA_VALUE.equals(id)) {
             if (!prorerties.isMultipleDataTypeAvailble()) {
-                return getValue().equals("true") ? 0 : 1;
+                return getValue().equals(trueFalseArray[0]) ? 0 : 1;
             }
             return getValue();
         }
@@ -119,7 +117,7 @@ public class DataModel<Parent extends IDataContainer>
         }
         if (DATA_VALUE.equals(id)) {
             if (value instanceof Integer) {
-                setValue(0 - (Integer) id == 0 ? "true" : "false");
+                setValue(trueFalseArray[(Integer) value]);
             } else {
                 setValue((String) value);
             }

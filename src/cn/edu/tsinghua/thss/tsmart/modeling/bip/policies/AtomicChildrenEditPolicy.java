@@ -65,6 +65,12 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
         } else if (request.getNewObjectType().equals(PortTypeModel.class)) {
             PortModel child = ((PortTypeModel) request.getNewObject()).getInstance();
             child.setName(getAppropriatePortName(parent));
+            Point location = request.getLocation().getCopy();
+            // œ‡∂‘Œª÷√
+            getHostFigure().translateToRelative(location);
+            getHostFigure().translateFromParent(location);
+            Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
+            child.setPositionConstraint(rect);
             command.setChild(child);
             return command;
         }

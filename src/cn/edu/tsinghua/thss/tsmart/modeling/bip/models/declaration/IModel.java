@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.ValidationError;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelException;
 
 /**
  * Created by Huangcd<br/>
@@ -57,12 +57,20 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
      * @return 如果导出成BIP文件时当前实例会被导出，则返回true；否则返回false
      */
     boolean exportable();
+    
+    /**
+     * 指示实例是否可被编辑，内置的类型应该是不可编辑的，比如bool、int的typeName之类的
+     * @return
+     */
+    boolean editable();
 
     /** @return 导出成BIP的文本 */
     String exportToBip();
 
     /** @return 返回模型的全局唯一ID */
     UUID getID();
+
+    void resetID();
 
     /** @return 返回模型全局唯一ID的字符串表示 */
     String getStringID();

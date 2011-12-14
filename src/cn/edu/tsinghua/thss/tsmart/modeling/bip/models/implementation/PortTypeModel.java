@@ -1,7 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +26,16 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
                     IOrderContainer<DataTypeModel<PortTypeModel>>,
                     IPortType<PortTypeModel, PortModel, IContainer> {
 
-    public final static PortTypeModel               ePort = new PortTypeModel().setName("ePort");
-    public final static PortTypeModel               bPort = new PortTypeModel().setName("boolPort");
-    public final static PortTypeModel               iPort = new PortTypeModel().setName("intPort");
+    public final static PortTypeModel               ePortType;
+    public final static PortTypeModel               bPortType;
+    public final static PortTypeModel               iPortType;
 
     static {
-        bPort.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData);
-        iPort.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData);
+        ePortType = new PortTypeModel().setName("ePort");
+        bPortType = new PortTypeModel().setName("boolPort");
+        iPortType = new PortTypeModel().setName("intPort");
+        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData);
+        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData);
     }
 
     @ElementList
@@ -46,7 +47,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
 
     @Override
     public PortModel createInstance() {
-        this.instance = new PortModel().setType(this);
+        this.instance = (PortModel) new PortModel().setType(this);
         return instance;
     }
 
@@ -67,10 +68,14 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
     @Override
     public PortTypeModel copy() {
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            serializer.write(this, out);
-            return serializer
-                            .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
+            byte[] bytes = this.exportToBytes();
+            PortTypeModel newModel = importFromBytes(bytes);
+            newModel.resetID();
+            return newModel;
+            // ByteArrayOutputStream out = new ByteArrayOutputStream();
+            // serializer.write(this, out);
+            // return serializer
+            // .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
         } catch (Exception e) {
             e.printStackTrace();
             PortTypeModel copyModel = new PortTypeModel();
