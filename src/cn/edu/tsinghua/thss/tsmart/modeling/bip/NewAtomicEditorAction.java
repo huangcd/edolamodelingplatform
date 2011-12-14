@@ -20,7 +20,8 @@ import cn.edu.tsinghua.thss.tsmart.platform.PlatformApplication;
 public class NewAtomicEditorAction extends Action implements ISelectionListener, IWorkbenchAction {
 
     private final IWorkbenchWindow window;
-    public static final String     ID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.NewAtomicEditorAction";
+    public static final String     ID =
+                                                      "cn.edu.tsinghua.thss.tsmart.modeling.bip.NewAtomicEditorAction";
 
     public NewAtomicEditorAction(IWorkbenchWindow window) {
         this.window = window;
@@ -45,7 +46,7 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
         try {
             window.getActivePage().openEditor(
                             new BIPModuleEditorInput(new AtomicTypeModel().setName("atomic")),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.AtomicEditor");
         } catch (PartInitException e) {
             e.printStackTrace();
         }

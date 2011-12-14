@@ -53,6 +53,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     protected String              name;
     protected Instance            instance;
     protected UUID                uuid            = UUID.randomUUID();
+    private boolean               editable        = true;
     protected static Serializer   serializer      = new Persister(new CycleStrategy());
 
     public BaseTypeModel() {}
@@ -70,6 +71,11 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     public UUID getID() {
         return uuid;
+    }
+
+    public Model resetID() {
+        uuid = UUID.randomUUID();
+        return (Model) this;
     }
 
     public boolean hasName() {
@@ -183,6 +189,18 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         return map;
     }
 
+    public Model copy() {
+        try {
+            byte[] bytes = exportToBytes();
+            Model model = importFromBytes(bytes);
+            model.resetID();
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public byte[] exportToBytes() throws IOException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -217,6 +235,15 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         for (UpdateReceiver receiver : getRegisterObjects()) {
             receiver.updated();
         }
+    }
+
+    @Override
+    public boolean editable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 
     public static void main(String[] args) throws Exception {
@@ -256,7 +283,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
                         "counter"));
 
         // atomic port
-        PortModel runPort = intPort.getInstance().copy().setName("run");
+        PortModel runPort = (PortModel) intPort.getInstance().copy().setName("run");
         machineType.addPort(runPort);
 
         // atomic place
@@ -268,8 +295,8 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
         // atomic transition
         TransitionModel run = new TransitionTypeModel().getInstance();
-        //run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
-        //run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
+        // run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
+        // run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
         run.setPort(runPort);
         run.setSource(idle);
         run.setTarget(busy);
@@ -279,7 +306,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
         // atomic priority
 
-        CompoundTypeModel all = new CompoundTypeModel().setName("all");
+        // CompoundTypeModel all = new CompoundTypeModel().setName("all");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         serializer.write(machineType.getInstance(), out);

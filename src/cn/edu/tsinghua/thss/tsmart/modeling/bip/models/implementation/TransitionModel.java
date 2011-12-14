@@ -2,6 +2,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
 
+import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
@@ -23,28 +24,28 @@ public class TransitionModel
                 implements
                     IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
-    public static final String                BEND_POINTS = "bendPoints";
+    public static final String         BEND_POINTS = "bendPoints";
     @Element
-    private PlaceModel                        source;
+    private PlaceModel                 source;
     @Element
-    private PlaceModel                        target;
+    private PlaceModel                 target;
     @Element
-    private PortModel                         port;
+    private PortModel<AtomicTypeModel> port;
     @Element
-    private ActionModel                       action;
+    private ActionModel                action;
     @Element
-    private GuardModel                        guard;
+    private GuardModel                 guard;
     @ElementList
-    private ArrayList<RelativeBendpointModel> bendpoints;
+    private ArrayList<Bendpoint>       bendpoints;
 
     protected TransitionModel() {
         action = new ActionModel();
         guard = new GuardModel();
-        bendpoints = new ArrayList<RelativeBendpointModel>();
+        bendpoints = new ArrayList<Bendpoint>();
     }
 
-    public TransitionModel copy(PlaceModel source, PlaceModel target, PortModel port,
-                    ActionModel action, GuardModel guard) {
+    public TransitionModel copy(PlaceModel source, PlaceModel target,
+                    PortModel<AtomicTypeModel> port, ActionModel action, GuardModel guard) {
         TransitionModel model = this.copy();
         model.source = source;
         model.target = target;
@@ -62,11 +63,11 @@ public class TransitionModel
         return target;
     }
 
-    public PortModel getPort() {
+    public PortModel<AtomicTypeModel> getPort() {
         return port;
     }
 
-    public void setPort(PortModel port) {
+    public void setPort(PortModel<AtomicTypeModel> port) {
         this.port = port;
         firePropertyChange(PortModel.PORT);
     }
@@ -196,17 +197,17 @@ public class TransitionModel
     }
 
     @Override
-    public ArrayList<RelativeBendpointModel> getBendpoints() {
+    public ArrayList<Bendpoint> getBendpoints() {
         return bendpoints;
     }
 
-    public TransitionModel setBendpoint(int index, RelativeBendpointModel bendpoint) {
+    public TransitionModel setBendpoint(int index, Bendpoint bendpoint) {
         getBendpoints().set(index, bendpoint);
         firePropertyChange(BEND_POINTS);
         return this;
     }
 
-    public TransitionModel addBendpoint(int index, RelativeBendpointModel bendpoint) {
+    public TransitionModel addBendpoint(int index, Bendpoint bendpoint) {
         getBendpoints().add(index, bendpoint);
         firePropertyChange(BEND_POINTS);
         return this;
@@ -220,7 +221,7 @@ public class TransitionModel
     }
 
     @Override
-    public RelativeBendpointModel getBendpoint(int index) {
+    public Bendpoint getBendpoint(int index) {
         return getBendpoints().get(index);
     }
 }

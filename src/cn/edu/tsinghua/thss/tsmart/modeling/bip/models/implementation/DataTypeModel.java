@@ -9,7 +9,6 @@ import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 
-
 /**
  * Created by Huangcd<br/>
  * Date: 11-9-26<br/>
@@ -20,6 +19,12 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
 
+    @ElementList
+    private final static HashSet<String> registerTypeNames = new HashSet<String>();
+    public final static String           BOUND             = "bound";
+    public final static DataTypeModel    boolData          = new DataTypeModel("bool");
+    public final static DataTypeModel    intData           = new DataTypeModel("int");
+
     public static HashSet<String> getRegisterTypeNames() {
         return registerTypeNames;
     }
@@ -28,14 +33,20 @@ public class DataTypeModel<P extends IDataContainer>
         return registerTypeNames.toArray(new String[registerTypeNames.size()]);
     }
 
-    @ElementList
-    private final static HashSet<String> registerTypeNames = new HashSet<String>();
-
     @Attribute(name = "typeName")
-    private String                       typeName;
+    private String  typeName;
+
+    @Attribute(name = "bound")
+    private boolean bounded = true;
 
     public DataTypeModel(@Attribute(name = "typeName") String typeName) {
         this.setTypeName(typeName);
+    }
+
+    public DataTypeModel(@Attribute(name = "typeName") String typeName,
+                    @Attribute(name = "bound") boolean bound) {
+        this.setTypeName(typeName);
+        this.setBounded(bound);
     }
 
     public String getTypeName() {
@@ -89,38 +100,25 @@ public class DataTypeModel<P extends IDataContainer>
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+    public void setPropertyValue(Object id, Object value) {}
 
+    public boolean isBounded() {
+        return bounded;
     }
 
-    @Override
-    public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-
+    public DataTypeModel setBounded(boolean bounded) {
+        this.bounded = bounded;
+        firePropertyChange(BOUND);
+        return this;
     }
 }

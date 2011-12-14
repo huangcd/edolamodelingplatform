@@ -22,11 +22,14 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
     private final static Pattern placeNamePattern = Pattern.compile("^PLACE(\\d*)$");
     private final static Pattern dataNamePattern  = Pattern.compile("^data(\\d*)$");
+    private final static Pattern portNamePattern  = Pattern.compile("^port(\\d*)$");
 
     @Override
     protected Command getCreateCommand(CreateRequest request) {
@@ -51,6 +54,17 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
             DataModel<AtomicTypeModel> child =
                             ((DataTypeModel<AtomicTypeModel>) request.getNewObject()).getInstance();
             child.setName(getAppropriateDataName(parent));
+            Point location = request.getLocation().getCopy();
+            // 相对位置
+            getHostFigure().translateToRelative(location);
+            getHostFigure().translateFromParent(location);
+            Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
+            child.setPositionConstraint(rect);
+            command.setChild(child);
+            return command;
+        } else if (request.getNewObjectType().equals(PortTypeModel.class)) {
+            PortModel child = ((PortTypeModel) request.getNewObject()).getInstance();
+            child.setName(getAppropriatePortName(parent));
             Point location = request.getLocation().getCopy();
             // 相对位置
             getHostFigure().translateToRelative(location);
@@ -98,6 +112,18 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
             }
         }
         return "data" + maxNumber;
+    }
+
+    private String getAppropriatePortName(AtomicTypeModel parent) {
+        int maxNumber = 0;
+        for (IInstance model : parent.getChildren()) {
+            Matcher mat = portNamePattern.matcher(model.getName());
+            if (mat.matches()) {
+                int number = Integer.parseInt(mat.group(1));
+                maxNumber = Math.max(number + 1, maxNumber);
+            }
+        }
+        return "port" + maxNumber;
     }
 
     @Override

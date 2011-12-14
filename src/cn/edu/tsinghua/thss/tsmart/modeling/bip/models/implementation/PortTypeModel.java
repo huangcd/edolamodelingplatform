@@ -1,7 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +18,27 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
  * Date: 11-9-26<br/>
  * Time: ÏÂÎç3:26<br/>
  */
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Root
 public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IContainer>
                 implements
                     IDataContainer<PortTypeModel, IContainer, DataTypeModel<PortTypeModel>>,
                     IOrderContainer<DataTypeModel<PortTypeModel>>,
                     IPortType<PortTypeModel, PortModel, IContainer> {
+
+    public final static PortTypeModel               ePortType;
+    public final static PortTypeModel               bPortType;
+    public final static PortTypeModel               iPortType;
+
+    static {
+        ePortType = new PortTypeModel().setName("ePort");
+        bPortType = new PortTypeModel().setName("boolPort");
+        iPortType = new PortTypeModel().setName("intPort");
+        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData.copy().setBounded(
+                        false));
+        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData.copy().setBounded(
+                        false));
+    }
 
     @ElementList
     private ArrayList<DataTypeModel<PortTypeModel>> arguments;
@@ -37,7 +49,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
 
     @Override
     public PortModel createInstance() {
-        this.instance = new PortModel().setType(this);
+        this.instance = (PortModel) new PortModel().setType(this);
         return instance;
     }
 
@@ -50,7 +62,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
      */
     public PortTypeModel copy(List<DataTypeModel<PortTypeModel>> dataTypes) {
         PortTypeModel copyModel = new PortTypeModel();
-        copyModel.setName(getName());
+        copyModel.setName("copyOf" + getName());
         copyModel.arguments.addAll(dataTypes);
         return copyModel;
     }
@@ -58,10 +70,14 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
     @Override
     public PortTypeModel copy() {
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            serializer.write(this, out);
-            return serializer
-                            .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
+            byte[] bytes = this.exportToBytes();
+            PortTypeModel newModel = importFromBytes(bytes);
+            newModel.resetID();
+            return newModel;
+            // ByteArrayOutputStream out = new ByteArrayOutputStream();
+            // serializer.write(this, out);
+            // return serializer
+            // .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
         } catch (Exception e) {
             e.printStackTrace();
             PortTypeModel copyModel = new PortTypeModel();

@@ -2,7 +2,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
 import java.util.ArrayList;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.RelativeBendpointModel;
+import org.eclipse.draw2d.Bendpoint;
 
 /**
  * Created by Huangcd<br/>
@@ -22,13 +22,13 @@ public interface IConnection<M extends IConnection, P extends IContainer, S exte
 
     T attachTarget();
 
-    ArrayList<RelativeBendpointModel> getBendpoints();
+    ArrayList<Bendpoint> getBendpoints();
     
-    RelativeBendpointModel getBendpoint(int index);
+    Bendpoint getBendpoint(int index);
 
-    M setBendpoint(int index, RelativeBendpointModel bendpoint);
+    M setBendpoint(int index, Bendpoint bendpoint);
 
-    M addBendpoint(int index, RelativeBendpointModel bendpoint);
+    M addBendpoint(int index, Bendpoint bendpoint);
 
     M removeBendpoint(int index);
 }

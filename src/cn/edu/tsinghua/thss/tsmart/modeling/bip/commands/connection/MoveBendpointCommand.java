@@ -1,15 +1,16 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.RelativeBendpointModel;
+import org.eclipse.draw2d.AbsoluteBendpoint;
 
 public class MoveBendpointCommand extends BendpointCommand {
-    RelativeBendpointModel oldBendpoint;
+    AbsoluteBendpoint oldBendpoint;
 
     @Override
     public void execute() {
-        oldBendpoint = connection.getBendpoint(index);
-        connection.setBendpoint(index,
-                        new RelativeBendpointModel().setRelativeDimensions(dimension1, dimension2));
+        oldBendpoint = (AbsoluteBendpoint) connection.getBendpoint(index);
+        AbsoluteBendpoint bendpoint = new AbsoluteBendpoint(point);
+        // bendpoint.setRelativeDimensions(dimension1, dimension2);
+        connection.setBendpoint(index, bendpoint);
     }
 
     @Override

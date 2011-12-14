@@ -32,6 +32,7 @@ public class ConnectionBendpointEditPolicy extends BendpointEditPolicy {
 
         command.setDimension1(location.getDifference(ref1));
         command.setDimension2(location.getDifference(ref2));
+        command.setPoint(location);
 
         command.setConnection((IConnection) getHost().getModel());
         command.setIndex(request.getIndex());
@@ -64,6 +65,7 @@ public class ConnectionBendpointEditPolicy extends BendpointEditPolicy {
 
         command.setConnection((IConnection) getHost().getModel());
         command.setIndex(request.getIndex());
+        command.setPoint(location);
         return command;
     }
 

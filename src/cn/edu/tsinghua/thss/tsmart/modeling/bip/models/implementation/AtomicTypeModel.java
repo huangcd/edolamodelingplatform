@@ -65,9 +65,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         children.addAll(ports);
         children.addAll(priorities);
         if (initAction != null) children.add(initAction);
-        // for (PlaceModel place : places) {
-        // children.add(place.getLabel());
-        // }
         return children;
     }
 
@@ -253,7 +250,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         // ¸´ÖÆ ports
         copyModel.ports = new ArrayList<PortModel>();
         for (PortModel port : ports) {
-            PortTypeModel oldPortType = port.getType();
+            PortTypeModel oldPortType = (PortTypeModel) port.getType();
             // TODO a mash
             PortTypeModel copyPortType = oldPortType;
             // .copy(oldPortType.getPortTypeArguments());

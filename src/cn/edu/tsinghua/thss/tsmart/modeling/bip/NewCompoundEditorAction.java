@@ -46,7 +46,7 @@ public class NewCompoundEditorAction extends Action implements ISelectionListene
         try {
             window.getActivePage().openEditor(
                             new BIPModuleEditorInput(new CompoundTypeModel().setName("compound")),
-                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor");
+                            "cn.edu.tsinghua.thss.tsmart.modeling.bip.CompoundEditor");
         } catch (PartInitException e) {
             e.printStackTrace();
         }
