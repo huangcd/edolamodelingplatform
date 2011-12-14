@@ -1,16 +1,21 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.gef.palette.CreationToolEntry;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 
 /**
  * Created by Huangcd<br/>
@@ -21,19 +26,50 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
 @Root
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
-    @ElementList
-    private final static HashSet<String>               registerTypeNames = new HashSet<String>();
-    public final static String                         BOUND             = "bound";
-    public final static DataTypeModel                  boolData;
-    public final static DataTypeModel                  intData;
-    public final static HashMap<String, DataTypeModel> typeSources;
+    public final static String                                               BOUND = "bound";
+    public final static DataTypeModel                                        boolData;
+    public final static DataTypeModel                                        intData;
+    private final static HashMap<String, DataTypeModel>                      typeSources;
+    private static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
     static {
+        toolMap = new HashMap<String, HashMap<AtomicEditor, CreationToolEntry>>();
         boolData = new DataTypeModel("bool");
         intData = new DataTypeModel("int");
         typeSources = new HashMap<String, DataTypeModel>();
         typeSources.put("bool", boolData);
         typeSources.put("int", intData);
+    }
+
+    public static void addType(String type) {
+        DataTypeModel model = new DataTypeModel(type);
+        addTypeSources(type, model);
+        HashMap<AtomicEditor, CreationToolEntry> map =
+                        new HashMap<AtomicEditor, CreationToolEntry>();
+        for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+            CreationToolEntry entry =
+                            new CreationToolEntry(type, "新建一个" + type + "变量",
+                                            new CopyFactory(model),
+                                            BIPEditor.getImage("icons/new_data_16.png"),
+                                            BIPEditor.getImage("icons/new_data_32.png"));
+            editor.addDataCreationToolEntry(entry);
+            map.put(editor, entry);
+        }
+        toolMap.put(type, map);
+    }
+
+    public static void addToolEntry(String type, AtomicEditor editor, CreationToolEntry entry) {
+        toolMap.get(type).put(editor, entry);
+    }
+
+    public static void removeType(String type) {
+        HashMap<AtomicEditor, CreationToolEntry> map = toolMap.get(type);
+        for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+            editor.removeDataCreationToolEntry(map.get(editor));
+        }
+        toolMap.remove(type);
+        removeTypeSources(type);
+        // TODO 删除一种数据类型的时候检查该类型是否被使用
     }
 
     public static boolean addTypeSources(String type, DataTypeModel dataType) {
@@ -49,7 +85,15 @@ public class DataTypeModel<P extends IDataContainer>
         return true;
     }
 
-    public static String[] getRegisterTypeNamesAsArray() {
+    public static Set<String> getTypes() {
+        return typeSources.keySet();
+    }
+
+    public static Set<Map.Entry<String, DataTypeModel>> getTypeEntries() {
+        return typeSources.entrySet();
+    }
+
+    public static String[] getTypeNamesAsArray() {
         ArrayList<String> list = new ArrayList<String>(typeSources.keySet());
         Collections.sort(list);
         return list.toArray(new String[list.size()]);
@@ -77,9 +121,6 @@ public class DataTypeModel<P extends IDataContainer>
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
-        if (!typeName.isEmpty()) {
-            registerTypeNames.add(typeName);
-        }
         getInstance().firePropertyChange(DataModel.DATA_TYPE);
         firePropertyChange(NAME);
     }

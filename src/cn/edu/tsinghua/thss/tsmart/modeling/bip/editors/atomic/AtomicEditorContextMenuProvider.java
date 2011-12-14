@@ -10,7 +10,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.actions.ActionFactory;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreateDataTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BipContextMenuProvider;
 
 public class AtomicEditorContextMenuProvider extends BipContextMenuProvider {
@@ -31,8 +30,8 @@ public class AtomicEditorContextMenuProvider extends BipContextMenuProvider {
         action = getActionRegistry().getAction(ActionFactory.DELETE.getId());
         menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
 
-        action = getActionRegistry().getAction(CreateDataTypeAction.id);
-        menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+        // action = getActionRegistry().getAction(CreateDataTypeAction.id);
+        // menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
 
         // action = getActionRegistry().getAction(CreateDataCommand.CREATE_DATA_COMMAND);
         // menu.appendToGroup(GEFActionConstants.GROUP_ADD, action);

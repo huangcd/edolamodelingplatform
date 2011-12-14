@@ -18,8 +18,8 @@ public class CreateDataTypeAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("Add data...");
-        setToolTipText("Add a new data");
+        setText("增加新数据类型");
+        setToolTipText("增加一个新的数据类型");
         setId(id);
         setEnabled(false);
     }

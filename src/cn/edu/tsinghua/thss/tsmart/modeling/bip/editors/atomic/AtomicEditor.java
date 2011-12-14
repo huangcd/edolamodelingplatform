@@ -75,6 +75,11 @@ public class AtomicEditor extends BIPEditor {
         dataStack.add(entry);
     }
 
+    /**
+     * 动态删除一个data创建按钮
+     * 
+     * @param entry
+     */
     public void removeDataCreationToolEntry(CreationToolEntry entry) {
         dataStack.remove(entry);
     }
@@ -100,9 +105,7 @@ public class AtomicEditor extends BIPEditor {
                                             DataTypeModel.intData), getImage("icons/int_16.png"),
                                             getImage("icons/int_32.png"));
             addDataCreationToolEntry(intCreationEntry);
-            // TODO 有一致性的问题（增加了一个数据类型以后再删除，这里可能还会有）
-            // FIXME 将增加数据类型从右键菜单命令改成全局菜单命令
-            for (Map.Entry<String, DataTypeModel> entry : DataTypeModel.typeSources.entrySet()) {
+            for (Map.Entry<String, DataTypeModel> entry : DataTypeModel.getTypeEntries()) {
                 if (entry.getKey().equals("int") || entry.getKey().equals("bool")) {
                     continue;
                 }
@@ -112,6 +115,7 @@ public class AtomicEditor extends BIPEditor {
                                                 BIPEditor.getImage("icons/new_data_16.png"),
                                                 BIPEditor.getImage("icons/new_data_32.png"));
                 addDataCreationToolEntry(creationToolEntry);
+                DataTypeModel.addToolEntry(entry.getKey(), this, creationToolEntry);
             }
         }
     }
@@ -185,9 +189,10 @@ public class AtomicEditor extends BIPEditor {
         super.createActions();
         ActionRegistry registry = getActionRegistry();
 
-        IAction action = new CreateDataTypeAction(this);
-        registry.registerAction(action);
-        getSelectionActions().add(action.getId());
+        IAction action;
+        // action = new CreateDataTypeAction(this);
+        // registry.registerAction(action);
+        // getSelectionActions().add(action.getId());
 
         // IAction action = new CreateDataAction(this);
         // registry.registerAction(action);
