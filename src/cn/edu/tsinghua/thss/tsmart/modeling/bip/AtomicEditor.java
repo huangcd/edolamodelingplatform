@@ -32,6 +32,10 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+<<<<<<< HEAD
+=======
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+>>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
@@ -39,7 +43,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.Transition
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.ui.handles.PlaceCreationTool;
+<<<<<<< HEAD
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+=======
+>>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
 
 @SuppressWarnings("rawtypes")
 public class AtomicEditor extends BIPEditor {
@@ -55,7 +62,11 @@ public class AtomicEditor extends BIPEditor {
         viewer = getGraphicalViewer();
         putViewerEditorEntry(viewer, this);
         viewer.setContents(getModel());
+<<<<<<< HEAD
         viewer.setContextMenu(new AtomicEditorContextMenuProvider(viewer, getActionRegistry()));
+=======
+        viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
+>>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
         initPaletteRoot();
         initDataCreationEntry();
         initPortCreationEntry();
@@ -86,6 +97,7 @@ public class AtomicEditor extends BIPEditor {
                                         DataTypeModel.boolData), getImage("icons/bool_16.png"),
                                         getImage("icons/bool_32.png"));
         addDataCreationToolEntry(boolCreationEntry);
+<<<<<<< HEAD
         if (GlobalProperties.getInstance().isMultipleDataTypeAvailble()) {
             CreationToolEntry intCreationEntry =
                             new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
@@ -99,6 +111,19 @@ public class AtomicEditor extends BIPEditor {
         // getImage("icons/new_data_16.png"),
         // getImage("icons/new_data_32.png"));
         // addDataCreationToolEntry(dataCreationEntry);
+=======
+        CreationToolEntry intCreationEntry =
+                        new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
+                                        DataTypeModel.intData), getImage("icons/int_16.png"),
+                                        getImage("icons/int_32.png"));
+        addDataCreationToolEntry(intCreationEntry);
+        CreationToolEntry dataCreationEntry =
+                        new CreationToolEntry("其它", "增加一个自定义变量", new CopyFactory(
+                                        new DataTypeModel<AtomicTypeModel>("")),
+                                        getImage("icons/new_data_16.png"),
+                                        getImage("icons/new_data_32.png"));
+        addDataCreationToolEntry(dataCreationEntry);
+>>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     }
 
     private void initPortCreationEntry() {
@@ -146,12 +171,15 @@ public class AtomicEditor extends BIPEditor {
         getPaletteRoot().add(atomicPalette);
     }
 
+<<<<<<< HEAD
     public void dispose() {
         removeViewerEditEntry(viewer);
         System.out.println("remove viewer from viewerEditorMap");
         super.dispose();
     }
 
+=======
+>>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     @Override
     public void doSave(IProgressMonitor monitor) {
         saveProperties();

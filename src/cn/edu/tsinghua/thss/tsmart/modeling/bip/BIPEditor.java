@@ -69,10 +69,13 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         viewerMap.put(viewer, editor);
     }
 
+<<<<<<< HEAD
     public static void removeViewerEditEntry(EditPartViewer viewer) {
         viewerMap.remove(viewer);
     }
 
+=======
+>>>>>>> 9000296a9394b07722d699ea835ad479e754b9a0
     /**
      * 打开一个编辑模型的页面
      * 
