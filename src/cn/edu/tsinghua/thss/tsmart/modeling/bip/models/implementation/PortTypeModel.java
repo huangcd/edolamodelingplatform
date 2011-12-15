@@ -195,42 +195,6 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         return instance;
     }
 
-    // /**
-    // * 深度根据给出的data参数列表复制一个新的PortTypeModel
-    // *
-    // * @param dataTypes data参数，应该是新的data
-    // *
-    // * @return 新的portTypeModel
-    // */
-    // public PortTypeModel copy(List<DataTypeModel<PortTypeModel>> dataTypes) {
-    // PortTypeModel copyModel = new PortTypeModel();
-    // copyModel.setName("copyOf" + getName());
-    // copyModel.arguments.addAll(dataTypes);
-    // return copyModel;
-    // }
-    //
-    // @Override
-    // public PortTypeModel copy() {
-    // try {
-    // byte[] bytes = this.exportToBytes();
-    // PortTypeModel newModel = importFromBytes(bytes);
-    // newModel.resetID();
-    // return newModel;
-    // // ByteArrayOutputStream out = new ByteArrayOutputStream();
-    // // serializer.write(this, out);
-    // // return serializer
-    // // .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // PortTypeModel copyModel = new PortTypeModel();
-    // copyModel.setName(getName());
-    // for (DataTypeModel<PortTypeModel> child : arguments) {
-    // copyModel.addChild(child);
-    // }
-    // return copyModel;
-    // }
-    // }
-
     @Override
     /**
      * 导出的同时设置各个DataTypeModel的name
