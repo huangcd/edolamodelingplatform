@@ -131,6 +131,16 @@ public class TransitionEditPart extends BaseConnectionEditPart {
     }
 
     /**
+     * 删除Transition的时候移除相应标签
+     */
+    public void deactivate() {
+        ((PlaceEditPart) getSource()).getParent().getFigure().remove(actionLabel);
+        ((PlaceEditPart) getSource()).getParent().getFigure().remove(guardLabel);
+        ((PlaceEditPart) getSource()).getParent().getFigure().remove(portLabel);
+        super.deactivate();
+    }
+
+    /**
      * 针对TransitionModel的事件处理
      */
     public void propertyChange(PropertyChangeEvent evt) {

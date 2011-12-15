@@ -28,13 +28,16 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
                     Serializable,
                     PropertyChangeListener {
 
-    public final static String CHILDREN   = "children";
-    public final static String PARENT     = "parent";
-    public final static String NAME       = "name";
-    public final static String CREATION   = "creation";
-    public final static String REFRESH    = "refresh";
-    public static final String CONSTRAINT = "constraint";
-    public static final int BULLET_RADIUS = 8;
+    public final static String CHILDREN      = "children";
+    public final static String PARENT        = "parent";
+    public final static String NAME          = "name";
+    public final static String CREATION      = "creation";
+    public final static String REFRESH       = "refresh";
+    public static final String CONSTRAINT    = "constraint";
+    /**
+     * 小圆点的半径
+     */
+    public static final int    BULLET_RADIUS = 8;
 
     /** @return 返回模型的父模型 */
     Parent getParent();

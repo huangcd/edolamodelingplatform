@@ -14,7 +14,6 @@ import org.eclipse.gef.ui.actions.MatchWidthAction;
 import org.eclipse.gef.ui.parts.ContentOutlinePage;
 import org.eclipse.gef.ui.parts.TreeViewer;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
@@ -50,18 +49,20 @@ public class CompoundEditor extends BIPEditor {
 
     private void createCompoundPaletteDrawer() {
         PaletteDrawer compoundPalette = new PaletteDrawer("复合组件");
-        ImageDescriptor descriptor = getImage("icons/atomic_16.png");
         CreationToolEntry creationAtomicEntry =
                         new CreationToolEntry("原子组件", "新建一个原子组件", new SimpleFactory(
-                                        AtomicTypeModel.class), descriptor, descriptor);
-        descriptor = getImage("icons/compound_16.png");
+                                        AtomicTypeModel.class), getImage("icons/atomic_16.png"),
+                                        getImage("icons/atomic_32.png"));
         CreationToolEntry creationCompoundEntry =
                         new CreationToolEntry("复合组件", "新建一个复合组件", new SimpleFactory(
-                                        CompoundTypeModel.class), descriptor, descriptor);
-        descriptor = getImage("icons/connector_16.png");
+                                        CompoundTypeModel.class),
+                                        getImage("icons/compound_16.png"),
+                                        getImage("icons/compound_32.png"));
         CreationToolEntry creationConnectorEntry =
                         new CreationToolEntry("连接子", "新建一个连接子", new SimpleFactory(
-                                        ConnectorTypeModel.class), descriptor, descriptor);
+                                        ConnectorTypeModel.class),
+                                        getImage("icons/connector_16.png"),
+                                        getImage("icons/connector_32.png"));
 
         // ConnectionCreationToolEntry creationConnectorLineEntry =
         // new ConnectionCreationToolEntry("Connector line",

@@ -26,7 +26,8 @@ public class TransitionModel
                 implements
                     IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
-    public static final String         BEND_POINTS = "bendPoints";
+    public static final String         BEND_POINTS             = "bendPoints";
+    public static final String         REMOVE_TRANSITION_LABEL = "removeTransitionLabels";
     @Element
     private PlaceModel                 source;
     @Element

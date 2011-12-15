@@ -5,8 +5,9 @@ import java.beans.PropertyChangeEvent;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -14,15 +15,16 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.FrameContainer;
 
 @SuppressWarnings("rawtypes")
 public abstract class ComponentEditPart extends BaseEditableEditPart {
-    private Label          typeLabel;
-    private Label          instanceLabel;
-    private FrameContainer panel;
+    private Label typeLabel;
+    private Label instanceLabel;
+    private Panel panel;
 
     public IComponentInstance getModel() {
         return (IComponentInstance) super.getModel();
@@ -30,44 +32,60 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
 
     @Override
     protected IFigure createFigure() {
-        panel = new FrameContainer(getModel().getName(), getModel().getType().getName(), this);
+        panel = new FrameContainer(this);
         panel.setFont(properties.getDefaultEditorFont());
-
-        typeLabel = new Label(getModel().getType().getName());
-        typeLabel.setForegroundColor(ColorConstants.darkBlue);
-        typeLabel.setFont(properties.getDefaultEditorFont());
-
-        instanceLabel = new Label(getModel().getName());
-        instanceLabel.setForegroundColor(ColorConstants.lightBlue);
-        instanceLabel.setFont(properties.getDefaultEditorFont());
-        resizeLabel();
-
-        panel.add(typeLabel);
-        panel.add(instanceLabel);
+        initLabels();
+        centerLabels();
         return panel;
     }
 
-    private void resizeLabel() {
-        typeLabel.setTextAlignment(PositionConstants.CENTER);
-        instanceLabel.setTextAlignment(PositionConstants.CENTER);
+    /** 将typeName 和 name 两个label放在方框中间 */
+    private void centerLabels() {
+        Rectangle rect = getModel().getPositionConstraint();
         Dimension typeSize = typeLabel.getPreferredSize();
         Dimension instanceSize = instanceLabel.getPreferredSize();
+        int width = Math.max(typeSize.width, instanceSize.width);
+        int height = typeSize.height + instanceSize.height + 3;
+        if (width + 30 > rect.width) {
+            getModel().setPositionConstraint(rect.getCopy().setWidth(width + 30));
+            rect = getModel().getPositionConstraint();
+        }
+        int x = (rect.width - typeSize.width) / 2;
+        int y = (rect.height - height) / 2;
+        typeLabel.setBounds(new Rectangle(new Point(x, y), typeSize));
 
-        Dimension newSize = typeSize.getUnioned(instanceSize);
-        typeLabel.setSize(newSize);
-        instanceLabel.setSize(newSize);
+        x = (rect.width - instanceSize.width) / 2;
+        y += instanceSize.height + 3;
+        instanceLabel.setBounds(new Rectangle(new Point(x, y), instanceSize));
+    }
+
+    private void initLabels() {
+        typeLabel = new Label(getModel().getType().getName());
+        typeLabel.setOpaque(true);
+        typeLabel.setForegroundColor(ColorConstants.darkBlue);
+        typeLabel.setFont(properties.getDefaultEditorFont());
+        panel.add(typeLabel);
+
+        instanceLabel = new Label(getModel().getName());
+        instanceLabel.setOpaque(true);
+        instanceLabel.setForegroundColor(ColorConstants.blue);
+        instanceLabel.setFont(properties.getDefaultEditorFont());
+        panel.add(instanceLabel);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
+            centerLabels();
+        }
         if (AtomicModel.TYPE_NAME.equals(evt.getPropertyName())) {
             typeLabel.setText(getModel().getType().getName());
-            resizeLabel();
-        } else if (AtomicModel.NAME.equals(evt.getPropertyName())) {
+            centerLabels();
+        } else if (IModel.NAME.equals(evt.getPropertyName())) {
             instanceLabel.setText(getModel().getName());
-            resizeLabel();
+            centerLabels();
         }
-        refresh();
+        refreshVisuals();
     }
 
     public void refreshVisuals() {
