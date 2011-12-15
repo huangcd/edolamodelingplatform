@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 
@@ -15,4 +16,6 @@ public interface IDataContainer<Model extends IDataContainer, Parent extends ICo
     extends IContainer<Model, Parent, Child> {
 
     List<DataModel<Model>> getDatas();
+    
+    Map<String, List<DataModel>> getDatasGroupByType();
 }

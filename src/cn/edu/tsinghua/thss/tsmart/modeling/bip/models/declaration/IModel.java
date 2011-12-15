@@ -23,7 +23,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelException;
  * </ul>
  */
 @SuppressWarnings({"unused", "rawtypes"})
-public interface IModel<Model extends IModel, Parent extends IContainer> extends Serializable {
+public interface IModel<Model extends IModel, Parent extends IContainer>
+                extends
+                    Serializable,
+                    PropertyChangeListener {
 
     public final static String CHILDREN   = "children";
     public final static String PARENT     = "parent";
@@ -57,9 +60,10 @@ public interface IModel<Model extends IModel, Parent extends IContainer> extends
      * @return 如果导出成BIP文件时当前实例会被导出，则返回true；否则返回false
      */
     boolean exportable();
-    
+
     /**
      * 指示实例是否可被编辑，内置的类型应该是不可编辑的，比如bool、int的typeName之类的
+     * 
      * @return
      */
     boolean editable();

@@ -15,7 +15,6 @@ import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
@@ -29,11 +28,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Root
-public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IContainer>
+public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IDataContainer>
                 implements
-                    IDataContainer<PortTypeModel, IContainer, DataTypeModel<PortTypeModel>>,
-                    IOrderContainer<DataTypeModel<PortTypeModel>>,
-                    IPortType<PortTypeModel, PortModel, IContainer> {
+                    IOrderContainer<DataTypeModel>,
+                    IPortType<PortTypeModel, PortModel, IDataContainer> {
     public final static PortTypeModel                                        ePortType;
     public final static PortTypeModel                                        bPortType;
     public final static PortTypeModel                                        iPortType;
@@ -46,8 +44,8 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         ePortType = new PortTypeModel().setName("ePort");
         bPortType = new PortTypeModel().setName("boolPort");
         iPortType = new PortTypeModel().setName("intPort");
-        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData.copy());
-        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData.copy());
+        bPortType.addChild((DataTypeModel) DataTypeModel.boolData.copy());
+        iPortType.addChild((DataTypeModel) DataTypeModel.intData.copy());
         typeSources.put("ePort", ePortType);
         typeSources.put("boolPort", bPortType);
         typeSources.put("intPort", iPortType);
@@ -129,21 +127,24 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
     }
 
     static class ChildEntry implements Serializable {
+        int           index;
+
         boolean       bounded = false;
         String        name;
         DataTypeModel model;
 
-        public ChildEntry(String name, DataTypeModel model) {
+        protected ChildEntry(String name, DataTypeModel model, int index) {
             super();
             this.name = name;
             this.model = model;
+            this.index = index;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
+        protected void setName(String name) {
             this.name = name;
         }
 
@@ -151,7 +152,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
             return model;
         }
 
-        public void setModel(DataTypeModel model) {
+        protected void setModel(DataTypeModel model) {
             this.model = model;
         }
 
@@ -163,9 +164,17 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
             return bounded;
         }
 
-        public void bound(DataTypeModel model) {
+        protected void bound(DataTypeModel model) {
             this.model = model;
             this.bounded = true;
+        }
+
+        public void unbound() {
+            this.bounded = false;
+        }
+
+        public int getIndex() {
+            return index;
         }
 
         public String toString() {
@@ -228,12 +237,12 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
      */
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("port type ").append(getName()).append('(').append(getArguments())
+        buffer.append("port type ").append(getName()).append('(').append(getArgumentAsString())
                         .append(')');
         return buffer.toString();
     }
 
-    public String getArguments() {
+    public String getArgumentAsString() {
         StringBuilder buffer = new StringBuilder();
         if (arguments != null && !arguments.isEmpty()) {
             ChildEntry child = arguments.get(0);
@@ -260,8 +269,18 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         return buffer.substring(0, buffer.length() - 2);
     }
 
+    // TODO 考虑通知机制，bound和unbound应该移到PortModel里面进行
     public PortTypeModel bound(int index, DataTypeModel model) {
         arguments.get(index).bound(model);
+        model.getInstance().addPropertyChangeListener(getInstance());
+        getInstance().firePropertyChange(CHILDREN);
+        return this;
+    }
+
+    public PortTypeModel unbound(int index) {
+        arguments.get(index).getModel().getInstance().removePropertyChangeListener(getInstance());
+        arguments.get(index).unbound();
+        getInstance().firePropertyChange(CHILDREN);
         return this;
     }
 
@@ -269,43 +288,32 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         return arguments.get(index).isBounded();
     }
 
-    public List<DataTypeModel<PortTypeModel>> getChildren() {
+    public List<DataTypeModel> getChildren() {
         return getOrderList();
     }
 
-    public DataTypeModel<PortTypeModel> removeOrderModelChild(int index) {
+    public DataTypeModel removeOrderModelChild(int index) {
         firePropertyChange(CHILDREN);
         return arguments.remove(index).getModel();
     }
 
-    @Override
-    public List<DataTypeModel<PortTypeModel>> getOrderList() {
-        ArrayList<DataTypeModel<PortTypeModel>> list =
-                        new ArrayList<DataTypeModel<PortTypeModel>>();
-        for (ChildEntry entry : arguments) {
-            list.add(entry.getModel());
-        }
-        return list;
-    }
-
-    @Override
-    public boolean removeChild(DataTypeModel<PortTypeModel> child) {
+    public boolean removeChild(DataTypeModel child) {
         firePropertyChange(CHILDREN);
         return arguments.remove(child);
     }
 
     public PortTypeModel addChild(DataTypeModel child, String name) {
-        arguments.add(new ChildEntry(name, child));
+        arguments.add(new ChildEntry(name, child, arguments.size()));
         firePropertyChange(CHILDREN);
         return this;
     }
 
-    public PortTypeModel addChild(DataTypeModel<PortTypeModel> child) {
+    public PortTypeModel addChild(DataTypeModel child) {
         // FIXME 名字可能会重复，应该确保其不重复
         return addChild(child, "p" + (arguments.size() + 1));
     }
 
-    public void setOrderModelChild(DataTypeModel<PortTypeModel> child, int index) {
+    public void setOrderModelChild(DataTypeModel child, int index) {
         arguments.get(index).setModel(child);
         firePropertyChange(CHILDREN);
     }
@@ -326,12 +334,16 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
     }
 
     @Override
-    public List<DataTypeModel> getPortTypeArguments() {
+    public List<DataTypeModel> getArguments() {
         List<DataTypeModel> list = new ArrayList<DataTypeModel>();
         for (ChildEntry entry : arguments) {
             list.add(entry.getModel());
         }
         return list;
+    }
+
+    public List<ChildEntry> getArgumentEntries() {
+        return arguments;
     }
 
     @Override
@@ -349,19 +361,17 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
 
     }
 
-    @Override
-    public List<DataModel<PortTypeModel>> getDatas() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean isNewNameAlreadyExistsInParent(DataTypeModel<PortTypeModel> child, String newName) {
-        for (DataTypeModel<PortTypeModel> instance : getChildren()) {
+    public boolean isNewNameAlreadyExistsInParent(DataTypeModel child, String newName) {
+        for (DataTypeModel instance : getChildren()) {
             if (!instance.equals(child) && instance.getName().equals(newName)) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public List<DataTypeModel> getOrderList() {
+        return getArguments();
     }
 }

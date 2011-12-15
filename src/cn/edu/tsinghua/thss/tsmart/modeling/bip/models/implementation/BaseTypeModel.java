@@ -11,6 +11,7 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.CycleStrategy;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
@@ -119,9 +120,18 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         return (Model) this;
     }
 
+    public Model firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        listeners.firePropertyChange(propertyName, oldValue, newValue);
+        return (Model) this;
+    }
+
     public Model removePropertyChangeListener(PropertyChangeListener listener) {
         listeners.removePropertyChangeListener(listener);
         return (Model) this;
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
     }
 
     public Model setPositionConstraint(Rectangle positionConstraint) {

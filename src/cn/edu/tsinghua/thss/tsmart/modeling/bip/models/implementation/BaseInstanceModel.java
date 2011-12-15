@@ -13,6 +13,7 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.CycleStrategy;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
@@ -64,6 +65,10 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     public static void setProrerties(GlobalProperties prorerties) {
         BaseInstanceModel.prorerties = prorerties;
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
     }
 
     /**

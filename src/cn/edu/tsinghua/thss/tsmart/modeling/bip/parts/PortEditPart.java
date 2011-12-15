@@ -24,6 +24,8 @@ public class PortEditPart extends BaseEditableEditPart {
             label.setText(getModel().getFriendlyString());
         } else if (PortModel.EXPORT.equals(evt.getPropertyName())) {
             label.setText(getModel().getFriendlyString());
+        } else if (IModel.CHILDREN.equals(evt.getPropertyName())) {
+            label.setText(getModel().getFriendlyString());
         }
         refreshVisuals();
     }
@@ -36,8 +38,7 @@ public class PortEditPart extends BaseEditableEditPart {
     }
 
     @Override
-    protected void performDoubleClick() {
-    }
+    protected void performDoubleClick() {}
 
     @Override
     protected IFigure createFigure() {

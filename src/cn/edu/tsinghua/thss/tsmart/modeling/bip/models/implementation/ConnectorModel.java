@@ -51,7 +51,7 @@ public class ConnectorModel
     @Override
     public ConnectorModel setType(ConnectorTypeModel connectorTypeModel) {
         super.setType(connectorTypeModel);
-        portEntries = new PortEntry[type.getPortTypeArguments().size()];
+        portEntries = new PortEntry[type.getArguments().size()];
         return this;
     }
 

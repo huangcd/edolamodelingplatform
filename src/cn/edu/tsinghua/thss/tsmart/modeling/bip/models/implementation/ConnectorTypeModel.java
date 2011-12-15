@@ -1,23 +1,23 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementArray;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
 
 /**
@@ -28,10 +28,10 @@ import java.util.Stack;
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root(name = "connectorType")
 public class ConnectorTypeModel
-                extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IContainer>
+                extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IDataContainer>
                 implements
-                    IDataContainer<ConnectorTypeModel, IContainer, IInstance>,
-                    IPortType<ConnectorTypeModel, ConnectorModel, IContainer>,
+                    IDataContainer<ConnectorTypeModel, IDataContainer, IInstance>,
+                    IPortType<ConnectorTypeModel, ConnectorModel, IDataContainer>,
                     IOrderContainer<IPortType> {
 
     @ElementList
@@ -113,7 +113,7 @@ public class ConnectorTypeModel
         if (port == null || portType == null) {
             return false;
         }
-        List<DataTypeModel> portTypeArguments = portType.getPortTypeArguments();
+        List<DataTypeModel> portTypeArguments = portType.getArguments();
         List<DataModel> portArguments = port.getPortArguments();
         if (portTypeArguments.size() != portArguments.size()) {
             return false;
@@ -316,7 +316,7 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public List<DataTypeModel> getPortTypeArguments() {
+    public List<DataTypeModel> getArguments() {
         List<DataTypeModel> dataTypes = new ArrayList<DataTypeModel>();
         for (DataModel<ConnectorTypeModel> data : exportDatas) {
             dataTypes.add(data.getType());
@@ -368,6 +368,12 @@ public class ConnectorTypeModel
             }
         }
         return false;
+    }
+
+    @Override
+    public Map<String, List<DataModel>> getDatasGroupByType() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
 

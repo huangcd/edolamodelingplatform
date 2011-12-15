@@ -206,6 +206,24 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     }
 
     /**
+     * 返回Atomic Type内部的所有数据，按照数据类型做聚类
+     * 
+     * @return
+     */
+    public HashMap<String, List<DataModel>> getDatasGroupByType() {
+        HashMap<String, List<DataModel>> map =
+                        new HashMap<String, List<DataModel>>();
+        for (DataModel<AtomicTypeModel> data : datas) {
+            String typeName = data.getType().getTypeName();
+            if (!map.containsKey(typeName)) {
+                map.put(typeName, new ArrayList<DataModel>());
+            }
+            map.get(typeName).add(data);
+        }
+        return map;
+    }
+
+    /**
      * 设置初始状态
      * 
      * @param newInitPlace

@@ -223,7 +223,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
     protected void initValues() {
         for (String type : PortTypeModel.getTypeNamesAsArray()) {
             listPortTypes.add(type);
-            portMap.put(type, PortTypeModel.getPortTypeModel(type).getArguments());
+            portMap.put(type, PortTypeModel.getPortTypeModel(type).getArgumentAsString());
         }
     }
 

@@ -11,8 +11,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeMo
  * Time: обнГ7:48<br/>
  */
 @SuppressWarnings("rawtypes")
-public interface IPortType<T extends IPortType<T, I, P>, I extends IPort, P extends IContainer>
+public interface IPortType<T extends IPortType<T, I, P>, I extends IPort, P extends IDataContainer>
     extends IType<T, I, P> {
 
-    List<DataTypeModel> getPortTypeArguments();
+    List<DataTypeModel> getArguments();
 }
