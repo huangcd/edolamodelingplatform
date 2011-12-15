@@ -9,7 +9,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 
 /**
- * Created by Huangcd Date: 11-9-14 Time: обнГ1:14
+ * Created by Huangcd
+ * 
+ * Date: 11-9-14
+ * 
+ * Time: обнГ1:14
  */
 public class ExportAction extends SelectionAction {
     public final static String ID = "Export to XML";

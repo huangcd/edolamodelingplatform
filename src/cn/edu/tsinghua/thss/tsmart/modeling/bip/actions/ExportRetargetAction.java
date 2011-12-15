@@ -6,7 +6,11 @@ import org.eclipse.ui.actions.RetargetAction;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 /**
- * Created by Huangcd Date: 11-9-14 Time: обнГ1:10
+ * Created by Huangcd
+ * 
+ * Date: 11-9-14
+ * 
+ * Time: обнГ1:10
  */
 public class ExportRetargetAction extends RetargetAction {
     public ExportRetargetAction() {

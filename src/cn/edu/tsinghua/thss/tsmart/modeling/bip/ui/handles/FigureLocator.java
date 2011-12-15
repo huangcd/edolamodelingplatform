@@ -7,6 +7,12 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.handles.RelativeHandleLocator;
 
+/**
+ * 根据一个figure定位另一个figure的Locatior，只支持东、南、西、北四个方向的定位
+ * 
+ * @author Huangcd
+ * 
+ */
 public class FigureLocator extends RelativeHandleLocator {
     private int     location;
     private int     gap;
@@ -26,7 +32,7 @@ public class FigureLocator extends RelativeHandleLocator {
     }
 
     /**
-     * 重定位标签 TODO：根据location计算新的位置
+     * 重定位标签
      * 
      * @param target 标签图像
      * @param refRect 参考位置

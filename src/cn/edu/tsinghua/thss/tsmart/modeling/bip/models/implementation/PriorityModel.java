@@ -78,12 +78,6 @@ public class PriorityModel<Parent extends IContainer, Port extends IPort>
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         // TODO Auto-generated method stub
         return null;
@@ -99,12 +93,6 @@ public class PriorityModel<Parent extends IContainer, Port extends IPort>
     public boolean isPropertySet(Object id) {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override

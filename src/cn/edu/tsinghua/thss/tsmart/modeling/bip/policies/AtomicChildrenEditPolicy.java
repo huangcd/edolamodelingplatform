@@ -50,7 +50,6 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
             command.setChild(child);
             return command;
         } else if (request.getNewObjectType().equals(DataTypeModel.class)) {
-            // TODO 判断getNewObject().getTypeName()是否为空，如果是空的话，弹出对话框提示用户设置
             DataModel<AtomicTypeModel> child =
                             ((DataTypeModel<AtomicTypeModel>) request.getNewObject()).getInstance();
             child.setName(getAppropriateDataName(parent));
@@ -128,7 +127,6 @@ public class AtomicChildrenEditPolicy extends XYLayoutEditPolicy {
 
     @Override
     public Command getCommand(Request request) {
-        // 不允许改变Atomic内部元素的大小
         if (REQ_RESIZE_CHILDREN.equals(request.getType())) return null;
         return super.getCommand(request);
     }

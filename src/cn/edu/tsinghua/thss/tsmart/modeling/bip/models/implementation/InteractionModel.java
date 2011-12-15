@@ -85,12 +85,6 @@ public class InteractionModel
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         // TODO Auto-generated method stub
         return null;
@@ -109,14 +103,7 @@ public class InteractionModel
     }
 
     @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
     }
 }

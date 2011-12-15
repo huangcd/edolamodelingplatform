@@ -60,9 +60,6 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
     }
 
     @Override
-    public void resetPropertyValue(Object id) {}
-
-    @Override
     public void setPropertyValue(Object id, Object value) {
         if (id.equals(ACTION)) {
             setAction((String) value);

@@ -15,7 +15,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 @SuppressWarnings("rawtypes")
 @Root
 public class CompoundModel extends BaseInstanceModel<CompoundModel, CompoundTypeModel, IContainer>
-    implements IComponentInstance<CompoundModel, CompoundTypeModel, IContainer> {
+                implements
+                    IComponentInstance<CompoundModel, CompoundTypeModel, IContainer> {
 
     @Override
     public boolean exportable() {
@@ -25,12 +26,6 @@ public class CompoundModel extends BaseInstanceModel<CompoundModel, CompoundType
     @Override
     public String exportToBip() {
         return String.format("component %s %s", getType().getName(), getName());
-    }
-
-    @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -52,14 +47,7 @@ public class CompoundModel extends BaseInstanceModel<CompoundModel, CompoundType
     }
 
     @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
     }
 }

@@ -1,6 +1,14 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-// import org.eclipse.draw2d.geometry.Rectangle;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -13,26 +21,10 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.CycleStrategy;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
-import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateNotifier;
-import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateReceiver;
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
-
-
 
 /**
  * Created by Huangcd<br/>
@@ -44,9 +36,7 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type extends IType, Parent extends IContainer>
                 implements
                     IInstance<Model, Type, Parent>,
-                    IPropertySource,
-                    UpdateNotifier,
-                    UpdateReceiver {
+                    IPropertySource {
     protected final static String[] trueFalseArray = new String[] {"true", "false"};
     private static Serializer       serializer     = new Persister(new CycleStrategy());
     private static GlobalProperties prorerties     = GlobalProperties.getInstance();
@@ -94,17 +84,16 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
         return (M) in.readObject();
     }
 
-    private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
-    private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
+    private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
     protected Rectangle           positionConstraint;
     @Element(required = false)
     protected Parent              parent;
     @Attribute(required = false)
     protected String              name;
-    protected UUID                uuid            = UUID.randomUUID();
+    protected UUID                uuid      = UUID.randomUUID();
     @Element(required = false, name = "type")
     protected Type                type;
-    protected boolean             editable        = true;
+    protected boolean             editable  = true;
 
     public Type getType() {
         return type;
@@ -222,33 +211,6 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public Model copy() {
         return (Model) ((IType) getType().copy()).getInstance().setName(getName()).resetID();
-    }
-
-    @Override
-    public void updated() {
-        firePropertyChange(REFRESH);
-    }
-
-    @Override
-    public List<UpdateReceiver> getRegisterObjects() {
-        return registerObjects;
-    }
-
-    @Override
-    public void register(UpdateReceiver obj) {
-        if (obj != null) registerObjects.add(obj);
-    }
-
-    @Override
-    public void unRegister(UpdateReceiver obj) {
-        if (obj != null) registerObjects.remove(obj);
-    }
-
-    @Override
-    public void notifyRegisterObjects() {
-        for (UpdateReceiver receiver : getRegisterObjects()) {
-            receiver.updated();
-        }
     }
 
     @Override

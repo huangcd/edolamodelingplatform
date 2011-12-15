@@ -1,6 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -14,7 +13,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 @Root
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class PriorityTypeModel<Parent extends IContainer>
-    extends BaseTypeModel<PriorityTypeModel, PriorityModel, Parent> {
+                extends BaseTypeModel<PriorityTypeModel, PriorityModel, Parent> {
 
     @Override
     public PriorityModel createInstance() {
@@ -40,38 +39,15 @@ public class PriorityTypeModel<Parent extends IContainer>
     }
 
     @Override
-    public Object getEditableValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void resetPropertyValue(Object id) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-        
-    }
+    public void setPropertyValue(Object id, Object value) {}
 }

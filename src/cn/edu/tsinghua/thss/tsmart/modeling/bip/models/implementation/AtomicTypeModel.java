@@ -24,6 +24,9 @@ import java.util.List;
  * Date: 11-9-25<br/>
  * Time: 下午9:05<br/>
  * AtomicTypeModel：一方面应该是一个类型模型，另一方面应该是一个容器
+ * 
+ * 
+ * FIXME 关闭一个Atomic编辑页面的时候应该把所有Transition去掉（detach），打开的时候再attach上去
  */
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
@@ -211,8 +214,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
      * @return
      */
     public HashMap<String, List<DataModel>> getDatasGroupByType() {
-        HashMap<String, List<DataModel>> map =
-                        new HashMap<String, List<DataModel>>();
+        HashMap<String, List<DataModel>> map = new HashMap<String, List<DataModel>>();
         for (DataModel<AtomicTypeModel> data : datas) {
             String typeName = data.getType().getTypeName();
             if (!map.containsKey(typeName)) {
