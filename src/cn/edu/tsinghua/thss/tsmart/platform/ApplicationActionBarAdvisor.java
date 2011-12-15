@@ -11,6 +11,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 
 import cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditorAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManageDataTypeAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManagePortTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewAtomicEditorAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewCompoundEditorAction;
 
@@ -26,6 +27,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private NewAtomicEditorAction   newAtomicAction;
     private NewCompoundEditorAction newCompoundAction;
     private ManageDataTypeAction    manageDataTypeAction;
+    private ManagePortTypeAction    managePortTypeAction;
     private XMLEditorAction         xmlAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
@@ -45,6 +47,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(xmlAction);
         manageDataTypeAction = new ManageDataTypeAction(window);
         register(manageDataTypeAction);
+        managePortTypeAction = new ManagePortTypeAction(window);
+        register(managePortTypeAction);
     }
 
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -66,6 +70,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
         MenuManager modelingMenu = new MenuManager("½¨Ä£", "modeling");
         modelingMenu.add(manageDataTypeAction);
+        modelingMenu.add(managePortTypeAction);
 
         MenuManager helpMenu = new MenuManager("°ïÖú", "help");
         helpMenu.add(aboutAction);

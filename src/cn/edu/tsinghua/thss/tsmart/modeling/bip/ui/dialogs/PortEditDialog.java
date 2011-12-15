@@ -115,4 +115,9 @@ public class PortEditDialog extends AbstractEditDialog {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    protected Label getErrorLabel() {
+        return null;
+    }
 }

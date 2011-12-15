@@ -93,6 +93,10 @@ public class DataTypeModel<P extends IDataContainer>
         return typeSources.entrySet();
     }
 
+    public static DataTypeModel getModel(String type) {
+        return (DataTypeModel) typeSources.get(type).copy();
+    }
+
     public static String[] getTypeNamesAsArray() {
         ArrayList<String> list = new ArrayList<String>(typeSources.keySet());
         Collections.sort(list);
@@ -129,15 +133,15 @@ public class DataTypeModel<P extends IDataContainer>
         return instance;
     }
 
-    /**
-     * 复制dataTypeModel对象，同时复制instance对象的value。 但为了避免出现问题，不复制instance的name
-     */
-    public DataTypeModel copy() {
-        DataTypeModel copyModel = new DataTypeModel(this.typeName);
-        DataModel instance = copyModel.createInstance();
-        instance.setValue(this.getInstance().getValue());
-        return copyModel;
-    }
+    // /**
+    // * 复制dataTypeModel对象，同时复制instance对象的value。 但为了避免出现问题，不复制instance的name
+    // */
+    // public DataTypeModel copy() {
+    // DataTypeModel copyModel = new DataTypeModel(this.typeName);
+    // DataModel instance = copyModel.createInstance();
+    // instance.setValue(this.getInstance().getValue());
+    // return copyModel;
+    // }
 
     @Override
     public boolean exportable() {

@@ -1,13 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -52,32 +51,13 @@ public class DataTypeManageDialog extends AbstractEditDialog {
         buttonDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                String[] seletions = listDataTypes.getSelection();
-                boolean containsDefaultType = false;
-                for (String selection : seletions) {
-                    if (selection.equals("int") || selection.equals("bool")) {
-                        containsDefaultType = true;
-                        continue;
-                    }
-                    listDataTypes.remove(selection);
-                }
-                if (containsDefaultType) {
-                    labelError.setText("内置类型不能被删除");
-                }
+                removeTypes();
             }
         });
         buttonDelete.setBounds(152, 10, 86, 27);
         buttonDelete.setText("\u5220\u9664\u9009\u5B9A\u7C7B\u578B");
 
         textType = new Text(container, SWT.BORDER);
-        textType.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.keyCode == SWT.CR) {
-                    addType();
-                }
-            }
-        });
         textType.setBounds(152, 149, 86, 23);
 
         buttonAdd = new Button(container, SWT.NONE);
@@ -98,16 +78,35 @@ public class DataTypeManageDialog extends AbstractEditDialog {
         return container;
     }
 
-    public void addType() {
+    private void removeTypes() {
+        String[] seletions = listDataTypes.getSelection();
+        boolean containsDefaultType = false;
+        for (String selection : seletions) {
+            if (selection.equals("int") || selection.equals("bool")) {
+                containsDefaultType = true;
+                continue;
+            }
+            listDataTypes.remove(selection);
+        }
+        if (containsDefaultType) {
+            handleError("内置类型不能被删除");
+        }
+    }
+
+    private void addType() {
         String newType = textType.getText().trim().toLowerCase();
+        if (!identifier.matcher(newType).matches()) {
+            handleError(MessageFormat.format("变量类型名\"{0}\"不合法", newType));
+            return;
+        }
         if (newType.isEmpty()) {
-            labelError.setText("添加的类型不能为空");
+            handleError("添加的类型不能为空");
             return;
         }
         String[] items = listDataTypes.getItems();
         for (String type : items) {
             if (type.equals(newType)) {
-                labelError.setText("添加的类型不能为空");
+                handleError("添加的类型已存在");
                 return;
             }
         }
@@ -155,5 +154,10 @@ public class DataTypeManageDialog extends AbstractEditDialog {
     @Override
     protected boolean validateUserInput() {
         return true;
+    }
+
+    @Override
+    protected Label getErrorLabel() {
+        return labelError;
     }
 }

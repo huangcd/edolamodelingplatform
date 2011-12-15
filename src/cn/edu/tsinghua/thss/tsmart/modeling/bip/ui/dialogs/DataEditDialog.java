@@ -93,7 +93,7 @@ public class DataEditDialog extends AbstractEditDialog {
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(340, 168);
+        return new Point(350, 168);
     }
 
     @Override
@@ -139,5 +139,10 @@ public class DataEditDialog extends AbstractEditDialog {
             }
         }
         return true;
+    }
+
+    @Override
+    protected Label getErrorLabel() {
+        return null;
     }
 }

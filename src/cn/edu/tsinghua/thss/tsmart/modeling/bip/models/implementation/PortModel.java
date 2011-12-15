@@ -26,15 +26,6 @@ public class PortModel<P extends IComponentType>
     @Element
     private boolean            export;
 
-    public PortModel copy(List<DataModel> datas) {
-        List<DataTypeModel<PortTypeModel>> dataTypes =
-                        new ArrayList<DataTypeModel<PortTypeModel>>();
-        for (DataModel<AtomicTypeModel> data : datas) {
-            dataTypes.add(data.getType());
-        }
-        return getType().copy(dataTypes).getInstance();
-    }
-
     public boolean isExport() {
         return export;
     }
@@ -80,8 +71,10 @@ public class PortModel<P extends IComponentType>
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "name"),
-                        new ComboBoxPropertyDescriptor(EXPORT, "exportable", trueFalseArray),};
+        ArrayList<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
+        list.add(new TextPropertyDescriptor(NAME, "name"));
+        list.add(new ComboBoxPropertyDescriptor(EXPORT, "exportable", trueFalseArray));
+        return list.toArray(new IPropertyDescriptor[list.size()]);
     }
 
     @Override
@@ -109,29 +102,11 @@ public class PortModel<P extends IComponentType>
         }
     }
 
-    private StringBuilder appendData(StringBuilder buffer, DataModel<IDataContainer> data) {
-        if (data.getType().isBounded()) {
-            buffer.append(data.getType().getTypeName()).append(' ').append(data.getName());
-        } else {
-            buffer.append(data.getType().getTypeName()).append(" $$UNBOUNDED$$");
-        }
-        return buffer;
-    }
-
     public String getFriendlyString() {
         StringBuilder buffer = new StringBuilder();
         if (isExport()) buffer.append("export ");
         buffer.append(getType().getName()).append(' ').append(getName()).append('(');
-        List<DataModel<IDataContainer>> datas = getPortArguments();
-        if (datas.isEmpty()) {
-            buffer.append(")");
-        } else {
-            for (DataModel<IDataContainer> data : datas) {
-                appendData(buffer, data).append(", ");
-            }
-            int size = buffer.length();
-            buffer.replace(size - 2, size, ")");
-        }
+        buffer.append(getType().getFriendlyArguments()).append(')');
         return buffer.toString();
     }
 }

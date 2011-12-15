@@ -32,7 +32,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CreateDataTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
@@ -93,6 +92,15 @@ public class AtomicEditor extends BIPEditor {
         portStack.add(entry);
     }
 
+    /**
+     * 动态删除一个port创建按钮
+     * 
+     * @param entry
+     */
+    public void removePortCreationToolEntry(CreationToolEntry entry) {
+        portStack.remove(entry);
+    }
+
     private void initDataCreationEntry() {
         CreationToolEntry boolCreationEntry =
                         new CreationToolEntry("布尔", "增加一个布尔变量", new CopyFactory(
@@ -111,7 +119,7 @@ public class AtomicEditor extends BIPEditor {
                 }
                 CreationToolEntry creationToolEntry =
                                 new CreationToolEntry(entry.getKey(), "新建一个" + entry.getKey()
-                                                + "变量", new CopyFactory(model),
+                                                + "变量", new CopyFactory(entry.getValue()),
                                                 BIPEditor.getImage("icons/new_data_16.png"),
                                                 BIPEditor.getImage("icons/new_data_32.png"));
                 addDataCreationToolEntry(creationToolEntry);
@@ -126,21 +134,18 @@ public class AtomicEditor extends BIPEditor {
                                         PortTypeModel.ePortType), getImage("icons/port_16.png"),
                                         getImage("icons/port_32.png"));
         addPortCreationToolEntry(ePortCreationEntry);
-        CreationToolEntry bPortCreationEntry =
-                        new CreationToolEntry("bPort", "增加一个带一个bool参数的端口", new CopyFactory(
-                                        PortTypeModel.bPortType), getImage("icons/port_16.png"),
-                                        getImage("icons/port_32.png"));
-        addPortCreationToolEntry(bPortCreationEntry);
-        CreationToolEntry iPortCreationEntry =
-                        new CreationToolEntry("iPort", "增加一个带一个int参数的端口", new CopyFactory(
-                                        PortTypeModel.iPortType), getImage("icons/port_16.png"),
-                                        getImage("icons/port_32.png"));
-        addPortCreationToolEntry(iPortCreationEntry);
-        CreationToolEntry dataCreationEntry =
-                        new CreationToolEntry("其它", "增加一个自定义端口", new CopyFactory(
-                                        new PortTypeModel()), getImage("icons/port_16.png"),
-                                        getImage("icons/port_32.png"));
-        addPortCreationToolEntry(dataCreationEntry);
+        for (Map.Entry<String, PortTypeModel> entry : PortTypeModel.getTypeEntries()) {
+            if (entry.getKey().equals("ePort")) {
+                continue;
+            }
+            CreationToolEntry creationToolEntry =
+                            new CreationToolEntry(entry.getKey(), "新建一个" + entry.getKey() + "端口",
+                                            new CopyFactory(entry.getValue()),
+                                            BIPEditor.getImage("icons/port_16.png"),
+                                            BIPEditor.getImage("icons/port_32.png"));
+            addPortCreationToolEntry(creationToolEntry);
+            PortTypeModel.addToolEntry(entry.getKey(), this, creationToolEntry);
+        }
     }
 
     private void initPaletteRoot() {

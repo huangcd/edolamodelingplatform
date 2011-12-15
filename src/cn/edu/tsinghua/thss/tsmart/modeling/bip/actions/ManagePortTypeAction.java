@@ -7,18 +7,18 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.DataTypeManageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.PortTypeManageDialog;
 
-public class ManageDataTypeAction extends Action implements ISelectionListener, IWorkbenchAction {
+public class ManagePortTypeAction extends Action implements ISelectionListener, IWorkbenchAction {
 
     private final IWorkbenchWindow window;
-    public static final String     ID = ManageDataTypeAction.class.getCanonicalName();
+    public static final String     ID = ManagePortTypeAction.class.getCanonicalName();
 
-    public ManageDataTypeAction(IWorkbenchWindow window) {
+    public ManagePortTypeAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("管理数据类型");
-        setToolTipText("增加或删除数据类型");
+        setText("管理端口类型");
+        setToolTipText("增加或删除端口类型");
         // setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png"));
         window.getSelectionService().addSelectionListener(this);
     }
@@ -33,7 +33,7 @@ public class ManageDataTypeAction extends Action implements ISelectionListener, 
 
     @Override
     public void run() {
-        DataTypeManageDialog dialog = new DataTypeManageDialog(window.getShell());
+        PortTypeManageDialog dialog = new PortTypeManageDialog(window.getShell());
         dialog.setBlockOnOpen(true);
         dialog.open();
     }
