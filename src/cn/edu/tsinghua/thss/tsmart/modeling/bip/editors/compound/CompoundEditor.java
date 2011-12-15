@@ -64,15 +64,9 @@ public class CompoundEditor extends BIPEditor {
                                         getImage("icons/connector_16.png"),
                                         getImage("icons/connector_32.png"));
 
-        // ConnectionCreationToolEntry creationConnectorLineEntry =
-        // new ConnectionCreationToolEntry("Connector line",
-        // "create a new connector line", new SimpleFactory(
-        // ConnectorPortModel.class), getImage("icons/connectorline_16.png"),
-        // getImage("icons/connectorline_32.png"));
         compoundPalette.add(creationAtomicEntry);
         compoundPalette.add(creationCompoundEntry);
         compoundPalette.add(creationConnectorEntry);
-        // drawer.add(creationConnectorLineEntry);
         getPaletteRoot().add(compoundPalette);
     }
 
