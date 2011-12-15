@@ -32,6 +32,7 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
 
     @Override
     protected IFigure createFigure() {
+        // TODO panel.translateToParent(p): ×ø±ê×ª»»
         panel = new FrameContainer(this);
         panel.setFont(properties.getDefaultEditorFont());
         initLabels();
