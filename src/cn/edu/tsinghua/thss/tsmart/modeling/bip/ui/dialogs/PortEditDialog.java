@@ -17,6 +17,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 @SuppressWarnings("rawtypes")
 public class PortEditDialog extends AbstractEditDialog {
     private PortModel  instance;
+    @SuppressWarnings("unused")
     private IContainer container;
     private Text textType;
     private Text textName;
