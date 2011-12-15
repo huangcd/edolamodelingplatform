@@ -118,14 +118,6 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         ArrayList<Bendpoint> bendpoints = getBendpoints();
         if (bendpoints.isEmpty() && getModel().isLoop()) {
             getConnectionFigure().setRoutingConstraint(bendpoints);
-            // Point center = getModel().getSource().getPositionConstraint().getCenter();
-            // Point point = new Point(center.x - 30, center.y + 30);
-            // connection.insertPoint(point, 1);
-            //
-            // center = getModel().getTarget().getPositionConstraint().getCenter();
-            // point = new Point(center.x + 30, center.y + 30);
-            // connection.insertPoint(point, 2);
-            // connection.repaint();
         } else {
             getConnectionFigure().setRoutingConstraint(bendpoints);
         }
@@ -158,9 +150,13 @@ public class TransitionEditPart extends BaseConnectionEditPart {
             refreshVisuals();
         } else if (PlaceModel.SOURCE.equals(propertyName) || PlaceModel.TARGET.equals(propertyName)) {
             refreshVisuals();
-        } else {
-            refreshVisuals();
         }
+        setTooltip();
+        actionLabel.setText(getModel().getActionString());
+        guardLabel.setText(getModel().getGuardString());
+        portLabel.setText(getModel().getPortString());
+        actionLocator.relocate();
+        refreshVisuals();
     }
 
     @Override

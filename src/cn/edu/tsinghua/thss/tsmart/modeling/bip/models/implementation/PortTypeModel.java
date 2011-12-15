@@ -265,12 +265,15 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
                     buffer.append("$UNBOUNDED$");
                 buffer.append(", ");
             }
+            return buffer.substring(0, buffer.length() - 2);
+        } else {
+            return "";
         }
-        return buffer.substring(0, buffer.length() - 2);
     }
 
     // TODO 考虑通知机制，bound和unbound应该移到PortModel里面进行
     public PortTypeModel bound(int index, DataTypeModel model) {
+        arguments.get(index).getModel().getInstance().removePropertyChangeListener(getInstance());
         arguments.get(index).bound(model);
         model.getInstance().addPropertyChangeListener(getInstance());
         getInstance().firePropertyChange(CHILDREN);

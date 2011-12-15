@@ -1,8 +1,10 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.draw2d.Bendpoint;
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
@@ -17,7 +19,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
  * Date: 11-9-26<br/>
  * Time: ÏÂÎç3:31<br/>
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
 public class TransitionModel
                 extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
@@ -68,7 +70,11 @@ public class TransitionModel
     }
 
     public void setPort(PortModel<AtomicTypeModel> port) {
+        if (port == null || this.port != null) {
+            this.port.removePropertyChangeListener(this);
+        }
         this.port = port;
+        this.port.addPropertyChangeListener(this);
         firePropertyChange(PortModel.PORT);
     }
 
@@ -161,8 +167,15 @@ public class TransitionModel
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
+        List<PortModel> ports = getParent().getPorts();
+        String[] values = new String[ports.size() + 1];
+        for (int i = 0, size = ports.size(); i < size; i++) {
+            values[i] = ports.get(i).getName();
+        }
+        values[ports.size()] = "$UNBOUNDED$";
         return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "action"),
-                        new TextPropertyDescriptor(GuardModel.GUARD, "guard")};
+                        new TextPropertyDescriptor(GuardModel.GUARD, "guard"),
+                        new ComboBoxPropertyDescriptor(PortModel.PORT, "port", values)};
     }
 
     @Override
@@ -174,7 +187,11 @@ public class TransitionModel
             return guard.getGuard();
         }
         if (PortModel.PORT.equals(id)) {
-            return port.getName();
+            List<PortModel> ports = getParent().getPorts();
+            if (port == null) {
+                return ports.size();
+            }
+            return ports.indexOf(port);
         }
         return null;
     }
@@ -192,7 +209,14 @@ public class TransitionModel
         } else if (GuardModel.GUARD.equals(id)) {
             setGuardString((String) value);
         } else if (PortModel.PORT.equals(id)) {
-            // TODO set port
+            List<PortModel> ports = getParent().getPorts();
+            int index = (Integer) value;
+            if (index == ports.size()) {
+                setPort(null);
+            }
+            if (index >= 0 && index < ports.size()) {
+                setPort(ports.get(index));
+            }
         }
     }
 
