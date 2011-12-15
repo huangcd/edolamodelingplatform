@@ -43,7 +43,6 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
         figure.setFont(properties.getDefaultEditorFont());
         figure.setLayoutManager(new FreeformLayout());
         return figure;
-        // return new ComponentFigure(this);
     }
 
     public IFigure getFigure() {
@@ -58,8 +57,6 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
             BetterBendpointConnectionRouter bendpointRouter = new BetterBendpointConnectionRouter();
             FanRouter fanRouter = new FanRouter();
             fanRouter.setSeparation(20);
-            // ManhattanConnectionRouter manhattanRouter = new ManhattanConnectionRouter();
-            // fanRouter.setNextRouter(new ShortestPathConnectionRouter(getFigure()));
             fanRouter.setNextRouter(bendpointRouter);
             cLayer.setConnectionRouter(fanRouter);
         }

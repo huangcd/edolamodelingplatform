@@ -3,7 +3,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
@@ -16,9 +15,11 @@ import org.eclipse.gef.requests.CreateRequest;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
 @SuppressWarnings("rawtypes")
@@ -53,7 +54,25 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
             // COMMENT 相对位置
             getHostFigure().translateToRelative(location);
             getHostFigure().translateFromParent(location);
-            Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
+            Rectangle rect = new Rectangle(location, IComponentType.componentSize);
+            child.setPositionConstraint(rect);
+            command.setChild(child);
+            command.setParent(parent);
+            return command;
+        } else if (request.getNewObjectType().equals(CompoundTypeModel.class)) {
+            CreateModelCommand command = new CreateModelCommand();
+            Object obj = getHost().getModel();
+            if (!(obj instanceof CompoundTypeModel)) return null;
+            CompoundTypeModel parent = (CompoundTypeModel) obj;
+            CompoundModel child =
+                            new CompoundTypeModel().createInstance().setName(
+                                            getAppropriateComponentName(parent));
+            child.getType().setName(child.getName() + "Type");
+            Point location = request.getLocation().getCopy();
+            // COMMENT 相对位置
+            getHostFigure().translateToRelative(location);
+            getHostFigure().translateFromParent(location);
+            Rectangle rect = new Rectangle(location, IComponentType.componentSize);
             child.setPositionConstraint(rect);
             command.setChild(child);
             command.setParent(parent);

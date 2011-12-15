@@ -37,7 +37,9 @@ public class TransitionEditPart extends BaseConnectionEditPart {
     private Label              actionLabel;
     private Label              portLabel;
     private Label              guardLabel;
+    // 根据portLabel的位置定位actionLabel
     private FigureLocator      actionLocator;
+    // 根据portLabel的位置定位guardLabel
     private FigureLocator      guardLocator;
 
     protected void createEditPolicies() {

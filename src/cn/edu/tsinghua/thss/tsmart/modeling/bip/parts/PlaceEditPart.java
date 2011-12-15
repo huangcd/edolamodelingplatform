@@ -34,19 +34,14 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     private FigureLocator labelLocator;
     private Label         tooltipLabel;
 
-    protected void setAsInitialPlace() {
-        // figure.setForegroundColor(ColorConstants.green);
-    }
+    protected void setAsInitialPlace() {}
 
-    protected void setAsNormalPlace() {
-        // figure.setForegroundColor(ColorConstants.gray);
-    }
+    protected void setAsNormalPlace() {}
 
     @Override
     protected IFigure createFigure() {
         PlaceModel model = getModel();
 
-        // figure = new INITFigure();
         figure = new PlaceFigure();
         figure.setForegroundColor(ColorConstants.gray);
         if (model.isInitialPlace()) {
@@ -150,12 +145,12 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected List<TransitionModel> getModelSourceConnections() {
-        return (getModel()).getSourceConnections();
+        return getModel().getSourceConnections();
     }
 
     @Override
     protected List<TransitionModel> getModelTargetConnections() {
-        return (getModel()).getTargetConnections();
+        return getModel().getTargetConnections();
     }
 
     @Override

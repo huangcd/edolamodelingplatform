@@ -34,6 +34,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     public final static String CREATION   = "creation";
     public final static String REFRESH    = "refresh";
     public static final String CONSTRAINT = "constraint";
+    public static final int BULLET_RADIUS = 8;
 
     /** @return 返回模型的父模型 */
     Parent getParent();

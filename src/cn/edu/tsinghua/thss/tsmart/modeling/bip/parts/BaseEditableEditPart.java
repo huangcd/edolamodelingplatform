@@ -4,7 +4,6 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 
 public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
-    // private CustomDirectEditManager directManager = null; // 编辑文本
 
     // 重载 ，用于处理特殊的request，如直接编辑文本
     public void performRequest(Request req) {
@@ -20,15 +19,10 @@ public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
         }
     }
 
-    protected void performDirectEdit() {
-        // if (directManager == null) {
-        // // 如果还没有 directManager，则创建一个：类型是 Text，位置由图形决定
-        // directManager =
-        // new CustomDirectEditManager(this, TextCellEditor.class,
-        // new CustomCellEditorLocator(getFigure()));
-        // }
-        // directManager.show(); // 显示这个 directManager
-    }
+    /**
+     * 本版本不支持直接编辑
+     */
+    protected void performDirectEdit() {}
 
     // 双击对话框
     protected abstract void performDoubleClick();
