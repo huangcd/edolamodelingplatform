@@ -2,3 +2,4 @@
    1）辅助插件安装（windowBuilder（安装地址：http://download.eclipse.org/windowbuilder/WB/release/R201109201200/3.7/）：可能会有依赖项不能满足，需要按照提示从别的机器拷贝，主要有org.eclipse.wst.sse.*及org.apache.xml*）
 2、   为保证代码风格一致，在编辑项目之前请导入.settings/eclipse-java-google-style.xml。
         导入方法：Eclipse->window->preferences->Java->Code Style->Formatter->Import 选择eclipse-java-google-style.xml文件。
+      重要：提交代码之前对于修改过的文件，请先在Eclipse里面执行格式化代码操作（默认快捷键是Ctrl+Shift+F），以保持代码风格一致。

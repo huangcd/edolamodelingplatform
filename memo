@@ -1,3 +1,0 @@
-1、增加一个全局的设定，可以设定诸如“启动模型检测”、“启动代码生成”一类的功能
-2、将PlaceModel的标签用RelativeHandleLocator实现定位
-3、TransitionModel的action、guard、port标签用同样的方法定位
