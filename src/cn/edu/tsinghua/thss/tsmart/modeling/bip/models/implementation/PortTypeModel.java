@@ -34,10 +34,8 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         ePortType = new PortTypeModel().setName("ePort");
         bPortType = new PortTypeModel().setName("boolPort");
         iPortType = new PortTypeModel().setName("intPort");
-        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData.copy().setBounded(
-                        false));
-        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData.copy().setBounded(
-                        false));
+        bPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.boolData.copy());
+        iPortType.addChild((DataTypeModel<PortTypeModel>) DataTypeModel.intData.copy());
     }
 
     @ElementList
@@ -53,41 +51,41 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ICont
         return instance;
     }
 
-    /**
-     * 深度根据给出的data参数列表复制一个新的PortTypeModel
-     * 
-     * @param dataTypes data参数，应该是新的data
-     * 
-     * @return 新的portTypeModel
-     */
-    public PortTypeModel copy(List<DataTypeModel<PortTypeModel>> dataTypes) {
-        PortTypeModel copyModel = new PortTypeModel();
-        copyModel.setName("copyOf" + getName());
-        copyModel.arguments.addAll(dataTypes);
-        return copyModel;
-    }
-
-    @Override
-    public PortTypeModel copy() {
-        try {
-            byte[] bytes = this.exportToBytes();
-            PortTypeModel newModel = importFromBytes(bytes);
-            newModel.resetID();
-            return newModel;
-            // ByteArrayOutputStream out = new ByteArrayOutputStream();
-            // serializer.write(this, out);
-            // return serializer
-            // .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            PortTypeModel copyModel = new PortTypeModel();
-            copyModel.setName(getName());
-            for (DataTypeModel<PortTypeModel> child : arguments) {
-                copyModel.addChild(child);
-            }
-            return copyModel;
-        }
-    }
+    // /**
+    // * 深度根据给出的data参数列表复制一个新的PortTypeModel
+    // *
+    // * @param dataTypes data参数，应该是新的data
+    // *
+    // * @return 新的portTypeModel
+    // */
+    // public PortTypeModel copy(List<DataTypeModel<PortTypeModel>> dataTypes) {
+    // PortTypeModel copyModel = new PortTypeModel();
+    // copyModel.setName("copyOf" + getName());
+    // copyModel.arguments.addAll(dataTypes);
+    // return copyModel;
+    // }
+    //
+    // @Override
+    // public PortTypeModel copy() {
+    // try {
+    // byte[] bytes = this.exportToBytes();
+    // PortTypeModel newModel = importFromBytes(bytes);
+    // newModel.resetID();
+    // return newModel;
+    // // ByteArrayOutputStream out = new ByteArrayOutputStream();
+    // // serializer.write(this, out);
+    // // return serializer
+    // // .read(PortTypeModel.class, new ByteArrayInputStream(out.toByteArray()));
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // PortTypeModel copyModel = new PortTypeModel();
+    // copyModel.setName(getName());
+    // for (DataTypeModel<PortTypeModel> child : arguments) {
+    // copyModel.addChild(child);
+    // }
+    // return copyModel;
+    // }
+    // }
 
     @Override
     /**

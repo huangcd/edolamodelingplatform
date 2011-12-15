@@ -100,19 +100,11 @@ public class DataTypeModel<P extends IDataContainer>
     }
 
     @Attribute(name = "typeName")
-    private String  typeName;
+    private String typeName;
 
-    @Attribute(name = "bound")
-    private boolean bounded = true;
 
     public DataTypeModel(@Attribute(name = "typeName") String typeName) {
         this.setTypeName(typeName);
-    }
-
-    public DataTypeModel(@Attribute(name = "typeName") String typeName,
-                    @Attribute(name = "bound") boolean bound) {
-        this.setTypeName(typeName);
-        this.setBounded(bound);
     }
 
     public String getTypeName() {
@@ -174,14 +166,4 @@ public class DataTypeModel<P extends IDataContainer>
 
     @Override
     public void setPropertyValue(Object id, Object value) {}
-
-    public boolean isBounded() {
-        return bounded;
-    }
-
-    public DataTypeModel setBounded(boolean bounded) {
-        this.bounded = bounded;
-        firePropertyChange(BOUND);
-        return this;
-    }
 }
