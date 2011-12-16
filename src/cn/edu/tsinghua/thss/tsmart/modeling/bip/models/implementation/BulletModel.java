@@ -16,6 +16,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContainer> {
 
     private IPort port;
+    private int   direction;
 
     public BulletModel(IPort portModel) {
         port = portModel;
@@ -25,8 +26,16 @@ public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContaine
         return port;
     }
 
-    public String getPortLable() {
+    public String getPortName() {
         return port.getName();
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 
     @Override

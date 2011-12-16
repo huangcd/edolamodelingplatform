@@ -6,7 +6,6 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.AtomicEditPart;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.ComponentEditPart;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.CompoundEditPart;

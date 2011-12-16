@@ -21,6 +21,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ComponentChildrenEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.FrameContainer;
 
@@ -99,23 +100,13 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
     @Override
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteModelEditPolicy());
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, new ComponentChildrenEditPolicy());
     }
 
     @Override
     protected void performDoubleClick() {
         IComponentType container = (IComponentType) getModel().getType();
         BIPEditor.openBIPEditor(container);
-    }
-
-    /**
-     * 确保bullet在方框之上
-     * 
-     * @param point
-     * @return
-     */
-    protected Point ensureInFrame(Point point) {
-        Rectangle rect = getFigure().getBounds();
-        return point;
     }
 
     @Override
