@@ -1,10 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -49,5 +51,13 @@ public class CompoundModel extends BaseInstanceModel<CompoundModel, CompoundType
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public CompoundModel setPositionConstraint(Rectangle positionConstraint) {
+        Rectangle rect =
+                        positionConstraint.getCopy().setSize(IModel.COMPONENT_WIDTH,
+                                        IModel.COMPONENT_HEIGHT);
+        return super.setPositionConstraint(rect);
     }
 }

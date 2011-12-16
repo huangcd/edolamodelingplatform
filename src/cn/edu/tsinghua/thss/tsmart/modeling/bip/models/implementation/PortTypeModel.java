@@ -235,17 +235,24 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         }
     }
 
-    // TODO 考虑通知机制，bound和unbound应该移到PortModel里面进行
-    public PortTypeModel bound(int index, DataTypeModel model) {
-        arguments.get(index).getModel().getInstance().removePropertyChangeListener(getInstance());
+    /**
+     * 
+     * @param index 返回第index个参数。如果未被绑定，返回null。
+     * @return
+     */
+    protected DataModel getData(int index) {
+        ChildEntry entry = arguments.get(index);
+        if (entry.isBounded()) return null;
+        return (DataModel) entry.getModel().getInstance();
+    }
+
+    protected PortTypeModel bound(int index, DataTypeModel model) {
         arguments.get(index).bound(model);
-        model.getInstance().addPropertyChangeListener(getInstance());
         getInstance().firePropertyChange(CHILDREN);
         return this;
     }
 
-    public PortTypeModel unbound(int index) {
-        arguments.get(index).getModel().getInstance().removePropertyChangeListener(getInstance());
+    protected PortTypeModel unbound(int index) {
         arguments.get(index).unbound();
         getInstance().firePropertyChange(CHILDREN);
         return this;

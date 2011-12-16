@@ -31,6 +31,10 @@ public class FigureLocator extends RelativeHandleLocator {
         this.gap = gap;
     }
 
+    public void resetLocation(int newLocation) {
+        location = newLocation;
+    }
+
     /**
      * 重定位标签
      * 

@@ -1,6 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
@@ -10,17 +12,19 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.FrameContainer;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class ComponentEditPart extends BaseEditableEditPart {
     private Label typeLabel;
     private Label instanceLabel;
@@ -33,7 +37,7 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
     @Override
     protected IFigure createFigure() {
         // TODO panel.translateToParent(p): 坐标转换
-        panel = new FrameContainer(this);
+        panel = new FrameContainer(this, IModel.BULLET_RADIUS);
         panel.setFont(properties.getDefaultEditorFont());
         initLabels();
         centerLabels();
@@ -85,14 +89,10 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
             instanceLabel.setText(getModel().getName());
             centerLabels();
+        } else if (PortModel.EXPORT.equals(evt.getPropertyName())) {
+            refreshChildren();
         }
         refreshVisuals();
-    }
-
-    public void refreshVisuals() {
-        Rectangle constraint = getModel().getPositionConstraint();
-        ((AbstractGraphicalEditPart) getParent())
-                        .setLayoutConstraint(this, getFigure(), constraint);
     }
 
     @Override
@@ -104,5 +104,32 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
     protected void performDoubleClick() {
         IComponentType container = (IComponentType) getModel().getType();
         BIPEditor.openBIPEditor(container);
+    }
+
+    /**
+     * 确保bullet在方框之上
+     * 
+     * @param point
+     * @return
+     */
+    protected Point ensureInFrame(Point point) {
+        Rectangle rect = getFigure().getBounds();
+        return point;
+    }
+
+    @Override
+    protected List<BulletModel> getModelChildren() {
+        List<IPort> exportPorts = ((IComponentType) getModel().getType()).getExportPorts();
+        List<BulletModel> bullets = new ArrayList<BulletModel>();
+        for (IPort port : exportPorts) {
+            BulletModel bullet = port.getBullet();
+            Rectangle rect = bullet.getPositionConstraint();
+            if (rect == null) {
+                rect = new Rectangle();
+                bullet.setPositionConstraint(rect);
+            }
+            bullets.add(bullet);
+        }
+        return bullets;
     }
 }

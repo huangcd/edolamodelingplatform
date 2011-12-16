@@ -4,9 +4,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
@@ -28,13 +26,6 @@ public class PortEditPart extends BaseEditableEditPart {
             label.setText(getModel().getFriendlyString());
         }
         refreshVisuals();
-    }
-
-    @Override
-    protected void refreshVisuals() {
-        Rectangle constraint = getModel().getPositionConstraint();
-        ((AbstractGraphicalEditPart) getParent())
-                        .setLayoutConstraint(this, getFigure(), constraint);
     }
 
     @Override

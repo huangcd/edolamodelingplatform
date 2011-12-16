@@ -1,5 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -13,10 +17,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 /**
@@ -35,8 +35,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
                     IDataContainer<AtomicTypeModel, IContainer, IInstance>,
                     IComponentType<AtomicTypeModel, AtomicModel, IContainer, IInstance> {
 
-    public final static String                              INIT_PLACE  = "initPlace";
-    public final static String                              INIT_ACTION = "initAction";
     @Element(name = "initialPlace")
     private PlaceModel                                      initPlace;
     @Element(name = "initialAction", required = false)
@@ -238,8 +236,8 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         }
         PlaceModel oldInitPlace = this.initPlace;
         initPlace = newInitPlace;
-        oldInitPlace.firePropertyChange(INIT_PLACE);
-        newInitPlace.firePropertyChange(INIT_PLACE);
+        oldInitPlace.firePropertyChange(ATOMIC_INIT_PLACE);
+        newInitPlace.firePropertyChange(ATOMIC_INIT_PLACE);
         return this;
     }
 
@@ -251,49 +249,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         this.initAction = initAction;
         firePropertyChange(CHILDREN);
         return this;
-    }
-
-    @Override
-    public AtomicTypeModel copy() {
-        AtomicTypeModel copyModel = new AtomicTypeModel();
-        copyModel.setName("CopyOf" + getName());
-        HashMap<DataModel<AtomicTypeModel>, DataModel<AtomicTypeModel>> dataMap = copyList(datas);
-        HashMap<PlaceModel, PlaceModel> placeMap = copyList(places);
-        HashMap<PortModel, PortModel> portMap = new HashMap<PortModel, PortModel>();
-
-        // 复制 datas
-        copyModel.datas = new ArrayList<DataModel<AtomicTypeModel>>();
-        for (DataModel<AtomicTypeModel> data : datas) {
-            copyModel.datas.add(dataMap.get(data));
-        }
-
-        // 复制 ports
-        copyModel.ports = new ArrayList<PortModel>();
-        for (PortModel port : ports) {
-            PortTypeModel oldPortType = (PortTypeModel) port.getType();
-            // TODO a mash
-            PortTypeModel copyPortType = oldPortType;
-            // .copy(oldPortType.getPortTypeArguments());
-            portMap.put(port, copyPortType.getInstance());
-            copyModel.ports.add(copyPortType.getInstance());
-        }
-
-        // 复制 places
-        copyModel.places = new ArrayList<PlaceModel>();
-        for (PlaceModel place : places) {
-            copyModel.places.add(placeMap.get(place));
-        }
-
-        // 复制 transitions
-
-        copyModel.priorities =
-                        new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>(this.priorities);
-        for (PriorityModel<AtomicTypeModel, PortModel> priority : priorities) {
-            // copyModel.priorities.add(priorityMap.get(priority));
-        }
-        copyModel.initAction = this.initAction;
-        copyModel.initPlace = this.initPlace;
-        return copyModel;
     }
 
     @Override
@@ -343,7 +298,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     @Override
     public List<IPort> getExportPorts() {
         List<IPort> exportPorts = new ArrayList<IPort>();
-        for (IPort port : ports) {
+        for (PortModel port : ports) {
             if (port.isExport()) {
                 exportPorts.add(port);
             }
@@ -360,7 +315,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             placeNames[i] = place.getName();
         }
         return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "component name"),
-                        new ComboBoxPropertyDescriptor(INIT_PLACE, "init place", placeNames)};
+                        new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "init place", placeNames)};
     }
 
     @Override
@@ -368,7 +323,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
-        if (INIT_PLACE.equals(id)) {
+        if (ATOMIC_INIT_PLACE.equals(id)) {
             return places.indexOf(initPlace);
         }
         return null;
@@ -376,14 +331,14 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id) || INIT_PLACE.equals(id);
+        return NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
-        } else if (INIT_PLACE.equals(id)) {
+        } else if (ATOMIC_INIT_PLACE.equals(id)) {
             int index = (Integer) value;
             setInitPlace(places.get(index));
         }

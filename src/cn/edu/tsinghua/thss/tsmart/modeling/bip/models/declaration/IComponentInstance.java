@@ -8,5 +8,4 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 @SuppressWarnings("rawtypes")
 public interface IComponentInstance<M extends IInstance, T extends IComponentType, P extends IContainer>
     extends IInstance<M, T, P> {
-
 }

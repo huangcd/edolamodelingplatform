@@ -13,11 +13,13 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.CompoundEditPart;
 
 public class FrameContainer extends Panel {
     private ComponentEditPart owner;
+    private int               radius;
 
-    public FrameContainer(ComponentEditPart owner) {
+    public FrameContainer(ComponentEditPart owner, int radius) {
         this.owner = owner;
         setOpaque(false);
         setLayoutManager(new FreeformLayout());
+        this.radius = radius;
     }
 
     @Override
@@ -28,8 +30,7 @@ public class FrameContainer extends Panel {
         }
         if (owner instanceof AtomicEditPart || owner instanceof CompoundEditPart) {
             Rectangle rect = owner.getModel().getPositionConstraint();
-            graphics.setForegroundColor(ColorConstants.gray);
-            int radius = IModel.BULLET_RADIUS;
+            graphics.setForegroundColor(ColorConstants.black);
             graphics.drawRectangle(rect.x + radius, rect.y + radius, rect.width - (2 * radius),
                             rect.height - (2 * radius));
         }

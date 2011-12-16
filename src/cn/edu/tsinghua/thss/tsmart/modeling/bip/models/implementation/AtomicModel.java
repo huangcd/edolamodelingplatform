@@ -1,10 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -51,5 +53,13 @@ public class AtomicModel extends BaseInstanceModel<AtomicModel, AtomicTypeModel,
         if (NAME.equals(id)) {
             setName((String) value);
         }
+    }
+
+    @Override
+    public AtomicModel setPositionConstraint(Rectangle positionConstraint) {
+        Rectangle rect =
+                        positionConstraint.getCopy().setSize(IModel.COMPONENT_WIDTH,
+                                        IModel.COMPONENT_HEIGHT);
+        return super.setPositionConstraint(rect);
     }
 }

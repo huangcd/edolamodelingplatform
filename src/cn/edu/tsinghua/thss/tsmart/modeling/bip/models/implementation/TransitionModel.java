@@ -47,17 +47,6 @@ public class TransitionModel
         bendpoints = new ArrayList<Bendpoint>();
     }
 
-    public TransitionModel copy(PlaceModel source, PlaceModel target,
-                    PortModel<AtomicTypeModel> port, ActionModel action, GuardModel guard) {
-        TransitionModel model = this.copy();
-        model.source = source;
-        model.target = target;
-        model.port = port;
-        model.action = action;
-        model.guard = guard;
-        return model;
-    }
-
     public PlaceModel getSource() {
         return source;
     }
@@ -70,12 +59,17 @@ public class TransitionModel
         return port;
     }
 
-    public void setPort(PortModel<AtomicTypeModel> port) {
-        if (port == null || this.port != null) {
-            this.port.removePropertyChangeListener(this);
+    /**
+     * 设置Transition的端口标签，并把Transition加入到port的属性变化通知队列中去
+     * 
+     * @param newPort
+     */
+    public void setPort(PortModel<AtomicTypeModel> newPort) {
+        if (port != null) {
+            port.removePropertyChangeListener(this);
         }
-        this.port = port;
-        this.port.addPropertyChangeListener(this);
+        port = newPort;
+        port.addPropertyChangeListener(this);
         firePropertyChange(PortModel.PORT);
     }
 

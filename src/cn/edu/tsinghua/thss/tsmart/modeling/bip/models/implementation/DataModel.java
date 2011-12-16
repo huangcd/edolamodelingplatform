@@ -83,8 +83,7 @@ public class DataModel<Parent extends IDataContainer>
             return new IPropertyDescriptor[] {new TextPropertyDescriptor(IModel.NAME, "name"),
                             new ComboBoxPropertyDescriptor(DATA_VALUE, "value", trueFalseArray)};
         } else {
-            return new IPropertyDescriptor[] {// new TextPropertyDescriptor(DATA_TYPE, "type"),
-            new TextPropertyDescriptor(IModel.NAME, "name"),
+            return new IPropertyDescriptor[] {new TextPropertyDescriptor(IModel.NAME, "name"),
                             new TextPropertyDescriptor(DATA_VALUE, "value")};
         }
     }

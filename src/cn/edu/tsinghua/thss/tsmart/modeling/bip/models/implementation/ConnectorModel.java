@@ -194,4 +194,10 @@ public class ConnectorModel
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public BulletModel getBullet() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

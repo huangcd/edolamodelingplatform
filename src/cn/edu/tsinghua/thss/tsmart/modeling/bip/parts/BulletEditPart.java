@@ -2,32 +2,44 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
 
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
+
 public class BulletEditPart extends BaseEditableEditPart {
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    protected void performDoubleClick() {
-        // TODO Auto-generated method stub
-
-    }
+    private Ellipse figure;
 
     @Override
     protected IFigure createFigure() {
-        // TODO Auto-generated method stub
-        return null;
+        figure = new Ellipse();
+        figure.setFill(true);
+        figure.setForegroundColor(ColorConstants.black);
+        figure.setBackgroundColor(ColorConstants.black);
+        return figure;
     }
+
+    public BulletModel getModel() {
+        return (BulletModel) super.getModel();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String propertyName = evt.getPropertyName();
+        if (IModel.CONSTRAINT.equals(propertyName)) {
+            refreshVisuals();
+        }
+        refreshVisuals();
+    }
+
+    @Override
+    protected void performDoubleClick() {}
 
     @Override
     protected void createEditPolicies() {
         // TODO Auto-generated method stub
-
     }
 
 }

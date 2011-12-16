@@ -4,9 +4,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.widgets.Display;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
@@ -36,15 +34,7 @@ public class DataEditPart extends BaseEditableEditPart {
     }
 
     @Override
-    protected void refreshVisuals() {
-        Rectangle constraint = getModel().getPositionConstraint();
-        ((AbstractGraphicalEditPart) getParent())
-                        .setLayoutConstraint(this, getFigure(), constraint);
-    }
-
-    @Override
     protected void performDoubleClick() {
-
         DataEditDialog dialog =
                         new DataEditDialog(Display.getCurrent().getActiveShell(), getModel());
         dialog.setBlockOnOpen(true);

@@ -27,12 +27,30 @@ public class PortModel<P extends IComponentType>
     public final static String EXPORT = "export";
     @Element
     private boolean            export;
+    private BulletModel        bullet;
+
+    protected PortModel() {
+        bullet = new BulletModel(this);
+    }
+
+    public BulletModel getBullet() {
+        return bullet;
+    }
 
     public boolean isExport() {
         return export;
     }
 
     public PortModel setExport(boolean export) {
+        if (this.export == export) {
+            return this;
+        }
+        // 如果portModel是export的，需要把AtomicModel添加到portModel的属性变化通知队列中去
+        if (export) {
+            addPropertyChangeListener(getParent().getInstance());
+        } else {
+            removePropertyChangeListener(getParent().getInstance());
+        }
         this.export = export;
         firePropertyChange(EXPORT);
         return this;
@@ -41,6 +59,27 @@ public class PortModel<P extends IComponentType>
     @Override
     public boolean exportable() {
         return true;
+    }
+
+    /**
+     * 绑定一个参数。如果argument为null，表示取消绑定
+     * 
+     * @param index 参数位置
+     * @param argument 参数
+     * @return 模型自身
+     */
+    public PortModel bound(int index, DataModel argument) {
+        DataModel oldArgument = getType().getData(index);
+        if (oldArgument != null) {
+            oldArgument.removePropertyChangeListener(this);
+        }
+        if (argument != null) {
+            argument.addPropertyChangeListener(this);
+            getType().bound(index, (DataTypeModel) argument.getType());
+        } else {
+            getType().unbound(index);
+        }
+        return this;
     }
 
     @Override
@@ -137,9 +176,9 @@ public class PortModel<P extends IComponentType>
             if (datas == null) datas = Collections.EMPTY_LIST;
             int index = (Integer) value;
             if (index == datas.size()) {
-                getType().unbound(entry.getIndex());
+                bound(entry.getIndex(), null);
             } else if (index >= 0 && index < datas.size()) {
-                getType().bound(entry.getIndex(), (DataTypeModel) datas.get(index).getType());
+                bound(entry.getIndex(), datas.get(index));
             }
         }
     }
