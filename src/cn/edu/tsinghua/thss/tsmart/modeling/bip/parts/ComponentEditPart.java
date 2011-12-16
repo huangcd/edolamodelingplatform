@@ -25,6 +25,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.FrameContainer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
+// TODO °²×°ChildEditPolicy
 public abstract class ComponentEditPart extends BaseEditableEditPart {
     private Label typeLabel;
     private Label instanceLabel;
