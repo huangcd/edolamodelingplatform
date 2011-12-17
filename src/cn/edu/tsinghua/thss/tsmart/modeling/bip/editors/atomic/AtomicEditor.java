@@ -11,7 +11,6 @@ import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.ConnectionCreationToolEntry;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.gef.palette.PaletteDrawer;
-import org.eclipse.gef.palette.PaletteStack;
 import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.gef.requests.SimpleFactory;
@@ -49,8 +48,8 @@ public class AtomicEditor extends BIPEditor {
     public final static String id = AtomicEditor.class.getCanonicalName();
     private GraphicalViewer    viewer;
     private IModel             model;
-    private PaletteDrawer      dataStack;
-    private PaletteDrawer      portStack;
+    private PaletteDrawer      dataPalette;
+    private PaletteDrawer      portPalette;
 
     @Override
     protected void initializeGraphicalViewer() {
@@ -71,7 +70,7 @@ public class AtomicEditor extends BIPEditor {
      * @param entry
      */
     public void addDataCreationToolEntry(CreationToolEntry entry) {
-        dataStack.add(entry);
+        dataPalette.add(entry);
     }
 
     /**
@@ -80,7 +79,7 @@ public class AtomicEditor extends BIPEditor {
      * @param entry
      */
     public void removeDataCreationToolEntry(CreationToolEntry entry) {
-        dataStack.remove(entry);
+        dataPalette.remove(entry);
     }
 
     /**
@@ -89,7 +88,7 @@ public class AtomicEditor extends BIPEditor {
      * @param entry
      */
     public void addPortCreationToolEntry(CreationToolEntry entry) {
-        portStack.add(entry);
+        portPalette.add(entry);
     }
 
     /**
@@ -98,7 +97,7 @@ public class AtomicEditor extends BIPEditor {
      * @param entry
      */
     public void removePortCreationToolEntry(CreationToolEntry entry) {
-        portStack.remove(entry);
+        portPalette.remove(entry);
     }
 
     private void initDataCreationEntry() {
@@ -148,7 +147,6 @@ public class AtomicEditor extends BIPEditor {
         }
     }
 
-    // TODO
     private void initPaletteRoot() {
         PaletteDrawer atomicPalette = new PaletteDrawer("原子组件");
         PlaceCreationToolEntry placeCreationEntry =
@@ -161,26 +159,19 @@ public class AtomicEditor extends BIPEditor {
                                         TransitionTypeModel.class),
                                         getImage("icons/transition_16.png"),
                                         getImage("icons/transition_32.png"));
-        // dataStack = new PaletteStack("变量", "增加一个变量", getImage("icons/new_data_32.png"));
-        // portStack = new PaletteStack("端口", "增加一个端口", getImage("icons/port_32.png"));
-        // atomicPalette.add(dataStack);
-        // atomicPalette.add(portStack);
-        // getPaletteRoot().setDefaultEntry(placeCreationEntry);
         atomicPalette.add(placeCreationEntry);
         atomicPalette.add(connectionCreationEntry);
 
-        dataStack = new PaletteDrawer("变量类型");
-        portStack = new PaletteDrawer("端口类型");
+        dataPalette = new PaletteDrawer("变量类型");
+        portPalette = new PaletteDrawer("端口类型");
 
         getPaletteRoot().add(atomicPalette);
-        getPaletteRoot().add(dataStack);
-        getPaletteRoot().add(portStack);
-        // getPaletteRoot().add(portStack);
+        getPaletteRoot().add(dataPalette);
+        getPaletteRoot().add(portPalette);
     }
 
     public void dispose() {
         removeViewerEditEntry(viewer);
-        System.out.println("remove viewer from viewerEditorMap");
         super.dispose();
     }
 

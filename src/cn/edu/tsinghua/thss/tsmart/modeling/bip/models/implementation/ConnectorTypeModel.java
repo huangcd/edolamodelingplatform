@@ -325,27 +325,17 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -360,8 +350,15 @@ public class ConnectorTypeModel
 
     @Override
     public Map<String, List<DataModel>> getDatasGroupByType() {
-        // TODO Auto-generated method stub
-        return null;
+        HashMap<String, List<DataModel>> map = new HashMap<String, List<DataModel>>();
+        for (DataModel<ConnectorTypeModel> data : datas) {
+            String typeName = data.getType().getTypeName();
+            if (!map.containsKey(typeName)) {
+                map.put(typeName, new ArrayList<DataModel>());
+            }
+            map.get(typeName).add(data);
+        }
+        return map;
     }
 }
 

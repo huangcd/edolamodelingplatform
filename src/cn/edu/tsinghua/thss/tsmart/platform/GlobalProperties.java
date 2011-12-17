@@ -19,19 +19,25 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public boolean                  enableModelChecking     = false;
     @Attribute(name = "codegeneration")
     public boolean                  enableCodeGeneration    = false;
-    public Font                     defaultEditorFont;
     @Element
     public String                   defaultEditorFontName   = "Consolas";
     @Element
     public int                      defaultEditorFontHeight = 10;
     @Element
     public int                      defaultEditorFontStyle  = SWT.NORMAL;
+    @Attribute(name = "atomicpriority")
+    public boolean                  allowAtomicPriority     = false;
+    @Attribute(name = "priority")
+    public boolean                  allowPriority           = false;
+    @Attribute(name = "broadcast")
+    public boolean                  allowBroadcast          = false;
 
     public Color                    placeLabelColor         = ColorConstants.blue;
     public Color                    actionLabelColor        = ColorConstants.cyan;
     public Color                    guardLabelColor         = ColorConstants.green;
     public Color                    portLabelColor          = ColorConstants.gray;
     public Color                    dataLabelColor          = ColorConstants.darkGray;
+    public Font                     defaultEditorFont;
     private static GlobalProperties instance;
 
     public final static GlobalProperties getInstance() {
@@ -51,20 +57,17 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
 
     @Override
     public boolean isAtomicPriorityAllow() {
-        // TODO Auto-generated method stub
-        return true;
+        return allowAtomicPriority;
     }
 
     @Override
     public boolean isPriorityAllow() {
-        // TODO Auto-generated method stub
-        return true;
+        return allowPriority;
     }
 
     @Override
     public boolean isBroadcastAllow() {
-        // TODO Auto-generated method stub
-        return false;
+        return allowBroadcast;
     }
 
     @Override
@@ -76,6 +79,12 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
                                             defaultEditorFontHeight, defaultEditorFontStyle));
         }
         return defaultEditorFont;
+    }
+
+    @Override
+    public Font getDefaultEditorBoldFont() {
+        return new Font(Display.getCurrent(), new FontData(defaultEditorFontName,
+                        defaultEditorFontHeight, SWT.BOLD));
     }
 
     @Override

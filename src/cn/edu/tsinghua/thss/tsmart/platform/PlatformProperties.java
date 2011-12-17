@@ -15,4 +15,6 @@ public interface PlatformProperties {
     Color getPortLabelColor();
 
     Color getDataLabelColor();
+
+    Font getDefaultEditorBoldFont();
 }

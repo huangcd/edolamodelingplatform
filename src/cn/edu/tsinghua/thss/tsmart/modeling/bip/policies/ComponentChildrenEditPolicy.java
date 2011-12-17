@@ -65,10 +65,10 @@ public class ComponentChildrenEditPolicy extends XYLayoutEditPolicy {
         int yValue = yPosition ? y : height - y;
         if (xValue < yValue) {
             x = xPosition ? 0 : width;
-            direction = xPosition ? PositionConstants.NORTH : PositionConstants.SOUTH;
+            direction = xPosition ? PositionConstants.WEST : PositionConstants.EAST;
         } else {
             y = yPosition ? 0 : height;
-            direction = xPosition ? PositionConstants.WEST : PositionConstants.EAST;
+            direction = yPosition ? PositionConstants.NORTH : PositionConstants.SOUTH;
         }
         point.setLocation(x, y);
         return direction;
