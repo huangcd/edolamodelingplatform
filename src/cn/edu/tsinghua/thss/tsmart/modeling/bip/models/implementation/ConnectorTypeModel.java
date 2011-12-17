@@ -7,18 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementArray;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
-
 
 /**
  * Created by Huangcd<br/>
@@ -33,21 +35,35 @@ public class ConnectorTypeModel
                     IDataContainer<ConnectorTypeModel, IDataContainer, IInstance>,
                     IPortType<ConnectorTypeModel, ConnectorModel, IDataContainer>,
                     IOrderContainer<IPortType> {
+    private final static ConnectorTypeModel                                          singleton;
+    private final static ConnectorTypeModel                                          rendezvous;
+    private final static HashMap<String, ConnectorTypeModel>                         typeSources;
+    private final static HashMap<String, HashMap<CompoundEditor, CreationToolEntry>> toolMap;
+
+    static {
+        typeSources = new HashMap<String, ConnectorTypeModel>();
+        toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
+        singleton = new ConnectorTypeModel();
+        rendezvous = new ConnectorTypeModel();
+    }
 
     @ElementList
-    private List<DataModel<ConnectorTypeModel>> datas         =
-                                                                              new ArrayList<DataModel<ConnectorTypeModel>>();
+    private List<DataModel<ConnectorTypeModel>>                                      datas;
     @ElementList
-    private List<DataModel<ConnectorTypeModel>> exportDatas   =
-                                                                              new ArrayList<DataModel<ConnectorTypeModel>>();
+    private List<DataModel<ConnectorTypeModel>>                                      exportDatas;
     @ElementList
-    private List<InteractionModel>              interactions  = new ArrayList<InteractionModel>();
+    private List<InteractionModel>                                                   interactions;
     @ElementList
-    private List<IPortType>                     portArguments = new ArrayList<IPortType>();
+    private List<IPortType>                                                          portArguments;
     @Element(required = false)
-    private Interactor                          interactor;
+    private Interactor                                                               interactor;
 
-    public ConnectorTypeModel() {}
+    public ConnectorTypeModel() {
+        datas = new ArrayList<DataModel<ConnectorTypeModel>>();
+        exportDatas = new ArrayList<DataModel<ConnectorTypeModel>>();
+        interactions = new ArrayList<InteractionModel>();
+        portArguments = new ArrayList<IPortType>();
+    }
 
     protected List<DataModel<ConnectorTypeModel>> getExportDatas() {
         return exportDatas;
@@ -335,8 +351,7 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public void setPropertyValue(Object id, Object value) {
-    }
+    public void setPropertyValue(Object id, Object value) {}
 
     @Override
     public boolean isNewNameAlreadyExistsInParent(IInstance child, String newName) {

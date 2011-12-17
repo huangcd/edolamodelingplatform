@@ -48,6 +48,7 @@ public class PortModel<P extends IComponentType>
         // 如果portModel是export的，需要把AtomicModel添加到portModel的属性变化通知队列中去
         if (export) {
             addPropertyChangeListener(getParent().getInstance());
+            addPropertyChangeListener(bullet);
         } else {
             removePropertyChangeListener(getParent().getInstance());
         }

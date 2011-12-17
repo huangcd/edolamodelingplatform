@@ -26,19 +26,16 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 @Root
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
-    public final static String                                               BOUND = "bound";
-    public final static DataTypeModel                                        boolData;
-    public final static DataTypeModel                                        intData;
-    private final static HashMap<String, DataTypeModel>                      typeSources;
-    private static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
+    private final static HashMap<String, DataTypeModel>                            typeSources;
+    private final static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
     static {
         toolMap = new HashMap<String, HashMap<AtomicEditor, CreationToolEntry>>();
-        boolData = new DataTypeModel("bool");
-        intData = new DataTypeModel("int");
+        DataTypeModel boolData = new DataTypeModel("bool");
+        DataTypeModel intData = new DataTypeModel("int");
         typeSources = new HashMap<String, DataTypeModel>();
-        typeSources.put("bool", boolData);
-        typeSources.put("int", intData);
+        addTypeSources("bool", boolData);
+        addTypeSources("int", intData);
     }
 
     public static void addType(String type) {
@@ -93,7 +90,7 @@ public class DataTypeModel<P extends IDataContainer>
         return typeSources.entrySet();
     }
 
-    public static DataTypeModel getModel(String type) {
+    public static DataTypeModel getDataTypeModel(String type) {
         return (DataTypeModel) typeSources.get(type).copy();
     }
 

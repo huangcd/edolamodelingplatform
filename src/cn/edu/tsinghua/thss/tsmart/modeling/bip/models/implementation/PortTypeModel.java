@@ -32,23 +32,20 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
                 implements
                     IOrderContainer<DataTypeModel>,
                     IPortType<PortTypeModel, PortModel, IDataContainer> {
-    public final static PortTypeModel                                        ePortType;
-    public final static PortTypeModel                                        bPortType;
-    public final static PortTypeModel                                        iPortType;
-    private final static HashMap<String, PortTypeModel>                      typeSources;
-    private static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
+    private final static HashMap<String, PortTypeModel>                            typeSources;
+    private final static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
     static {
         toolMap = new HashMap<String, HashMap<AtomicEditor, CreationToolEntry>>();
         typeSources = new HashMap<String, PortTypeModel>();
-        ePortType = new PortTypeModel().setName("ePort");
-        bPortType = new PortTypeModel().setName("boolPort");
-        iPortType = new PortTypeModel().setName("intPort");
-        bPortType.addChild((DataTypeModel) DataTypeModel.boolData.copy());
-        iPortType.addChild((DataTypeModel) DataTypeModel.intData.copy());
-        typeSources.put("ePort", ePortType);
-        typeSources.put("boolPort", bPortType);
-        typeSources.put("intPort", iPortType);
+        PortTypeModel ePortType = new PortTypeModel().setName("ePort");
+        PortTypeModel bPortType = new PortTypeModel().setName("boolPort");
+        PortTypeModel iPortType = new PortTypeModel().setName("intPort");
+        bPortType.addChild(DataTypeModel.getDataTypeModel("bool"));
+        iPortType.addChild(DataTypeModel.getDataTypeModel("int"));
+        addTypeSources("ePort", ePortType);
+        addTypeSources("boolPort", bPortType);
+        addTypeSources("intPort", iPortType);
     }
 
     public static void addType(String type, String arguments) {
@@ -61,7 +58,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
                 String[] temp = argument.split("\\s+");
                 String dataType = temp[0];
                 String dataName = temp[1];
-                model.addChild(DataTypeModel.getModel(dataType), dataName);
+                model.addChild(DataTypeModel.getDataTypeModel(dataType), dataName);
             }
         }
         addTypeSources(type, model);

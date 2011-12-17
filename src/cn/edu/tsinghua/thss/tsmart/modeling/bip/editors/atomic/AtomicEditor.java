@@ -103,13 +103,15 @@ public class AtomicEditor extends BIPEditor {
     private void initDataCreationEntry() {
         CreationToolEntry boolCreationEntry =
                         new CreationToolEntry("布尔", "增加一个布尔变量", new CopyFactory(
-                                        DataTypeModel.boolData), getImage("icons/bool_16.png"),
+                                        DataTypeModel.getDataTypeModel("bool")),
+                                        getImage("icons/bool_16.png"),
                                         getImage("icons/bool_32.png"));
         addDataCreationToolEntry(boolCreationEntry);
         if (GlobalProperties.getInstance().isMultipleDataTypeAvailble()) {
             CreationToolEntry intCreationEntry =
                             new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
-                                            DataTypeModel.intData), getImage("icons/int_16.png"),
+                                            DataTypeModel.getDataTypeModel("int")),
+                                            getImage("icons/int_16.png"),
                                             getImage("icons/int_32.png"));
             addDataCreationToolEntry(intCreationEntry);
             for (Map.Entry<String, DataTypeModel> entry : DataTypeModel.getTypeEntries()) {
@@ -130,7 +132,8 @@ public class AtomicEditor extends BIPEditor {
     private void initPortCreationEntry() {
         CreationToolEntry ePortCreationEntry =
                         new CreationToolEntry("ePort", "增加一个空端口", new CopyFactory(
-                                        PortTypeModel.ePortType), getImage("icons/port_16.png"),
+                                        PortTypeModel.getPortTypeModel("ePort")),
+                                        getImage("icons/port_16.png"),
                                         getImage("icons/port_32.png"));
         addPortCreationToolEntry(ePortCreationEntry);
         for (Map.Entry<String, PortTypeModel> entry : PortTypeModel.getTypeEntries()) {

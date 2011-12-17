@@ -48,9 +48,10 @@ public class BulletEditPart extends BaseEditableEditPart {
         refreshVisuals();
         String propertyName = evt.getPropertyName();
         if (IModel.CONSTRAINT.equals(propertyName)) {
-            refreshVisuals();
             labelLocator.resetLocation(getModel().getDirection()).relocate(
                             (Rectangle) evt.getNewValue());
+        } else if (IModel.NAME.equals(propertyName)) {
+            portName.setText(getModel().getPortName());
         }
     }
 
