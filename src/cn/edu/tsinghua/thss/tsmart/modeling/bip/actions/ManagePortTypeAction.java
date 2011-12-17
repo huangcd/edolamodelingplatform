@@ -8,6 +8,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.PortTypeManageDialog;
+import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 public class ManagePortTypeAction extends Action implements ISelectionListener, IWorkbenchAction {
 
@@ -19,7 +20,7 @@ public class ManagePortTypeAction extends Action implements ISelectionListener, 
         setId(ID);
         setText("管理端口类型");
         setToolTipText("增加或删除端口类型");
-        // setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png"));
+        setImageDescriptor(Activator.getImageDescriptor("icons/port_16.png"));
         window.getSelectionService().addSelectionListener(this);
     }
 

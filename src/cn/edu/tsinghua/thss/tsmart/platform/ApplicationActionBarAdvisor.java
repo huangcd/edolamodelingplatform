@@ -10,6 +10,7 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
 import cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManageConnectorTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManageDataTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManagePortTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewAtomicEditorAction;
@@ -22,13 +23,14 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewCompoundEditorAction;
  * 
  */
 public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
-    private IWorkbenchAction        exitAction;
-    private IWorkbenchAction        aboutAction;
-    private NewAtomicEditorAction   newAtomicAction;
-    private NewCompoundEditorAction newCompoundAction;
-    private ManageDataTypeAction    manageDataTypeAction;
-    private ManagePortTypeAction    managePortTypeAction;
-    private XMLEditorAction         xmlAction;
+    private IWorkbenchAction          exitAction;
+    private IWorkbenchAction          aboutAction;
+    private NewAtomicEditorAction     newAtomicAction;
+    private NewCompoundEditorAction   newCompoundAction;
+    private ManageDataTypeAction      manageDataTypeAction;
+    private ManagePortTypeAction      managePortTypeAction;
+    private ManageConnectorTypeAction manageConnectorTypeAction;
+    private XMLEditorAction           xmlAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -49,6 +51,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(manageDataTypeAction);
         managePortTypeAction = new ManagePortTypeAction(window);
         register(managePortTypeAction);
+        manageConnectorTypeAction = new ManageConnectorTypeAction(window);
+        register(manageConnectorTypeAction);
     }
 
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -71,6 +75,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         MenuManager modelingMenu = new MenuManager("½¨Ä£", "modeling");
         modelingMenu.add(manageDataTypeAction);
         modelingMenu.add(managePortTypeAction);
+        modelingMenu.add(manageConnectorTypeAction);
 
         MenuManager helpMenu = new MenuManager("°ïÖú", "help");
         helpMenu.add(aboutAction);
