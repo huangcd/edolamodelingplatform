@@ -95,7 +95,7 @@ public class DataTypeManageDialog extends AbstractEditDialog {
 
     private void addType() {
         String newType = textType.getText().trim().toLowerCase();
-        if (!identifier.matcher(newType).matches()) {
+        if (!isIdentifier(newType)) {
             handleError(MessageFormat.format("变量类型名\"{0}\"不合法", newType));
             return;
         }

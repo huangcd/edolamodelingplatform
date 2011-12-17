@@ -15,7 +15,7 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 public abstract class AbstractEditDialog extends Dialog {
     private String               title      = "{YOU NEED TO SET TITLE FIRST}";
     protected ModelingProperties properties = GlobalProperties.getInstance();
-    public static final Pattern  identifier = Pattern.compile("[\\w&&[^0-9]]\\w*");
+    private static final Pattern identifier = Pattern.compile("[\\w&&[^0-9]]\\w*");
 
     protected AbstractEditDialog(Shell shell, String title) {
         super(shell);
@@ -78,6 +78,10 @@ public abstract class AbstractEditDialog extends Dialog {
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    }
+
+    public boolean isIdentifier(String str) {
+        return identifier.matcher(str).matches();
     }
 
     /**

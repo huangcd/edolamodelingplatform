@@ -42,11 +42,16 @@ public class ConnectorTypeModel
     static {
         typeSources = new HashMap<String, ConnectorTypeModel>();
         toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
-        ConnectorTypeModel singleton = new ConnectorTypeModel();
+        ConnectorTypeModel singleton = new ConnectorTypeModel().setName("singleton");
         singleton.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p1");
-        ConnectorTypeModel rendezvous = new ConnectorTypeModel();
+        singleton.parseInteractor("p1");
+
+        ConnectorTypeModel rendezvous = new ConnectorTypeModel().setName("rendezvous");
         rendezvous.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p1");
         rendezvous.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p2");
+        rendezvous.parseInteractor("p1 p2");
+        addTypeSources(singleton.getName(), singleton);
+        addTypeSources(rendezvous.getName(), rendezvous);
     }
 
     public static void addType(String type, String[][] arrays, String[][] datas,
@@ -89,7 +94,7 @@ public class ConnectorTypeModel
         // 添加export port
         PortTypeModel exportPort = PortTypeModel.getPortTypeModel(exportPortType);
         for (String dataName : exportDatas) {
-            
+
         }
         connector.setPort(exportPort);
 
@@ -131,7 +136,7 @@ public class ConnectorTypeModel
         // TODO 删除一种类型的时候检查该类型是否被使用
     }
 
-    public static boolean removeTypeSources(String type) {
+    private static boolean removeTypeSources(String type) {
         if (type.equals("singleton") || type.equals("rendezvous") || !typeSources.containsKey(type))
             return false;
         typeSources.remove(type);
@@ -260,27 +265,14 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public ConnectorTypeModel copy() {
-        ConnectorTypeModel model = new ConnectorTypeModel();
-        model.datas.addAll(datas);
-        model.exportDatas.addAll(exportDatas);
-        model.interactions.addAll(interactions);
-        model.arguments.addAll(arguments);
-        return model;
-    }
-
-    @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("connector type ").append(getName()).append('(');
         if (arguments != null && !arguments.isEmpty()) {
-            PortTypeModel portType = arguments.get(0).getModel();
-            buffer.append(portType.getName()).append(' ').append(portType.getInstance().getName());
-            for (int i = 1, size = arguments.size(); i < size; i++) {
-                portType = arguments.get(0).getModel();
-                buffer.append(", ").append(portType.getName()).append(' ')
-                                .append(portType.getInstance().getName());
+            for (ArgumentEntry entry : arguments) {
+                buffer.append(entry.getTypeName()).append(' ').append(entry.getName()).append(", ");
             }
+            buffer.replace(buffer.length() - 2, buffer.length(), "");
         }
         buffer.append(")\n");
         buffer.append("   define ").append(interactor).append('\n');
@@ -290,6 +282,7 @@ public class ConnectorTypeModel
         for (InteractionModel interaction : interactions) {
             buffer.append("    ").append(interaction).append('\n');
         }
+        // TODO export port
         buffer.append("end");
         return buffer.toString();
     }
@@ -513,7 +506,7 @@ public class ConnectorTypeModel
 
 @SuppressWarnings({"unused", "rawtypes"})
 @Root
-class Interactor {
+class Interactor implements Serializable {
 
     @Element(required = false, name = "content")
     private ArgumentEntry content;

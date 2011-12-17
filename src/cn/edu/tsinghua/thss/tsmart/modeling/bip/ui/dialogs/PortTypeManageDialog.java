@@ -140,7 +140,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
 
     private void addType() {
         String newType = textName.getText().trim();
-        if (!identifier.matcher(newType).matches()) {
+        if (!isIdentifier(newType)) {
             handleError(MessageFormat.format("端口类型名\"{0}\"不合法", newType));
             return;
         }

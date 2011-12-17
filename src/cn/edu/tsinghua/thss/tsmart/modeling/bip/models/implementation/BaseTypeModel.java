@@ -204,6 +204,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
             byte[] bytes = exportToBytes();
             Model model = importFromBytes(bytes);
             model.resetID();
+            model.getInstance().resetID();
             return model;
         } catch (Exception e) {
             e.printStackTrace();
