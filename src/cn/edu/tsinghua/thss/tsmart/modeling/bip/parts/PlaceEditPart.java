@@ -16,11 +16,9 @@ import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
@@ -80,13 +78,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     }
 
     @Override
-    protected void refreshVisuals() {
-        Rectangle constraint = getModel().getPositionConstraint();
-        ((AbstractGraphicalEditPart) getParent())
-                        .setLayoutConstraint(this, getFigure(), constraint);
-    }
-
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         // 位置变更，同时重定位标签的位置
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
@@ -104,7 +95,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             nameLabel.setText(getModel().getName());
             tooltipLabel.setText(getModel().getName());
             labelLocator.relocate();
-        } else if (AtomicTypeModel.INIT_PLACE.equals(evt.getPropertyName())) {
+        } else if (IModel.ATOMIC_INIT_PLACE.equals(evt.getPropertyName())) {
             PlaceModel model = getModel();
             if (model.isInitialPlace()) {
                 setAsInitialPlace();

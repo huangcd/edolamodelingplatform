@@ -17,18 +17,33 @@ public class FigureLocator extends RelativeHandleLocator {
     private int     location;
     private int     gap;
     private IFigure target;
+    private boolean refUseLocalCoordinates;
 
-    public FigureLocator(IFigure reference, IFigure target, int location) {
-        super(reference, location);
-        this.target = target;
-        this.location = location;
+    public FigureLocator(IFigure reference, IFigure target, int location,
+                    boolean refUseLocalCoordinates) {
+        this(reference, target, location, 0, refUseLocalCoordinates);
     }
 
-    public FigureLocator(IFigure reference, IFigure target, int location, int gap) {
+    public FigureLocator(IFigure reference, IFigure target, int location) {
+        this(reference, target, location, 0, false);
+    }
+
+    public FigureLocator(IFigure reference, IFigure target, int location, int gap,
+                    boolean refUseLocalCoordinates) {
         super(reference, location);
         this.target = target;
         this.location = location;
         this.gap = gap;
+        this.refUseLocalCoordinates = refUseLocalCoordinates;
+    }
+
+    public FigureLocator(IFigure reference, IFigure target, int location, int gap) {
+        this(reference, target, location, gap, false);
+    }
+
+    public FigureLocator resetLocation(int newLocation) {
+        location = newLocation;
+        return this;
     }
 
     /**
@@ -38,6 +53,14 @@ public class FigureLocator extends RelativeHandleLocator {
      * @param refRect ²Î¿¼Î»ÖÃ
      */
     public void relocate(IFigure target, Rectangle refRect) {
+        refRect = refRect.getCopy();
+        if (refUseLocalCoordinates) {
+            Point point = refRect.getLocation();
+            System.out.println(point);
+            getReferenceFigure().getParent().translateToParent(point);
+            System.out.println(point);
+            refRect.setLocation(point);
+        }
         Dimension size = target.getPreferredSize();
 
         int x = target.getBounds().x;

@@ -1,5 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
+import java.beans.PropertyChangeEvent;
+
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 
@@ -18,6 +21,25 @@ public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
             super.performRequest(req);
         }
     }
+
+    @Override
+    public abstract void propertyChange(PropertyChangeEvent evt);
+
+    @Override
+    protected IFigure createFigure() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+
+    @Override
+    protected void createEditPolicies() {
+        // TODO Auto-generated method stub
+
+    }
+
+
 
     /**
      * 本版本不支持直接编辑

@@ -49,8 +49,8 @@ public class AtomicEditor extends BIPEditor {
     public final static String id = AtomicEditor.class.getCanonicalName();
     private GraphicalViewer    viewer;
     private IModel             model;
-    private PaletteStack       dataStack;
-    private PaletteStack       portStack;
+    private PaletteDrawer      dataStack;
+    private PaletteDrawer      portStack;
 
     @Override
     protected void initializeGraphicalViewer() {
@@ -148,6 +148,7 @@ public class AtomicEditor extends BIPEditor {
         }
     }
 
+    // TODO
     private void initPaletteRoot() {
         PaletteDrawer atomicPalette = new PaletteDrawer("原子组件");
         PlaceCreationToolEntry placeCreationEntry =
@@ -160,14 +161,21 @@ public class AtomicEditor extends BIPEditor {
                                         TransitionTypeModel.class),
                                         getImage("icons/transition_16.png"),
                                         getImage("icons/transition_32.png"));
-        dataStack = new PaletteStack("变量", "增加一个变量", getImage("icons/new_data_32.png"));
-        portStack = new PaletteStack("端口", "增加一个端口", getImage("icons/port_32.png"));
+        // dataStack = new PaletteStack("变量", "增加一个变量", getImage("icons/new_data_32.png"));
+        // portStack = new PaletteStack("端口", "增加一个端口", getImage("icons/port_32.png"));
+        // atomicPalette.add(dataStack);
+        // atomicPalette.add(portStack);
+        // getPaletteRoot().setDefaultEntry(placeCreationEntry);
         atomicPalette.add(placeCreationEntry);
         atomicPalette.add(connectionCreationEntry);
-        atomicPalette.add(dataStack);
-        atomicPalette.add(portStack);
-        // getPaletteRoot().setDefaultEntry(placeCreationEntry);
+
+        dataStack = new PaletteDrawer("变量类型");
+        portStack = new PaletteDrawer("端口类型");
+
         getPaletteRoot().add(atomicPalette);
+        getPaletteRoot().add(dataStack);
+        getPaletteRoot().add(portStack);
+        // getPaletteRoot().add(portStack);
     }
 
     public void dispose() {

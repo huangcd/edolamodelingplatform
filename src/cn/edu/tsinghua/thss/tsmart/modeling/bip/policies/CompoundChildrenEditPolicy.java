@@ -3,6 +3,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
@@ -15,7 +16,6 @@ import org.eclipse.gef.requests.CreateRequest;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
@@ -54,7 +54,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
             // COMMENT 相对位置
             getHostFigure().translateToRelative(location);
             getHostFigure().translateFromParent(location);
-            Rectangle rect = new Rectangle(location, IComponentType.componentSize);
+            Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
             command.setChild(child);
             command.setParent(parent);
@@ -72,7 +72,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
             // COMMENT 相对位置
             getHostFigure().translateToRelative(location);
             getHostFigure().translateFromParent(location);
-            Rectangle rect = new Rectangle(location, IComponentType.componentSize);
+            Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
             command.setChild(child);
             command.setParent(parent);
@@ -95,6 +95,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
 
     @Override
     public Command getCommand(Request request) {
+        if (REQ_RESIZE_CHILDREN.equals(request.getType())) return null;
         return super.getCommand(request);
     }
 }

@@ -6,7 +6,7 @@ import org.eclipse.gef.EditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.AtomicChildrenEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.AtomicTypeChildrenEditPolicy;
 
 
 /**
@@ -16,7 +16,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.AtomicChildrenEditPolic
 public class AtomicTypeEditPart extends PageContainerEditPart {
     @Override
     protected void createEditPolicies() {
-        installEditPolicy(EditPolicy.LAYOUT_ROLE, new AtomicChildrenEditPolicy());
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, new AtomicTypeChildrenEditPolicy());
     }
 
     public AtomicTypeModel getModel() {
