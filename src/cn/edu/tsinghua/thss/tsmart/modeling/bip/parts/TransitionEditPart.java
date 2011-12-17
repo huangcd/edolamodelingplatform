@@ -27,7 +27,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -44,7 +44,7 @@ public class TransitionEditPart extends BaseConnectionEditPart {
 
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
-        installEditPolicy(EditPolicy.CONNECTION_ROLE, new ConnectionEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new BIPConnectionEditPolicy());
         installEditPolicy(EditPolicy.CONNECTION_BENDPOINTS_ROLE,
                         new ConnectionBendpointEditPolicy());
     }

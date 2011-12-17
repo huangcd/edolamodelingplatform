@@ -69,19 +69,27 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
     private void initLabels() {
         typeLabel = new Label(getModel().getType().getName());
         typeLabel.setOpaque(true);
-        typeLabel.setForegroundColor(ColorConstants.darkBlue);
-        typeLabel.setFont(properties.getDefaultEditorFont());
-        panel.add(typeLabel);
+        typeLabel.setFont(properties.getDefaultEditorBoldFont());
 
         instanceLabel = new Label(getModel().getName());
         instanceLabel.setOpaque(true);
-        instanceLabel.setForegroundColor(ColorConstants.blue);
         instanceLabel.setFont(properties.getDefaultEditorFont());
+
+        if (this instanceof AtomicEditPart) {
+            typeLabel.setForegroundColor(ColorConstants.blue);
+            instanceLabel.setForegroundColor(ColorConstants.blue);
+        } else if (this instanceof CompoundEditPart) {
+            typeLabel.setForegroundColor(ColorConstants.darkBlue);
+            instanceLabel.setForegroundColor(ColorConstants.darkBlue);
+        }
+
+        panel.add(typeLabel);
         panel.add(instanceLabel);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        refreshVisuals();
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             centerLabels();
         }
@@ -94,7 +102,6 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         } else if (PortModel.EXPORT.equals(evt.getPropertyName())) {
             refreshChildren();
         }
-        refreshVisuals();
     }
 
     @Override

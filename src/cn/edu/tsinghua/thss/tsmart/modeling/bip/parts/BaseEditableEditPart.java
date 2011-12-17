@@ -25,22 +25,6 @@ public abstract class BaseEditableEditPart extends BaseGraphicalEditPart {
     @Override
     public abstract void propertyChange(PropertyChangeEvent evt);
 
-    @Override
-    protected IFigure createFigure() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-
-    @Override
-    protected void createEditPolicies() {
-        // TODO Auto-generated method stub
-
-    }
-
-
-
     /**
      * 本版本不支持直接编辑
      */

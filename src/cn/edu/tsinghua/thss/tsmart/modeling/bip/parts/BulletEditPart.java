@@ -33,6 +33,7 @@ public class BulletEditPart extends BaseEditableEditPart {
         ((GraphicalEditPart) getParent().getParent()).getFigure().add(portName);
 
         labelLocator = new FigureLocator(figure, portName, PositionConstants.NORTH, 3, true);
+        // FIXME 拖动大框的时候标签没有随之改变位置
         // FIXME 下面语句会导致出错，考虑在BulletEditPart做translate而不是FigureLocator里面做
         // labelLocator.relocate(getModel().getPositionConstraint());
         return figure;

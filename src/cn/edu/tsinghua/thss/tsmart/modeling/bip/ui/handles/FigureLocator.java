@@ -56,9 +56,7 @@ public class FigureLocator extends RelativeHandleLocator {
         refRect = refRect.getCopy();
         if (refUseLocalCoordinates) {
             Point point = refRect.getLocation();
-            System.out.println(point);
             getReferenceFigure().getParent().translateToParent(point);
-            System.out.println(point);
             refRect.setLocation(point);
         }
         Dimension size = target.getPreferredSize();
