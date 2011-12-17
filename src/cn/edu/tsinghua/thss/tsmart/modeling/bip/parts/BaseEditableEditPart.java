@@ -2,7 +2,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
 
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 
