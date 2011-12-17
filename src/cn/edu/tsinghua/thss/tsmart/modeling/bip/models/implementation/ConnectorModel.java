@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
 
@@ -29,8 +30,7 @@ public class ConnectorModel
 
     public PortModel getExportPort() {
         if (export) {
-            return null;
-            // TODO export的情况下返回Connector Type里面的port，否则返回null
+            return getType().getPort().getInstance();
         }
         return null;
     }
@@ -66,25 +66,26 @@ public class ConnectorModel
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "name")};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
+        if (NAME.equals(id)) {
+            return hasName() ? getName() : "";
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
-        return false;
+        return NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-
+        if (NAME.equals(id)) {
+            setName((String) value);
+        }
     }
 }

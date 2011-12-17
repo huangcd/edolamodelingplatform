@@ -88,7 +88,6 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
 
     @Override
     protected void updateValues() {
-        // FIXME 删除再增加一个同名的port会有bug，应该避免
         HashSet<String> types = new HashSet<String>(Arrays.asList(listPortTypes.getItems()));
         HashSet<String> temp = new HashSet<String>();
         for (String type : PortTypeModel.getTypes()) {

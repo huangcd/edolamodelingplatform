@@ -3,10 +3,11 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
 
 
 /**
@@ -17,18 +18,27 @@ import org.simpleframework.xml.Root;
 @Root
 @SuppressWarnings("rawtypes")
 public class InteractionModel
-    extends BaseInstanceModel<InteractionModel, InteractionTypeModel, ConnectorTypeModel> {
+                extends
+                BaseInstanceModel<InteractionModel, InteractionTypeModel, ConnectorTypeModel> {
 
     @Element
-    private ActionModel upAction;
+    private ActionModel         upAction;
     @Element
-    private ActionModel downAction;
+    private ActionModel         downAction;
     @ElementList
-    private List<PortTypeModel> interactionPorts;
+    private List<ArgumentEntry> interactionPorts;
 
 
     public InteractionModel() {
-        interactionPorts = new ArrayList<PortTypeModel>();
+        interactionPorts = new ArrayList<ArgumentEntry>();
+    }
+
+    public InteractionModel(ActionModel upAction, ActionModel downAction,
+                    List<ArgumentEntry> interactionPorts) {
+        super();
+        this.upAction = upAction;
+        this.downAction = downAction;
+        this.interactionPorts = interactionPorts;
     }
 
     public ActionModel getUpAction() {
@@ -47,22 +57,22 @@ public class InteractionModel
         this.downAction = downAction;
     }
 
-    public List<PortTypeModel> getInteractionPorts() {
+    public List<ArgumentEntry> getInteractionPorts() {
         return interactionPorts;
     }
 
-    public void setInteractionPorts(List<PortTypeModel> interactionPorts) {
+    public void setInteractionPorts(List<ArgumentEntry> interactionPorts) {
         this.interactionPorts = interactionPorts;
     }
 
-    public void setInteractionPort(PortTypeModel interactionPort, int index) {
+    public void setInteractionPort(ArgumentEntry interactionPort, int index) {
         if (index < 0 || index >= interactionPorts.size()) {
             throw new ArrayIndexOutOfBoundsException(index);
         }
         interactionPorts.set(index, interactionPort);
     }
 
-    public void addInteractionPort(PortTypeModel interactionPort) {
+    public void addInteractionPort(ArgumentEntry interactionPort) {
         interactionPorts.add(interactionPort);
     }
 
@@ -74,7 +84,7 @@ public class InteractionModel
     @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder("on ");
-        for (PortTypeModel portType : interactionPorts) {
+        for (ArgumentEntry portType : interactionPorts) {
             buffer.append(portType.getName()).append(' ');
         }
         buffer.append("\n\t\tup{").append(upAction).append("}");
@@ -83,25 +93,15 @@ public class InteractionModel
     }
 
     @Override
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Object getPropertyValue(Object id) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void setPropertyValue(Object id, Object value) {
-        // TODO Auto-generated method stub
-    }
+    public void setPropertyValue(Object id, Object value) {}
 }
