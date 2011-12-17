@@ -36,6 +36,8 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     public final static String CONSTRAINT         = "constraint";
     public final static String ATOMIC_INIT_PLACE  = "initPlace";
     public final static String ATOMIC_INIT_ACTION = "initAction";
+    public final static String PORT               = "port";
+    public final static String EXPORT_PORT        = "export";
     /**
      * СԲ��İ뾶
      */

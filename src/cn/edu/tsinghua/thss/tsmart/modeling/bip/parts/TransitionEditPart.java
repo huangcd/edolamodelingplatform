@@ -24,10 +24,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ActionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.GuardModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -153,7 +152,7 @@ public class TransitionEditPart extends BaseConnectionEditPart {
             setTooltip();
             guardLabel.setText(getModel().getGuardString());
             guardLocator.relocate();
-        } else if (PortModel.PORT.equals(propertyName)) {
+        } else if (IModel.PORT.equals(propertyName)) {
             setTooltip();
             portLabel.setText(getModel().getPortString());
         } else if (TransitionModel.BEND_POINTS.equals(propertyName)) {

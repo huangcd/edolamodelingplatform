@@ -99,7 +99,7 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
             instanceLabel.setText(getModel().getName());
             centerLabels();
-        } else if (PortModel.EXPORT.equals(evt.getPropertyName())) {
+        } else if (PortModel.EXPORT_PORT.equals(evt.getPropertyName())) {
             refreshChildren();
         }
     }

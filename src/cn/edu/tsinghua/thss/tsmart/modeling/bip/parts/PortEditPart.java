@@ -20,7 +20,7 @@ public class PortEditPart extends BaseEditableEditPart {
             getParent().refresh();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
             label.setText(getModel().getFriendlyString());
-        } else if (PortModel.EXPORT.equals(evt.getPropertyName())) {
+        } else if (PortModel.EXPORT_PORT.equals(evt.getPropertyName())) {
             label.setText(getModel().getFriendlyString());
         } else if (IModel.CHILDREN.equals(evt.getPropertyName())) {
             label.setText(getModel().getFriendlyString());

@@ -12,6 +12,7 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -70,7 +71,7 @@ public class TransitionModel
         }
         port = newPort;
         port.addPropertyChangeListener(this);
-        firePropertyChange(PortModel.PORT);
+        firePropertyChange(IModel.PORT);
     }
 
     public void setSource(PlaceModel source) {
@@ -170,7 +171,7 @@ public class TransitionModel
         values[ports.size()] = "$UNBOUNDED$";
         return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "action"),
                         new TextPropertyDescriptor(GuardModel.GUARD, "guard"),
-                        new ComboBoxPropertyDescriptor(PortModel.PORT, "port", values)};
+                        new ComboBoxPropertyDescriptor(IModel.PORT, "port", values)};
     }
 
     @Override
@@ -181,7 +182,7 @@ public class TransitionModel
         if (GuardModel.GUARD.equals(id)) {
             return guard.getGuard();
         }
-        if (PortModel.PORT.equals(id)) {
+        if (IModel.PORT.equals(id)) {
             List<PortModel> ports = getParent().getPorts();
             if (port == null) {
                 return ports.size();
@@ -194,7 +195,7 @@ public class TransitionModel
     @Override
     public boolean isPropertySet(Object id) {
         return ActionModel.ACTION.equals(id) || GuardModel.GUARD.equals(id)
-                        || PortModel.PORT.equals(id);
+                        || IModel.PORT.equals(id);
     }
 
     @Override
@@ -203,7 +204,7 @@ public class TransitionModel
             setActionString((String) value);
         } else if (GuardModel.GUARD.equals(id)) {
             setGuardString((String) value);
-        } else if (PortModel.PORT.equals(id)) {
+        } else if (IModel.PORT.equals(id)) {
             List<PortModel> ports = getParent().getPorts();
             int index = (Integer) value;
             if (index == ports.size()) {

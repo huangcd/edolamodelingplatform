@@ -22,12 +22,9 @@ public class PortModel<P extends IComponentType>
                 extends BaseInstanceModel<PortModel, PortTypeModel, P>
                 implements
                     IPort<PortModel, PortTypeModel, P, IDataContainer> {
-
-    public final static String PORT   = "port";
-    public final static String EXPORT = "export";
     @Element
-    private boolean            export;
-    private BulletModel        bullet;
+    private boolean     export;
+    private BulletModel bullet;
 
     protected PortModel() {
         bullet = new BulletModel(this);
@@ -48,12 +45,12 @@ public class PortModel<P extends IComponentType>
         // 如果portModel是export的，需要把AtomicModel添加到portModel的属性变化通知队列中去
         if (export) {
             addPropertyChangeListener(getParent().getInstance());
-            addPropertyChangeListener(bullet);
-        } else {
-            removePropertyChangeListener(getParent().getInstance());
         }
         this.export = export;
-        firePropertyChange(EXPORT);
+        firePropertyChange(EXPORT_PORT, !export, export);
+        if (!export) {
+            removePropertyChangeListener(getParent().getInstance());
+        }
         return this;
     }
 
@@ -117,7 +114,7 @@ public class PortModel<P extends IComponentType>
     public IPropertyDescriptor[] getPropertyDescriptors() {
         ArrayList<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new TextPropertyDescriptor(NAME, "name"));
-        list.add(new ComboBoxPropertyDescriptor(EXPORT, "exportable", trueFalseArray));
+        list.add(new ComboBoxPropertyDescriptor(EXPORT_PORT, "exportable", trueFalseArray));
         map = ((AtomicTypeModel) getParent()).getDatasGroupByType();
         int i = 1;
         for (ChildEntry entry : getType().getArgumentEntries()) {
@@ -142,7 +139,7 @@ public class PortModel<P extends IComponentType>
         if (NAME.equals(id)) {
             return getName();
         }
-        if (EXPORT.equals(id)) {
+        if (EXPORT_PORT.equals(id)) {
             return Boolean.toString(export).equals(trueFalseArray[0]) ? 0 : 1;
         }
         if (id instanceof ChildEntry) {
@@ -161,14 +158,14 @@ public class PortModel<P extends IComponentType>
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id) || EXPORT.equals(id);
+        return NAME.equals(id) || EXPORT_PORT.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
-        } else if (EXPORT.equals(id)) {
+        } else if (EXPORT_PORT.equals(id)) {
             setExport(Boolean.parseBoolean(trueFalseArray[(Integer) value]));
         } else if (id instanceof ChildEntry) {
             ChildEntry entry = (ChildEntry) id;

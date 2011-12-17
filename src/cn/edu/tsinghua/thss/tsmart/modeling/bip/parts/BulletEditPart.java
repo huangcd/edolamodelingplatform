@@ -19,20 +19,31 @@ public class BulletEditPart extends BaseEditableEditPart {
     private Label         portName;
     private FigureLocator labelLocator;
 
+    public void deactivate() {
+        super.deactivate();
+        getModel().removePropertyChangeListener(this);
+        ((GraphicalEditPart) getParent().getParent()).getFigure().remove(portName);
+    }
+
     @Override
     protected IFigure createFigure() {
-        figure = new Ellipse();
+        if (figure == null) {
+            figure = new Ellipse();
+        }
         figure.setFill(true);
         figure.setForegroundColor(ColorConstants.black);
         figure.setBackgroundColor(ColorConstants.black);
 
-        portName = new Label(getModel().getPortName());
+        if (portName == null) {
+            portName = new Label(getModel().getPortName());
+        }
         portName.setFont(properties.getDefaultEditorFont());
         portName.setForegroundColor(ColorConstants.blue);
         addFigureMouseEvent(portName);
-        ((GraphicalEditPart) getParent().getParent()).getFigure().add(portName);
 
+        ((GraphicalEditPart) getParent().getParent()).getFigure().add(portName);
         labelLocator = new FigureLocator(figure, portName, PositionConstants.NORTH, 3, true);
+        // FIXME 第一次显示Bullet的时候将portName定位到正确的位置（现在需要拖动一下才能定位）
         // FIXME 拖动大框的时候标签没有随之改变位置
         // FIXME 下面语句会导致出错，考虑在BulletEditPart做translate而不是FigureLocator里面做
         // labelLocator.relocate(getModel().getPositionConstraint());
