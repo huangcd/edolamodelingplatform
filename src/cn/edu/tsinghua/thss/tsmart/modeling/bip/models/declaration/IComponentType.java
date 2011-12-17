@@ -2,6 +2,8 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 
 import java.util.List;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
+
 /**
  * Created by Huangcd<br/>
  * Date: 11-11-17<br/>
@@ -14,5 +16,5 @@ public interface IComponentType<Model extends IComponentType, Instance extends I
                     IType<Model, Instance, Parent> {
 
     /** @return 返回export port的集合（组件对外可见的端口集） */
-    List<IPort> getExportPorts();
+    List<PortModel> getExportPorts();
 }

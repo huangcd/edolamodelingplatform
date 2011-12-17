@@ -1,14 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
-
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -26,11 +24,11 @@ public class InteractionModel
     @Element
     private ActionModel downAction;
     @ElementList
-    private List<IPortType> interactionPorts;
+    private List<PortTypeModel> interactionPorts;
 
 
     public InteractionModel() {
-        interactionPorts = new ArrayList<IPortType>();
+        interactionPorts = new ArrayList<PortTypeModel>();
     }
 
     public ActionModel getUpAction() {
@@ -49,22 +47,22 @@ public class InteractionModel
         this.downAction = downAction;
     }
 
-    public List<IPortType> getInteractionPorts() {
+    public List<PortTypeModel> getInteractionPorts() {
         return interactionPorts;
     }
 
-    public void setInteractionPorts(List<IPortType> interactionPorts) {
+    public void setInteractionPorts(List<PortTypeModel> interactionPorts) {
         this.interactionPorts = interactionPorts;
     }
 
-    public void setInteractionPort(IPortType interactionPort, int index) {
+    public void setInteractionPort(PortTypeModel interactionPort, int index) {
         if (index < 0 || index >= interactionPorts.size()) {
             throw new ArrayIndexOutOfBoundsException(index);
         }
         interactionPorts.set(index, interactionPort);
     }
 
-    public void addInteractionPort(IPortType interactionPort) {
+    public void addInteractionPort(PortTypeModel interactionPort) {
         interactionPorts.add(interactionPort);
     }
 
@@ -76,7 +74,7 @@ public class InteractionModel
     @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder("on ");
-        for (IPortType portType : interactionPorts) {
+        for (PortTypeModel portType : interactionPorts) {
             buffer.append(portType.getName()).append(' ');
         }
         buffer.append("\n\t\tup{").append(upAction).append("}");

@@ -17,7 +17,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 
 
@@ -30,8 +29,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 @Root
 public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IDataContainer>
                 implements
-                    IOrderContainer<DataTypeModel>,
-                    IPortType<PortTypeModel, PortModel, IDataContainer> {
+                    IOrderContainer<DataTypeModel> {
     private final static HashMap<String, PortTypeModel>                            typeSources;
     private final static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
@@ -76,9 +74,9 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         toolMap.put(type, map);
     }
 
-    public static boolean addTypeSources(String type, PortTypeModel dataType) {
+    public static boolean addTypeSources(String type, PortTypeModel port) {
         if (typeSources.containsKey(type)) return false;
-        typeSources.put(type, dataType);
+        typeSources.put(type, port);
         return true;
     }
 
@@ -99,7 +97,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         // TODO 删除一种类型的时候检查该类型是否被使用
     }
 
-    public static boolean removeTypeSources(String type) {
+    private static boolean removeTypeSources(String type) {
         if (type.equals("ePort") || !typeSources.containsKey(type)) return false;
         typeSources.remove(type);
         return true;
@@ -120,17 +118,16 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     }
 
     public static PortTypeModel getPortTypeModel(String type) {
-        return typeSources.get(type);
+        return typeSources.get(type).copy();
     }
 
-    static class ChildEntry implements Serializable {
-        int           index;
+    static class ArgumentEntry implements Serializable {
+        private int           index;
+        private boolean       bounded = false;
+        private String        name;
+        private DataTypeModel model;
 
-        boolean       bounded = false;
-        String        name;
-        DataTypeModel model;
-
-        protected ChildEntry(String name, DataTypeModel model, int index) {
+        protected ArgumentEntry(String name, DataTypeModel model, int index) {
             super();
             this.name = name;
             this.model = model;
@@ -154,7 +151,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         }
 
         public String getTypeName() {
-            return model.getTypeName();
+            return model.getName();
         }
 
         public boolean isBounded() {
@@ -175,15 +172,15 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         }
 
         public String toString() {
-            return model.getTypeName() + " " + name;
+            return model.getName() + " " + name;
         }
     }
 
     @ElementList
-    private ArrayList<ChildEntry> arguments;
+    private ArrayList<ArgumentEntry> arguments;
 
     public PortTypeModel() {
-        this.arguments = new ArrayList<ChildEntry>();
+        this.arguments = new ArrayList<ArgumentEntry>();
     }
 
     @Override
@@ -206,7 +203,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     public String getArgumentAsString() {
         StringBuilder buffer = new StringBuilder();
         if (arguments != null && !arguments.isEmpty()) {
-            ChildEntry child = arguments.get(0);
+            ArgumentEntry child = arguments.get(0);
             buffer.append(child.getTypeName()).append(' ').append(child.getName());
             for (int i = 1, size = arguments.size(); i < size; i++) {
                 buffer.append(", ").append(child.getTypeName()).append(' ').append(child.getName());
@@ -218,7 +215,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     public String getFriendlyArguments() {
         StringBuilder buffer = new StringBuilder();
         if (arguments != null && !arguments.isEmpty()) {
-            for (ChildEntry entry : arguments) {
+            for (ArgumentEntry entry : arguments) {
                 buffer.append(entry.getTypeName()).append(' ');
                 if (entry.isBounded())
                     buffer.append(entry.getModel().getInstance().getName());
@@ -238,7 +235,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
      * @return
      */
     protected DataModel getData(int index) {
-        ChildEntry entry = arguments.get(index);
+        ArgumentEntry entry = arguments.get(index);
         if (entry.isBounded()) return null;
         return (DataModel) entry.getModel().getInstance();
     }
@@ -274,14 +271,14 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     }
 
     public PortTypeModel addChild(DataTypeModel child, String name) {
-        arguments.add(new ChildEntry(name, child, arguments.size()));
+        arguments.add(new ArgumentEntry(name, child, arguments.size()));
         firePropertyChange(CHILDREN);
         return this;
     }
 
     public PortTypeModel addChild(DataTypeModel child) {
         // FIXME 名字可能会重复，应该确保其不重复
-        return addChild(child, "p" + (arguments.size() + 1));
+        return addChild(child, "d" + (arguments.size() + 1));
     }
 
     public void setOrderModelChild(DataTypeModel child, int index) {
@@ -291,8 +288,8 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
 
     @Override
     public boolean allSets() {
-        for (int i = 0, size = arguments.size(); i < size; i++) {
-            if (arguments.get(i) == null) {
+        for (ArgumentEntry entry : arguments) {
+            if (!entry.isBounded()) {
                 return false;
             }
         }
@@ -304,16 +301,15 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         return true;
     }
 
-    @Override
     public List<DataTypeModel> getArguments() {
         List<DataTypeModel> list = new ArrayList<DataTypeModel>();
-        for (ChildEntry entry : arguments) {
+        for (ArgumentEntry entry : arguments) {
             list.add(entry.getModel());
         }
         return list;
     }
 
-    public List<ChildEntry> getArgumentEntries() {
+    public List<ArgumentEntry> getArgumentEntries() {
         return arguments;
     }
 

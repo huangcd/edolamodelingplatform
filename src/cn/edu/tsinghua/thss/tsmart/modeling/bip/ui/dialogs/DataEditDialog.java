@@ -98,7 +98,7 @@ public class DataEditDialog extends AbstractEditDialog {
 
     @Override
     protected void initValues() {
-        labelTypeName.setText(((DataTypeModel) instance.getType()).getTypeName());
+        labelTypeName.setText(((DataTypeModel) instance.getType()).getName());
         if (instance.hasName()) {
             textName.setText(instance.getName());
         }

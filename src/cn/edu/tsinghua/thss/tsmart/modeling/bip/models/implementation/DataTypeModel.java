@@ -75,7 +75,7 @@ public class DataTypeModel<P extends IDataContainer>
         return true;
     }
 
-    public static boolean removeTypeSources(String type) {
+    private static boolean removeTypeSources(String type) {
         if (type.equals("int") || type.equals("bool") || !typeSources.containsKey(type))
             return false;
         typeSources.remove(type);
@@ -100,45 +100,31 @@ public class DataTypeModel<P extends IDataContainer>
         return list.toArray(new String[list.size()]);
     }
 
-    @Attribute(name = "typeName")
-    private String typeName;
-
-
     public DataTypeModel(@Attribute(name = "typeName") String typeName) {
-        this.setTypeName(typeName);
+        this.setName(typeName);
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getName() {
+        return name;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public DataTypeModel<P> setName(String name) {
+        this.name = name;
         getInstance().firePropertyChange(DataModel.DATA_TYPE);
-        firePropertyChange(NAME);
+        return super.setName(name);
     }
 
     @Override
     public DataModel createInstance() {
-        instance = (DataModel) new DataModel<P>().setType(this);
+        instance = (DataModel) new DataModel().setType(this);
         // 给常用类型赋初值
-        if (typeName.equals("bool")) {
+        if (getName().equals("bool")) {
             instance.setValue("false");
-        } else if (typeName.equals("int")) {
+        } else if (getName().equals("int")) {
             instance.setValue("0");
         }
         return instance;
     }
-
-    // /**
-    // * 复制dataTypeModel对象，同时复制instance对象的value。 但为了避免出现问题，不复制instance的name
-    // */
-    // public DataTypeModel copy() {
-    // DataTypeModel copyModel = new DataTypeModel(this.typeName);
-    // DataModel instance = copyModel.createInstance();
-    // instance.setValue(this.getInstance().getValue());
-    // return copyModel;
-    // }
 
     @Override
     public boolean exportable() {
@@ -152,7 +138,7 @@ public class DataTypeModel<P extends IDataContainer>
 
     @Override
     public String toString() {
-        return "DataType{" + "typeName='" + getTypeName() + '\'' + '}';
+        return "DataType{" + "typeName='" + getName() + '\'' + '}';
     }
 
     @Override

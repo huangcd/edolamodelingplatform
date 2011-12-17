@@ -5,7 +5,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -15,53 +15,48 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
  */
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
-public class PriorityModel<Parent extends IContainer, Port extends IPort>
-    extends BaseInstanceModel<PriorityModel, PriorityTypeModel, Parent> {
+public class PriorityModel<Parent extends IContainer, Port extends IModel>
+                extends BaseInstanceModel<PriorityModel, PriorityTypeModel, Parent> {
 
     @Element(name = "left")
-    private Port leftPort;
+    private Port       left;
     @Element(name = "right")
-    private Port rightPort;
+    private Port       right;
     @Element(name = "guard")
     private GuardModel condition = new GuardModel().setGuard("true");
 
     public PriorityModel<Parent, Port> copy(Port leftPort, Port rightPort) {
         PriorityModel<Parent, Port> model = this.copy();
-        model.leftPort = leftPort;
-        model.rightPort = rightPort;
+        model.left = leftPort;
+        model.right = rightPort;
         return model;
     }
 
     @Override
     public String exportToBip() {
         if (condition.getGuard().equals("true")) {
-            return String.format("priority %s %s < %s",
-                                 getName(),
-                                 getLeftPort().getName(),
-                                 getRightPort().getName());
+            return String.format("priority %s %s < %s", getName(), getLeftPort().getName(),
+                            getRightPort().getName());
         } else {
-            return String.format("priority %s %s -> %s < %s",
-                                 getName(),
-                                 getCondition().getGuard(),
-                                 getLeftPort().getName(),
-                                 getRightPort().getName());
+            return String.format("priority %s %s -> %s < %s", getName(), getCondition().getGuard(),
+                            getLeftPort().getName(), getRightPort().getName());
         }
     }
 
     public Port getLeftPort() {
-        return leftPort;
+        return left;
     }
 
     public void setLeftPort(Port leftPort) {
-        this.leftPort = leftPort;
+        this.left = leftPort;
     }
 
     public Port getRightPort() {
-        return rightPort;
+        return right;
     }
 
     public void setRightPort(Port rightPort) {
-        this.rightPort = rightPort;
+        this.right = rightPort;
     }
 
     @Override
@@ -98,6 +93,6 @@ public class PriorityModel<Parent extends IContainer, Port extends IPort>
     @Override
     public void setPropertyValue(Object id, Object value) {
         // TODO Auto-generated method stub
-        
+
     }
 }

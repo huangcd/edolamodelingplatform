@@ -13,15 +13,12 @@ import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel.ChildEntry;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel.ArgumentEntry;
 
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
 public class PortModel<P extends IComponentType>
-                extends BaseInstanceModel<PortModel, PortTypeModel, P>
-                implements
-                    IPort<PortModel, PortTypeModel, P, IDataContainer> {
+                extends BaseInstanceModel<PortModel, PortTypeModel, P> {
     @Element
     private boolean     export;
     private BulletModel bullet;
@@ -98,7 +95,6 @@ public class PortModel<P extends IComponentType>
         return buffer.toString();
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<DataModel<IDataContainer>> getPortArguments() {
         ArrayList<DataModel<IDataContainer>> arguments = new ArrayList<DataModel<IDataContainer>>();
@@ -117,7 +113,7 @@ public class PortModel<P extends IComponentType>
         list.add(new ComboBoxPropertyDescriptor(EXPORT_PORT, "exportable", trueFalseArray));
         map = ((AtomicTypeModel) getParent()).getDatasGroupByType();
         int i = 1;
-        for (ChildEntry entry : getType().getArgumentEntries()) {
+        for (ArgumentEntry entry : getType().getArgumentEntries()) {
             String typeName = entry.getTypeName();
             List<DataModel> datas = map.get(typeName);
             if (datas == null) datas = Collections.EMPTY_LIST;
@@ -142,8 +138,8 @@ public class PortModel<P extends IComponentType>
         if (EXPORT_PORT.equals(id)) {
             return Boolean.toString(export).equals(trueFalseArray[0]) ? 0 : 1;
         }
-        if (id instanceof ChildEntry) {
-            ChildEntry entry = (ChildEntry) id;
+        if (id instanceof ArgumentEntry) {
+            ArgumentEntry entry = (ArgumentEntry) id;
             String name = entry.getTypeName();
             List<DataModel> datas = map.get(name);
             if (datas == null) datas = Collections.EMPTY_LIST;
@@ -167,8 +163,8 @@ public class PortModel<P extends IComponentType>
             setName((String) value);
         } else if (EXPORT_PORT.equals(id)) {
             setExport(Boolean.parseBoolean(trueFalseArray[(Integer) value]));
-        } else if (id instanceof ChildEntry) {
-            ChildEntry entry = (ChildEntry) id;
+        } else if (id instanceof ArgumentEntry) {
+            ArgumentEntry entry = (ArgumentEntry) id;
             String name = entry.getTypeName();
             List<DataModel> datas = map.get(name);
             if (datas == null) datas = Collections.EMPTY_LIST;

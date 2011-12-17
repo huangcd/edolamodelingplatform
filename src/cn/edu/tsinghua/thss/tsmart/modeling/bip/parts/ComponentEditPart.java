@@ -17,7 +17,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
@@ -118,9 +117,9 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
 
     @Override
     protected List<BulletModel> getModelChildren() {
-        List<IPort> exportPorts = ((IComponentType) getModel().getType()).getExportPorts();
+        List<PortModel> exportPorts = ((IComponentType) getModel().getType()).getExportPorts();
         List<BulletModel> bullets = new ArrayList<BulletModel>();
-        for (IPort port : exportPorts) {
+        for (PortModel port : exportPorts) {
             BulletModel bullet = port.getBullet();
             Rectangle rect = bullet.getPositionConstraint();
             if (rect == null) {

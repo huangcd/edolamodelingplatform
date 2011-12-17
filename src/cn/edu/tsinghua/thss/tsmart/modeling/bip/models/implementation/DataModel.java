@@ -34,7 +34,7 @@ public class DataModel<Parent extends IDataContainer>
     }
 
     public boolean setValue(String value) {
-        String typeString = getType().getTypeName();
+        String typeString = getType().getName();
         if (typeString.equals("int")) {
             try {
                 Integer.parseInt(value);
@@ -61,17 +61,17 @@ public class DataModel<Parent extends IDataContainer>
     @Override
     public String exportToBip() {
         if (value == null || value.isEmpty()) {
-            return String.format("data %s %s", getType().getTypeName(), getName());
+            return String.format("data %s %s", getType().getName(), getName());
         } else {
-            return String.format("data %s %s = %s", getType().getTypeName(), getName(), getValue());
+            return String.format("data %s %s = %s", getType().getName(), getName(), getValue());
         }
     }
 
     public String getFriendlyString() {
         if (value == null || value.isEmpty()) {
-            return String.format("%s %s", getType().getTypeName(), getName());
+            return String.format("%s %s", getType().getName(), getName());
         } else {
-            return String.format("%s %s = %s", getType().getTypeName(), getName(), getValue());
+            return String.format("%s %s = %s", getType().getName(), getName(), getValue());
         }
     }
 
@@ -91,7 +91,7 @@ public class DataModel<Parent extends IDataContainer>
     @Override
     public Object getPropertyValue(Object id) {
         if (DATA_TYPE.equals(id)) {
-            return getType().getTypeName();
+            return getType().getName();
         }
         if (DATA_VALUE.equals(id)) {
             if (!getProrerties().isMultipleDataTypeAvailble()) {
@@ -113,7 +113,7 @@ public class DataModel<Parent extends IDataContainer>
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (DATA_TYPE.equals(id)) {
-            getType().setTypeName((String) value);
+            getType().setName((String) value);
         }
         if (DATA_VALUE.equals(id)) {
             if (value instanceof Integer) {

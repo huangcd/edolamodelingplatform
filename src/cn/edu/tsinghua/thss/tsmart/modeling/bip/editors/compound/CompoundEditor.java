@@ -70,6 +70,15 @@ public class CompoundEditor extends BIPEditor {
         getPaletteRoot().add(compoundPalette);
     }
 
+    public void removeConnectorCreationToolEntry(CreationToolEntry creationToolEntry) {
+        // TODO Auto-generated method stub
+    }
+
+    public void addConnectorCreationToolEntry(CreationToolEntry entry) {
+        // TODO Auto-generated method stub
+
+    }
+
     @Override
     public void doSave(IProgressMonitor monitor) {
         saveProperties();

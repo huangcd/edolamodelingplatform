@@ -1,5 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.ElementList;
@@ -9,10 +12,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentIns
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -172,11 +171,11 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
     }
 
     @Override
-    public List<IPort> getExportPorts() {
-        List<IPort> exportPorts = new ArrayList<IPort>();
+    public List<PortModel> getExportPorts() {
+        List<PortModel> exportPorts = new ArrayList<PortModel>();
         for (ConnectorModel connector : connectors) {
             if (connector.isExport()) {
-                exportPorts.add(connector);
+                exportPorts.add(connector.getExportPort());
             }
         }
         return exportPorts;

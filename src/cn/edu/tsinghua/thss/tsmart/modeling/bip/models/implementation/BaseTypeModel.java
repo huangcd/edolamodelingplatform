@@ -257,71 +257,71 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     }
 
     public static void main(String[] args) throws Exception {
-        Serializer serializer = new Persister(new CycleStrategy());
-
-        // empty port
-        PortTypeModel ePort = new PortTypeModel();
-        ePort.setName("ePort");
-        ePort.getInstance().setName("p1");
-
-        // int port
-        PortTypeModel intPort = new PortTypeModel();
-        intPort.setName("intPort");
-        intPort.getInstance().setName("p2");
-
-        // data
-        DataTypeModel intDataType = new DataTypeModel("int");
-        intDataType.getInstance().setName("a");
-        intPort.setOrderModelChild(intDataType, 0);
-
-        // connector type
-        ConnectorTypeModel synchronizedInt = new ConnectorTypeModel();
-        synchronizedInt.getInstance();
-        synchronizedInt.setName("synchronizedInt");
-        synchronizedInt.setOrderModelChild(ePort, 0);
-        synchronizedInt.setOrderModelChild(intPort, 1);
-        synchronizedInt.parseInteractor("p1' p2");
-
-        // atomic
-        AtomicTypeModel machineType = new AtomicTypeModel().setName("Machine");
-        machineType.getInstance().setName("mac");
-        machineType.setInitAction(new ActionTypeModel().getInstance().setAction(""));
-
-        // atomic data
-        DataTypeModel intInMachine = (DataTypeModel) intDataType.copy().setName("int");
-        machineType.addData((DataModel<AtomicTypeModel>) intInMachine.createInstance().setName(
-                        "counter"));
-
-        // atomic port
-        PortModel runPort = (PortModel) intPort.getInstance().copy().setName("run");
-        machineType.addPort(runPort);
-
-        // atomic place
-        PlaceModel idle = new PlaceTypeModel().getInstance().setName("IDLE");
-        PlaceModel busy = idle.copy().setName("BUSY");
-        machineType.addPlace(idle);
-        machineType.addPlace(busy);
-        machineType.setInitPlace(idle);
-
-        // atomic transition
-        TransitionModel run = new TransitionTypeModel().getInstance();
-        // run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
-        // run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
-        run.setPort(runPort);
-        run.setSource(idle);
-        run.setTarget(busy);
-        run.attachSource();
-        run.attachTarget();
-        // machineType.addTransition(run);
-
-        // atomic priority
-
-        // CompoundTypeModel all = new CompoundTypeModel().setName("all");
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        serializer.write(machineType.getInstance(), out);
-        System.out.println(new String(out.toByteArray()));
-        System.out.println(serializer.read(AtomicModel.class,
-                        new ByteArrayInputStream(out.toByteArray())));
+        // Serializer serializer = new Persister(new CycleStrategy());
+        //
+        // // empty port
+        // PortTypeModel ePort = new PortTypeModel();
+        // ePort.setName("ePort");
+        // ePort.getInstance().setName("p1");
+        //
+        // // int port
+        // PortTypeModel intPort = new PortTypeModel();
+        // intPort.setName("intPort");
+        // intPort.getInstance().setName("p2");
+        //
+        // // data
+        // DataTypeModel intDataType = new DataTypeModel("int");
+        // intDataType.getInstance().setName("a");
+        // intPort.setOrderModelChild(intDataType, 0);
+        //
+        // // connector type
+        // ConnectorTypeModel synchronizedInt = new ConnectorTypeModel();
+        // synchronizedInt.getInstance();
+        // synchronizedInt.setName("synchronizedInt");
+        // synchronizedInt.setOrderModelChild(ePort, 0);
+        // synchronizedInt.setOrderModelChild(intPort, 1);
+        // synchronizedInt.parseInteractor("p1' p2");
+        //
+        // // atomic
+        // AtomicTypeModel machineType = new AtomicTypeModel().setName("Machine");
+        // machineType.getInstance().setName("mac");
+        // machineType.setInitAction(new ActionTypeModel().getInstance().setAction(""));
+        //
+        // // atomic data
+        // DataTypeModel intInMachine = (DataTypeModel) intDataType.copy().setName("int");
+        // machineType.addData((DataModel<AtomicTypeModel>) intInMachine.createInstance().setName(
+        // "counter"));
+        //
+        // // atomic port
+        // PortModel runPort = (PortModel) intPort.getInstance().copy().setName("run");
+        // machineType.addPort(runPort);
+        //
+        // // atomic place
+        // PlaceModel idle = new PlaceTypeModel().getInstance().setName("IDLE");
+        // PlaceModel busy = idle.copy().setName("BUSY");
+        // machineType.addPlace(idle);
+        // machineType.addPlace(busy);
+        // machineType.setInitPlace(idle);
+        //
+        // // atomic transition
+        // TransitionModel run = new TransitionTypeModel().getInstance();
+        // // run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
+        // // run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
+        // run.setPort(runPort);
+        // run.setSource(idle);
+        // run.setTarget(busy);
+        // run.attachSource();
+        // run.attachTarget();
+        // // machineType.addTransition(run);
+        //
+        // // atomic priority
+        //
+        // // CompoundTypeModel all = new CompoundTypeModel().setName("all");
+        //
+        // ByteArrayOutputStream out = new ByteArrayOutputStream();
+        // serializer.write(machineType.getInstance(), out);
+        // System.out.println(new String(out.toByteArray()));
+        // System.out.println(serializer.read(AtomicModel.class,
+        // new ByteArrayInputStream(out.toByteArray())));
     }
 }

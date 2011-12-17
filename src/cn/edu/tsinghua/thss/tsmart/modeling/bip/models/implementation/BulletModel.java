@@ -3,7 +3,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 import org.eclipse.draw2d.geometry.Rectangle;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 
 /**
@@ -15,14 +14,14 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 @SuppressWarnings("rawtypes")
 public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContainer> {
 
-    private IPort port;
-    private int   direction;
+    private PortModel port;
+    private int       direction;
 
-    public BulletModel(IPort portModel) {
+    public BulletModel(PortModel portModel) {
         port = portModel;
     }
 
-    public IPort getPort() {
+    public PortModel getPort() {
         return port;
     }
 

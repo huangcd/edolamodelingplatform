@@ -16,7 +16,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentTyp
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
 
 
 /**
@@ -214,7 +213,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     public HashMap<String, List<DataModel>> getDatasGroupByType() {
         HashMap<String, List<DataModel>> map = new HashMap<String, List<DataModel>>();
         for (DataModel<AtomicTypeModel> data : datas) {
-            String typeName = data.getType().getTypeName();
+            String typeName = data.getType().getName();
             if (!map.containsKey(typeName)) {
                 map.put(typeName, new ArrayList<DataModel>());
             }
@@ -296,8 +295,8 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     }
 
     @Override
-    public List<IPort> getExportPorts() {
-        List<IPort> exportPorts = new ArrayList<IPort>();
+    public List<PortModel> getExportPorts() {
+        List<PortModel> exportPorts = new ArrayList<PortModel>();
         for (PortModel port : ports) {
             if (port.isExport()) {
                 exportPorts.add(port);

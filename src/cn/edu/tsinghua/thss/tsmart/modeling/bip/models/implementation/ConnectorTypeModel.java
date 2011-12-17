@@ -1,26 +1,27 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.gef.palette.CreationToolEntry;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementArray;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPort;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IPortType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 
 /**
  * Created by Huangcd<br/>
@@ -33,40 +34,174 @@ public class ConnectorTypeModel
                 extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IDataContainer>
                 implements
                     IDataContainer<ConnectorTypeModel, IDataContainer, IInstance>,
-                    IPortType<ConnectorTypeModel, ConnectorModel, IDataContainer>,
-                    IOrderContainer<IPortType> {
-    private final static ConnectorTypeModel                                          singleton;
-    private final static ConnectorTypeModel                                          rendezvous;
+                    IOrderContainer<PortTypeModel> {
     private final static HashMap<String, ConnectorTypeModel>                         typeSources;
     private final static HashMap<String, HashMap<CompoundEditor, CreationToolEntry>> toolMap;
 
     static {
         typeSources = new HashMap<String, ConnectorTypeModel>();
         toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
-        singleton = new ConnectorTypeModel();
-        rendezvous = new ConnectorTypeModel();
+        ConnectorTypeModel singleton = new ConnectorTypeModel();
+        singleton.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p1");
+        ConnectorTypeModel rendezvous = new ConnectorTypeModel();
+        rendezvous.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p1").addArgument(
+                        PortTypeModel.getPortTypeModel("ePort"), "p2");
+    }
+
+    public static void addType(String type, String[][] arrays) {
+        ConnectorTypeModel connector = new ConnectorTypeModel().setName(type);
+        for (int i = 0, size = arrays.length; i < size; i++) {
+            String portTypeName = arrays[i][0];
+            String argumentName = arrays[i][1];
+            connector.addArgument(PortTypeModel.getPortTypeModel(portTypeName), argumentName);
+        }
+        addTypeSources(type, connector);
+        HashMap<CompoundEditor, CreationToolEntry> map =
+                        new HashMap<CompoundEditor, CreationToolEntry>();
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            CreationToolEntry entry =
+                            new CreationToolEntry(type, "新建一个" + type + "连接子", new CopyFactory(
+                                            connector),
+                                            BIPEditor.getImage("icons/connector_16.png"),
+                                            BIPEditor.getImage("icons/connector_32.png"));
+            editor.addConnectorCreationToolEntry(entry);
+            map.put(editor, entry);
+        }
+        toolMap.put(type, map);
+    }
+
+    public static boolean addTypeSources(String type, ConnectorTypeModel connector) {
+        if (typeSources.containsKey(type)) return false;
+        typeSources.put(type, connector);
+        return true;
+    }
+
+    public static void addToolEntry(String type, CompoundEditor editor, CreationToolEntry entry) {
+        if (!toolMap.containsKey(type)) {
+            toolMap.put(type, new HashMap<CompoundEditor, CreationToolEntry>());
+        }
+        toolMap.get(type).put(editor, entry);
+    }
+
+    public static void removeType(String type) {
+        HashMap<CompoundEditor, CreationToolEntry> map = toolMap.get(type);
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            editor.removeConnectorCreationToolEntry(map.get(editor));
+        }
+        toolMap.remove(type);
+        removeTypeSources(type);
+        // TODO 删除一种类型的时候检查该类型是否被使用
+    }
+
+    public static boolean removeTypeSources(String type) {
+        if (type.equals("singleton") || type.equals("rendezvous") || !typeSources.containsKey(type))
+            return false;
+        typeSources.remove(type);
+        return true;
+    }
+
+    public static Set<String> getTypes() {
+        return typeSources.keySet();
+    }
+
+    public static String[] getTypeNamesAsArray() {
+        ArrayList<String> array = new ArrayList<String>(typeSources.keySet());
+        Collections.sort(array);
+        return array.toArray(new String[array.size()]);
+    }
+
+    public static Set<Map.Entry<String, ConnectorTypeModel>> getTypeEntries() {
+        return typeSources.entrySet();
+    }
+
+    public static ConnectorTypeModel getConnectorTypeModel(String type) {
+        return typeSources.get(type).copy();
+    }
+
+    static class ArgumentEntry implements Serializable {
+        private int       index;
+        private boolean   bounded = false;
+        private String    name;
+        private PortTypeModel model;
+
+        protected ArgumentEntry(String name, PortTypeModel model, int index) {
+            super();
+            this.name = name;
+            this.model = model;
+            this.index = index;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        protected void setName(String name) {
+            this.name = name;
+        }
+
+        public PortTypeModel getModel() {
+            return model;
+        }
+
+        protected void setModel(PortTypeModel model) {
+            this.model = model;
+        }
+
+        public String getTypeName() {
+            return model.getName();
+        }
+
+        public boolean isBounded() {
+            return bounded;
+        }
+
+        protected void bound(PortTypeModel model) {
+            this.model = model;
+            this.bounded = true;
+        }
+
+        public void unbound() {
+            this.bounded = false;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String toString() {
+            return model.getName() + " " + name;
+        }
+
     }
 
     @ElementList
-    private List<DataModel<ConnectorTypeModel>>                                      datas;
+    private List<DataModel<ConnectorTypeModel>> datas;
     @ElementList
-    private List<DataModel<ConnectorTypeModel>>                                      exportDatas;
+    private List<DataModel<ConnectorTypeModel>> exportDatas;
     @ElementList
-    private List<InteractionModel>                                                   interactions;
+    private List<InteractionModel>              interactions;
     @ElementList
-    private List<IPortType>                                                          portArguments;
+    private List<ArgumentEntry>                 arguments;
+    @Element
+    private PortTypeModel                       port;
     @Element(required = false)
-    private Interactor                                                               interactor;
+    private Interactor                          interactor;
 
     public ConnectorTypeModel() {
         datas = new ArrayList<DataModel<ConnectorTypeModel>>();
         exportDatas = new ArrayList<DataModel<ConnectorTypeModel>>();
         interactions = new ArrayList<InteractionModel>();
-        portArguments = new ArrayList<IPortType>();
+        arguments = new ArrayList<ArgumentEntry>();
     }
 
     protected List<DataModel<ConnectorTypeModel>> getExportDatas() {
         return exportDatas;
+    }
+
+    public ConnectorTypeModel addArgument(PortTypeModel child, String name) {
+        arguments.add(new ArgumentEntry(name, child, arguments.size()));
+        firePropertyChange(CHILDREN);
+        return this;
     }
 
     @Override
@@ -83,7 +218,7 @@ public class ConnectorTypeModel
         model.datas.addAll(datas);
         model.exportDatas.addAll(exportDatas);
         model.interactions.addAll(interactions);
-        model.portArguments.addAll(portArguments);
+        model.arguments.addAll(arguments);
         return model;
     }
 
@@ -91,11 +226,11 @@ public class ConnectorTypeModel
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("connector type ").append(getName()).append('(');
-        if (portArguments != null && !portArguments.isEmpty()) {
-            IPortType portType = portArguments.get(0);
+        if (arguments != null && !arguments.isEmpty()) {
+            PortTypeModel portType = arguments.get(0).getModel();
             buffer.append(portType.getName()).append(' ').append(portType.getInstance().getName());
-            for (int i = 1, size = portArguments.size(); i < size; i++) {
-                portType = portArguments.get(0);
+            for (int i = 1, size = arguments.size(); i < size; i++) {
+                portType = arguments.get(0).getModel();
                 buffer.append(", ").append(portType.getName()).append(' ')
                                 .append(portType.getInstance().getName());
             }
@@ -120,12 +255,13 @@ public class ConnectorTypeModel
      * 
      * @return 如果一致，返回true；否则返回false
      */
-    public boolean validateArguments(IPort port, int index) {
-        int size = portArguments.size();
+    public boolean validateArguments(PortModel port, int index) {
+        // TODO 使用更简单的方法，直接检查各个port的名字是否一样。
+        int size = arguments.size();
         if (index < 0 || index >= size) {
             return false;
         }
-        IPortType portType = portArguments.get(index);
+        PortTypeModel portType = arguments.get(index).getModel();
         if (port == null || portType == null) {
             return false;
         }
@@ -135,7 +271,7 @@ public class ConnectorTypeModel
             return false;
         }
         for (int i = 0, max = portTypeArguments.size(); i < max; i++) {
-            if (!portTypeArguments.get(i).getTypeName()
+            if (!portTypeArguments.get(i).getName()
                             .equals(portArguments.get(i).getType().getName())) {
                 return false;
             }
@@ -200,9 +336,9 @@ public class ConnectorTypeModel
         string = String.format("[%s]", string);
         Stack<Object> stack = new Stack<Object>();
         List<Interactor> list = new LinkedList<Interactor>();
-        HashMap<String, IPortType> portTypeHashMap = new HashMap<String, IPortType>();
-        for (IPortType portType : this.portArguments) {
-            portTypeHashMap.put(portType.getInstance().getName(), portType);
+        HashMap<String, PortTypeModel> portTypeHashMap = new HashMap<String, PortTypeModel>();
+        for (ArgumentEntry entry : this.arguments) {
+            portTypeHashMap.put(entry.getModel().getInstance().getName(), entry.getModel());
         }
         int i = 0;
         int size = string.length();
@@ -243,7 +379,7 @@ public class ConnectorTypeModel
                     j++;
                 }
                 String identifier = string.substring(i, j);
-                IPortType portType = portTypeHashMap.get(identifier);
+                PortTypeModel portType = portTypeHashMap.get(identifier);
                 if (portType == null) {
                     throw new NullPointerException(identifier);
                 }
@@ -272,11 +408,11 @@ public class ConnectorTypeModel
         return true;
     }
 
-    public ConnectorTypeModel addParameter(IPortType child) {
-        return setParameter(child, portArguments.size());
+    public ConnectorTypeModel addParameter(PortTypeModel child) {
+        return setParameter(child, arguments.size());
     }
 
-    public ConnectorTypeModel setParameter(IPortType child, int index) {
+    public ConnectorTypeModel setParameter(PortTypeModel child, int index) {
         setOrderModelChild(child, index);
         return this;
     }
@@ -292,27 +428,15 @@ public class ConnectorTypeModel
     }
 
     @Override
-    // TODO test me
-    public void setOrderModelChild(IPortType child, int index) {
-        if (index < 0) {
-            throw new ArrayIndexOutOfBoundsException(Integer.toString(index));
-        }
-        if (index < portArguments.size()) {
-            portArguments.set(index, child);
-            return;
-        }
-        while (index > portArguments.size()) {
-            portArguments.add(null);
-        }
-        portArguments.add(child);
-        getInstance().enlargeArguments(portArguments.size());
+    public void setOrderModelChild(PortTypeModel child, int index) {
+        arguments.get(index).setModel(child);
         firePropertyChange(CHILDREN);
     }
 
     @Override
     public boolean allSets() {
-        for (IPortType child : portArguments) {
-            if (child == null) {
+        for (ArgumentEntry child : arguments) {
+            if (!child.isBounded()) {
                 return false;
             }
         }
@@ -320,24 +444,18 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public IPortType removeOrderModelChild(int index) {
+    public PortTypeModel removeOrderModelChild(int index) {
         firePropertyChange(CHILDREN);
-        getInstance().removeArgument(index);
-        return portArguments.remove(index);
+        return arguments.remove(index).getModel();
     }
 
     @Override
-    public List<IPortType> getOrderList() {
-        return portArguments;
-    }
-
-    @Override
-    public List<DataTypeModel> getArguments() {
-        List<DataTypeModel> dataTypes = new ArrayList<DataTypeModel>();
-        for (DataModel<ConnectorTypeModel> data : exportDatas) {
-            dataTypes.add(data.getType());
+    public List<PortTypeModel> getOrderList() {
+        ArrayList<PortTypeModel> list = new ArrayList<PortTypeModel>();
+        for (ArgumentEntry entry : arguments) {
+            list.add(entry.getModel());
         }
-        return dataTypes;
+        return list;
     }
 
     @Override
@@ -367,7 +485,7 @@ public class ConnectorTypeModel
     public Map<String, List<DataModel>> getDatasGroupByType() {
         HashMap<String, List<DataModel>> map = new HashMap<String, List<DataModel>>();
         for (DataModel<ConnectorTypeModel> data : datas) {
-            String typeName = data.getType().getTypeName();
+            String typeName = data.getType().getName();
             if (!map.containsKey(typeName)) {
                 map.put(typeName, new ArrayList<DataModel>());
             }
@@ -383,13 +501,13 @@ public class ConnectorTypeModel
 class Interactor {
 
     @Element(required = false, name = "content")
-    private IPortType    content;
+    private PortTypeModel    content;
     @Element(required = false, name = "trigger")
     private Interactor   completePort;
     @ElementArray(required = false, name = "ports")
     private Interactor[] incompletePorts;
 
-    public Interactor(@Element(name = "content") IPortType content) {
+    public Interactor(@Element(name = "content") PortTypeModel content) {
         this.content = content;
         this.completePort = null;
         this.incompletePorts = null;
