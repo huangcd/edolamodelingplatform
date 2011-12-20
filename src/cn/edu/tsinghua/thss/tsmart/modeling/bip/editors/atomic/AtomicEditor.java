@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
@@ -191,6 +192,10 @@ public class AtomicEditor extends BIPEditor {
         IAction action;
 
         action = new SaveComponentTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+        
+        action = new CopyComponentAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 

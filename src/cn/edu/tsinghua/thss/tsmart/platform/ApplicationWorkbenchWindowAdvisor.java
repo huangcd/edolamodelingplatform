@@ -44,8 +44,10 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
         try {
-            page.openEditor(new BIPModuleEditorInput(new CompoundTypeModel().setName("compound")),
-                            CompoundEditor.id);
+            CompoundTypeModel model = new CompoundTypeModel();
+            model.setName("compound");
+            model.getInstance().setName("model");
+            page.openEditor(new BIPModuleEditorInput(model), CompoundEditor.id);
         } catch (PartInitException e) {
             MessageBox errorBox = new MessageBox(window.getShell());
             errorBox.setMessage(e.getMessage());

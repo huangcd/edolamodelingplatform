@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic;
 
 import org.eclipse.gef.EditPartViewer;

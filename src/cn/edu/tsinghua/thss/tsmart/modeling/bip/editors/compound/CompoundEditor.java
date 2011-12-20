@@ -16,11 +16,12 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.PasteComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPFileEditorInput;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BipContextMenuProvider;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
@@ -47,7 +48,7 @@ public class CompoundEditor extends BIPEditor {
         viewer = getGraphicalViewer();
         putViewerEditorEntry(viewer, this);
         viewer.setContents(getModel());
-        viewer.setContextMenu(new BipContextMenuProvider(viewer, getActionRegistry()));
+        viewer.setContextMenu(new CompoundEditorContextMenuProvider(viewer, getActionRegistry()));
         initCompoundPalette();
     }
 
@@ -115,6 +116,14 @@ public class CompoundEditor extends BIPEditor {
         IAction action;
 
         action = new SaveComponentTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+        
+        action = new CopyComponentAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+        
+        action = new PasteComponentAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 

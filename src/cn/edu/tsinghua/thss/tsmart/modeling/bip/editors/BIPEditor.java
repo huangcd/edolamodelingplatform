@@ -44,7 +44,9 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
@@ -53,11 +55,24 @@ import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 @SuppressWarnings("rawtypes")
 public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
-
     protected static HashMap<EditPartViewer, BIPEditor> viewerMap;
-    private IModel                                      model;
-    private PaletteRoot                                 paletteRoot;
-    private PaletteGroup                                toolGroup;
+    private static IInstance                            copyObject;
+
+    public static IInstance getCopyObject() {
+        return copyObject == null ? null : (IInstance) copyObject.copy();
+    }
+
+    public static void setCopyObject(IModel obj) {
+        if (obj instanceof IType) {
+            BIPEditor.copyObject = ((IType) obj).getInstance();
+        } else {
+            BIPEditor.copyObject = (IInstance) obj;
+        }
+    }
+
+    public static boolean isCopyObject(CompoundTypeModel model) {
+        return copyObject.equals(model);
+    }
 
     public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
         if (viewerMap == null) {
@@ -140,6 +155,10 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     public static ImageDescriptor getImage(String location) {
         return Activator.getImageDescriptor(location);
     }
+
+    private IModel       model;
+    private PaletteRoot  paletteRoot;
+    private PaletteGroup toolGroup;
 
     public BIPEditor() {
         setEditDomain(new DefaultEditDomain(this));
