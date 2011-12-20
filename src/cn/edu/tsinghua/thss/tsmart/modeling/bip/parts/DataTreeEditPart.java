@@ -1,7 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
 
@@ -9,7 +8,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 
-
+@SuppressWarnings("rawtypes")
 public class DataTreeEditPart extends BaseTreeEditPart {
 
     private DataModel getCastedModel() {

@@ -1,25 +1,18 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
-
-
 
 public class PlaceTreeEditPart extends BaseTreeEditPart {
 
 	private PlaceModel getCastedModel() {
 		return (PlaceModel) getModel();
 	}
-
 
 	protected String getText() {
 		if(getCastedModel().getName()==null)

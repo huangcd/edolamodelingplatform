@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.MidpointLocator;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.PositionConstants;
@@ -84,9 +83,7 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         ((PlaceEditPart) getSource()).getParent().getFigure().add(guardLabel);
         guardLocator = new FigureLocator(portLabel, guardLabel, PositionConstants.WEST, 5);
         addFigureMouseEvent(guardLabel);
-
         relocateLabels(getBendpoints());
-
         return connection;
     }
 
@@ -97,9 +94,19 @@ public class TransitionEditPart extends BaseConnectionEditPart {
             Point location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
             Dimension size = portLabel.getPreferredSize();
             portLabel.setBounds(new Rectangle(location, size));
+        } else if (bendpoints.size() == 1) {
+            Point ref1 = getModel().getSource().getPositionConstraint().getLocation();
+            Point ref2 = bendpoints.get(0).getLocation();
+            Point location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
+            Dimension size = portLabel.getPreferredSize();
+            portLabel.setBounds(new Rectangle(location, size));
         } else {
-            MidpointLocator locator = new MidpointLocator(connection, bendpoints.size() / 2);
-            locator.relocate(portLabel);
+            int index = (bendpoints.size() - 1) >> 1;
+            Point ref1 = bendpoints.get(index).getLocation();
+            Point ref2 = bendpoints.get(index + 1).getLocation();
+            Point location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
+            Dimension size = portLabel.getPreferredSize();
+            portLabel.setBounds(new Rectangle(location, size));
         }
         guardLocator.relocate();
         actionLocator.relocate();

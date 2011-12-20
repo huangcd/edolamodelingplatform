@@ -24,7 +24,7 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     @Element
     public int                      defaultEditorFontHeight = 10;
     @Element
-    public int                      defaultEditorFontStyle  = SWT.NORMAL;
+    public int                      defaultEditorFontStyle  = SWT.BOLD;
     @Attribute(name = "atomicpriority")
     public boolean                  allowAtomicPriority     = false;
     @Attribute(name = "priority")

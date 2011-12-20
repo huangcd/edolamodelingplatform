@@ -1,7 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
 
@@ -9,8 +8,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 
-
-
+@SuppressWarnings("rawtypes")
 public class PortTreeEditPart extends BaseTreeEditPart {
 
     private PortModel getCastedModel() {
@@ -42,5 +40,4 @@ public class PortTreeEditPart extends BaseTreeEditPart {
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteModelEditPolicy());
     }
-
 }

@@ -1,13 +1,10 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 
 @SuppressWarnings("rawtypes")
 public class AtomicTreeEditPart extends BaseTreeEditPart {
@@ -36,5 +33,4 @@ public class AtomicTreeEditPart extends BaseTreeEditPart {
         setWidgetText(getText());
         setWidgetImage(BIPEditor.getImage("icons/atomic_16.png").createImage());
     }
-
 }
