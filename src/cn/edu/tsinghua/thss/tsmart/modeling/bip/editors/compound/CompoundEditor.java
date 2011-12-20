@@ -16,7 +16,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BipContextMenuProvider;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
@@ -89,6 +91,9 @@ public class CompoundEditor extends BIPEditor {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        if (getEditorInput() instanceof BIPModuleEditorInput) {
+            return;
+        }
         saveProperties();
         new ExportAction(this).run();
     }
@@ -104,6 +109,11 @@ public class CompoundEditor extends BIPEditor {
     protected void createActions() {
         super.createActions();
         ActionRegistry registry = getActionRegistry();
+        IAction action;
+
+        action = new SaveComponentTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
 
         // IAction action = new CreateDataAction(this);
         // registry.registerAction(action);
@@ -113,7 +123,7 @@ public class CompoundEditor extends BIPEditor {
         // registry.registerAction(action);
         // getSelectionActions().add(action.getId());
 
-        IAction action = new ExportAction(this);
+        action = new ExportAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 

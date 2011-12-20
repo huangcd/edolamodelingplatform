@@ -31,6 +31,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     public final static String CHILDREN           = "children";
     public final static String PARENT             = "parent";
     public final static String NAME               = "name";
+    public final static String TYPE_NAME          = "typeName";
     public final static String CREATION           = "creation";
     public final static String REFRESH            = "refresh";
     public final static String CONSTRAINT         = "constraint";

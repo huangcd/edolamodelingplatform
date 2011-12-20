@@ -57,7 +57,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     protected static HashMap<EditPartViewer, BIPEditor> viewerMap;
     private IModel                                      model;
     private PaletteRoot                                 paletteRoot;
-    private PaletteGroup toolGroup;
+    private PaletteGroup                                toolGroup;
 
     public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
         if (viewerMap == null) {
@@ -149,7 +149,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         setPartName(title);
     }
 
-    protected IModel getModel() {
+    public IModel getModel() {
         if (model == null) {
             IEditorInput editorInput = getEditorInput();
             if (editorInput instanceof BIPModuleEditorInput) {
@@ -158,6 +158,13 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             }
         }
         return model;
+    }
+
+    public boolean isSaveOnCloseNeeded() {
+        if (getEditorInput() instanceof BIPModuleEditorInput) {
+            return false;
+        }
+        return isDirty();
     }
 
     @Override
@@ -256,7 +263,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             getSelectionSynchronizer().removeViewer(getViewer());
             super.dispose();
         }
-    }    
+    }
 
     public PaletteGroup getToolGroup() {
         return toolGroup;

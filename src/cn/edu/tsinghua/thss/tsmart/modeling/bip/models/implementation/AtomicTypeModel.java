@@ -16,6 +16,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentTyp
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -24,8 +25,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
  * Time: 下午9:05<br/>
  * AtomicTypeModel：一方面应该是一个类型模型，另一方面应该是一个容器
  * 
- * 
- * FIXME 关闭一个Atomic编辑页面的时候应该把所有Transition去掉（detach），打开的时候再attach上去
  */
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
@@ -237,6 +236,13 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         initPlace = newInitPlace;
         oldInitPlace.firePropertyChange(ATOMIC_INIT_PLACE);
         newInitPlace.firePropertyChange(ATOMIC_INIT_PLACE);
+        return this;
+    }
+
+    @Override
+    public AtomicTypeModel setName(String newName) {
+        super.setName(newName);
+        getInstance().firePropertyChange(IModel.TYPE_NAME);
         return this;
     }
 

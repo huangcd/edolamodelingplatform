@@ -21,7 +21,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
@@ -164,6 +166,9 @@ public class AtomicEditor extends BIPEditor {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        if (getEditorInput() instanceof BIPModuleEditorInput) {
+            return;
+        }
         saveProperties();
         new ExportAction(this).run();
     }
@@ -181,23 +186,15 @@ public class AtomicEditor extends BIPEditor {
         ActionRegistry registry = getActionRegistry();
 
         IAction action;
-        // action = new CreateDataTypeAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
 
-        // IAction action = new CreateDataAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
-        //
-        // action = new CreatePriorityAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
+        action = new SaveComponentTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
 
         action = new ExportAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
-        //
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.LEFT);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());

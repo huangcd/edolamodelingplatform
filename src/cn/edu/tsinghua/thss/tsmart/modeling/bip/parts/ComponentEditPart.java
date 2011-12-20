@@ -17,7 +17,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ComponentChildrenEditPolicy;
@@ -91,7 +90,7 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             centerLabels();
         }
-        if (AtomicModel.TYPE_NAME.equals(evt.getPropertyName())) {
+        if (IModel.TYPE_NAME.equals(evt.getPropertyName())) {
             typeLabel.setText(getModel().getType().getName());
             centerLabels();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
