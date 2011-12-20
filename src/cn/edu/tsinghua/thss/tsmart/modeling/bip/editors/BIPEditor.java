@@ -151,10 +151,13 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
     public IModel getModel() {
         if (model == null) {
-            IEditorInput editorInput = getEditorInput();
-            if (editorInput instanceof BIPModuleEditorInput) {
-                BIPModuleEditorInput bipModuleEditorInput = (BIPModuleEditorInput) editorInput;
-                model = bipModuleEditorInput.getModel();
+            IEditorInput iEditorInput = getEditorInput();
+            if (iEditorInput instanceof BIPModuleEditorInput) {
+                BIPModuleEditorInput editorInput = (BIPModuleEditorInput) iEditorInput;
+                model = editorInput.getModel();
+            } else if (iEditorInput instanceof BIPFileEditorInput) {
+                BIPFileEditorInput editorInput = (BIPFileEditorInput) iEditorInput;
+                model = editorInput.getModel();
             }
         }
         return model;

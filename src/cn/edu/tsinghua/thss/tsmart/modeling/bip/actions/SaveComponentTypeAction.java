@@ -15,7 +15,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 
+@SuppressWarnings("rawtypes")
 public class SaveComponentTypeAction extends SelectionAction {
     public final static String id = SaveComponentTypeAction.class.getCanonicalName();
 
@@ -42,9 +46,19 @@ public class SaveComponentTypeAction extends SelectionAction {
     public void run() {
         Shell shell = Display.getCurrent().getActiveShell();
         IWorkbenchPart part = getWorkbenchPart();
-        System.out.println(part);
+        if (!(part instanceof BIPEditor)) {
+            return;
+        }
+        BIPEditor editor = (BIPEditor) part;
+        IModel model = editor.getModel();
         FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-        dialog.setFilterExtensions(new String[] {"*.bipm"});
+        if (model instanceof AtomicTypeModel) {
+            dialog.setFilterExtensions(new String[] {"*.bipa"});
+        } else if (model instanceof CompoundTypeModel) {
+            dialog.setFilterExtensions(new String[] {"*.bipm"});
+        } else {
+            return;
+        }
         String path = dialog.open();
         if (path == null) {
             return;
@@ -61,17 +75,14 @@ public class SaveComponentTypeAction extends SelectionAction {
                 return;
             }
         }
-        if (part instanceof BIPEditor) {
-            BIPEditor editor = (BIPEditor) part;
-            try {
-                byte[] bytes = editor.getModel().exportToBytes();
-                FileOutputStream out = new FileOutputStream(path);
-                out.write(bytes);
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            byte[] bytes = model.exportToBytes();
+            FileOutputStream out = new FileOutputStream(path);
+            out.write(bytes);
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

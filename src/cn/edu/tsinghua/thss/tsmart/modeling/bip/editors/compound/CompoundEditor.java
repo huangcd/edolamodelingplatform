@@ -13,12 +13,13 @@ import org.eclipse.gef.ui.actions.AlignmentAction;
 import org.eclipse.gef.ui.actions.MatchHeightAction;
 import org.eclipse.gef.ui.actions.MatchWidthAction;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPFileEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BipContextMenuProvider;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
@@ -37,7 +38,12 @@ public class CompoundEditor extends BIPEditor {
     @Override
     protected void initializeGraphicalViewer() {
         super.initializeGraphicalViewer();
-        setEditorTitle(getModel().getName());
+        IEditorInput input = getEditorInput();
+        if (input instanceof BIPFileEditorInput) {
+            setEditorTitle(((BIPFileEditorInput) input).getName());
+        } else {
+            setEditorTitle(getModel().getName());
+        }
         viewer = getGraphicalViewer();
         putViewerEditorEntry(viewer, this);
         viewer.setContents(getModel());
@@ -91,11 +97,8 @@ public class CompoundEditor extends BIPEditor {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-        if (getEditorInput() instanceof BIPModuleEditorInput) {
-            return;
-        }
         saveProperties();
-        new ExportAction(this).run();
+        new SaveComponentTypeAction(this).run();
     }
 
     public void doSaveAs() {}
@@ -114,14 +117,6 @@ public class CompoundEditor extends BIPEditor {
         action = new SaveComponentTypeAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-
-        // IAction action = new CreateDataAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
-        //
-        // action = new CreatePriorityAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
 
         action = new ExportAction(this);
         registry.registerAction(action);
@@ -159,11 +154,6 @@ public class CompoundEditor extends BIPEditor {
         action = new MatchHeightAction((IWorkbenchPart) this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-
-        // action = new CreatePortAction(this);
-        // registry.registerAction(action);
-        // getSelectionActions().add(action.getId());
-
     }
 
     public void dispose() {

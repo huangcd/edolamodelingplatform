@@ -15,6 +15,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManageDataTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ManagePortTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewAtomicEditorAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.NewCompoundEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenAtomicEditorAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenCompoundEditorAction;
 
 /**
  * 主界面的菜单栏
@@ -30,6 +32,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private ManageDataTypeAction      manageDataTypeAction;
     private ManagePortTypeAction      managePortTypeAction;
     private ManageConnectorTypeAction manageConnectorTypeAction;
+    private OpenAtomicEditorAction    openAtomicAction;
+    private OpenCompoundEditorAction  openCompoundAction;
     private XMLEditorAction           xmlAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
@@ -53,6 +57,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(managePortTypeAction);
         manageConnectorTypeAction = new ManageConnectorTypeAction(window);
         register(manageConnectorTypeAction);
+        openAtomicAction = new OpenAtomicEditorAction(window);
+        register(openAtomicAction);
+        openCompoundAction = new OpenCompoundEditorAction(window);
+        register(openCompoundAction);
     }
 
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -68,6 +76,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
         fileMenu.add(openMenu);
         openMenu.add(xmlAction);
+        openMenu.add(openAtomicAction);
+        openMenu.add(openCompoundAction);
 
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
