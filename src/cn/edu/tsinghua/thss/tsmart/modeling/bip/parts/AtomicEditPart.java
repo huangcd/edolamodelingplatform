@@ -1,6 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 
 @SuppressWarnings("rawtypes")

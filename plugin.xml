@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="RCP Perspective"
+            name="%perspective.name"
             class="cn.edu.tsinghua.thss.tsmart.platform.Perspective"
             id="EdolaModelingPlatform.perspective">
       </perspective>
@@ -24,10 +24,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="EdolaModelingPlatform.application"
-            name="Edola Modeling Platform">
+            name="%product.name">
          <property
                name="windowImages"
                value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+         </property>
+         <property
+               name="appName"
+               value="%product.name">
          </property>
       </product>
    </extension>
@@ -39,7 +43,7 @@
             extensions="bipm"
             icon="icons/alt_window_16.gif"
             id="cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditor"
-            name="XML Editor">
+            name="%editor.name">
       </editor>
       <editor
             class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
@@ -47,7 +51,7 @@
             default="false"
             icon="icons/compound_16.png"
             id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
-            name="Compound Editor">
+            name="%editor.name.0">
       </editor>
       <editor
             class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
@@ -55,7 +59,7 @@
             default="false"
             icon="icons/atomic_16.png"
             id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
-            name="Atomic Editor">
+            name="%editor.name.1">
       </editor>
    </extension>
 

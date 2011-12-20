@@ -1,7 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.platform;
 
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -14,6 +13,9 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPModuleEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
 
 /**
  * 设置工作台窗口属性，
@@ -43,15 +45,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     public void postWindowOpen() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
+        DataTypeModel.loadDataTypes();
+        PortTypeModel.loadPortTypes();
+        ConnectorTypeModel.loadConnectorTypes();
         try {
             CompoundTypeModel model = new CompoundTypeModel();
             model.setName("compound");
             model.getInstance().setName("model");
             page.openEditor(new BIPModuleEditorInput(model), CompoundEditor.id);
-        } catch (PartInitException e) {
-            MessageBox errorBox = new MessageBox(window.getShell());
-            errorBox.setMessage(e.getMessage());
-            errorBox.open();
-        }
+        } catch (PartInitException e) {}
     }
 }

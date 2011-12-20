@@ -1,5 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +25,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
+import cn.edu.tsinghua.thss.tsmart.platform.Activator;
+import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 
 /**
@@ -46,19 +55,39 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         addTypeSources("intPort", iPortType);
     }
 
-    public static void addType(String type, String arguments) {
-        PortTypeModel model = new PortTypeModel().setName(type);
-        if (!arguments.endsWith(",")) {
-            Scanner scan = new Scanner(arguments);
-            scan.useDelimiter(",");
-            while (scan.hasNext()) {
-                String argument = scan.next().trim();
-                String[] temp = argument.split("\\s+");
-                String dataType = temp[0];
-                String dataName = temp[1];
-                model.addChild(DataTypeModel.getDataTypeModel(dataType), dataName);
+    public static void savePortTypes() {
+        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.PORT_TYPE_FILE);
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            for (Map.Entry<String, PortTypeModel> entry : getTypeEntries()) {
+                out.writeObject(entry.getValue());
+                out.flush();
             }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static void loadPortTypes() {
+        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.PORT_TYPE_FILE);
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            while (true) {
+                PortTypeModel model = (PortTypeModel) in.readObject();
+                if (!getTypes().contains(model.getName())) {
+                    addType(model.getName(), model);
+                }
+            }
+        } catch (EOFException e) {} catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addType(String type, PortTypeModel model) {
         addTypeSources(type, model);
         HashMap<AtomicEditor, CreationToolEntry> map =
                         new HashMap<AtomicEditor, CreationToolEntry>();
@@ -72,6 +101,22 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
             map.put(editor, entry);
         }
         toolMap.put(type, map);
+    }
+
+    public static void addType(String type, String arguments) {
+        PortTypeModel model = new PortTypeModel().setName(type);
+        if (!arguments.endsWith(",")) {
+            Scanner scan = new Scanner(arguments);
+            scan.useDelimiter(",");
+            while (scan.hasNext()) {
+                String argument = scan.next().trim();
+                String[] temp = argument.split("\\s+");
+                String dataType = temp[0];
+                String dataName = temp[1];
+                model.addChild(DataTypeModel.getDataTypeModel(dataType), dataName);
+            }
+        }
+        addType(type, model);
     }
 
     public static boolean addTypeSources(String type, PortTypeModel port) {
@@ -322,7 +367,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         for (ArgumentEntry entry : arguments) {
             list.add(entry.getTypeName());
         }
-        return list;        
+        return list;
     }
 
     public List<ArgumentEntry> getArgumentEntries() {

@@ -1,5 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +31,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
+import cn.edu.tsinghua.thss.tsmart.platform.Activator;
+import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 /**
  * Created by Huangcd<br/>
@@ -53,6 +62,42 @@ public class ConnectorTypeModel
         rendezvous.parseInteractor("p1 p2");
         addTypeSources(singleton.getName(), singleton);
         addTypeSources(rendezvous.getName(), rendezvous);
+    }
+
+    public static void saveConnectorTypes() {
+        File file =
+                        new File(Activator.getPreferenceDirection(),
+                                        GlobalProperties.CONNECTOR_TYPE_FILE);
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            for (Map.Entry<String, ConnectorTypeModel> entry : getTypeEntries()) {
+                out.writeObject(entry.getValue());
+                out.flush();
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadConnectorTypes() {
+        File file =
+                        new File(Activator.getPreferenceDirection(),
+                                        GlobalProperties.CONNECTOR_TYPE_FILE);
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            while (true) {
+                ConnectorTypeModel model = (ConnectorTypeModel) in.readObject();
+                if (!getTypes().contains(model.getName())) {
+                    addType(model.getName(), model);
+                }
+            }
+        } catch (EOFException e) {} catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void addType(String type, ConnectorTypeModel connector) {

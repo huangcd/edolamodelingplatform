@@ -70,7 +70,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
         buttonDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                String[] selections = listConnectorTypes.getItems();
+                String[] selections = listConnectorTypes.getSelection();
                 if (selections == null || selections.length == 0) {
                     return;
                 }
