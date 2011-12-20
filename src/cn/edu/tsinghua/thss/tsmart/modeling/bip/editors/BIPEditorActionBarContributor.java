@@ -88,7 +88,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
     // ²Ëµ¥À¸
     @Override
     public void contributeToMenu(IMenuManager menuManager) {
-        MenuManager editMenu = new MenuManager("&Edit", "edit");
+        MenuManager editMenu = new MenuManager("±à¼­", "edit");
         menuManager.insertAfter(IWorkbenchActionConstants.M_FILE, editMenu);
         editMenu.add(getActionRegistry().getAction(ActionFactory.UNDO.getId()));
         editMenu.add(getActionRegistry().getAction(ActionFactory.REDO.getId()));
@@ -102,7 +102,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
         editMenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
         editMenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
 
-        IMenuManager viewMenu = new MenuManager("&View", "view");
+        IMenuManager viewMenu = new MenuManager("²é¿´", "view");
         menuManager.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);
         viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
         viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));

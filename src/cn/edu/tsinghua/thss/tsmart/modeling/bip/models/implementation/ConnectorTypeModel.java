@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,50 +55,7 @@ public class ConnectorTypeModel
         addTypeSources(rendezvous.getName(), rendezvous);
     }
 
-    public static void addType(String type, String[][] arrays, String[][] datas,
-                    String[][] interactions, String defineString, String exportPortType,
-                    String[] exportDatas) {
-        ConnectorTypeModel connector = new ConnectorTypeModel().setName(type);
-        HashMap<String, ArgumentEntry> entriesMap = new HashMap<String, ArgumentEntry>();
-        // 设置参数
-        for (int i = 0, size = arrays.length; i < size; i++) {
-            String portTypeName = arrays[i][0];
-            String argumentName = arrays[i][1];
-            PortTypeModel port = PortTypeModel.getPortTypeModel(portTypeName);
-            entriesMap.put(argumentName, connector.addArgument(port, argumentName));
-        }
-        HashMap<String, DataModel> dataMap = new HashMap<String, DataModel>();
-        // 添加内部变量
-        for (int i = 0, size = datas.length; i < size; i++) {
-            String dataTypeName = datas[i][0];
-            String dataName = datas[i][1];
-            DataModel data =
-                            (DataModel) DataTypeModel.getDataTypeModel(dataTypeName).getInstance()
-                                            .setName(dataName);
-            connector.addData(data);
-            dataMap.put(dataName, data);
-        }
-        // 添加Interaction
-        for (int i = 0, size = interactions.length; i < size; i++) {
-            String[] portStrs = interactions[i][0].split("\\s");
-            List<ArgumentEntry> portTypes = new ArrayList<ArgumentEntry>();
-            for (String portStr : portStrs) {
-                portTypes.add(entriesMap.get(portStrs));
-            }
-            ActionModel upAction = new ActionModel().setAction(interactions[i][1]);
-            ActionModel downAction = new ActionModel().setAction(interactions[i][2]);
-            InteractionModel interaction = new InteractionModel(upAction, downAction, portTypes);
-            connector.addInteraction(interaction);
-        }
-        // 添加Interactor
-        connector.parseInteractor(defineString);
-        // 添加export port
-        PortTypeModel exportPort = PortTypeModel.getPortTypeModel(exportPortType);
-        for (String dataName : exportDatas) {
-
-        }
-        connector.setPort(exportPort);
-
+    public static void addType(String type, ConnectorTypeModel connector) {
         addTypeSources(type, connector);
         HashMap<CompoundEditor, CreationToolEntry> map =
                         new HashMap<CompoundEditor, CreationToolEntry>();
@@ -212,7 +170,9 @@ public class ConnectorTypeModel
         }
 
         public String toString() {
-            return model.getName() + " " + name;
+            StringBuilder buffer = new StringBuilder();
+            buffer.append(model.getName()).append(' ').append(name).append('(');
+            return buffer.append(model.getArgumentAsString()).append(')').toString();
         }
     }
 
@@ -225,23 +185,25 @@ public class ConnectorTypeModel
     @ElementList
     private List<ArgumentEntry>                 arguments;
     @Element
-    private PortTypeModel                       port;
+    private PortModel                           port;
     @Element(required = false)
     private Interactor                          interactor;
 
-    protected ConnectorTypeModel() {
+    public ConnectorTypeModel() {
         datas = new ArrayList<DataModel<ConnectorTypeModel>>();
         exportDatas = new ArrayList<DataModel<ConnectorTypeModel>>();
         interactions = new ArrayList<InteractionModel>();
         arguments = new ArrayList<ArgumentEntry>();
+        setPort(PortTypeModel.getPortTypeModel("ePort").getInstance());
     }
 
-    public PortTypeModel getPort() {
+    public PortModel getPort() {
         return port;
     }
 
-    public ConnectorTypeModel setPort(PortTypeModel port) {
+    public ConnectorTypeModel setPort(PortModel port) {
         this.port = port;
+        this.port.setName("p");
         return this;
     }
 
@@ -264,6 +226,29 @@ public class ConnectorTypeModel
         return instance;
     }
 
+    /**
+     * 返回port type参数的定义形式<br>
+     * 
+     * 对<br>
+     * connector type xxx(int2Port p0, ePort p1)<br>
+     * 的p0而言，返回的是类似
+     * 
+     * <br>
+     * int2Port p0(int a, int b)<br>
+     * 
+     * 形式的字符串，用于在编写Action的时候参考port type参数名
+     * 
+     * @param index
+     * @return
+     */
+    public String getArgumentAsString(int index) {
+        return arguments.get(index).toString();
+    }
+
+    public String getArgumentName(int index) {
+        return arguments.get(index).getName();
+    }
+
     @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
@@ -277,12 +262,13 @@ public class ConnectorTypeModel
         buffer.append(")\n");
         buffer.append("   define ").append(interactor).append('\n');
         for (DataModel<ConnectorTypeModel> data : datas) {
-            buffer.append("    ").append(data).append('\n');
+            buffer.append("    ").append(data.exportToBip()).append('\n');
         }
         for (InteractionModel interaction : interactions) {
-            buffer.append("    ").append(interaction).append('\n');
+            buffer.append("    ").append(interaction.exportToBip()).append('\n');
         }
         // TODO export port
+        buffer.append("    export port ").append(port.exportToBip()).append('\n');
         buffer.append("end");
         return buffer.toString();
     }
@@ -332,6 +318,194 @@ public class ConnectorTypeModel
         return result;
     }
 
+    /**
+     * 根据名字删除变量
+     * 
+     * @param name
+     * @return
+     */
+    public DataModel<ConnectorTypeModel> removeDataByName(String name) {
+        Iterator<DataModel<ConnectorTypeModel>> it = datas.iterator();
+        while (it.hasNext()) {
+            DataModel<ConnectorTypeModel> data = it.next();
+            if (data.getName().equals(name)) {
+                it.remove();
+                return data;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据名字删除参数
+     * 
+     * @param name
+     * @return
+     */
+    public boolean removeArgumentByName(String name) {
+        Iterator<ArgumentEntry> it = arguments.iterator();
+        while (it.hasNext()) {
+            ArgumentEntry entry = it.next();
+            if (entry.getName().equals(name)) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 根据交互端口字符串删除交互
+     * 
+     * @param name
+     * @return
+     */
+    public boolean removeInteractionByName(String name) {
+        Iterator<InteractionModel> it = interactions.iterator();
+        while (it.hasNext()) {
+            InteractionModel interaction = it.next();
+            if (interaction.getInteractionString().equals(name)) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public InteractionModel getInteractionByName(String name) {
+        Iterator<InteractionModel> it = interactions.iterator();
+        while (it.hasNext()) {
+            InteractionModel interaction = it.next();
+            if (interaction.getInteractionString().equals(name)) {
+                return interaction;
+            }
+        }
+        return null;
+    }
+
+    public DataModel getDataByName(String name) {
+        for (DataModel<ConnectorTypeModel> data : datas) {
+            if (data.getName().equals(name)) {
+                return data;
+            }
+        }
+        return null;
+    }
+
+    public boolean moveArgumentForward(int index) {
+        if (index <= 0 || index >= arguments.size()) {
+            return false;
+        }
+        arguments.add(index - 1, arguments.remove(index));
+        return true;
+    }
+
+    public boolean moveArgumentBackward(int index) {
+        if (index < 0 || index >= arguments.size() - 1) {
+            return false;
+        }
+        arguments.add(index + 1, arguments.remove(index));
+        return true;
+    }
+
+    public boolean moveInteractionForward(int index) {
+        if (index <= 0 || index >= interactions.size()) {
+            return false;
+        }
+        interactions.add(index - 1, interactions.remove(index));
+        return true;
+    }
+
+    public boolean moveInteractionBackward(int index) {
+        if (index < 0 || index >= interactions.size() - 1) {
+            return false;
+        }
+        interactions.add(index + 1, interactions.remove(index));
+        return true;
+    }
+
+    public List<String> getArgumentNames() {
+        ArrayList<String> list = new ArrayList<String>();
+        for (ArgumentEntry entry : arguments) {
+            list.add(entry.getName());
+        }
+        return list;
+    }
+
+    public InteractionModel removeInteraction(int index) {
+        return interactions.remove(index);
+    }
+
+    /**
+     * 检查Connector里面是否有重名的参数或者变量
+     * 
+     * @param name
+     * @return
+     */
+    public boolean nameExistsInConnector(String name) {
+        for (DataModel<ConnectorTypeModel> data : datas) {
+            if (data.getName().equals(name)) {
+                return true;
+            }
+        }
+        for (ArgumentEntry entry : arguments) {
+            if (entry.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查Connector里面是否有重复的Interaction
+     * 
+     * @param name
+     * @return
+     */
+    public boolean interactionNameExistsInConnector(String name) {
+        for (InteractionModel interaction : interactions) {
+            if (interaction.getInteractionString().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public InteractionModel addInteraction(List<String> portArguments, String upAction,
+                    String downAction) {
+        List<ArgumentEntry> ports = new ArrayList<ArgumentEntry>();
+        for (ArgumentEntry entry : arguments) {
+            if (portArguments.contains(entry.getName())) {
+                ports.add(entry);
+            }
+        }
+        InteractionModel model =
+                        new InteractionModel(new ActionModel().setAction(upAction),
+                                        new ActionModel().setAction(downAction), ports);
+        addInteraction(model);
+        return model;
+    }
+
+    public InteractionModel updateInteraction(String oldPorts, List<String> portArguments,
+                    String upAction, String downAction) {
+        List<ArgumentEntry> ports = new ArrayList<ArgumentEntry>();
+        for (ArgumentEntry entry : arguments) {
+            if (portArguments.contains(entry.getName())) {
+                ports.add(entry);
+            }
+        }
+        Iterator<InteractionModel> it = interactions.iterator();
+        while (it.hasNext()) {
+            InteractionModel interaction = it.next();
+            if (interaction.getInteractionString().equals(oldPorts)) {
+                interaction.setInteractionPorts(ports);
+                interaction.getUpAction().setAction(upAction);
+                interaction.getDownAction().setAction(downAction);
+                return interaction;
+            }
+        }
+        return null;
+    }
 
     /**
      * 解析 define [p1' p2]' p3 样式的语句

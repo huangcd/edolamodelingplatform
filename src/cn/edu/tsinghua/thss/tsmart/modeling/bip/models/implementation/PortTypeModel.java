@@ -309,6 +309,22 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         return list;
     }
 
+    public List<String> getArgumentNames() {
+        List<String> list = new ArrayList<String>();
+        for (ArgumentEntry entry : arguments) {
+            list.add(entry.getName());
+        }
+        return list;
+    }
+
+    public List<String> getArgumentTypes() {
+        List<String> list = new ArrayList<String>();
+        for (ArgumentEntry entry : arguments) {
+            list.add(entry.getTypeName());
+        }
+        return list;        
+    }
+
     public List<ArgumentEntry> getArgumentEntries() {
         return arguments;
     }

@@ -33,9 +33,9 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public boolean                  allowBroadcast          = false;
 
     public Color                    placeLabelColor         = ColorConstants.blue;
-    public Color                    actionLabelColor        = ColorConstants.cyan;
-    public Color                    guardLabelColor         = ColorConstants.green;
-    public Color                    portLabelColor          = ColorConstants.gray;
+    public Color                    actionLabelColor        = new Color(null, 204,102,255);
+    public Color                    guardLabelColor         = new Color(null, 100,180,100);
+    public Color                    portLabelColor          = ColorConstants.lightBlue;
     public Color                    dataLabelColor          = ColorConstants.darkGray;
     public Font                     defaultEditorFont;
     private static GlobalProperties instance;

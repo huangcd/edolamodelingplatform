@@ -30,7 +30,7 @@ public class ConnectorModel
 
     public PortModel getExportPort() {
         if (export) {
-            return getType().getPort().getInstance();
+            return getType().getPort();
         }
         return null;
     }

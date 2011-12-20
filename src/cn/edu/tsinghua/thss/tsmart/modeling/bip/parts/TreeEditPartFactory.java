@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 public class TreeEditPartFactory implements EditPartFactory {
 
     private final static String              modelPackage =
-                                                                          "cn.edu.tsinghua.thss.tsmart.modeling.bip.models.";
+                                                                          "cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.";
     private static Pattern                   modelPattern = Pattern.compile(modelPackage
                                                                           + "([A-Za-z0-9_]*)Model");
 
@@ -44,8 +44,7 @@ public class TreeEditPartFactory implements EditPartFactory {
      * @return
      */
     private EditPart getPartFromModel(Object model) {
-        EditPart part = null;
-
+        EditPart part = null;  
         String name = model.getClass().getName();
         Matcher matcher = modelPattern.matcher(name);
         if (matcher.matches()) {

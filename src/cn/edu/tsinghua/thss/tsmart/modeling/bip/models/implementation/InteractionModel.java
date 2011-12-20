@@ -29,11 +29,11 @@ public class InteractionModel
     private List<ArgumentEntry> interactionPorts;
 
 
-    public InteractionModel() {
+    protected InteractionModel() {
         interactionPorts = new ArrayList<ArgumentEntry>();
     }
 
-    public InteractionModel(ActionModel upAction, ActionModel downAction,
+    protected InteractionModel(ActionModel upAction, ActionModel downAction,
                     List<ArgumentEntry> interactionPorts) {
         super();
         this.upAction = upAction;
@@ -61,6 +61,14 @@ public class InteractionModel
         return interactionPorts;
     }
 
+    public ArrayList<String> getInteractionPortsAsStringArray() {
+        ArrayList<String> list = new ArrayList<String>();
+        for (ArgumentEntry entry : getInteractionPorts()) {
+            list.add(entry.getName());
+        }
+        return list;
+    }
+
     public void setInteractionPorts(List<ArgumentEntry> interactionPorts) {
         this.interactionPorts = interactionPorts;
     }
@@ -81,14 +89,20 @@ public class InteractionModel
         return true;
     }
 
-    @Override
-    public String exportToBip() {
-        StringBuilder buffer = new StringBuilder("on ");
+    public String getInteractionString() {
+        StringBuilder buffer = new StringBuilder();
         for (ArgumentEntry portType : interactionPorts) {
             buffer.append(portType.getName()).append(' ');
         }
-        buffer.append("\n\t\tup{").append(upAction).append("}");
-        buffer.append("\n\t\tdown{").append(downAction).append("}\n");
+        return buffer.toString().trim();
+    }
+
+    @Override
+    public String exportToBip() {
+        StringBuilder buffer = new StringBuilder("on ");
+        buffer.append(getInteractionString());
+        buffer.append("\n\t\tup{\n\t\t").append(upAction.getAction()).append("\n\t\t}");
+        buffer.append("\n\t\tdown{\n\t\t").append(downAction.getAction()).append("\n\t\t}\n");
         return buffer.toString();
     }
 

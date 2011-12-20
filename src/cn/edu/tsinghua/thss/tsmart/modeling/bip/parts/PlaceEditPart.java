@@ -36,6 +36,12 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     protected void setAsNormalPlace() {}
 
+    public void deactivate() {
+        super.deactivate();
+        getModel().removePropertyChangeListener(this);
+        getParent().getFigure().remove(nameLabel);
+    }
+
     @Override
     protected IFigure createFigure() {
         PlaceModel model = getModel();

@@ -10,16 +10,16 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicType
 @SuppressWarnings("rawtypes")
 public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
 
-    public AtomicTypeModel getModel() {
+    public AtomicTypeModel getCastedModel() {
         return (AtomicTypeModel) getModel();
     }
 
     protected List<IInstance> getModelChildren() {
-        return getModel().getChildren(); // return a list of activities
+        return getCastedModel().getChildren(); // return a list of activities
     }
 
     protected String getText() {
-        return getModel().getName();
+        return getCastedModel().getName();
     }
 
     @Override
@@ -42,10 +42,10 @@ public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
     public void refreshChildren() {
         List children = getModelChildren();
         if (children != null) for (int i = 0; i < children.size(); i++) {
-            System.out.println(i + " " + children.get(i).toString());
+            // System.out.println(i + " " + children.get(i).toString());
             if (children.get(i) instanceof AtomicTypeModel || children.get(i).equals(getModel())) {
-                System.out.println(i + " " + children.get(i).toString());
-                getModel().removeChild(getModel().getChildren().get(0));
+                // System.out.println(i + " " + children.get(i).toString());
+                getCastedModel().removeChild(getCastedModel().getChildren().get(0));
             }
         }
         //

@@ -1,8 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,35 +22,41 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InteractionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ConnectorTypeEditDialog extends AbstractEditDialog {
-    private Label                   labelError;
-    private Text                    textNewArgumentName;
-    private Text                    textNewDataName;
-    private StyledText              styledTextInteractionPreview;
-    private List                    listInteractions;
-    private List                    listPortArguments;
-    private Button                  buttonDeleteArgument;
-    private Button                  buttonMoveArgumentUp;
-    private Button                  buttonMoveArgumentDown;
-    private Combo                   comboArguments;
-    private Button                  buttonAddArgument;
-    private List                    listDatas;
-    private Button                  buttonDeleteData;
-    private Combo                   comboDatas;
-    private Button                  buttonAddData;
-    private Button                  buttonMoveInteractionUp;
-    private Button                  buttonCreateInteraction;
-    private Button                  buttonMoveInteractionDown;
-    private Button                  buttonDeleteInteraction;
-    private Text                    textConnectorName;
-    private Combo                   comboExportPortType;
-
-    private String                  newConnectorName;
-    private HashMap<String, String> argumentMap = new HashMap<String, String>();
-    private HashMap<String, String> dataMap     = new HashMap<String, String>();
+    private ConnectorTypeModel connector;
+    private Label              labelError;
+    private Text               textNewArgumentName;
+    private Text               textNewDataName;
+    private StyledText         styledTextInteractionPreview;
+    private List               listInteractions;
+    private List               listPortArguments;
+    private Button             buttonDeleteArgument;
+    private Button             buttonMoveArgumentUp;
+    private Button             buttonMoveArgumentDown;
+    private Combo              comboArguments;
+    private Button             buttonAddArgument;
+    private List               listDatas;
+    private Button             buttonDeleteData;
+    private Combo              comboDatas;
+    private Button             buttonAddData;
+    private Button             buttonMoveInteractionUp;
+    private Button             buttonCreateInteraction;
+    private Button             buttonMoveInteractionDown;
+    private Button             buttonDeleteInteraction;
+    private Text               textConnectorName;
+    private Combo              comboExportPortType;
+    private Text               textInteractor;
+    private Button             buttonExport;
+    private Button             buttonBoundData;
+    private Button             buttonEditInteraction;
+    private Text               textBoundArguments;
 
     /**
      * Create the dialog.
@@ -62,6 +66,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
     public ConnectorTypeEditDialog(Shell parentShell) {
         super(parentShell, "创建连接子");
         setTitle("\u7F16\u8F91\u8FDE\u63A5\u5B50");
+        connector = new ConnectorTypeModel();
     }
 
     /**
@@ -74,9 +79,23 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         Composite container = (Composite) super.createDialogArea(parent);
         container.setLayout(null);
 
+        Label lblNewLabel_1 = new Label(container, SWT.RIGHT);
+        lblNewLabel_1.setBounds(10, 23, 87, 17);
+        lblNewLabel_1.setText("\u8FDE\u63A5\u5B50\u540D\u79F0*\uFF1A");
+
+        textConnectorName = new Text(container, SWT.BORDER);
+        textConnectorName.setBounds(103, 20, 395, 23);
+
+        Label label_4 = new Label(container, SWT.RIGHT);
+        label_4.setText("\u4EA4\u4E92\u65B9\u5F0F\uFF1A");
+        label_4.setBounds(10, 52, 87, 17);
+
+        textInteractor = new Text(container, SWT.BORDER);
+        textInteractor.setBounds(103, 49, 395, 23);
+
         Group groupArgument = new Group(container, SWT.SHADOW_ETCHED_IN);
-        groupArgument.setText("\u7AEF\u53E3\u53C2\u6570");
-        groupArgument.setBounds(10, 80, 237, 270);
+        groupArgument.setText("1\u3001\u7AEF\u53E3\u53C2\u6570*\uFF08\u81F3\u5C11\u6709\u4E00\u4E2A\u7AEF\u53E3\u53C2\u6570\uFF09");
+        groupArgument.setBounds(10, 108, 237, 270);
         groupArgument.setLayout(null);
 
         ScrolledComposite scrolledComposite =
@@ -90,69 +109,22 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         listPortArguments.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                Label info = getErrorLabel();
-                info.setForeground(ColorConstants.black);
-                String selection = listPortArguments.getSelection()[0];
-                info.setText(MessageFormat.format("{0} {1}", argumentMap.get(selection), selection));
+                previewPortArgument();
             }
         });
         listPortArguments.setLocation(0, -129);
         scrolledComposite.setContent(listPortArguments);
         scrolledComposite.setMinSize(listPortArguments.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        buttonDeleteArgument = new Button(groupArgument, SWT.NONE);
-        buttonDeleteArgument.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                removeArgument();
-            }
-        });
-        buttonDeleteArgument.setBounds(119, 58, 106, 27);
-        buttonDeleteArgument.setText("\u5220\u9664\u53C2\u6570");
-
-        buttonMoveArgumentUp = new Button(groupArgument, SWT.NONE);
-        buttonMoveArgumentUp.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                int index = listPortArguments.getSelectionIndex();
-                if (index == 0) {
-                    return;
-                }
-                String name = listPortArguments.getItem(index);
-                listPortArguments.remove(index);
-                listPortArguments.add(name, index - 1);
-                listPortArguments.select(index - 1);
-            }
-        });
-        buttonMoveArgumentUp.setBounds(119, 23, 34, 27);
-        buttonMoveArgumentUp.setText("\u2191");
-
-        buttonMoveArgumentDown = new Button(groupArgument, SWT.NONE);
-        buttonMoveArgumentDown.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                int index = listPortArguments.getSelectionIndex();
-                if (index == listPortArguments.getItemCount() - 1) {
-                    return;
-                }
-                String name = listPortArguments.getItem(index);
-                listPortArguments.remove(index);
-                listPortArguments.add(name, index + 1);
-                listPortArguments.select(index + 1);
-            }
-        });
-        buttonMoveArgumentDown.setText("\u2193");
-        buttonMoveArgumentDown.setBounds(191, 23, 34, 27);
-
         Group group = new Group(groupArgument, SWT.NONE);
-        group.setBounds(119, 91, 106, 168);
-
-        comboArguments = new Combo(group, SWT.READ_ONLY);
-        comboArguments.setBounds(10, 42, 86, 25);
+        group.setBounds(119, 23, 106, 168);
 
         Label label = new Label(group, SWT.NONE);
         label.setBounds(10, 19, 61, 17);
         label.setText("\u7AEF\u53E3\u7C7B\u578B\uFF1A");
+
+        comboArguments = new Combo(group, SWT.READ_ONLY);
+        comboArguments.setBounds(10, 42, 86, 25);
 
         Label lblNewLabel = new Label(group, SWT.NONE);
         lblNewLabel.setBounds(10, 73, 61, 17);
@@ -171,17 +143,43 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         buttonAddArgument.setBounds(10, 132, 86, 27);
         buttonAddArgument.setText("\u589E\u52A0\u53C2\u6570");
 
-        labelError = new Label(container, SWT.NONE);
-        labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-        labelError.setBounds(10, 459, 821, 17);
+        buttonDeleteArgument = new Button(groupArgument, SWT.NONE);
+        buttonDeleteArgument.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                removeArgument();
+            }
+        });
+        buttonDeleteArgument.setBounds(119, 232, 106, 27);
+        buttonDeleteArgument.setText("\u5220\u9664\u53C2\u6570");
 
-        Group group_1 = new Group(container, SWT.SHADOW_ETCHED_IN);
-        group_1.setLayout(null);
-        group_1.setText("\u5185\u90E8\u53D8\u91CF");
-        group_1.setBounds(261, 80, 237, 270);
+        buttonMoveArgumentUp = new Button(groupArgument, SWT.NONE);
+        buttonMoveArgumentUp.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                moveArgumentUp();
+            }
+        });
+        buttonMoveArgumentUp.setBounds(119, 197, 34, 27);
+        buttonMoveArgumentUp.setText("\u2191");
+
+        buttonMoveArgumentDown = new Button(groupArgument, SWT.NONE);
+        buttonMoveArgumentDown.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                moveArgumentDown();
+            }
+        });
+        buttonMoveArgumentDown.setText("\u2193");
+        buttonMoveArgumentDown.setBounds(191, 197, 34, 27);
+
+        Group groupData = new Group(container, SWT.SHADOW_ETCHED_IN);
+        groupData.setLayout(null);
+        groupData.setText("2\u3001\u5185\u90E8\u53D8\u91CF");
+        groupData.setBounds(261, 108, 237, 270);
 
         ScrolledComposite scrolledComposite_1 =
-                        new ScrolledComposite(group_1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+                        new ScrolledComposite(groupData, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         scrolledComposite_1.setExpandVertical(true);
         scrolledComposite_1.setExpandHorizontal(true);
         scrolledComposite_1.setBounds(10, 23, 103, 236);
@@ -189,13 +187,15 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         listDatas = new List(scrolledComposite_1, SWT.BORDER);
         listDatas.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {}
+            public void widgetSelected(SelectionEvent e) {
+                previewData();
+            }
         });
         scrolledComposite_1.setContent(listDatas);
         scrolledComposite_1.setMinSize(listDatas.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         scrolledComposite_1.setMinSize(new Point(71, 68));
 
-        buttonDeleteData = new Button(group_1, SWT.NONE);
+        buttonDeleteData = new Button(groupData, SWT.NONE);
         buttonDeleteData.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -205,7 +205,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         buttonDeleteData.setText("\u5220\u9664\u53D8\u91CF");
         buttonDeleteData.setBounds(119, 56, 106, 27);
 
-        Group group_2 = new Group(group_1, SWT.NONE);
+        Group group_2 = new Group(groupData, SWT.NONE);
         group_2.setBounds(119, 89, 106, 170);
 
         comboDatas = new Combo(group_2, SWT.READ_ONLY);
@@ -232,37 +232,13 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         buttonAddData.setText("\u589E\u52A0\u53C2\u6570");
         buttonAddData.setBounds(10, 129, 86, 27);
 
-        Group group_3 = new Group(container, SWT.NONE);
-        group_3.setText("\u5BFC\u51FA\u7AEF\u53E3");
-        group_3.setBounds(10, 395, 488, 58);
-
-        Button buttonExport = new Button(group_3, SWT.CHECK);
-        buttonExport.setBounds(10, 27, 45, 17);
-        buttonExport.setText("\u5BFC\u51FA");
-
-        Label label_3 = new Label(group_3, SWT.NONE);
-        label_3.setBounds(83, 27, 61, 17);
-        label_3.setText("\u7AEF\u53E3\u7C7B\u578B\uFF1A");
-
-        comboExportPortType = new Combo(group_3, SWT.READ_ONLY);
-        comboExportPortType.setBounds(150, 23, 86, 25);
-
-        Button buttonBoundData = new Button(group_3, SWT.NONE);
-        buttonBoundData.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                // TODO bounded data
-            }
-        });
-        buttonBoundData.setBounds(261, 22, 80, 27);
-        buttonBoundData.setText("\u7ED1\u5B9A\u53C2\u6570");
-
-        Group group_4 = new Group(container, SWT.NONE);
-        group_4.setText("\u4EA4\u4E92");
-        group_4.setBounds(504, 10, 327, 443);
+        Group groupInteraction = new Group(container, SWT.NONE);
+        groupInteraction.setText("3\u3001\u4EA4\u4E92");
+        groupInteraction.setBounds(504, 10, 327, 443);
 
         ScrolledComposite scrolledComposite_2 =
-                        new ScrolledComposite(group_4, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+                        new ScrolledComposite(groupInteraction, SWT.BORDER | SWT.H_SCROLL
+                                        | SWT.V_SCROLL);
         scrolledComposite_2.setBounds(10, 21, 307, 119);
         scrolledComposite_2.setExpandHorizontal(true);
         scrolledComposite_2.setExpandVertical(true);
@@ -270,33 +246,66 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         listInteractions = new List(scrolledComposite_2, SWT.BORDER);
         listInteractions.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {}
+            public void widgetSelected(SelectionEvent e) {
+                previewInteraction();
+            }
         });
         scrolledComposite_2.setContent(listInteractions);
         scrolledComposite_2.setMinSize(listInteractions.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        buttonMoveInteractionUp = new Button(group_4, SWT.NONE);
-        buttonMoveInteractionUp.setText("\u2191");
-        buttonMoveInteractionUp.setBounds(124, 150, 34, 27);
-
-        buttonCreateInteraction = new Button(group_4, SWT.NONE);
+        buttonCreateInteraction = new Button(groupInteraction, SWT.NONE);
         buttonCreateInteraction.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {}
+            public void widgetSelected(SelectionEvent e) {
+                addInteraction();
+            }
         });
         buttonCreateInteraction.setText("\u589E\u52A0\u4EA4\u4E92");
-        buttonCreateInteraction.setBounds(10, 150, 106, 27);
+        buttonCreateInteraction.setBounds(9, 150, 70, 27);
 
-        buttonMoveInteractionDown = new Button(group_4, SWT.NONE);
+        buttonEditInteraction = new Button(groupInteraction, SWT.NONE);
+        buttonEditInteraction.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                editInteraction();
+            }
+        });
+        buttonEditInteraction.setText("\u7F16\u8F91\u4EA4\u4E92");
+        buttonEditInteraction.setBounds(88, 150, 70, 27);
+
+        buttonMoveInteractionUp = new Button(groupInteraction, SWT.NONE);
+        buttonMoveInteractionUp.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                moveInteractionUp();
+            }
+        });
+        buttonMoveInteractionUp.setText("\u2191");
+        buttonMoveInteractionUp.setBounds(167, 150, 30, 27);
+
+        buttonMoveInteractionDown = new Button(groupInteraction, SWT.NONE);
+        buttonMoveInteractionDown.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                moveInteractionDown();
+            }
+        });
         buttonMoveInteractionDown.setText("\u2193");
-        buttonMoveInteractionDown.setBounds(168, 150, 34, 27);
+        buttonMoveInteractionDown.setBounds(206, 150, 30, 27);
 
-        buttonDeleteInteraction = new Button(group_4, SWT.NONE);
+        buttonDeleteInteraction = new Button(groupInteraction, SWT.NONE);
+        buttonDeleteInteraction.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                removeInteraction();
+            }
+        });
         buttonDeleteInteraction.setText("\u5220\u9664\u4EA4\u4E92");
-        buttonDeleteInteraction.setBounds(211, 150, 106, 27);
+        buttonDeleteInteraction.setBounds(245, 150, 70, 27);
 
         ScrolledComposite scrolledComposite_3 =
-                        new ScrolledComposite(group_4, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+                        new ScrolledComposite(groupInteraction, SWT.BORDER | SWT.H_SCROLL
+                                        | SWT.V_SCROLL);
         scrolledComposite_3.setBounds(10, 183, 307, 249);
         scrolledComposite_3.setExpandHorizontal(true);
         scrolledComposite_3.setExpandVertical(true);
@@ -307,16 +316,197 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         scrolledComposite_3.setMinSize(styledTextInteractionPreview.computeSize(SWT.DEFAULT,
                         SWT.DEFAULT));
 
-        Label lblNewLabel_1 = new Label(container, SWT.NONE);
-        lblNewLabel_1.setBounds(10, 13, 73, 17);
-        lblNewLabel_1.setText("\u8FDE\u63A5\u5B50\u540D\u79F0\uFF1A");
+        Group groupExport = new Group(container, SWT.NONE);
+        groupExport.setText("4\u3001\u5BFC\u51FA\u7AEF\u53E3");
+        groupExport.setBounds(10, 395, 488, 58);
 
-        textConnectorName = new Text(container, SWT.BORDER);
-        textConnectorName.setBounds(89, 10, 158, 23);
+        buttonExport = new Button(groupExport, SWT.CHECK);
+        buttonExport.setSelection(true);
+        buttonExport.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (buttonExport.getSelection()) {
+                    comboExportPortType.setEnabled(true);
+                    buttonBoundData.setEnabled(true);
+                } else {
+                    comboExportPortType.setEnabled(false);
+                    buttonBoundData.setEnabled(false);
+                }
+            }
+        });
+        buttonExport.setBounds(10, 27, 45, 17);
+        buttonExport.setText("\u5BFC\u51FA");
+
+        Label label_3 = new Label(groupExport, SWT.NONE);
+        label_3.setBounds(57, 27, 61, 17);
+        label_3.setText("\u7AEF\u53E3\u7C7B\u578B\uFF1A");
+
+        comboExportPortType = new Combo(groupExport, SWT.READ_ONLY);
+        comboExportPortType.setBounds(124, 23, 86, 25);
+
+        buttonBoundData = new Button(groupExport, SWT.NONE);
+        buttonBoundData.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                boundData();
+            }
+        });
+        buttonBoundData.setBounds(398, 22, 80, 27);
+        buttonBoundData.setText("\u7ED1\u5B9A\u53C2\u6570");
+
+        textBoundArguments = new Text(groupExport, SWT.BORDER);
+        textBoundArguments.setBounds(221, 24, 171, 23);
+
+        labelError = new Label(container, SWT.NONE);
+        labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+        labelError.setBounds(10, 459, 821, 17);
 
         initValues();
 
         return container;
+    }
+
+    protected void previewInteraction() {
+        String[] selections = listInteractions.getSelection();
+        if (selections == null || selections.length == 0) {
+            return;
+        }
+        String interactionName = selections[0];
+        InteractionModel interaction = connector.getInteractionByName(interactionName);
+        styledTextInteractionPreview.setText(interaction.exportToBip());
+    }
+
+    protected void editInteraction() {
+        int index = listInteractions.getSelectionIndex();
+        if (index == -1) return;
+        String interactionName = listInteractions.getItem(index);
+        InteractionModel interaction = connector.getInteractionByName(interactionName);
+        InteractionEditDialog dialog =
+                        new InteractionEditDialog(getParentShell(), connector, interaction);
+        dialog.setBlockOnOpen(true);
+        if (OK == dialog.open()) {
+            listInteractions.setItem(index, interaction.getInteractionString());
+        }
+    }
+
+    protected void boundData() {
+        String portType = comboExportPortType.getText();
+        connector.setPort(PortTypeModel.getPortTypeModel(portType).getInstance());
+        PortModel port = connector.getPort();
+        int size = port.getPortArguments().size();
+        boolean emptyString = textBoundArguments.getText().trim().isEmpty();
+        String[] arguments = textBoundArguments.getText().replaceAll("\\s+", "").split(",");
+        if ((emptyString && size != 0) || (!emptyString && arguments.length != size)) {
+            getErrorLabel().setText("绑定的参数与导出端口参数不对应");
+            return;
+        }
+        java.util.List<String> list = ((PortTypeModel) port.getType()).getArgumentTypes();
+        for (int i = 0; i < size; i++) {
+            DataModel data = connector.getDataByName(arguments[i]);
+            if (data == null) {
+                getErrorLabel().setText("局部变量" + arguments[i] + "不存在");
+                return;
+            }
+            if (!connector.getDataByName(arguments[i]).getType().getName().equals(list.get(i))) {
+                getErrorLabel().setText("变量" + list.get(i) + "类型与端口参数类型不对应");
+                return;
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            port.bound(i, connector.getDataByName(arguments[i]));
+        }
+        Label info = getErrorLabel();
+        info.setForeground(ColorConstants.black);
+        info.setText("绑定参数成功");
+        // String portType = comboExportPortType.getText();
+        // connector.setPort(PortTypeModel.getPortTypeModel(portType).getInstance());
+        // HashSet<String> portArgumentTypes =
+        // new HashSet<String>(
+        // ((PortTypeModel) connector.getPort().getType())
+        // .getArgumentTypes());
+        // for (DataModel<ConnectorTypeModel> data : connector.getDatas()) {
+        // String type = data.getType().getName();
+        // if (portArgumentTypes.contains(type)) {
+        // portArgumentTypes.remove(type);
+        // }
+        // }
+        // if (!portArgumentTypes.isEmpty()) {
+        // String type = portArgumentTypes.iterator().next();
+        // getErrorLabel().setText("导出端口中包含变量类型" + type + "，而连接子中没有类型为" + type + "的变量");
+        // return;
+        // }
+        // ConnectorExportPortEditDialog dialog =
+        // new ConnectorExportPortEditDialog(getParentShell(), connector);
+        // dialog.setBlockOnOpen(true);
+        // if (OK == dialog.open()) {
+        // // TODO ok
+        // }
+    }
+
+    protected void removeInteraction() {
+        int index = listInteractions.getSelectionIndex();
+        if (index == -1) {
+            return;
+        }
+        listInteractions.remove(index);
+        connector.removeInteraction(index);
+        getErrorLabel().setText("");
+    }
+
+    protected void moveInteractionDown() {
+        int index = listInteractions.getSelectionIndex();
+        if (index == listInteractions.getItemCount() - 1 || index == -1) {
+            return;
+        }
+        String name = listInteractions.getItem(index);
+        listInteractions.remove(index);
+        listInteractions.add(name, index + 1);
+        listInteractions.select(index + 1);
+        connector.moveInteractionBackward(index);
+    }
+
+    protected void moveInteractionUp() {
+        int index = listInteractions.getSelectionIndex();
+        if (index == 0 || index == -1) {
+            return;
+        }
+        String name = listInteractions.getItem(index);
+        listInteractions.remove(index);
+        listInteractions.add(name, index - 1);
+        listInteractions.select(index - 1);
+        connector.moveInteractionForward(index);
+    }
+
+    private void moveArgumentDown() {
+        int index = listPortArguments.getSelectionIndex();
+        if (index == listPortArguments.getItemCount() - 1 || index == -1) {
+            return;
+        }
+        String name = listPortArguments.getItem(index);
+        listPortArguments.remove(index);
+        listPortArguments.add(name, index + 1);
+        listPortArguments.select(index + 1);
+        connector.moveArgumentBackward(index);
+    }
+
+    private void moveArgumentUp() {
+        int index = listPortArguments.getSelectionIndex();
+        if (index == 0 || index == -1) {
+            return;
+        }
+        String name = listPortArguments.getItem(index);
+        listPortArguments.remove(index);
+        listPortArguments.add(name, index - 1);
+        listPortArguments.select(index - 1);
+        connector.moveArgumentForward(index);
+    }
+
+    protected void addInteraction() {
+        InteractionEditDialog dialog = new InteractionEditDialog(getParentShell(), connector, null);
+        dialog.setBlockOnOpen(true);
+        if (OK == dialog.open()) {
+            listInteractions.add(dialog.getInteractionName());
+        }
     }
 
     protected void removeData() {
@@ -326,6 +516,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         }
         listDatas.remove(selections[0]);
         getErrorLabel().setText("");
+        connector.removeDataByName(selections[0]);
     }
 
     protected void removeArgument() {
@@ -335,6 +526,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         }
         listPortArguments.remove(selections[0]);
         getErrorLabel().setText("");
+        connector.removeArgumentByName(selections[0]);
     }
 
     protected void addData() {
@@ -343,18 +535,21 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             getErrorLabel().setText("请先选择数据类型");
             return;
         }
-        String portType = comboDatas.getItem(index);
-        String portName = textNewDataName.getText().trim();
-        if (!isIdentifier(portName)) {
+        String dataType = comboDatas.getItem(index);
+        String dataName = textNewDataName.getText().trim();
+        if (!isIdentifier(dataName)) {
             getErrorLabel().setText("请先输入变量名");
             return;
         }
-        if (Arrays.asList(listDatas.getItems()).indexOf(portName) != -1) {
+        if (connector.nameExistsInConnector(dataName)) {
             getErrorLabel().setText("变量名已存在");
             return;
         }
-        dataMap.put(portName, portType);
-        comboDatas.add(portName);
+        DataModel<ConnectorTypeModel> data =
+                        (DataModel<ConnectorTypeModel>) DataTypeModel.getDataTypeModel(dataType)
+                                        .getInstance().setName(dataName);
+        connector.addData(data);
+        listDatas.add(dataName);
         getErrorLabel().setText("");
     }
 
@@ -370,11 +565,12 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             getErrorLabel().setText("请先输入参数名");
             return;
         }
-        if (Arrays.asList(listPortArguments.getItems()).indexOf(portName) != -1) {
+        if (connector.nameExistsInConnector(portName)) {
             getErrorLabel().setText("参数名已存在");
             return;
         }
-        argumentMap.put(portName, portType);
+        PortTypeModel port = PortTypeModel.getPortTypeModel(portType);
+        connector.addArgument(port, portName);
         listPortArguments.add(portName);
         getErrorLabel().setText("");
     }
@@ -400,8 +596,8 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
     @Override
     protected void updateValues() {
-        // TODO Auto-generated method stub
-
+        connector.setName(textConnectorName.getText().trim());
+        ConnectorTypeModel.addType(connector.getName(), connector);
     }
 
     @Override
@@ -409,11 +605,17 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         for (String portTypeName : PortTypeModel.getTypes()) {
             comboArguments.add(portTypeName);
             comboExportPortType.add(portTypeName);
+            if (portTypeName.equals("ePort")) {
+                comboArguments.select(comboArguments.getItemCount() - 1);
+                comboExportPortType.select(comboExportPortType.getItemCount() - 1);
+            }
         }
         for (String dataTypeName : DataTypeModel.getTypes()) {
             comboDatas.add(dataTypeName);
+            if (dataTypeName.equals("bool")) {
+                comboDatas.select(comboDatas.getItemCount() - 1);
+            }
         }
-
         // TODO Auto-generated method stub
     }
 
@@ -425,8 +627,42 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
     @Override
     protected boolean validateUserInput() {
-        return validateConnectorName() && validateArguments();
+        return validateConnectorName() && validateArguments() && validateExport()
+                        && validateInteractor();
         // TODO Auto-generated method stub
+    }
+
+    private boolean validateInteractor() {
+        try {
+            String interactor = textInteractor.getText().trim();
+            if (interactor.isEmpty()) {
+                for (String str : listPortArguments.getItems()) {
+                    interactor += str + " ";
+                }
+                interactor = interactor.trim();
+            }
+            connector.parseInteractor(interactor);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            getErrorLabel().setText("错误的交互方式");
+        }
+        return false;
+    }
+
+    private boolean validateExport() {
+        if (!buttonExport.getSelection()) {
+            return true;
+        }
+        if (comboExportPortType.getSelectionIndex() == -1) {
+            getErrorLabel().setText("未选择导出端口类型");
+            return false;
+        }
+        if (!((PortTypeModel) connector.getPort().getType()).allSets()) {
+            getErrorLabel().setText("尚未绑定导出端口参数");
+            return false;
+        }
+        return true;
     }
 
     private boolean validateArguments() {
@@ -447,11 +683,25 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             getErrorLabel().setText("连接子名称已存在");
             return false;
         }
-        newConnectorName = connectorName;
         return true;
     }
 
     public String getNewConnectorTypeName() {
-        return newConnectorName;
+        return connector.getName();
+    }
+
+    private void previewPortArgument() {
+        Label info = getErrorLabel();
+        info.setForeground(ColorConstants.black);
+        int index = listPortArguments.getSelectionIndex();
+        info.setText(connector.getArgumentAsString(index));
+    }
+
+    private void previewData() {
+        Label info = getErrorLabel();
+        info.setForeground(ColorConstants.black);
+        int index = listDatas.getSelectionIndex();
+        DataModel<ConnectorTypeModel> data = connector.getDatas().get(index);
+        info.setText(MessageFormat.format("{0} {1}", data.getType().getName(), data.getName()));
     }
 }

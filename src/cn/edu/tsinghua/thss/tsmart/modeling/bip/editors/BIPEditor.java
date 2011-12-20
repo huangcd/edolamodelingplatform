@@ -39,6 +39,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
@@ -56,6 +57,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     protected static HashMap<EditPartViewer, BIPEditor> viewerMap;
     private IModel                                      model;
     private PaletteRoot                                 paletteRoot;
+    private PaletteGroup toolGroup;
 
     public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
         if (viewerMap == null) {
@@ -163,7 +165,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         if (paletteRoot == null) {
             paletteRoot = new PaletteRoot();
 
-            PaletteGroup toolGroup = new PaletteGroup("选择工具");
+            toolGroup = new PaletteGroup("选择工具");
             ToolEntry tool = new SelectionToolEntry("选择");
             toolGroup.add(tool);
             tool = new MarqueeToolEntry("选择多个");
@@ -173,17 +175,15 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         return paletteRoot;
     }
 
-    // 缩放
     @SuppressWarnings("rawtypes")
     public Object getAdapter(Class type) {
         if (type == ZoomManager.class) {
             return ((ScalableFreeformRootEditPart) getGraphicalViewer().getRootEditPart())
                             .getZoomManager();
         }
-        // 如果是 IContentOutlinePage 类型，则返回该 ContentOutlinePage
-        // if (type == IContentOutlinePage.class) {
-        // return new BIPContentOutlinePage(new TreeViewer());
-        // }
+        if (type == IContentOutlinePage.class) {
+            return new BIPContentOutlinePage(new TreeViewer());
+        }
         return super.getAdapter(type);
     }
 
@@ -219,9 +219,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
         public void init(IPageSite pageSite) {
             super.init(pageSite);
-            // 获得注册给 graphical editor 的 Action
             ActionRegistry registry = getActionRegistry();
-            // 使这些 Action 在大纲视图中也有效
             IActionBars bars = pageSite.getActionBars();
 
             String id = ActionFactory.UNDO.getId();
@@ -235,38 +233,33 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             bars.updateActionBars();
         }
 
-        // 重载
         @Override
         public void createControl(Composite parent) {
             getViewer().createControl(parent);
-            // 设置 Edit Domain
             getViewer().setEditDomain(getEditDomain());
-            // 设置 EditPartFactory
-            // getViewer().setEditPartFactory(new TreeEditPartFactory());
             getViewer().setEditPartFactory(TreeEditPartFactory.getInstance());
-            // 本视图中对应于 BIPModel的内容
+            model = getModel();
             if (model != null) {
                 getViewer().setContents(model);
             }
-            // 选择同步：在 Graphical editor 中选择图形，则大纲视图选择对应的节点；反之亦然
             getSelectionSynchronizer().addViewer(getViewer());
 
         }
 
         @Override
         public Control getControl() {
-            // 当大纲视图是当前（active）视图时，返回聚焦的控件
-            // return sash;
             return getViewer().getControl();
-
         }
 
         public void dispose() {
             // 从 TreeViewer 中删除 SelectionSynchronizer
             getSelectionSynchronizer().removeViewer(getViewer());
-
             super.dispose();
         }
+    }    
+
+    public PaletteGroup getToolGroup() {
+        return toolGroup;
     }
 
     @Override

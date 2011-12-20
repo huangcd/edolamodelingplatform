@@ -23,7 +23,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
     private List<TransitionModel> sourceConnections;
     private List<TransitionModel> targetConnections;
 
-    protected PlaceModel() {
+    public PlaceModel() {
         sourceConnections = new ArrayList<TransitionModel>();
         targetConnections = new ArrayList<TransitionModel>();
     }
