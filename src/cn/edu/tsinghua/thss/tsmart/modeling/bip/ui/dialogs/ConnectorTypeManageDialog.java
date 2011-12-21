@@ -70,35 +70,34 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
         buttonDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                String[] selections = listConnectorTypes.getSelection();
-                if (selections == null || selections.length == 0) {
-                    return;
-                }
-                String connectorType = selections[0];
-                if (connectorType.equals("singleton") || connectorType.equals("rendezvous")) {
-                    getErrorLabel().setText("内置类型不能被删除");
-                } else {
-                    ConnectorTypeModel.removeType(connectorType);
-                    listConnectorTypes.remove(connectorType);
-                }
+                removeConnectorType();
             }
         });
         buttonDelete.setBounds(178, 211, 120, 27);
         buttonDelete.setText("\u5220\u9664\u8FDE\u63A5\u5B50");
 
-        ScrolledComposite scrolledComposite_1 =
-                        new ScrolledComposite(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        scrolledComposite_1.setBounds(304, 10, 423, 228);
-        scrolledComposite_1.setExpandHorizontal(true);
-        scrolledComposite_1.setExpandVertical(true);
 
         styledTextPreview =
-                        new StyledText(scrolledComposite_1, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
-        scrolledComposite_1.setContent(styledTextPreview);
-        scrolledComposite_1.setMinSize(styledTextPreview.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+                        new StyledText(container, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP
+                                        | SWT.H_SCROLL | SWT.V_SCROLL);
+        styledTextPreview.setBounds(304, 10, 423, 228);
 
         initValues();
         return container;
+    }
+
+    private void removeConnectorType() {
+        String[] selections = listConnectorTypes.getSelection();
+        if (selections == null || selections.length == 0) {
+            return;
+        }
+        String connectorType = selections[0];
+        if (connectorType.equals("singleton") || connectorType.equals("rendezvous")) {
+            getErrorLabel().setText("内置类型不能被删除");
+        } else {
+            ConnectorTypeModel.removeType(connectorType);
+            listConnectorTypes.remove(connectorType);
+        }
     }
 
     private void addConnector() {

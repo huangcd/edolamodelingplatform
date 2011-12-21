@@ -88,14 +88,14 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
         Label label_4 = new Label(container, SWT.RIGHT);
         label_4.setText("\u4EA4\u4E92\u65B9\u5F0F\uFF1A");
-        label_4.setBounds(10, 52, 87, 17);
+        label_4.setBounds(10, 357, 87, 17);
 
         textInteractor = new Text(container, SWT.BORDER);
-        textInteractor.setBounds(103, 49, 395, 23);
+        textInteractor.setBounds(103, 354, 395, 23);
 
         Group groupArgument = new Group(container, SWT.SHADOW_ETCHED_IN);
         groupArgument.setText("1\u3001\u7AEF\u53E3\u53C2\u6570*\uFF08\u81F3\u5C11\u6709\u4E00\u4E2A\u7AEF\u53E3\u53C2\u6570\uFF09");
-        groupArgument.setBounds(10, 108, 237, 270);
+        groupArgument.setBounds(10, 64, 237, 270);
         groupArgument.setLayout(null);
 
         ScrolledComposite scrolledComposite =
@@ -176,7 +176,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         Group groupData = new Group(container, SWT.SHADOW_ETCHED_IN);
         groupData.setLayout(null);
         groupData.setText("2\u3001\u5185\u90E8\u53D8\u91CF");
-        groupData.setBounds(261, 108, 237, 270);
+        groupData.setBounds(261, 64, 237, 270);
 
         ScrolledComposite scrolledComposite_1 =
                         new ScrolledComposite(groupData, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -203,10 +203,10 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             }
         });
         buttonDeleteData.setText("\u5220\u9664\u53D8\u91CF");
-        buttonDeleteData.setBounds(119, 56, 106, 27);
+        buttonDeleteData.setBounds(119, 232, 106, 27);
 
         Group group_2 = new Group(groupData, SWT.NONE);
-        group_2.setBounds(119, 89, 106, 170);
+        group_2.setBounds(119, 23, 106, 170);
 
         comboDatas = new Combo(group_2, SWT.READ_ONLY);
         comboDatas.setBounds(10, 46, 86, 25);
@@ -303,18 +303,10 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         buttonDeleteInteraction.setText("\u5220\u9664\u4EA4\u4E92");
         buttonDeleteInteraction.setBounds(245, 150, 70, 27);
 
-        ScrolledComposite scrolledComposite_3 =
-                        new ScrolledComposite(groupInteraction, SWT.BORDER | SWT.H_SCROLL
-                                        | SWT.V_SCROLL);
-        scrolledComposite_3.setBounds(10, 183, 307, 249);
-        scrolledComposite_3.setExpandHorizontal(true);
-        scrolledComposite_3.setExpandVertical(true);
-
         styledTextInteractionPreview =
-                        new StyledText(scrolledComposite_3, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
-        scrolledComposite_3.setContent(styledTextInteractionPreview);
-        scrolledComposite_3.setMinSize(styledTextInteractionPreview.computeSize(SWT.DEFAULT,
-                        SWT.DEFAULT));
+                        new StyledText(groupInteraction, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP
+                                        | SWT.H_SCROLL | SWT.V_SCROLL);
+        styledTextInteractionPreview.setBounds(10, 183, 307, 249);
 
         Group groupExport = new Group(container, SWT.NONE);
         groupExport.setText("4\u3001\u5BFC\u51FA\u7AEF\u53E3");
@@ -328,9 +320,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 if (buttonExport.getSelection()) {
                     comboExportPortType.setEnabled(true);
                     buttonBoundData.setEnabled(true);
+                    textBoundArguments.setEnabled(true);
                 } else {
                     comboExportPortType.setEnabled(false);
                     buttonBoundData.setEnabled(false);
+                    textBoundArguments.setEnabled(false);
                 }
             }
         });
@@ -351,11 +345,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 boundData();
             }
         });
-        buttonBoundData.setBounds(398, 22, 80, 27);
-        buttonBoundData.setText("\u7ED1\u5B9A\u53C2\u6570");
+        buttonBoundData.setBounds(378, 22, 100, 27);
+        buttonBoundData.setText("\u7ED1\u5B9A\u7AEF\u53E3\u53C2\u6570");
 
         textBoundArguments = new Text(groupExport, SWT.BORDER);
-        textBoundArguments.setBounds(221, 24, 171, 23);
+        textBoundArguments.setBounds(221, 24, 151, 23);
 
         labelError = new Label(container, SWT.NONE);
         labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));

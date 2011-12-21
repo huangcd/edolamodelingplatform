@@ -759,7 +759,7 @@ class Interactor implements Serializable {
         if (completePort != null) {
             buffer.append(completePort).append("\' ");
         }
-        if (incompletePorts != null && !(incompletePorts.length > 0)) {
+        if (incompletePorts != null && (incompletePorts.length > 0)) {
             for (Interactor interactor : incompletePorts) {
                 buffer.append(interactor).append(' ');
             }

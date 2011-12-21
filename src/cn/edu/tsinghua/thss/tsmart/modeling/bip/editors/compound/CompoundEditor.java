@@ -85,6 +85,7 @@ public class CompoundEditor extends BIPEditor {
                                             getImage("icons/connector_16.png"),
                                             getImage("icons/connector_32.png"));
             addConnectorCreationToolEntry(toolEntry);
+            ConnectorTypeModel.addToolEntry(entry.getKey(), this, toolEntry);
         }
     }
 
