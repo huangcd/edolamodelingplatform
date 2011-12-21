@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="EdolaModelingPlatform" version="2">
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/actions/ExportRetargetAction.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportRetargetAction">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="RetargetAction"/>
+                <message_argument value="ExportRetargetAction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
