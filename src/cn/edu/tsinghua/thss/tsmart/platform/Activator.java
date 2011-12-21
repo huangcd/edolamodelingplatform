@@ -1,8 +1,14 @@
 package cn.edu.tsinghua.thss.tsmart.platform;
 
+import java.io.File;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -14,6 +20,15 @@ public class Activator extends AbstractUIPlugin {
 
     // The shared instance
     private static Activator   plugin;
+
+    private static File        preferenceDirection;
+
+    public static File getPreferenceDirection() {
+        if (preferenceDirection == null) {
+            preferenceDirection = getDefault().getStateLocation().makeAbsolute().toFile();
+        }
+        return preferenceDirection;
+    }
 
     /**
      * The constructor
@@ -27,6 +42,9 @@ public class Activator extends AbstractUIPlugin {
 
     public void stop(BundleContext context) throws Exception {
         plugin = null;
+        DataTypeModel.saveDataTypes();
+        PortTypeModel.savePortTypes();
+        ConnectorTypeModel.saveConnectorTypes();
         super.stop(context);
     }
 

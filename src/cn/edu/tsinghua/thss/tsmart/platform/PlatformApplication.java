@@ -22,10 +22,10 @@ public class PlatformApplication implements IApplication {
                 return IApplication.EXIT_RESTART;
             else
                 return IApplication.EXIT_OK;
+            
         } finally {
             display.dispose();
         }
-
     }
 
     /*

@@ -66,7 +66,7 @@ public class ConnectorModel
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "name")};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "连接子名")};
     }
 
     @Override

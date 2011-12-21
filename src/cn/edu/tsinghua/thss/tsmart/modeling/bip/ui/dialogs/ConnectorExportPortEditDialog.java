@@ -17,7 +17,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
  * 
  * @author huangcd
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
 public class ConnectorExportPortEditDialog extends AbstractEditDialog {
     private ConnectorTypeModel connector;
     private PortModel          port;

@@ -55,7 +55,8 @@ import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 @SuppressWarnings("rawtypes")
 public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
-    protected static HashMap<EditPartViewer, BIPEditor> viewerMap;
+    protected static HashMap<EditPartViewer, BIPEditor> viewerMap =
+                                                                                  new HashMap<EditPartViewer, BIPEditor>();
     private static IInstance                            copyObject;
 
     public static IInstance getCopyObject() {
@@ -75,16 +76,10 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     }
 
     public static BIPEditor getEditorFromViewer(EditPartViewer viewer) {
-        if (viewerMap == null) {
-            viewerMap = new HashMap<EditPartViewer, BIPEditor>();
-        }
         return viewerMap.get(viewer);
     }
 
     public static void putViewerEditorEntry(EditPartViewer viewer, BIPEditor editor) {
-        if (viewerMap == null) {
-            viewerMap = new HashMap<EditPartViewer, BIPEditor>();
-        }
         viewerMap.put(viewer, editor);
     }
 

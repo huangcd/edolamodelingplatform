@@ -1,21 +1,28 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef.palette.CreationToolEntry;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
+import cn.edu.tsinghua.thss.tsmart.platform.Activator;
+import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 /**
  * Created by Huangcd<br/>
@@ -36,6 +43,39 @@ public class DataTypeModel<P extends IDataContainer>
         typeSources = new HashMap<String, DataTypeModel>();
         addTypeSources("bool", boolData);
         addTypeSources("int", intData);
+    }
+
+    public static void saveDataTypes() {
+        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.DATA_TYPE_FILE);
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(file);
+            for (String string : getTypes()) {
+                writer.println(string);
+            }
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadDataTypes() {
+        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.DATA_TYPE_FILE);
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!getTypes().contains(line)) {
+                    addType(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void addType(String type) {

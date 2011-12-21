@@ -67,24 +67,33 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         portLabel = new Label(getModel().getPortString());
         portLabel.setFont(properties.getDefaultEditorFont());
         portLabel.setForegroundColor(properties.getPortLabelColor());
-        ((PlaceEditPart) getSource()).getParent().getFigure().add(portLabel);
+        getPlaceLayerFigure().add(portLabel);
         addFigureMouseEvent(portLabel);
 
         actionLabel = new Label(getModel().getActionString());
         actionLabel.setFont(properties.getDefaultEditorFont());
         actionLabel.setForegroundColor(properties.getActionLabelColor());
-        ((PlaceEditPart) getSource()).getParent().getFigure().add(actionLabel);
+        getPlaceLayerFigure().add(actionLabel);
         actionLocator = new FigureLocator(portLabel, actionLabel, PositionConstants.EAST, 5);
         addFigureMouseEvent(actionLabel);
 
         guardLabel = new Label(getModel().getGuardString());
         guardLabel.setFont(properties.getDefaultEditorFont());
         guardLabel.setForegroundColor(properties.getGuardLabelColor());
-        ((PlaceEditPart) getSource()).getParent().getFigure().add(guardLabel);
+        getPlaceLayerFigure().add(guardLabel);
         guardLocator = new FigureLocator(portLabel, guardLabel, PositionConstants.WEST, 5);
         addFigureMouseEvent(guardLabel);
         relocateLabels(getBendpoints());
         return connection;
+    }
+
+    private IFigure getPlaceLayerFigure() {
+        if (getSource() != null) {
+            return ((PlaceEditPart) getSource()).getParent().getFigure();
+        } else if (getTarget() != null) {
+            return ((PlaceEditPart) getTarget()).getParent().getFigure();
+        }
+        return null;
     }
 
     private void relocateLabels(ArrayList<Bendpoint> bendpoints) {

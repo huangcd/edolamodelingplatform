@@ -169,9 +169,9 @@ public class TransitionModel
             values[i] = ports.get(i).getName();
         }
         values[ports.size()] = "$UNBOUNDED$";
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "action"),
-                        new TextPropertyDescriptor(GuardModel.GUARD, "guard"),
-                        new ComboBoxPropertyDescriptor(IModel.PORT, "port", values)};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "动作"),
+                        new TextPropertyDescriptor(GuardModel.GUARD, "门卫函数"),
+                        new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values)};
     }
 
     @Override

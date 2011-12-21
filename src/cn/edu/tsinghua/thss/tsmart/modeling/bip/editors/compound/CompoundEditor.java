@@ -118,11 +118,11 @@ public class CompoundEditor extends BIPEditor {
         action = new SaveComponentTypeAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-        
+
         action = new CopyComponentAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-        
+
         action = new PasteComponentAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
