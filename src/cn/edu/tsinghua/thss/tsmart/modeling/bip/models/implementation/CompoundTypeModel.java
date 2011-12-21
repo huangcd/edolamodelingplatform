@@ -183,7 +183,7 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "compound name")};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "复合组件名")};
     }
 
     @Override

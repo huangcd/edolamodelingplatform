@@ -33,6 +33,10 @@ public class PlaceTreeEditPart extends BaseTreeEditPart {
 
 	public void refreshVisuals() {
 		setWidgetText(getText());
+		 if (getCastedModel().isInitialPlace()) {
+		     setWidgetImage(BIPEditor.getImage("icons/initplace.png").createImage());
+		 }
+		 else
 		setWidgetImage(BIPEditor.getImage("icons/place_16.png").createImage());
 	}
 

@@ -26,7 +26,7 @@ public class ComponentModel<Model extends BaseInstanceModel, Type extends ICompo
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "name")};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "×é¼þÃû")};
     }
 
     @Override

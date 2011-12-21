@@ -111,8 +111,8 @@ public class PortModel<P extends IComponentType>
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         ArrayList<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
-        list.add(new TextPropertyDescriptor(NAME, "name"));
-        list.add(new ComboBoxPropertyDescriptor(EXPORT_PORT, "exportable", trueFalseArray));
+        list.add(new TextPropertyDescriptor(NAME, "端口名"));
+        list.add(new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", trueFalseArray));
         map = ((AtomicTypeModel) getParent()).getDatasGroupByType();
         int i = 1;
         for (ArgumentEntry entry : getType().getArgumentEntries()) {
@@ -126,7 +126,7 @@ public class PortModel<P extends IComponentType>
                 index++;
             }
             values[index] = "$UNBOUNDED$";
-            String name = "arg" + (i++) + "_" + entry.getName();
+            String name = "参数" + (i++) + "_" + entry.getName();
             list.add(new ComboBoxPropertyDescriptor(entry, name, values));
         }
         return list.toArray(new IPropertyDescriptor[list.size()]);

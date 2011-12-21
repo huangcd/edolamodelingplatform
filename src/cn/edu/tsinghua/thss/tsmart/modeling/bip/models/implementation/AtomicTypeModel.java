@@ -319,8 +319,8 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             PlaceModel place = places.get(i);
             placeNames[i] = place.getName();
         }
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "component name"),
-                        new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "init place", placeNames)};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "原子组件名"),
+                        new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "初始状态", placeNames)};
     }
 
     @Override

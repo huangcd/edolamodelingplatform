@@ -44,7 +44,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "place name")};
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "×´Ì¬Ãû")};
     }
 
     @Override

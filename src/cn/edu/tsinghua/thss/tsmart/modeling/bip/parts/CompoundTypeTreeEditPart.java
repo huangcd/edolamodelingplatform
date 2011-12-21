@@ -33,7 +33,7 @@ public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
     }
 
     public void refreshVisuals() {
-        setWidgetText(getText());
+        setWidgetText(getText());        
     }
 
 }
