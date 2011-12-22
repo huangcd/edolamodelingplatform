@@ -11,7 +11,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
 
 @SuppressWarnings("rawtypes")
@@ -20,20 +23,36 @@ public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
     protected Command getConnectionCompleteCommand(CreateConnectionRequest request) {
         CreateConnectionCommand command = (CreateConnectionCommand) request.getStartCommand();
         IInstance target = (IInstance) getHost().getModel();
-        command.setTarget(target);
-        return command;
+        if (target instanceof BulletModel || target instanceof PlaceModel) {
+            command.setTarget(target);
+            return command;
+        }
+        return null;
     }
 
     @Override
     protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
         Object type = request.getNewObjectType();
-        if (type.equals(TransitionTypeModel.class) || type.equals(ConnectionTypeModel.class)) {
+        if (type.equals(TransitionTypeModel.class)) {
             CreateConnectionCommand command = new CreateConnectionCommand();
             command.setConnection((IConnection) ((IType) request.getNewObject()).getInstance());
-            command.setSource((IInstance) getHost().getModel());
             command.setParent((IContainer) getHost().getParent().getModel());
-            request.setStartCommand(command);
-            return command;
+            if (getHost().getModel() instanceof PlaceModel) {
+                command.setSource((PlaceModel) getHost().getModel());
+                request.setStartCommand(command);
+                return command;
+            }
+            return null;
+        } else if (type.equals(ConnectionTypeModel.class)) {
+            CreateConnectionCommand command = new CreateConnectionCommand();
+            command.setConnection((IConnection) ((IType) request.getNewObject()).getInstance());
+            //command.setParent((IContainer) getHost().getParent().getModel());
+            if (getHost().getModel() instanceof ConnectorModel) {
+                command.setSource((IInstance) getHost().getModel());
+                request.setStartCommand(command);
+                return command;
+            }
+            return null;
         }
         return null;
     }

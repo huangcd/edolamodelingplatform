@@ -16,7 +16,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
  */
 @SuppressWarnings("rawtypes")
 public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContainer> {
-
     private PortModel             port;
     private int                   direction;
     private List<ConnectionModel> targetConnections;

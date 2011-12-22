@@ -1,22 +1,29 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 
+import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.NodeEditPart;
+import org.eclipse.gef.Request;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
-public class BulletEditPart extends BaseEditableEditPart {
+public class BulletEditPart extends BaseEditableEditPart implements NodeEditPart {
     private Ellipse       figure;
     private Label         portName;
     private FigureLocator labelLocator;
@@ -65,7 +72,36 @@ public class BulletEditPart extends BaseEditableEditPart {
                             (Rectangle) evt.getNewValue());
         } else if (IModel.NAME.equals(propertyName)) {
             portName.setText(getModel().getPortDescription());
+        } else if (IModel.SOURCE.equals(evt.getPropertyName())) {
+            refreshSourceConnections();
+        } else if (IModel.TARGET.equals(evt.getPropertyName())) {
+            refreshTargetConnections();
         }
+    }
+
+    @Override
+    public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {
+        return null;
+    }
+
+    @Override
+    public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
+        return new ChopboxAnchor(getFigure());
+    }
+
+    @Override
+    public ConnectionAnchor getSourceConnectionAnchor(Request request) {
+        return null;
+    }
+
+    @Override
+    public ConnectionAnchor getTargetConnectionAnchor(Request request) {
+        return new ChopboxAnchor(getFigure());
+    }
+
+    @Override
+    protected List<ConnectionModel> getModelTargetConnections() {
+        return getModel().getTargetConnections();
     }
 
     @Override

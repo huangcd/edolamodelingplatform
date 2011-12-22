@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.draw2d.Bendpoint;
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 /**
  * Created by Huangcd<br/>
@@ -34,6 +31,8 @@ public class ConnectionModel
     private BulletModel          target;
     @ElementList
     private ArrayList<Bendpoint> bendpoints;
+    @Element
+    private int                  argumentIndex;
 
     protected ConnectionModel() {
         bendpoints = new ArrayList<Bendpoint>();

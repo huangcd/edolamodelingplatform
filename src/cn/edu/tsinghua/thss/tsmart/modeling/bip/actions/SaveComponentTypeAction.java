@@ -53,9 +53,9 @@ public class SaveComponentTypeAction extends SelectionAction {
         IModel model = editor.getModel();
         FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         if (model instanceof AtomicTypeModel) {
-            dialog.setFilterExtensions(new String[] {"*.bipa"});
+            dialog.setFilterExtensions(new String[] {"*.edolaa"});
         } else if (model instanceof CompoundTypeModel) {
-            dialog.setFilterExtensions(new String[] {"*.bipm"});
+            dialog.setFilterExtensions(new String[] {"*.edolam"});
         } else {
             return;
         }

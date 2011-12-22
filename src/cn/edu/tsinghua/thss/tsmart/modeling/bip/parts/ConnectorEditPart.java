@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ConnectionAnchor;
@@ -17,6 +18,7 @@ import org.eclipse.gef.Request;
 import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
@@ -55,7 +57,6 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
     @Override
     protected void performDoubleClick() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -100,7 +101,7 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
 
     @Override
     public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
-        return new ChopboxAnchor(getFigure());
+        return null;
     }
 
     @Override
@@ -110,9 +111,13 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
 
     @Override
     public ConnectionAnchor getTargetConnectionAnchor(Request request) {
-        return new ChopboxAnchor(getFigure());
+        return null;
     }
 
+    @Override
+    protected List<ConnectionModel> getModelSourceConnections() {
+        return getModel().getSourceConnections();
+    }
 
     /**
      * connectorµÄÐÎ×´

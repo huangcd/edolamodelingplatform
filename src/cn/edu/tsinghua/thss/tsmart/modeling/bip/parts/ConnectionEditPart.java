@@ -15,7 +15,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 
@@ -23,6 +23,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEdit
 public class ConnectionEditPart extends BaseConnectionEditPart {
     private PolylineConnection connection;
     private Label              tooltipLabel;
+    private Label              label;
 
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
@@ -76,8 +77,8 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
         relocateLabels(bendpoints);
     }
 
-    public TransitionModel getModel() {
-        return (TransitionModel) super.getModel();
+    public ConnectionModel getModel() {
+        return (ConnectionModel) super.getModel();
     }
 
     /**

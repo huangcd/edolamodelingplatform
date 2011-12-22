@@ -5,8 +5,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.palette.ConnectionCreationToolEntry;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.gef.palette.PaletteDrawer;
+import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.SimpleFactory;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.AlignmentAction;
@@ -24,9 +26,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPFileEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
-
 
 @SuppressWarnings("rawtypes")
 public class CompoundEditor extends BIPEditor {
@@ -53,18 +55,23 @@ public class CompoundEditor extends BIPEditor {
     }
 
     private void initCompoundPalette() {
-        CreationToolEntry creationAtomicEntry =
+        ToolEntry entry =
                         new CreationToolEntry("原子组件", "新建一个空白的原子组件", new SimpleFactory(
                                         AtomicTypeModel.class), getImage("icons/atomic_16.png"),
                                         getImage("icons/atomic_32.png"));
-        CreationToolEntry creationCompoundEntry =
+        getToolGroup().add(entry);
+        entry =
                         new CreationToolEntry("复合组件", "新建一个空白的复合组件", new SimpleFactory(
                                         CompoundTypeModel.class),
                                         getImage("icons/compound_16.png"),
                                         getImage("icons/compound_32.png"));
-
-        getToolGroup().add(creationAtomicEntry);
-        getToolGroup().add(creationCompoundEntry);
+        getToolGroup().add(entry);
+        entry =
+                        new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
+                                        ConnectionTypeModel.class),
+                                        getImage("icons/transition_16.png"),
+                                        getImage("icons/transition_32.png"));
+        getToolGroup().add(entry);
 
         connectorPalette = new PaletteDrawer("连接子");
         getPaletteRoot().add(connectorPalette);
