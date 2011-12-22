@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
@@ -89,7 +90,7 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
     @Override
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteModelEditPolicy());
-        // TODO Auto-generated method stub
+        installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new ConnectionEditPolicy());
     }
 
     @Override

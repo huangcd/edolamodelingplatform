@@ -8,10 +8,12 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 public class BulletEditPart extends BaseEditableEditPart {
@@ -70,5 +72,7 @@ public class BulletEditPart extends BaseEditableEditPart {
     protected void performDoubleClick() {}
 
     @Override
-    protected void createEditPolicies() {}
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new ConnectionEditPolicy());
+    }
 }
