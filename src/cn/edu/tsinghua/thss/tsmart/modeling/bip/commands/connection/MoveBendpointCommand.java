@@ -9,7 +9,6 @@ public class MoveBendpointCommand extends BendpointCommand {
     public void execute() {
         oldBendpoint = (AbsoluteBendpoint) connection.getBendpoint(index);
         AbsoluteBendpoint bendpoint = new AbsoluteBendpoint(point);
-        // bendpoint.setRelativeDimensions(dimension1, dimension2);
         connection.setBendpoint(index, bendpoint);
     }
 

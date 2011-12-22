@@ -1,5 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.Arrays;
+
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -7,7 +9,6 @@ import org.simpleframework.xml.Element;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.DataValueNotMatchException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 
 /**
@@ -77,22 +78,19 @@ public class DataModel<Parent extends IDataContainer>
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // 不管什么情况都不允许修改数据类型
+        IPropertyDescriptor valueDescriptor = null;
         if (!getProrerties().isMultipleDataTypeAvailble()) {
             // TODO 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
-            return new IPropertyDescriptor[] {new TextPropertyDescriptor(IModel.NAME, "变量名"),
-                            new ComboBoxPropertyDescriptor(DATA_VALUE, "值", trueFalseArray)};
+            valueDescriptor = new ComboBoxPropertyDescriptor(DATA_VALUE, "值", trueFalseArray);
         } else {
-            return new IPropertyDescriptor[] {new TextPropertyDescriptor(IModel.NAME, "变量名"),
-                            new TextPropertyDescriptor(DATA_VALUE, "值")};
+            valueDescriptor = new TextPropertyDescriptor(DATA_VALUE, "值");
         }
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "变量名"), valueDescriptor,
+                        new ComboBoxPropertyDescriptor(TAG, "标签", TAGS)};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (DATA_TYPE.equals(id)) {
-            return getType().getName();
-        }
         if (DATA_VALUE.equals(id)) {
             if (!getProrerties().isMultipleDataTypeAvailble()) {
                 return getValue().equals(trueFalseArray[0]) ? 0 : 1;
@@ -102,18 +100,25 @@ public class DataModel<Parent extends IDataContainer>
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return DATA_TYPE.equals(id) || DATA_VALUE.equals(id) || NAME.equals(id);
+        return TAG.equals(id) || DATA_VALUE.equals(id) || NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        if (DATA_TYPE.equals(id)) {
-            getType().setName((String) value);
+        if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(TAGS[index]);
         }
         if (DATA_VALUE.equals(id)) {
             if (value instanceof Integer) {

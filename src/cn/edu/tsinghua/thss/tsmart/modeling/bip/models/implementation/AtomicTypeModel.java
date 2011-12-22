@@ -140,6 +140,9 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         }
         ports.remove(index);
         firePropertyChange(CHILDREN);
+        if (child.isExport()) {
+            getInstance().firePropertyChange(EXPORT_PORT);
+        }
         return true;
     }
 

@@ -17,13 +17,21 @@ public interface IConnection<M extends IConnection, P extends IContainer, S exte
     S getSource();
 
     T getTarget();
+    
+    void setSource(S source);
+    
+    void setTarget(T target);
 
     S attachSource();
 
     T attachTarget();
 
+    S detachSource();
+
+    T detachTarget();
+
     ArrayList<Bendpoint> getBendpoints();
-    
+
     Bendpoint getBendpoint(int index);
 
     M setBendpoint(int index, Bendpoint bendpoint);

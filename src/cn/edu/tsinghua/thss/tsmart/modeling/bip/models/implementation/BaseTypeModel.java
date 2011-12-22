@@ -45,17 +45,19 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
                     UpdateNotifier,
                     UpdateReceiver {
 
+    protected static Serializer   serializer      = new Persister(new CycleStrategy());
     private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
     private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
     protected Rectangle           positionConstraint;
     @Element(required = false)
-    protected Parent              parent;
+    private Parent                parent;
     @Attribute(required = false)
-    protected String              name;
-    protected Instance            instance;
-    protected UUID                uuid            = UUID.randomUUID();
+    private String                name;
+    protected Instance              instance;
+    private UUID                  uuid            = UUID.randomUUID();
     private boolean               editable        = true;
-    protected static Serializer   serializer      = new Persister(new CycleStrategy());
+    @Attribute(required = false)
+    private String                tag;
 
     public BaseTypeModel() {}
 
@@ -76,6 +78,18 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     public Model resetID() {
         uuid = UUID.randomUUID();
+        return (Model) this;
+    }
+
+    @Override
+    public String getTag() {
+        return tag;
+    }
+
+    @Override
+    public Model setTag(String tag) {
+        this.tag = tag;
+        firePropertyChange(TAG);
         return (Model) this;
     }
 

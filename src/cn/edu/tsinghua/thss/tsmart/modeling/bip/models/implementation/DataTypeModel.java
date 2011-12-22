@@ -144,14 +144,10 @@ public class DataTypeModel<P extends IDataContainer>
         this.setName(typeName);
     }
 
-    public String getName() {
-        return name;
-    }
-
     public DataTypeModel<P> setName(String name) {
-        this.name = name;
+        super.setName(name);
         getInstance().firePropertyChange(DataModel.DATA_TYPE);
-        return super.setName(name);
+        return this;
     }
 
     @Override

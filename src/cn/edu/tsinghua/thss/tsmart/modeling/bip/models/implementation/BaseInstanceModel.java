@@ -94,6 +94,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Element(required = false, name = "type")
     protected Type                type;
     protected boolean             editable  = true;
+    private String                tag;
 
     public Type getType() {
         return type;
@@ -101,6 +102,18 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     public Model setType(Type type) {
         this.type = type;
+        return (Model) this;
+    }
+
+    @Override
+    public String getTag() {
+        return tag;
+    }
+
+    @Override
+    public Model setTag(String tag) {
+        this.tag = tag;
+        firePropertyChange(TAG);
         return (Model) this;
     }
 

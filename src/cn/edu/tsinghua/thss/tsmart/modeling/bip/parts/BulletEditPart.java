@@ -35,7 +35,7 @@ public class BulletEditPart extends BaseEditableEditPart {
         figure.setBackgroundColor(ColorConstants.black);
 
         if (portName == null) {
-            portName = new Label(getModel().getPortName());
+            portName = new Label(getModel().getPortDescription());
         }
         portName.setFont(properties.getDefaultEditorFont());
         portName.setForegroundColor(ColorConstants.blue);
@@ -62,7 +62,7 @@ public class BulletEditPart extends BaseEditableEditPart {
             labelLocator.resetLocation(getModel().getDirection()).relocate(
                             (Rectangle) evt.getNewValue());
         } else if (IModel.NAME.equals(propertyName)) {
-            portName.setText(getModel().getPortName());
+            portName.setText(getModel().getPortDescription());
         }
     }
 

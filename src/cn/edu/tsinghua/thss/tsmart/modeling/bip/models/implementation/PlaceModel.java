@@ -16,10 +16,7 @@ import org.simpleframework.xml.Root;
  */
 @Root
 public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, AtomicTypeModel> {
-
-    public final static String    SOURCE = "source";
-    public final static String    TARGET = "target";
-    public final static Dimension SIZE   = new Dimension(20, 20);
+    public final static Dimension PLACE_SIZE = new Dimension(20, 20);
     private List<TransitionModel> sourceConnections;
     private List<TransitionModel> targetConnections;
 
@@ -105,7 +102,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public PlaceModel setPositionConstraint(Rectangle positionConstraint) {
-        Rectangle rect = new Rectangle(positionConstraint.getLocation(), SIZE);
+        Rectangle rect = new Rectangle(positionConstraint.getLocation(), PLACE_SIZE);
         if (rect.equals(getPositionConstraint())) {
             return this;
         }

@@ -1,5 +1,10 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
@@ -15,9 +20,13 @@ import org.simpleframework.xml.Root;
 public class ConnectorModel
                 extends BaseInstanceModel<ConnectorModel, ConnectorTypeModel, CompoundTypeModel> {
 
-    private boolean export;
+    public final static Dimension CONNECTOR_SIZE = new Dimension(30, 30);
+    private boolean               export;
+    private List<ConnectionModel> sourceConnections;
 
-    protected ConnectorModel() {}
+    protected ConnectorModel() {
+        sourceConnections = new ArrayList<ConnectionModel>();
+    }
 
     /**
      * 导出成形如 export port A is B 格式的文本
@@ -78,6 +87,15 @@ public class ConnectorModel
     }
 
     @Override
+    public ConnectorModel setPositionConstraint(Rectangle positionConstraint) {
+        Rectangle rect = new Rectangle(positionConstraint.getLocation(), CONNECTOR_SIZE);
+        if (rect.equals(getPositionConstraint())) {
+            return this;
+        }
+        return super.setPositionConstraint(rect);
+    }
+
+    @Override
     public boolean isPropertySet(Object id) {
         return NAME.equals(id);
     }
@@ -87,5 +105,23 @@ public class ConnectorModel
         if (NAME.equals(id)) {
             setName((String) value);
         }
+    }
+
+    public List<ConnectionModel> getSourceConnections() {
+        return sourceConnections;
+    }
+
+    public ConnectorModel addSourceConnection(ConnectionModel connection) {
+        sourceConnections.add(connection);
+        firePropertyChange(SOURCE);
+        return this;
+    }
+
+    public ConnectorModel removeSourceConnection(ConnectionModel connection) {
+        boolean result = sourceConnections.remove(connection);
+        if (result) {
+            firePropertyChange(SOURCE);
+        }
+        return this;
     }
 }

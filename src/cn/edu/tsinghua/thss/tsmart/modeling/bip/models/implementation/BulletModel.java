@@ -1,5 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.draw2d.geometry.Rectangle;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -14,19 +17,21 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 @SuppressWarnings("rawtypes")
 public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContainer> {
 
-    private PortModel port;
-    private int       direction;
+    private PortModel             port;
+    private int                   direction;
+    private List<ConnectionModel> targetConnections;
 
     public BulletModel(PortModel portModel) {
         port = portModel;
+        targetConnections = new ArrayList<ConnectionModel>();
     }
 
     public PortModel getPort() {
         return port;
     }
 
-    public String getPortName() {
-        return port.getName();
+    public String getPortDescription() {
+        return port.getType().getName() + " " + port.getName();
     }
 
     public int getDirection() {
@@ -64,5 +69,23 @@ public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContaine
     public BulletModel setPositionConstraint(Rectangle positionConstraint) {
         Rectangle rect = positionConstraint.getCopy().setSize(BULLET_RADIUS * 2, BULLET_RADIUS * 2);
         return super.setPositionConstraint(rect);
+    }
+
+    public List<ConnectionModel> getTargetConnections() {
+        return targetConnections;
+    }
+
+    public BulletModel addTargetConnection(ConnectionModel connectionModel) {
+        targetConnections.add(connectionModel);
+        firePropertyChange(TARGET);
+        return this;
+    }
+
+    public BulletModel removeTargetConnection(ConnectionModel connection) {
+        boolean result = targetConnections.remove(connection);
+        if (result) {
+            firePropertyChange(TARGET);
+        }
+        return this;
     }
 }

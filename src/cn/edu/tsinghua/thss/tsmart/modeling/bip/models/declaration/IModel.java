@@ -28,23 +28,28 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
                     Serializable,
                     PropertyChangeListener {
 
-    public final static String CHILDREN           = "children";
-    public final static String PARENT             = "parent";
-    public final static String NAME               = "name";
-    public final static String TYPE_NAME          = "typeName";
-    public final static String CREATION           = "creation";
-    public final static String REFRESH            = "refresh";
-    public final static String CONSTRAINT         = "constraint";
-    public final static String ATOMIC_INIT_PLACE  = "initPlace";
-    public final static String ATOMIC_INIT_ACTION = "initAction";
-    public final static String PORT               = "port";
-    public final static String EXPORT_PORT        = "export";
+    public final static String   CHILDREN           = "children";
+    public final static String   PARENT             = "parent";
+    public final static String   NAME               = "name";
+    public final static String   TYPE_NAME          = "typeName";
+    public final static String   CREATION           = "creation";
+    public final static String   REFRESH            = "refresh";
+    public final static String   CONSTRAINT         = "constraint";
+    public final static String   ATOMIC_INIT_PLACE  = "initPlace";
+    public final static String   ATOMIC_INIT_ACTION = "initAction";
+    public final static String   PORT               = "port";
+    public final static String   EXPORT_PORT        = "export";
+    public final static String   SOURCE             = "source";
+    public final static String   TARGET             = "target";
+    public final static String   TAG                = "tag";
+    public final static String[] TAGS               = new String[] {"$UNBOUND$", "sys", "sensor",
+                    "gate"                          };
     /**
      * 小圆点的半径
      */
-    public static final int    BULLET_RADIUS      = 8;
-    public final static int    COMPONENT_WIDTH    = 200;
-    public final static int    COMPONENT_HEIGHT   = 124;
+    public static final int      BULLET_RADIUS      = 8;
+    public final static int      COMPONENT_WIDTH    = 200;
+    public final static int      COMPONENT_HEIGHT   = 124;
 
     /** @return 返回模型的父模型 */
     Parent getParent();
@@ -81,6 +86,10 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
 
     /** @return 导出成BIP的文本 */
     String exportToBip();
+
+    String getTag();
+
+    Model setTag(String tag);
 
     /** @return 返回模型的全局唯一ID */
     UUID getID();

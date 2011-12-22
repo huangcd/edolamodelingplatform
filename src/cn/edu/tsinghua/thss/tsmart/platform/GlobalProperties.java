@@ -33,8 +33,9 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public boolean                  allowBroadcast          = false;
 
     public Color                    placeLabelColor         = ColorConstants.blue;
-    public Color                    actionLabelColor        = new Color(null, 204,102,255);
-    public Color                    guardLabelColor         = new Color(null, 100,180,100);
+    public Color                    actionLabelColor        = new Color(null, 204, 102, 255);
+    public Color                    guardLabelColor         = new Color(null, 100, 180, 100);
+    public Color                    connectorColor          = new Color(null, 120, 180, 120);
     public Color                    portLabelColor          = ColorConstants.lightBlue;
     public Color                    dataLabelColor          = ColorConstants.darkGray;
     public Font                     defaultEditorFont;
@@ -100,6 +101,11 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     @Override
     public Color getGuardLabelColor() {
         return guardLabelColor;
+    }
+
+    @Override
+    public Color getConnectorColor() {
+        return connectorColor;
     }
 
     @Override

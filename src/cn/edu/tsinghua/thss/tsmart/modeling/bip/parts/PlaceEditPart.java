@@ -38,7 +38,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     public void deactivate() {
         super.deactivate();
-        getModel().removePropertyChangeListener(this);
         getParent().getFigure().remove(nameLabel);
     }
 
@@ -85,6 +84,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        refreshVisuals();
         // 位置变更，同时重定位标签的位置
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
@@ -110,14 +110,13 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             }
             figure.repaint();
             refresh();
-        } else if (PlaceModel.SOURCE.equals(evt.getPropertyName())) {
+        } else if (IModel.SOURCE.equals(evt.getPropertyName())) {
             refreshSourceConnections();
-        } else if (PlaceModel.TARGET.equals(evt.getPropertyName())) {
+        } else if (IModel.TARGET.equals(evt.getPropertyName())) {
             refreshTargetConnections();
         } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
             refresh();
         }
-        refreshVisuals();
     }
 
     @Override
@@ -161,7 +160,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             super();
         }
 
-        private Rectangle getInnerBounds() {
+        private Rectangle getInnerBound() {
             float lineInset = Math.max(1.0f, getLineWidthFloat()) / 2.0f;
             int inset1 = (int) Math.floor(lineInset);
             int inset2 = (int) Math.ceil(lineInset);
@@ -178,7 +177,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             graphics.setAntialias(SWT.ON);
             super.outlineShape(graphics);
             if (getModel().isInitialPlace()) {
-                graphics.drawOval(getInnerBounds());
+                graphics.drawOval(getInnerBound());
             }
         }
     }
