@@ -38,18 +38,13 @@ public class AtomicTypeTreeEditPart extends BaseTreeEditPart {
         setWidgetText(getText());
     }
 
-    // TODO bug
     public void refreshChildren() {
         List children = getModelChildren();
         if (children != null) for (int i = 0; i < children.size(); i++) {
-            // System.out.println(i + " " + children.get(i).toString());
             if (children.get(i) instanceof AtomicTypeModel || children.get(i).equals(getModel())) {
-                // System.out.println(i + " " + children.get(i).toString());
                 getCastedModel().removeChild(getCastedModel().getChildren().get(0));
             }
         }
-        //
-
         super.refreshChildren();
     }
 

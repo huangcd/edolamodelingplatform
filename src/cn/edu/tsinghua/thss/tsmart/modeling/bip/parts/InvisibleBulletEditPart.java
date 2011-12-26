@@ -8,34 +8,22 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
-@SuppressWarnings("rawtypes")
-public class BulletEditPart extends BaseEditableEditPart implements NodeEditPart {
-    private Ellipse       figure;
-    private Label         portName;
-    private FigureLocator labelLocator;
+public class InvisibleBulletEditPart extends BaseEditableEditPart implements NodeEditPart {
+    private Ellipse figure;
 
     public void deactivate() {
         super.deactivate();
         getModel().removePropertyChangeListener(this);
-        ((GraphicalEditPart) getParent().getParent()).getFigure().remove(portName);
     }
 
     @Override
@@ -43,20 +31,9 @@ public class BulletEditPart extends BaseEditableEditPart implements NodeEditPart
         if (figure == null) {
             figure = new Ellipse();
         }
-        figure.setFill(true);
-        figure.setForegroundColor(ColorConstants.black);
-        figure.setBackgroundColor(ColorConstants.black);
-        figure.setAntialias(SWT.ON);
-
-        if (portName == null) {
-            portName = new Label(getModel().getPortDescription());
-        }
-        portName.setFont(properties.getDefaultEditorFont());
-        portName.setForegroundColor(ColorConstants.blue);
-        addFigureMouseEvent(portName);
-
-        ((GraphicalEditPart) getParent().getParent()).getFigure().add(portName);
-        labelLocator = new FigureLocator(figure, portName, PositionConstants.NORTH, 3);
+        figure.setFill(false);
+        figure.setForegroundColor(ColorConstants.white);
+        figure.setBackgroundColor(ColorConstants.white);
         return figure;
     }
 
@@ -67,25 +44,9 @@ public class BulletEditPart extends BaseEditableEditPart implements NodeEditPart
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         refreshVisuals();
-        String propertyName = evt.getPropertyName();
-        if (IModel.CONSTRAINT.equals(propertyName)) {} else if (IModel.NAME.equals(propertyName)) {
-            portName.setText(getModel().getPortDescription());
-        } else if (IModel.TARGET.equals(evt.getPropertyName())) {
+        if (IModel.TARGET.equals(evt.getPropertyName())) {
             refreshTargetConnections();
         }
-    }
-
-    @Override
-    protected void refreshVisuals() {
-        Rectangle constraint = getModel().getPositionConstraint();
-        ((AbstractGraphicalEditPart) getParent())
-                        .setLayoutConstraint(this, getFigure(), constraint);
-        Point location = constraint.getLocation();
-        Point parentLocation =
-                        ((IModel) getParent().getModel()).getPositionConstraint().getLocation();
-        location.translate(parentLocation);
-        labelLocator.resetDirection(getModel().getDirection()).relocate(
-                        new Rectangle(location, constraint.getSize()));
     }
 
     @Override

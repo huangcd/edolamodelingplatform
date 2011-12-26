@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="%perspective.name"
+            name="RCP Perspective"
             class="cn.edu.tsinghua.thss.tsmart.platform.Perspective"
             id="EdolaModelingPlatform.perspective">
       </perspective>
@@ -24,14 +24,18 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="EdolaModelingPlatform.application"
-            name="%product.name">
+            name="Edola Modeling Platform">
          <property
                name="windowImages"
-               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+               value="icons/compound_16.png,icons/compound_32.png">
          </property>
          <property
                name="appName"
-               value="%product.name">
+               value="Edola Modeling Platform">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>
@@ -43,7 +47,7 @@
             extensions="bipm"
             icon="icons/alt_window_16.gif"
             id="cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditor"
-            name="%editor.name">
+            name="XML Editor">
       </editor>
       <editor
             class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
@@ -51,7 +55,7 @@
             default="false"
             icon="icons/compound_16.png"
             id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
-            name="%editor.name.0">
+            name="Compound Editor">
       </editor>
       <editor
             class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
@@ -59,8 +63,19 @@
             default="false"
             icon="icons/atomic_16.png"
             id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
-            name="%editor.name.1">
+            name="Atomic Editor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.splashHandlers">
+      <splashHandler
+            class="edolamodelingplatform.splashHandlers.InteractiveSplashHandler"
+            id="edolamodelingplatform.splashHandlers.interactive">
+      </splashHandler>
+      <splashHandlerProductBinding
+            productId="EdolaModelingPlatform.product"
+            splashId="edolamodelingplatform.splashHandlers.interactive">
+      </splashHandlerProductBinding>
    </extension>
 
 </plugin>

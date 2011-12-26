@@ -49,7 +49,7 @@ public class OpenAtomicEditorAction extends Action implements ISelectionListener
     public void run() {
         Shell shell = Display.getCurrent().getActiveShell();
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-        dialog.setFilterExtensions(new String[] {"*.bipa"});
+        dialog.setFilterExtensions(new String[] {"*.edolaa"});
         String path = dialog.open();
         if (path == null) {
             return;

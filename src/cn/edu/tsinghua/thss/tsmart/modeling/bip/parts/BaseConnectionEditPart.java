@@ -1,12 +1,19 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
+import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
+import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureMouseListener;
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
@@ -19,6 +26,34 @@ public abstract class BaseConnectionEditPart extends AbstractConnectionEditPart
     public void activate() {
         super.activate();
         getModel().addPropertyChangeListener(this);
+    }
+
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new BIPConnectionEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_BENDPOINTS_ROLE,
+                        new ConnectionBendpointEditPolicy());
+    }
+
+    protected abstract Point getSourceLocation();
+
+    protected abstract Point getTargetLocation();
+
+    protected Point getRelocateLocation(ArrayList<Bendpoint> bendpoints) {
+        Point location;
+        if (bendpoints.isEmpty()) {
+            Point ref1 = getSourceLocation();
+            Point ref2 = getTargetLocation();
+            location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
+        } else if ((bendpoints.size() & 1) != 0) {
+            location = bendpoints.get(bendpoints.size() / 2).getLocation().getCopy();
+        } else {
+            int index = (bendpoints.size() - 1) >> 1;
+            Point ref1 = bendpoints.get(index).getLocation();
+            Point ref2 = bendpoints.get(index + 1).getLocation();
+            location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
+        }
+        return location;
     }
 
     public IModel getModel() {

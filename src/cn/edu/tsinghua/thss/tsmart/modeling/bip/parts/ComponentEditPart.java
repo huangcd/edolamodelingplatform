@@ -4,13 +4,13 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
@@ -35,7 +35,6 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
 
     @Override
     protected IFigure createFigure() {
-        // TODO panel.translateToParent(p): ×ø±ê×ª»»
         panel = new FrameContainer(this, IModel.BULLET_RADIUS);
         panel.setFont(properties.getDefaultEditorFont());
         initLabels();
@@ -73,11 +72,11 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         instanceLabel.setFont(properties.getDefaultEditorFont());
 
         if (this instanceof AtomicEditPart) {
-            typeLabel.setForegroundColor(ColorConstants.blue);
-            instanceLabel.setForegroundColor(ColorConstants.blue);
+            typeLabel.setForegroundColor(properties.getAtomicLabelColor());
+            instanceLabel.setForegroundColor(properties.getAtomicLabelColor());
         } else if (this instanceof CompoundEditPart) {
-            typeLabel.setForegroundColor(ColorConstants.darkBlue);
-            instanceLabel.setForegroundColor(ColorConstants.darkBlue);
+            typeLabel.setForegroundColor(properties.getCompoundLabelColor());
+            instanceLabel.setForegroundColor(properties.getCompoundLabelColor());
         }
 
         panel.add(typeLabel);
@@ -89,6 +88,12 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         refreshVisuals();
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             centerLabels();
+            refreshChildren();
+            for (Object child : getChildren()) {
+                if (child instanceof EditPart) {
+                    ((EditPart) child).refresh();
+                }
+            }
         }
         if (IModel.TYPE_NAME.equals(evt.getPropertyName())) {
             typeLabel.setText(getModel().getType().getName());

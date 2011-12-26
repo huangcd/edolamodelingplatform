@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -322,8 +323,18 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             PlaceModel place = places.get(i);
             placeNames[i] = place.getName();
         }
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "原子组件名"),
-                        new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "初始状态", placeNames)};
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "原子组件名");
+        name.setDescription("01");
+        properties.add(name);
+        ComboBoxPropertyDescriptor init =
+                        new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "初始状态", placeNames);
+        init.setDescription("02");
+        properties.add(init);
+        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", COMPONENT_TAGS);
+        tag.setDescription("03");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
     @Override
@@ -334,12 +345,15 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         if (ATOMIC_INIT_PLACE.equals(id)) {
             return places.indexOf(initPlace);
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(COMPONENT_TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id);
+        return TAG.equals(id) || NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id);
     }
 
     @Override
@@ -349,6 +363,12 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         } else if (ATOMIC_INIT_PLACE.equals(id)) {
             int index = (Integer) value;
             setInitPlace(places.get(index));
+        } else if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(COMPONENT_TAGS[index]);
         }
     }
 

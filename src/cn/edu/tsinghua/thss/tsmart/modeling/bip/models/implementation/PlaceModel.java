@@ -1,10 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
@@ -41,7 +43,14 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "×´Ì¬Ãû")};
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
+        TextPropertyDescriptor name= new TextPropertyDescriptor(NAME, "×´Ì¬Ãû");   
+        name.setDescription("01");
+        properties.add(name);
+        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "±êÇ©", TAGS);
+        tag.setDescription("02");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
     @Override
@@ -49,18 +58,28 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id);
+        return TAG.equals(id) || NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
+        }
+        if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(TAGS[index]);
         }
     }
 

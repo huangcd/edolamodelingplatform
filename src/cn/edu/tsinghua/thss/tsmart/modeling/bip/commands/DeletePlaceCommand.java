@@ -23,7 +23,7 @@ public class DeletePlaceCommand extends Command {
         targetConnections.addAll(child.getTargetConnections());
         for (TransitionModel transition : sourceConnections) {
             transition.detachSource();
-            transition.detachSource();
+            transition.detachTarget();
         }
         for (TransitionModel transition : targetConnections) {
             transition.detachSource();
@@ -40,7 +40,7 @@ public class DeletePlaceCommand extends Command {
         child.getTargetConnections().addAll(targetConnections);
         for (TransitionModel transition : sourceConnections) {
             transition.attachSource();
-            transition.attachSource();
+            transition.attachTarget();
         }
         for (TransitionModel transition : targetConnections) {
             transition.attachSource();

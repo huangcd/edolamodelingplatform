@@ -1,16 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import org.apache.commons.codec.binary.Base64;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.CycleStrategy;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -23,6 +12,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.commons.codec.binary.Base64;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.strategy.CycleStrategy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
@@ -53,11 +53,9 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     private Parent                parent;
     @Attribute(required = false)
     private String                name;
-    protected Instance              instance;
+    protected Instance            instance;
     private UUID                  uuid            = UUID.randomUUID();
     private boolean               editable        = true;
-    @Attribute(required = false)
-    private String                tag;
 
     public BaseTypeModel() {}
 
@@ -83,13 +81,12 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
 
     @Override
     public String getTag() {
-        return tag;
+        return getInstance().getTag();
     }
 
     @Override
     public Model setTag(String tag) {
-        this.tag = tag;
-        firePropertyChange(TAG);
+        getInstance().setTag(tag);
         return (Model) this;
     }
 

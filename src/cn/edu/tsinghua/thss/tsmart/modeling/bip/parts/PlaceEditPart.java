@@ -3,6 +3,8 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
+import org.eclipse.draw2d.AbsoluteBendpoint;
+import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.ConnectionAnchor;
@@ -11,6 +13,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
@@ -21,8 +24,8 @@ import org.eclipse.swt.SWT;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 
@@ -82,18 +85,35 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
         installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new ConnectionEditPolicy());
     }
 
+    private void relocateConnections(Rectangle oldValue, Rectangle newValue) {
+        if (oldValue == null || newValue == null) return;
+        int dx = newValue.x - oldValue.x;
+        int dy = newValue.y - oldValue.y;
+        for (TransitionModel transition : getModel().getSourceConnections()) {
+            if (transition.getSource().equals(transition.getTarget())) {
+                for (int i = 0, size = transition.getBendpoints().size(); i < size; i++) {
+                    Bendpoint bendpoint = transition.getBendpoint(i);
+                    Point point = bendpoint.getLocation();
+                    point = new Point(point.x + dx, point.y + dy);
+                    transition.setBendpoint(i, new AbsoluteBendpoint(point));
+                }
+            }
+        }
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         refreshVisuals();
         // 位置变更，同时重定位标签的位置
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
+            relocateConnections((Rectangle) evt.getOldValue(), (Rectangle) evt.getNewValue());
             labelLocator.relocate((Rectangle) evt.getNewValue());
             for (TransitionModel transition : getModel().getSourceConnections()) {
-                transition.firePropertyChange(PlaceModel.SOURCE);
+                transition.firePropertyChange(IModel.SOURCE);
             }
             for (TransitionModel transition : getModel().getTargetConnections()) {
-                transition.firePropertyChange(PlaceModel.TARGET);
+                transition.firePropertyChange(IModel.TARGET);
             }
         }
         // 名字变更，同时修改标签和toolTip的名字,并重定位标签的位置

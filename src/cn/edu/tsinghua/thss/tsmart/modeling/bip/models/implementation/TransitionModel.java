@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.Bendpoint;
@@ -169,9 +170,22 @@ public class TransitionModel
             values[i] = ports.get(i).getName();
         }
         values[ports.size()] = "$UNBOUNDED$";
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "动作"),
-                        new TextPropertyDescriptor(GuardModel.GUARD, "门卫函数"),
-                        new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values)};
+        
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
+        TextPropertyDescriptor action= new TextPropertyDescriptor(ActionModel.ACTION, "动作");   
+        action.setDescription("01");
+        properties.add(action);
+        TextPropertyDescriptor guard= new TextPropertyDescriptor(GuardModel.GUARD, "门卫函数");   
+        guard.setDescription("02");
+        properties.add(guard);
+        ComboBoxPropertyDescriptor port=new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values);
+        port.setDescription("03");
+        properties.add(port);
+        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "标签", TAGS);
+        tag.setDescription("04");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
+        
     }
 
     @Override
@@ -189,13 +203,16 @@ public class TransitionModel
             }
             return ports.indexOf(port);
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
         return ActionModel.ACTION.equals(id) || GuardModel.GUARD.equals(id)
-                        || IModel.PORT.equals(id);
+                        || IModel.PORT.equals(id) || TAG.equals(id);
     }
 
     @Override
@@ -213,6 +230,12 @@ public class TransitionModel
             if (index >= 0 && index < ports.size()) {
                 setPort(ports.get(index));
             }
+        } else if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(TAGS[index]);
         }
     }
 

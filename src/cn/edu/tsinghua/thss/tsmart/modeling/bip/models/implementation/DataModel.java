@@ -1,9 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 
@@ -80,13 +82,22 @@ public class DataModel<Parent extends IDataContainer>
     public IPropertyDescriptor[] getPropertyDescriptors() {
         IPropertyDescriptor valueDescriptor = null;
         if (!getProrerties().isMultipleDataTypeAvailble()) {
-            // TODO 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
+            // 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
             valueDescriptor = new ComboBoxPropertyDescriptor(DATA_VALUE, "值", trueFalseArray);
         } else {
             valueDescriptor = new TextPropertyDescriptor(DATA_VALUE, "值");
+
         }
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "变量名"), valueDescriptor,
-                        new ComboBoxPropertyDescriptor(TAG, "标签", TAGS)};
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "变量名");
+        name.setDescription("01");
+        properties.add(name);
+        ((PropertyDescriptor) valueDescriptor).setDescription("02");
+        properties.add(valueDescriptor);
+        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", DATA_TAGS);
+        tag.setDescription("03");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
     @Override
@@ -101,34 +112,33 @@ public class DataModel<Parent extends IDataContainer>
             return hasName() ? getName() : "";
         }
         if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+            return getTag() == null ? 0 : Arrays.asList(DATA_TAGS).indexOf(getTag());
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return TAG.equals(id) || DATA_VALUE.equals(id) || NAME.equals(id);
+        return DATA_VALUE.equals(id) || NAME.equals(id) || TAG.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(TAGS[index]);
-        }
+
         if (DATA_VALUE.equals(id)) {
             if (value instanceof Integer) {
                 setValue(trueFalseArray[(Integer) value]);
             } else {
                 setValue((String) value);
             }
-        }
-        if (NAME.equals(id)) {
+        } else if (NAME.equals(id)) {
             setName((String) value);
+        } else if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(DATA_TAGS[index]);
         }
     }
 }

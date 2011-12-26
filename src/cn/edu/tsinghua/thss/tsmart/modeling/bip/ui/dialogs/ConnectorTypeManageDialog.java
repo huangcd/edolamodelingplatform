@@ -63,7 +63,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                 addConnector();
             }
         });
-        buttonCreate.setBounds(10, 211, 120, 27);
+        buttonCreate.setBounds(10, 211, 90, 27);
         buttonCreate.setText("\u589E\u52A0\u8FDE\u63A5\u5B50");
 
         Button buttonDelete = new Button(container, SWT.NONE);
@@ -73,7 +73,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                 removeConnectorType();
             }
         });
-        buttonDelete.setBounds(178, 211, 120, 27);
+        buttonDelete.setBounds(208, 211, 90, 27);
         buttonDelete.setText("\u5220\u9664\u8FDE\u63A5\u5B50");
 
 
@@ -82,8 +82,34 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                                         | SWT.H_SCROLL | SWT.V_SCROLL);
         styledTextPreview.setBounds(304, 10, 423, 228);
 
+        Button button = new Button(container, SWT.NONE);
+        button.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                editConnectorType();
+            }
+        });
+        button.setText("\u589E\u52A0\u8FDE\u63A5\u5B50");
+        button.setBounds(109, 211, 90, 27);
+
         initValues();
         return container;
+    }
+
+    private void editConnectorType() {
+        int index = listConnectorTypes.getSelectionIndex();
+        if (index < 0 || index >= listConnectorTypes.getItemCount()) {
+            return;
+        }
+        ConnectorTypeModel model =
+                        ConnectorTypeModel.getConnectorTypeModel(listConnectorTypes.getItem(index));
+        ConnectorTypeEditDialog dialog = new ConnectorTypeEditDialog(getParentShell(), model);
+        dialog.setBlockOnOpen(true);
+        int result = dialog.open();
+        if (OK == result) {
+            listConnectorTypes.remove(index);
+            listConnectorTypes.add(dialog.getNewConnectorTypeName(), index);
+        }
     }
 
     private void removeConnectorType() {

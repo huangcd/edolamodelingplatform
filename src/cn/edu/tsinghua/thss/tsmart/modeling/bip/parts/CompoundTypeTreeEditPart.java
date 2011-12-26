@@ -1,23 +1,34 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InvisibleBulletModel;
 
 @SuppressWarnings("rawtypes")
 public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
 
-    private CompoundTypeModel getCastedModel() {
-        return (CompoundTypeModel) getModel();
+    public CompoundTypeModel getModel() {
+        return (CompoundTypeModel) super.getModel();
     }
+
     protected List<IInstance> getModelChildren() {
-        return getCastedModel().getChildren(); // return a list of activities
+        List<IInstance> modelChildren = new ArrayList<IInstance>();
+        for (IInstance instance : getModel().getChildren()) {
+            if (instance instanceof InvisibleBulletModel) {
+                continue;
+            }
+            modelChildren.add(instance);
+        }
+        return modelChildren;
     }
+
     protected String getText() {
-        return getCastedModel().getName();
+        return getModel().getName();
     }
 
     @Override
@@ -33,7 +44,7 @@ public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
     }
 
     public void refreshVisuals() {
-        setWidgetText(getText());        
+        setWidgetText(getText());
     }
 
 }

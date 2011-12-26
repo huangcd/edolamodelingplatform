@@ -64,11 +64,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     }
 
     protected void fillMenuBar(IMenuManager menuBar) {
-        MenuManager fileMenu = new MenuManager("文件", "file");
+        MenuManager fileMenu = new MenuManager("文件", "文件");
 
-        MenuManager newMenu = new MenuManager("新建", "new");
+        MenuManager newMenu = new MenuManager("新建", "新建");
 
-        MenuManager openMenu = new MenuManager("打开", "open");
+        MenuManager openMenu = new MenuManager("打开", "打开");
 
         fileMenu.add(newMenu);
         newMenu.add(newAtomicAction);
@@ -82,12 +82,12 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
 
-        MenuManager modelingMenu = new MenuManager("建模", "modeling");
+        MenuManager modelingMenu = new MenuManager("建模", "建模");
         modelingMenu.add(manageDataTypeAction);
         modelingMenu.add(managePortTypeAction);
         modelingMenu.add(manageConnectorTypeAction);
 
-        MenuManager helpMenu = new MenuManager("帮助", "help");
+        MenuManager helpMenu = new MenuManager("帮助", "帮助");
         helpMenu.add(aboutAction);
 
         menuBar.add(fileMenu);

@@ -35,7 +35,12 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public Color                    placeLabelColor         = ColorConstants.blue;
     public Color                    actionLabelColor        = new Color(null, 204, 102, 255);
     public Color                    guardLabelColor         = new Color(null, 100, 180, 100);
-    public Color                    connectorColor          = new Color(null, 120, 180, 120);
+    public Color                    connectorColor          = new Color(null, 99, 37, 35);
+    public Color                    connectorOutlineColor   = new Color(null, 113, 137, 63);
+    public Color                    connectorFillColor      = new Color(null, 155, 187, 89);
+    public Color                    connectionLabelColor    = new Color(null, 0, 51, 0);
+    public Color                    atomicLabelColor        = new Color(null, 60, 60, 60);
+    public Color                    compoundLabelColor      = new Color(null, 13, 13, 13);
     public Color                    portLabelColor          = ColorConstants.lightBlue;
     public Color                    dataLabelColor          = ColorConstants.darkGray;
     public Font                     defaultEditorFont;
@@ -116,4 +121,25 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public Color getDataLabelColor() {
         return dataLabelColor;
     }
+
+    public Color getConnectorOutlineColor() {
+        return connectorOutlineColor;
+    }
+
+    public Color getConnectorFillColor() {
+        return connectorFillColor;
+    }
+
+    public Color getConnectionLabelColor() {
+        return connectionLabelColor;
+    }
+
+    public Color getAtomicLabelColor() {
+        return atomicLabelColor;
+    }
+
+    public Color getCompoundLabelColor() {
+        return compoundLabelColor;
+    }
+
 }

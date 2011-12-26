@@ -4,11 +4,14 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteConnectorCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeletePlaceCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 
 @SuppressWarnings("rawtypes")
@@ -20,6 +23,12 @@ public class DeleteModelEditPolicy extends ComponentEditPolicy {
             DeletePlaceCommand command = new DeletePlaceCommand();
             command.setParent((AtomicTypeModel) getHost().getParent().getModel());
             command.setChild((PlaceModel) getHost().getModel());
+            return command;
+        }
+        if (getHost().getModel() instanceof ConnectorModel) {
+            DeleteConnectorCommand command = new DeleteConnectorCommand();
+            command.setParent((CompoundTypeModel) getHost().getParent().getModel());
+            command.setChild((ConnectorModel) getHost().getModel());
             return command;
         }
         DeleteModelCommand command = new DeleteModelCommand();

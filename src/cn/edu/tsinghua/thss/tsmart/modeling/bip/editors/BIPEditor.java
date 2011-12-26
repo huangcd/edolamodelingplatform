@@ -40,6 +40,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetEntry;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.PropertySheetPage;
+import org.eclipse.ui.views.properties.PropertySheetSorter;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
@@ -208,6 +212,23 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         if (type == IContentOutlinePage.class) {
             return new BIPContentOutlinePage(new TreeViewer());
         }
+        if (type.equals(IPropertySheetPage.class)) {   
+            return new PropertySheetPage() {   
+                public void createControl(Composite parent) {   
+                    // super.createControl(parent);   
+                    PropertySheetSorter sorter = new PropertySheetSorter() {   
+                        public int compare(IPropertySheetEntry entryA,   
+                                IPropertySheetEntry entryB) {   
+                            return getCollator().compare(   
+                                    entryA.getDescription(),   
+                                    entryB.getDescription());   
+                        }   
+                    };   
+                    this.setSorter(sorter);   
+                    super.createControl(parent);   
+                }   
+            };   
+        } 
         return super.getAdapter(type);
     }
 

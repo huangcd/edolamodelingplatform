@@ -19,8 +19,8 @@ public class PortEditDialog extends AbstractEditDialog {
     private PortModel  instance;
     @SuppressWarnings("unused")
     private IContainer container;
-    private Text textType;
-    private Text textName;
+    private Text       textType;
+    private Text       textName;
 
     /**
      * Create the dialog.
@@ -42,37 +42,37 @@ public class PortEditDialog extends AbstractEditDialog {
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
         container.setLayout(null);
-        
+
         Button buttonExport = new Button(container, SWT.CHECK);
         buttonExport.setBounds(278, 18, 59, 17);
         buttonExport.setText("export");
-        
+
         List listAllDatas = new List(container, SWT.BORDER | SWT.MULTI);
         listAllDatas.setBounds(7, 44, 126, 161);
         listAllDatas.setTouchEnabled(true);
-        
+
         textType = new Text(container, SWT.BORDER);
         textType.setBounds(45, 15, 73, 23);
-        
+
         Label labelType = new Label(container, SWT.NONE);
         labelType.setBounds(7, 18, 32, 17);
         labelType.setText("type:");
-        
+
         Label labelName = new Label(container, SWT.NONE);
         labelName.setText("name:");
         labelName.setBounds(141, 18, 32, 17);
-        
+
         textName = new Text(container, SWT.BORDER);
         textName.setBounds(179, 15, 73, 23);
-        
+
         List listPortDatas = new List(container, SWT.BORDER | SWT.MULTI);
         listPortDatas.setTouchEnabled(true);
         listPortDatas.setBounds(209, 44, 126, 161);
-        
+
         Button buttonAdd = new Button(container, SWT.NONE);
         buttonAdd.setBounds(146, 61, 48, 27);
         buttonAdd.setText(">>");
-        
+
         Button buttonRemove = new Button(container, SWT.NONE);
         buttonRemove.setText("<<");
         buttonRemove.setBounds(146, 130, 48, 27);
@@ -100,20 +100,13 @@ public class PortEditDialog extends AbstractEditDialog {
     }
 
     @Override
-    protected void updateValues() {
-        // TODO Auto-generated method stub
-
-    }
+    protected void updateValues() {}
 
     @Override
-    protected void initValues() {
-        // TODO Auto-generated method stub
-
-    }
+    protected void initValues() {}
 
     @Override
     protected boolean validateUserInput() {
-        // TODO Auto-generated method stub
         return false;
     }
 

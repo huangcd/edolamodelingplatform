@@ -1,5 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
@@ -43,7 +47,14 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(ACTION, "action")};
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
+        TextPropertyDescriptor action= new TextPropertyDescriptor(ACTION, "action");   
+        action.setDescription("01");
+        properties.add(action);
+        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "±Í«©", TAGS);
+        tag.setDescription("02");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
     @Override
@@ -51,18 +62,28 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
         if (id.equals(ACTION)) {
             return action;
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return id.equals(ACTION);
+        return TAG.equals(id) || id.equals(ACTION);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (id.equals(ACTION)) {
             setAction((String) value);
+        }
+        if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(TAGS[index]);
         }
     }
 }

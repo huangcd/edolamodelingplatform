@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import org.eclipse.draw2d.ChopboxAnchor;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.Graphics;
@@ -12,6 +13,7 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
@@ -20,6 +22,7 @@ import org.eclipse.swt.SWT;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InvisibleBulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
@@ -41,23 +44,44 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
             labelLocator.relocate((Rectangle) evt.getNewValue());
+            relocateInvisibleBullet((Rectangle) evt.getOldValue(), (Rectangle) evt.getNewValue());
+            for (ConnectionModel transition : getModel().getSourceConnections()) {
+                transition.firePropertyChange(IModel.SOURCE);
+            }
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
             nameLabel.setText(getModel().getName());
-            tooltipLabel.setText(getModel().getName());
+            tooltipLabel.setText(getModel().getFriendlyString());
             labelLocator.relocate();
         } else if (IModel.SOURCE.equals(evt.getPropertyName())) {
             refreshSourceConnections();
-        } else if (IModel.TARGET.equals(evt.getPropertyName())) {
-            refreshTargetConnections();
         } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
             refresh();
+        } else if (ConnectorModel.LINE_COLOR.equals(evt.getPropertyName())) {
+            refreshSourceConnections();
         }
     }
 
-    @Override
-    protected void performDoubleClick() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("unchecked")
+    private void relocateInvisibleBullet(Rectangle oldBounds, Rectangle newBounds) {
+        int dx = newBounds.x - oldBounds.x;
+        int dy = newBounds.y - oldBounds.y;
+        List<ConnectionEditPart> connections = getSourceConnections();
+        for (ConnectionEditPart part : connections) {
+            EditPart target = part.getTarget();
+            if (target instanceof InvisibleBulletEditPart) {
+                InvisibleBulletModel bullet = (InvisibleBulletModel) target.getModel();
+                Rectangle rect = bullet.getPositionConstraint();
+                rect.setX(rect.x + dx);
+                rect.setY(rect.y + dy);
+                bullet.setPositionConstraint(rect);
+                ((InvisibleBulletEditPart) target).refreshVisuals();
+            }
+        }
+
     }
+
+    @Override
+    protected void performDoubleClick() {}
 
     @Override
     public ConnectorModel getModel() {
@@ -66,19 +90,22 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
 
     @Override
     protected IFigure createFigure() {
-        figure = new ConnectorFigure();
-        figure.setForegroundColor(properties.getConnectorColor());
-
+       // figure = new ConnectorFigure();
+        figure=new Ellipse();
+        figure.setForegroundColor(properties.getConnectorOutlineColor());
+        figure.setBackgroundColor(properties.getConnectorFillColor());
+        figure.setFill(true);
         figure.setOpaque(true);
         figure.setLineWidth(3);
+        figure.setAntialias(SWT.ON);
 
-        tooltipLabel = new Label(getModel().getName());
+        tooltipLabel = new Label(getModel().getFriendlyString());
         tooltipLabel.setFont(properties.getDefaultEditorFont());
         figure.setToolTip(tooltipLabel);
 
         nameLabel = new Label(getModel().getName());
         nameLabel.setFont(properties.getDefaultEditorFont());
-        nameLabel.setForegroundColor(properties.getPlaceLabelColor());
+        nameLabel.setForegroundColor(properties.getConnectorColor());
         addFigureMouseEvent(nameLabel);
 
         labelLocator = new FigureLocator(figure, nameLabel, PositionConstants.NORTH);
@@ -143,8 +170,9 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
         protected void outlineShape(Graphics graphics) {
             graphics.setAntialias(SWT.ON);
             super.outlineShape(graphics);
-            Rectangle innerBound = getInnerBound();
-            graphics.drawOval(innerBound);
+            // Rectangle innerBound = getInnerBound();
+            // graphics.drawOval(innerBound);
+
         }
     }
 }

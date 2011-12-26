@@ -1,6 +1,10 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
@@ -26,26 +30,41 @@ public class ComponentModel<Model extends BaseInstanceModel, Type extends ICompo
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "组件名")};
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
+        TextPropertyDescriptor name= new TextPropertyDescriptor(NAME, "组件名");   
+        name.setDescription("01");
+        properties.add(name);
+        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "标签", COMPONENT_TAGS);
+        tag.setDescription("02");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
     @Override
     public Object getPropertyValue(Object id) {
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
+        } else if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(COMPONENT_TAGS).indexOf(getTag());
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id);
+        return NAME.equals(id) || TAG.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
+        } else if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(COMPONENT_TAGS[index]);
         }
     }
 

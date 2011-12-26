@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/editors/BIPEditor.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor">
+        <filter id="571519004">
+            <message_arguments>
+                <message_argument value="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor.getAdapter(Class)"/>
+                <message_argument value="PropertySheetPage"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

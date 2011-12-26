@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -111,10 +112,16 @@ public class PortModel<P extends IComponentType>
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         ArrayList<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
-        list.add(new TextPropertyDescriptor(NAME, "端口名"));
-        list.add(new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", trueFalseArray));
+        TextPropertyDescriptor pName = new TextPropertyDescriptor(NAME, "端口名");
+        pName.setDescription("01");
+        list.add(pName);
+        ComboBoxPropertyDescriptor isExport =
+                        new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", trueFalseArray);
+        isExport.setDescription("02");
+        list.add(isExport);
         map = ((AtomicTypeModel) getParent()).getDatasGroupByType();
         int i = 1;
+        ComboBoxPropertyDescriptor arg;
         for (ArgumentEntry entry : getType().getArgumentEntries()) {
             String typeName = entry.getTypeName();
             List<DataModel> datas = map.get(typeName);
@@ -127,8 +134,13 @@ public class PortModel<P extends IComponentType>
             }
             values[index] = "$UNBOUNDED$";
             String name = "参数" + (i++) + "_" + entry.getName();
-            list.add(new ComboBoxPropertyDescriptor(entry, name, values));
+            arg = new ComboBoxPropertyDescriptor(entry, name, values);
+            arg.setDescription("0" + (i + 2));
+            list.add(arg);
         }
+        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", PORT_TAGS);
+        tag.setDescription("0" + (i + 3));
+        list.add(tag);
         return list.toArray(new IPropertyDescriptor[list.size()]);
     }
 
@@ -151,12 +163,15 @@ public class PortModel<P extends IComponentType>
                 return datas.indexOf(entry.getModel().getInstance());
             }
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(PORT_TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id) || EXPORT_PORT.equals(id);
+        return NAME.equals(id) || EXPORT_PORT.equals(id) || TAG.equals(id);
     }
 
     @Override
@@ -176,6 +191,12 @@ public class PortModel<P extends IComponentType>
             } else if (index >= 0 && index < datas.size()) {
                 bound(entry.getIndex(), datas.get(index));
             }
+        } else if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(PORT_TAGS[index]);
         }
     }
 

@@ -15,12 +15,12 @@ import org.eclipse.gef.requests.CreateRequest;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveModelCommand;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.InvisibleBulletEditPart;
 
 @SuppressWarnings("rawtypes")
 public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
@@ -30,6 +30,9 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
     @Override
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child,
                     Object constraint) {
+        if (child instanceof InvisibleBulletEditPart) {
+            return null;
+        }
         if (child.getModel() instanceof IModel) {
             IModel model = (IModel) child.getModel();
             MoveModelCommand command = new MoveModelCommand();
@@ -79,7 +82,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
 
     private String getAppropriateComponentName(CompoundTypeModel parent) {
         int maxNumber = 0;
-        for (IComponentInstance model : parent.getComponents()) {
+        for (IInstance model : parent.getChildren()) {
             Matcher mat = componentNamePattern.matcher(model.getName());
             if (mat.matches()) {
                 int number = Integer.parseInt(mat.group(1));
@@ -91,7 +94,7 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
 
     private String getAppropriateConnectorName(CompoundTypeModel parent) {
         int maxNumber = 0;
-        for (IComponentInstance model : parent.getComponents()) {
+        for (IInstance model : parent.getChildren()) {
             Matcher mat = connectorNamePattern.matcher(model.getName());
             if (mat.matches()) {
                 int number = Integer.parseInt(mat.group(1));

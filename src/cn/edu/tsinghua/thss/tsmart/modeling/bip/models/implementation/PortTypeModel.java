@@ -323,6 +323,8 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
 
     public PortTypeModel addChild(DataTypeModel child) {
         // FIXME 名字可能会重复，应该确保其不重复
+        //点击"增加端口",触发在PortTypeManageDialog的addType(),已确保不会和其他Port重复。
+        //但是仍需保证全局不重复。
         return addChild(child, "d" + (arguments.size() + 1));
     }
 

@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelException;
-
 /**
  * Created by Huangcd<br/>
  * Date: 11-9-25<br/>
@@ -28,28 +26,38 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
                     Serializable,
                     PropertyChangeListener {
 
-    public final static String   CHILDREN           = "children";
-    public final static String   PARENT             = "parent";
-    public final static String   NAME               = "name";
-    public final static String   TYPE_NAME          = "typeName";
-    public final static String   CREATION           = "creation";
-    public final static String   REFRESH            = "refresh";
-    public final static String   CONSTRAINT         = "constraint";
-    public final static String   ATOMIC_INIT_PLACE  = "initPlace";
-    public final static String   ATOMIC_INIT_ACTION = "initAction";
-    public final static String   PORT               = "port";
-    public final static String   EXPORT_PORT        = "export";
-    public final static String   SOURCE             = "source";
-    public final static String   TARGET             = "target";
-    public final static String   TAG                = "tag";
-    public final static String[] TAGS               = new String[] {"$UNBOUND$", "sys", "sensor",
-                    "gate"                          };
+    public final static String   CHILDREN                = "children";
+    public final static String   PARENT                  = "parent";
+    public final static String   NAME                    = "name";
+    public final static String   TYPE_NAME               = "typeName";
+    public final static String   CREATION                = "creation";
+    public final static String   REFRESH                 = "refresh";
+    public final static String   CONSTRAINT              = "constraint";
+    public final static String   ATOMIC_INIT_PLACE       = "initPlace";
+    public final static String   ATOMIC_INIT_ACTION      = "initAction";
+    public final static String   PORT                    = "port";
+    public final static String   EXPORT_PORT             = "export";
+    public final static String   SOURCE                  = "source";
+    public final static String   TARGET                  = "target";
+    public final static String   TAG                     = "tag";
+    public static final String   BEND_POINTS             = "bendPoints";
+    public static final String   REMOVE_TRANSITION_LABEL = "removeTransitionLabels";
+    public final static String[] TAGS                    = new String[] {"$UNBOUND$", "sys",
+                    "sensor", "gate"                     };
+    public final static String[] COMPONENT_TAGS          = new String[] {"$UNBOUND$", "SwC", "EC",
+                    "Main", "Constraints", "Functional", "Dev", "User", "HW"};
+    public final static String[] DATA_TAGS               = new String[] {"$UNBOUND$", "SL", "HL",
+                    "Vmin", "Vmax", "Smin", "Smax"       };
+    public final static String[] PORT_TAGS               = new String[] {"$UNBOUND$", "SC", "FC"};
+    public final static String[] CONNECTOR_TAGS          = new String[] {"$UNBOUND$", "TickCon",
+                    "ReadCon", "WriteCon", "StartCycleCon", "FinishCycleCon", "FunctionCallCon",
+                    "DataRequestCon", "DataReplyCon"     };
     /**
      * 小圆点的半径
      */
-    public static final int      BULLET_RADIUS      = 8;
-    public final static int      COMPONENT_WIDTH    = 200;
-    public final static int      COMPONENT_HEIGHT   = 124;
+    public static final int      BULLET_RADIUS           = 8;
+    public final static int      COMPONENT_WIDTH         = 200;
+    public final static int      COMPONENT_HEIGHT        = 124;
 
     /** @return 返回模型的父模型 */
     Parent getParent();

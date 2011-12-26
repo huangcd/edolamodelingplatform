@@ -59,14 +59,16 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
     private Text               textBoundArguments;
 
     /**
-     * Create the dialog.
-     * 
-     * @param parentShell
+     * @wbp.parser.constructor
      */
     public ConnectorTypeEditDialog(Shell parentShell) {
         super(parentShell, "创建连接子");
-        setTitle("\u7F16\u8F91\u8FDE\u63A5\u5B50");
         connector = new ConnectorTypeModel();
+    }
+
+    public ConnectorTypeEditDialog(Shell parentShell, ConnectorTypeModel connector) {
+        super(parentShell, "创建连接子");
+        this.connector = connector;
     }
 
     /**
@@ -610,7 +612,6 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 comboDatas.select(comboDatas.getItemCount() - 1);
             }
         }
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -623,7 +624,6 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
     protected boolean validateUserInput() {
         return validateConnectorName() && validateArguments() && validateExport()
                         && validateInteractor();
-        // TODO Auto-generated method stub
     }
 
     private boolean validateInteractor() {

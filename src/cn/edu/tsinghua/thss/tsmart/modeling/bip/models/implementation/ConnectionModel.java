@@ -22,9 +22,6 @@ public class ConnectionModel
                 extends BaseInstanceModel<ConnectionModel, ConnectionTypeModel, CompoundTypeModel>
                 implements
                     IConnection<ConnectionModel, CompoundTypeModel, ConnectorModel, BulletModel> {
-
-    public static final String   BEND_POINTS             = "bendPoints";
-    public static final String   REMOVE_TRANSITION_LABEL = "removeTransitionLabels";
     @Element
     private ConnectorModel       source;
     @Element
@@ -36,6 +33,11 @@ public class ConnectionModel
 
     protected ConnectionModel() {
         bendpoints = new ArrayList<Bendpoint>();
+    }
+
+    protected ConnectionModel(int index) {
+        bendpoints = new ArrayList<Bendpoint>();
+        argumentIndex = index;
     }
 
     public ConnectorModel getSource() {
@@ -60,8 +62,9 @@ public class ConnectionModel
      * @return
      */
     public String getFriendlyString() {
-        // TODO
-        return "";
+        if (source == null) return "";
+        ConnectorTypeModel connectorType = source.getType();
+        return connectorType.getArgumentAsString(argumentIndex).replaceAll("\\(.*\\)", "");
     }
 
     public ConnectorModel attachSource() {
@@ -71,9 +74,17 @@ public class ConnectionModel
         return source;
     }
 
+    public String getTypeName() {
+        return getSource().getType().getArgumentType(argumentIndex);
+    }
+
     public BulletModel attachTarget() {
         if (!target.getTargetConnections().contains(this)) {
             target.addTargetConnection(this);
+            // 绑定参数
+            if (!(target instanceof InvisibleBulletModel)) {
+                source.bound(argumentIndex, target.getPort());
+            }
         }
         return target;
     }
@@ -85,11 +96,10 @@ public class ConnectionModel
 
     public BulletModel detachTarget() {
         target.removeTargetConnection(this);
+        if (target instanceof InvisibleBulletModel) {
+            source.getParent().removeBullet((InvisibleBulletModel) target);
+        }
         return target;
-    }
-
-    public boolean isLoop() {
-        return source != null && source.equals(target);
     }
 
     @Override
@@ -104,35 +114,21 @@ public class ConnectionModel
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        // TODO
         return new IPropertyDescriptor[0];
-        // List<PortModel> ports = getParent().getPorts();
-        // String[] values = new String[ports.size() + 1];
-        // for (int i = 0, size = ports.size(); i < size; i++) {
-        // values[i] = ports.get(i).getName();
-        // }
-        // values[ports.size()] = "$UNBOUNDED$";
-        // return new IPropertyDescriptor[] {new TextPropertyDescriptor(ActionModel.ACTION, "动作"),
-        // new TextPropertyDescriptor(GuardModel.GUARD, "门卫函数"),
-        // new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values)};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        // TODO
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        // TODO
         return false;
     }
 
     @Override
-    public void setPropertyValue(Object id, Object value) {
-        // TODO
-    }
+    public void setPropertyValue(Object id, Object value) {}
 
     @Override
     public ArrayList<Bendpoint> getBendpoints() {

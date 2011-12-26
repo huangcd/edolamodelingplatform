@@ -13,7 +13,7 @@ import org.eclipse.gef.requests.CreateRequest;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveBulletCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.AtomicEditPart;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.ComponentEditPart;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ComponentChildrenEditPolicy extends XYLayoutEditPolicy {
@@ -28,7 +28,7 @@ public class ComponentChildrenEditPolicy extends XYLayoutEditPolicy {
                     Object constraint) {
         if (child.getModel() instanceof BulletModel) {
             BulletModel model = (BulletModel) child.getModel();
-            AtomicEditPart parent = (AtomicEditPart) getHost();
+            ComponentEditPart parent = (ComponentEditPart) getHost();
             Rectangle rect = (Rectangle) constraint;
             Point point = rect.getLocation();
             int direction = ensureInFrame(point, parent.getFigure().getBounds());

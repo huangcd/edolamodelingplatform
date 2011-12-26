@@ -15,8 +15,6 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
@@ -24,8 +22,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ActionMode
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.GuardModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -39,13 +35,6 @@ public class TransitionEditPart extends BaseConnectionEditPart {
     private FigureLocator      actionLocator;
     // 根据portLabel的位置定位guardLabel
     private FigureLocator      guardLocator;
-
-    protected void createEditPolicies() {
-        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
-        installEditPolicy(EditPolicy.CONNECTION_ROLE, new BIPConnectionEditPolicy());
-        installEditPolicy(EditPolicy.CONNECTION_BENDPOINTS_ROLE,
-                        new ConnectionBendpointEditPolicy());
-    }
 
     private void handleLoop() {}
 
@@ -67,27 +56,27 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         portLabel = new Label(getModel().getPortString());
         portLabel.setFont(properties.getDefaultEditorFont());
         portLabel.setForegroundColor(properties.getPortLabelColor());
-        getPlaceLayerFigure().add(portLabel);
+        getGraphLayerFigure().add(portLabel);
         addFigureMouseEvent(portLabel);
 
         actionLabel = new Label(getModel().getActionString());
         actionLabel.setFont(properties.getDefaultEditorFont());
         actionLabel.setForegroundColor(properties.getActionLabelColor());
-        getPlaceLayerFigure().add(actionLabel);
+        getGraphLayerFigure().add(actionLabel);
         actionLocator = new FigureLocator(portLabel, actionLabel, PositionConstants.EAST, 5);
         addFigureMouseEvent(actionLabel);
 
         guardLabel = new Label(getModel().getGuardString());
         guardLabel.setFont(properties.getDefaultEditorFont());
         guardLabel.setForegroundColor(properties.getGuardLabelColor());
-        getPlaceLayerFigure().add(guardLabel);
+        getGraphLayerFigure().add(guardLabel);
         guardLocator = new FigureLocator(portLabel, guardLabel, PositionConstants.WEST, 5);
         addFigureMouseEvent(guardLabel);
         relocateLabels(getBendpoints());
         return connection;
     }
 
-    private IFigure getPlaceLayerFigure() {
+    private IFigure getGraphLayerFigure() {
         if (getSource() != null) {
             return ((PlaceEditPart) getSource()).getParent().getFigure();
         } else if (getTarget() != null) {
@@ -96,27 +85,19 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         return null;
     }
 
+    protected Point getSourceLocation() {
+        return getModel().getSource().getPositionConstraint().getLocation();
+    }
+
+    protected Point getTargetLocation() {
+        return getModel().getTarget().getPositionConstraint().getLocation();
+    }
+
     private void relocateLabels(ArrayList<Bendpoint> bendpoints) {
-        if (bendpoints.isEmpty()) {
-            Point ref1 = getModel().getSource().getPositionConstraint().getLocation();
-            Point ref2 = getModel().getTarget().getPositionConstraint().getLocation();
-            Point location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
-            Dimension size = portLabel.getPreferredSize();
-            portLabel.setBounds(new Rectangle(location, size));
-        } else if (bendpoints.size() == 1) {
-            Point ref1 = getModel().getSource().getPositionConstraint().getLocation();
-            Point ref2 = bendpoints.get(0).getLocation();
-            Point location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
-            Dimension size = portLabel.getPreferredSize();
-            portLabel.setBounds(new Rectangle(location, size));
-        } else {
-            int index = (bendpoints.size() - 1) >> 1;
-            Point ref1 = bendpoints.get(index).getLocation();
-            Point ref2 = bendpoints.get(index + 1).getLocation();
-            Point location = new Point((ref1.x + ref2.x) / 2, (ref1.y + ref2.y) / 2);
-            Dimension size = portLabel.getPreferredSize();
-            portLabel.setBounds(new Rectangle(location, size));
-        }
+        Point location = getRelocateLocation(bendpoints);
+        Dimension size = portLabel.getPreferredSize();
+        location.translate(-size.width / 2, 0);
+        portLabel.setBounds(new Rectangle(location, size));
         guardLocator.relocate();
         actionLocator.relocate();
     }
@@ -149,9 +130,9 @@ public class TransitionEditPart extends BaseConnectionEditPart {
      * 删除Transition的时候移除相应标签
      */
     public void deactivate() {
-        ((PlaceEditPart) getSource()).getParent().getFigure().remove(actionLabel);
-        ((PlaceEditPart) getSource()).getParent().getFigure().remove(guardLabel);
-        ((PlaceEditPart) getSource()).getParent().getFigure().remove(portLabel);
+        getGraphLayerFigure().remove(actionLabel);
+        getGraphLayerFigure().remove(guardLabel);
+        getGraphLayerFigure().remove(portLabel);
         super.deactivate();
     }
 
@@ -182,7 +163,6 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         actionLabel.setText(getModel().getActionString());
         guardLabel.setText(getModel().getGuardString());
         portLabel.setText(getModel().getPortString());
-        actionLocator.relocate();
         refreshVisuals();
     }
 

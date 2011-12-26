@@ -17,15 +17,9 @@ public class CreateModelCommand extends Command {
     }
 
     @Override
-    public void redo() {
-        child.setParent(parent);
-        parent.addChild(child);
-    }
-
-    @Override
     public void undo() {
         parent.removeChild(child);
-        child.setParent(parent);
+        child.setParent(null);
     }
 
     public void setParent(IContainer parent) {

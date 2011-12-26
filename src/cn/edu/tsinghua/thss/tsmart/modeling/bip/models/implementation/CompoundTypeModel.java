@@ -1,8 +1,10 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.ElementList;
@@ -32,11 +34,13 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
     private List<ConnectorModel>                                   connectors;
     @ElementList
     private List<PriorityModel<CompoundTypeModel, ConnectorModel>> priorities;
+    private List<InvisibleBulletModel>                             bullets;
 
     public CompoundTypeModel() {
         components = new ArrayList<IComponentInstance>();
         connectors = new ArrayList<ConnectorModel>();
         priorities = new ArrayList<PriorityModel<CompoundTypeModel, ConnectorModel>>();
+        bullets = new ArrayList<InvisibleBulletModel>();
     }
 
     @Override
@@ -45,6 +49,7 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
         children.addAll(components);
         children.addAll(connectors);
         children.addAll(priorities);
+        children.addAll(bullets);
         return children;
     }
 
@@ -55,13 +60,16 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
 
     public void addConnector(ConnectorModel connector) {
         connectors.add(connector);
-        // TODO validate
         firePropertyChange(CHILDREN);
     }
 
     public void addPriority(PriorityModel<CompoundTypeModel, ConnectorModel> priorityModel) {
         priorities.add(priorityModel);
-        // TODO validate
+        firePropertyChange(CHILDREN);
+    }
+
+    private void addBullet(InvisibleBulletModel child) {
+        bullets.add(child);
         firePropertyChange(CHILDREN);
     }
 
@@ -77,6 +85,8 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
             addConnector((ConnectorModel) child);
         } else if (child instanceof PriorityModel) {
             addPriority((PriorityModel) child);
+        } else if (child instanceof InvisibleBulletModel) {
+            addBullet((InvisibleBulletModel) child);
         } else {
             System.err.println("Invalidated child type to add:\n" + child);
         }
@@ -91,6 +101,8 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
             removeConnector((ConnectorModel) iInstance);
         } else if (iInstance instanceof PriorityModel) {
             removePriority((PriorityModel) iInstance);
+        } else if (iInstance instanceof InvisibleBulletModel) {
+            removeBullet((InvisibleBulletModel) iInstance);
         }
         return false;
     }
@@ -104,6 +116,19 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
             return false;
         }
         priorities.remove(index);
+        firePropertyChange(CHILDREN);
+        return true;
+    }
+
+    public boolean removeBullet(InvisibleBulletModel child) {
+        if (child == null) {
+            return false;
+        }
+        int index = bullets.indexOf(child);
+        if (index < 0) {
+            return false;
+        }
+        bullets.remove(index);
         firePropertyChange(CHILDREN);
         return true;
     }
@@ -183,7 +208,14 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        return new IPropertyDescriptor[] {new TextPropertyDescriptor(NAME, "复合组件名")};
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "复合组件名");
+        name.setDescription("01");
+        properties.add(name);
+        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", COMPONENT_TAGS);
+        tag.setDescription("02");
+        properties.add(tag);
+        return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
     @Override
@@ -191,18 +223,28 @@ public class CompoundTypeModel extends BaseTypeModel<CompoundTypeModel, Compound
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
+        if (TAG.equals(id)) {
+            return getTag() == null ? 0 : Arrays.asList(COMPONENT_TAGS).indexOf(getTag());
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id);
+        return TAG.equals(id) || NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
+        }
+        if (TAG.equals(id)) {
+            int index = (Integer) value;
+            if (index == 0)
+                setTag(null);
+            else
+                setTag(COMPONENT_TAGS[index]);
         }
     }
 

@@ -81,14 +81,10 @@ public class ConnectorExportPortEditDialog extends AbstractEditDialog {
     }
 
     @Override
-    protected void initValues() {
-        // TODO
-    }
+    protected void initValues() {}
 
     @Override
-    protected void updateValues() {
-        // TODO
-    }
+    protected void updateValues() {}
 
     @SuppressWarnings("unchecked")
     @Override

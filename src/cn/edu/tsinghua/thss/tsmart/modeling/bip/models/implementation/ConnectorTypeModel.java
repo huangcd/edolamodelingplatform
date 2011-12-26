@@ -165,9 +165,13 @@ public class ConnectorTypeModel
     }
 
     static class ArgumentEntry implements Serializable {
+        @Element
         private int           index;
+        @Element
         private boolean       bounded = false;
+        @Element
         private String        name;
+        @Element
         private PortTypeModel model;
 
         protected ArgumentEntry(String name, PortTypeModel model, int index) {
@@ -239,7 +243,11 @@ public class ConnectorTypeModel
         exportDatas = new ArrayList<DataModel<ConnectorTypeModel>>();
         interactions = new ArrayList<InteractionModel>();
         arguments = new ArrayList<ArgumentEntry>();
-        setPort(PortTypeModel.getPortTypeModel("ePort").getInstance());
+        setPort((PortModel) PortTypeModel.getPortTypeModel("ePort").getInstance().setParent(this));
+    }
+
+    protected List<ArgumentEntry> getArguments() {
+        return arguments;
     }
 
     public PortModel getPort() {
@@ -294,6 +302,10 @@ public class ConnectorTypeModel
         return arguments.get(index).getName();
     }
 
+    public String getArgumentType(int index) {
+        return arguments.get(index).getTypeName();
+    }
+
     @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
@@ -312,7 +324,6 @@ public class ConnectorTypeModel
         for (InteractionModel interaction : interactions) {
             buffer.append("    ").append(interaction.exportToBip()).append('\n');
         }
-        // TODO export port
         buffer.append("    export port ").append(port.exportToBip()).append('\n');
         buffer.append("end");
         return buffer.toString();
@@ -328,6 +339,18 @@ public class ConnectorTypeModel
         List<IInstance> list = new ArrayList<IInstance>(interactions);
         list.addAll(datas);
         return list;
+    }
+
+    protected ConnectorTypeModel bound(int index, PortTypeModel model) {
+        arguments.get(index).bound(model);
+        getInstance().firePropertyChange(CHILDREN);
+        return this;
+    }
+
+    protected ConnectorTypeModel unbound(int index) {
+        arguments.get(index).unbound();
+        getInstance().firePropertyChange(CHILDREN);
+        return this;
     }
 
     @Override

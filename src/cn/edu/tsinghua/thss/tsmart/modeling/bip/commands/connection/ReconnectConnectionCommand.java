@@ -4,6 +4,7 @@ import org.eclipse.gef.commands.Command;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InvisibleBulletModel;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ReconnectConnectionCommand extends Command {
@@ -24,6 +25,14 @@ public class ReconnectConnectionCommand extends Command {
             connection.setTarget(newTarget);
             connection.attachTarget();
         }
+    }
+
+    @Override
+    public boolean canUndo() {
+        if (oldTarget != null && oldTarget instanceof InvisibleBulletModel) {
+            return false;
+        }
+        return super.canUndo();
     }
 
     public void undo() {

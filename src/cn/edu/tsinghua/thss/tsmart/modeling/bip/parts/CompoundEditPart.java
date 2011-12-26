@@ -7,4 +7,5 @@ public class CompoundEditPart extends ComponentEditPart {
     public CompoundModel getModel() {
         return (CompoundModel) super.getModel();
     }
+
 }
