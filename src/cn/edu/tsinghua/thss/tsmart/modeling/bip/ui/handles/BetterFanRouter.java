@@ -7,8 +7,8 @@ import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 
 public class BetterFanRouter extends FanRouter {
-    private static final PrecisionPoint A_POINT = new PrecisionPoint();
-    private static final int            COUNT   = 50;
+    public static final PrecisionPoint A_POINT = new PrecisionPoint();
+    private static final int           COUNT   = 50;
 
     public void route(Connection conn) {
         super.route(conn);

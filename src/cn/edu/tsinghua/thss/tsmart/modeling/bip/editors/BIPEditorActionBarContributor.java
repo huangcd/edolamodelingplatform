@@ -88,7 +88,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
     // 菜单栏
     @Override
     public void contributeToMenu(IMenuManager menuManager) {
-        MenuManager editMenu = new MenuManager("编辑", "edit");
+        MenuManager editMenu = new MenuManager("编辑");
         menuManager.insertAfter(IWorkbenchActionConstants.M_FILE, editMenu);
         editMenu.add(getActionRegistry().getAction(ActionFactory.UNDO.getId()));
         editMenu.add(getActionRegistry().getAction(ActionFactory.REDO.getId()));
@@ -102,7 +102,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
         editMenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
         editMenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
 
-        IMenuManager viewMenu = new MenuManager("查看", "view");
+        IMenuManager viewMenu = new MenuManager("查看");
         menuManager.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);
         viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
         viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));

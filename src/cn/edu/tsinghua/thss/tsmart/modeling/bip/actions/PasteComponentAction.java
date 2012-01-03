@@ -9,6 +9,8 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.CompoundTypeEditPart;
 
@@ -25,7 +27,7 @@ public class PasteComponentAction extends SelectionAction {
     protected void init() {
         super.init();
         setText("粘贴");
-        setToolTipText("粘贴复制的组件");
+        setToolTipText("粘贴复制的构件");
         setId(id);
         setEnabled(false);
     }
@@ -44,6 +46,9 @@ public class PasteComponentAction extends SelectionAction {
             }
             return true;
         }
+        if (BIPEditor.getCopyObject() == null) {
+            return false;
+        }
         return false;
     }
 
@@ -55,8 +60,20 @@ public class PasteComponentAction extends SelectionAction {
         if (container instanceof CompoundTypeEditPart) {
             CompoundTypeModel compound = ((CompoundTypeEditPart) container).getModel();
             IInstance obj = BIPEditor.getCopyObject();
-            obj.setPositionConstraint(new Rectangle(0, 0, 0, 0));
-            compound.addChild(obj);
+            if (obj != null) {
+                obj.setPositionConstraint(new Rectangle(10, 10, 0, 0));
+                if (obj instanceof AtomicModel) {
+                    obj.setName(CompoundTypeModel.getAppropriateAtomicName(compound));
+                    obj.getType().setName(
+                                    CompoundTypeModel.getAppropriateAtomicName(compound) + "Type");
+                } else if (obj instanceof CompoundModel) {
+                    obj.setName(CompoundTypeModel.getAppropriateCompoundName(compound));
+                    obj.getType()
+                                    .setName(CompoundTypeModel.getAppropriateCompoundName(compound)
+                                                    + "Type");
+                }
+                compound.addChild(obj);
+            }
             BIPEditor.setCopyObject(null);
         }
     }

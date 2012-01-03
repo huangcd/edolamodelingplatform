@@ -11,8 +11,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.DataEditDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DataEditPart extends BaseEditableEditPart {
     private Label label;
 
@@ -21,8 +22,15 @@ public class DataEditPart extends BaseEditableEditPart {
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            label.setText(getModel().getFriendlyString());
-            refreshVisuals();
+            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                            getModel().getName())
+                            && !getModel().getParent().isNewNameKeyword(getModel().getName())) {
+                label.setText(getModel().getFriendlyString());
+                refreshVisuals();
+            } else {
+                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                getModel().setName(getModel().getOldName());
+            }
         } else if (DataModel.DATA_TYPE.equals(evt.getPropertyName())) {
             label.setText(getModel().getFriendlyString());
             refreshVisuals();

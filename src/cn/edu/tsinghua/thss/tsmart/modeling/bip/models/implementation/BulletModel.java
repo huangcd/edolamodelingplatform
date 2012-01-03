@@ -16,6 +16,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
  */
 @SuppressWarnings("rawtypes")
 public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContainer> {
+    private static final long     serialVersionUID = -3202298194927737177L;
     private PortModel             port;
     private int                   direction;
     private List<ConnectionModel> targetConnections;

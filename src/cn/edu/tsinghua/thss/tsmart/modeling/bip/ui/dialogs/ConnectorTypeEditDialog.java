@@ -387,24 +387,24 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
     protected void boundData() {
         String portType = comboExportPortType.getText();
-        connector.setPort(PortTypeModel.getPortTypeModel(portType).getInstance());
+        connector.setPort(PortTypeModel.getModelByName(portType).getInstance());
         PortModel port = connector.getPort();
         int size = port.getPortArguments().size();
         boolean emptyString = textBoundArguments.getText().trim().isEmpty();
         String[] arguments = textBoundArguments.getText().replaceAll("\\s+", "").split(",");
         if ((emptyString && size != 0) || (!emptyString && arguments.length != size)) {
-            getErrorLabel().setText("绑定的参数与导出端口参数不对应");
+            handleError("绑定的参数与导出端口参数不对应");
             return;
         }
         java.util.List<String> list = ((PortTypeModel) port.getType()).getArgumentTypes();
         for (int i = 0; i < size; i++) {
             DataModel data = connector.getDataByName(arguments[i]);
             if (data == null) {
-                getErrorLabel().setText("局部变量" + arguments[i] + "不存在");
+                handleError("局部变量" + arguments[i] + "不存在");
                 return;
             }
             if (!connector.getDataByName(arguments[i]).getType().getName().equals(list.get(i))) {
-                getErrorLabel().setText("变量" + list.get(i) + "类型与端口参数类型不对应");
+                handleError("变量" + list.get(i) + "类型与端口参数类型不对应");
                 return;
             }
         }
@@ -446,7 +446,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         }
         listInteractions.remove(index);
         connector.removeInteraction(index);
-        getErrorLabel().setText("");
+        handleError("");
     }
 
     protected void moveInteractionDown() {
@@ -511,7 +511,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return;
         }
         listDatas.remove(selections[0]);
-        getErrorLabel().setText("");
+        handleError("");
         connector.removeDataByName(selections[0]);
     }
 
@@ -521,7 +521,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return;
         }
         listPortArguments.remove(selections[0]);
-        getErrorLabel().setText("");
+        handleError("");
         connector.removeArgumentByName(selections[0]);
     }
 
@@ -542,33 +542,33 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return;
         }
         DataModel<ConnectorTypeModel> data =
-                        (DataModel<ConnectorTypeModel>) DataTypeModel.getDataTypeModel(dataType)
+                        (DataModel<ConnectorTypeModel>) DataTypeModel.getModelByName(dataType)
                                         .getInstance().setName(dataName);
         connector.addData(data);
         listDatas.add(dataName);
-        getErrorLabel().setText("");
+        handleError("");
     }
 
     protected void addArgument() {
         int index = comboArguments.getSelectionIndex();
         if (index == -1) {
-            getErrorLabel().setText("请先选择参数类型");
+            handleError("请先选择参数类型");
             return;
         }
         String portType = comboArguments.getItem(index);
         String portName = textNewArgumentName.getText().trim();
         if (!isIdentifier(portName)) {
-            getErrorLabel().setText("请先输入参数名");
+            handleError("请先输入参数名");
             return;
         }
         if (connector.nameExistsInConnector(portName)) {
-            getErrorLabel().setText("参数名已存在");
+            handleError("参数名已存在");
             return;
         }
-        PortTypeModel port = PortTypeModel.getPortTypeModel(portType);
+        PortTypeModel port = PortTypeModel.getModelByName(portType);
         connector.addArgument(port, portName);
         listPortArguments.add(portName);
-        getErrorLabel().setText("");
+        handleError("");
     }
 
     /**
@@ -639,7 +639,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            getErrorLabel().setText("错误的交互方式");
+            handleError("错误的交互方式");
         }
         return false;
     }
@@ -649,11 +649,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return true;
         }
         if (comboExportPortType.getSelectionIndex() == -1) {
-            getErrorLabel().setText("未选择导出端口类型");
+            handleError("未选择导出端口类型");
             return false;
         }
         if (!((PortTypeModel) connector.getPort().getType()).allSets()) {
-            getErrorLabel().setText("尚未绑定导出端口参数");
+            handleError("尚未绑定导出端口参数");
             return false;
         }
         return true;
@@ -661,7 +661,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
     private boolean validateArguments() {
         if (listPortArguments.getItemCount() == 0) {
-            getErrorLabel().setText("连接子必须有至少一个端口参数");
+            handleError("连接子必须有至少一个端口参数");
             return false;
         }
         return true;
@@ -670,11 +670,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
     private boolean validateConnectorName() {
         String connectorName = textConnectorName.getText().trim();
         if (!isIdentifier(connectorName)) {
-            getErrorLabel().setText("连接子名称不是合法标示符");
+            handleError("连接子名称不是合法标示符");
             return false;
         }
         if (ConnectorTypeModel.getTypes().contains(connectorName)) {
-            getErrorLabel().setText("连接子名称已存在");
+            handleError("连接子名称已存在");
             return false;
         }
         return true;

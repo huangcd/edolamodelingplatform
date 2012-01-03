@@ -4,6 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef.EditPart;
+
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
@@ -15,7 +17,7 @@ public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
     public CompoundTypeModel getModel() {
         return (CompoundTypeModel) super.getModel();
     }
-
+    @Override
     protected List<IInstance> getModelChildren() {
         List<IInstance> modelChildren = new ArrayList<IInstance>();
         for (IInstance instance : getModel().getChildren()) {
@@ -23,6 +25,11 @@ public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
                 continue;
             }
             modelChildren.add(instance);
+        }
+        for (Object child : getChildren()) {
+            if (child instanceof EditPart) {
+                ((EditPart) child).refresh();
+            }
         }
         return modelChildren;
     }
@@ -33,8 +40,10 @@ public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(IModel.CHILDREN)) refresh();
-        if (evt.getPropertyName().equals(IModel.NAME)) refreshVisuals();
+       if (evt.getPropertyName().equals(IModel.NAME))
+            refreshVisuals();
+        else if (evt.getPropertyName().equals(IModel.CHILDREN))
+            refresh();
     }
 
     @Override

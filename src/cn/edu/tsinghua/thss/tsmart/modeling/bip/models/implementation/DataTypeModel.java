@@ -9,8 +9,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -20,6 +23,7 @@ import org.simpleframework.xml.Root;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
@@ -33,6 +37,8 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 @Root
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
+    private final static long                                                      serialVersionUID =
+                                                                                                                    -5282743296523116195L;
     private final static HashMap<String, DataTypeModel>                            typeSources;
     private final static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
@@ -106,7 +112,18 @@ public class DataTypeModel<P extends IDataContainer>
         }
         toolMap.remove(type);
         removeTypeSources(type);
-        // TODO 删除一种数据类型的时候检查该类型是否被使用
+    }
+
+    public static boolean isRemovable(String type) {
+        for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+            AtomicTypeModel model = (AtomicTypeModel) editor.getModel();
+            Map<String, List<DataModel>> map = model.getDatasGroupByType();
+            List<DataModel> datas = map.get(type);
+            if (datas != null && datas.size() > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean addTypeSources(String type, DataTypeModel dataType) {
@@ -130,7 +147,7 @@ public class DataTypeModel<P extends IDataContainer>
         return typeSources.entrySet();
     }
 
-    public static DataTypeModel getDataTypeModel(String type) {
+    public static DataTypeModel getModelByName(String type) {
         return (DataTypeModel) typeSources.get(type).copy();
     }
 
@@ -170,11 +187,6 @@ public class DataTypeModel<P extends IDataContainer>
     @Override
     public String exportToBip() {
         return "";
-    }
-
-    @Override
-    public String toString() {
-        return "DataType{" + "typeName='" + getName() + '\'' + '}';
     }
 
     @Override

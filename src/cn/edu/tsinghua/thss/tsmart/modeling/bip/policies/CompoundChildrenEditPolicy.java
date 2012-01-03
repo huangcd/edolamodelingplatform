@@ -24,7 +24,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.InvisibleBulletEditPart;
 
 @SuppressWarnings("rawtypes")
 public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
-    private final static Pattern componentNamePattern = Pattern.compile("^component(\\d*)$");
     private final static Pattern connectorNamePattern = Pattern.compile("^connector(\\d*)$");
 
     @Override
@@ -54,14 +53,14 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
         if (request.getNewObjectType().equals(AtomicTypeModel.class)) {
             child =
                             new AtomicTypeModel().createInstance().setName(
-                                            getAppropriateComponentName(parent));
+                                            CompoundTypeModel.getAppropriateAtomicName(parent));
             child.getType().setName(child.getName() + "Type");
         }
         // Compound
         else if (request.getNewObjectType().equals(CompoundTypeModel.class)) {
             child =
                             new CompoundTypeModel().createInstance().setName(
-                                            getAppropriateComponentName(parent));
+                                            CompoundTypeModel.getAppropriateCompoundName(parent));
             child.getType().setName(child.getName() + "Type");
         }
         // Connector
@@ -78,18 +77,6 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
         command.setChild(child);
         command.setParent(parent);
         return command;
-    }
-
-    private String getAppropriateComponentName(CompoundTypeModel parent) {
-        int maxNumber = 0;
-        for (IInstance model : parent.getChildren()) {
-            Matcher mat = componentNamePattern.matcher(model.getName());
-            if (mat.matches()) {
-                int number = Integer.parseInt(mat.group(1));
-                maxNumber = Math.max(number + 1, maxNumber);
-            }
-        }
-        return "component" + maxNumber;
     }
 
     private String getAppropriateConnectorName(CompoundTypeModel parent) {

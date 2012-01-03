@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
@@ -8,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
@@ -17,13 +19,15 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.CycleStrategy;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Rule;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Validator;
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 /**
@@ -37,24 +41,14 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
                 implements
                     IInstance<Model, Type, Parent>,
                     IPropertySource {
-    protected final static String[] trueFalseArray = new String[] {"true", "false"};
-    private static Serializer       serializer     = new Persister(new CycleStrategy());
-    private static GlobalProperties prorerties     = GlobalProperties.getInstance();
+    private static final long            serialVersionUID = -7202759073484290135L;
+    protected transient GlobalProperties properties;
 
-    public static Serializer getSerializer() {
-        return serializer;
-    }
-
-    public static void setSerializer(Serializer serializer) {
-        BaseInstanceModel.serializer = serializer;
-    }
-
-    public static GlobalProperties getProrerties() {
-        return prorerties;
-    }
-
-    public static void setProrerties(GlobalProperties prorerties) {
-        BaseInstanceModel.prorerties = prorerties;
+    public GlobalProperties getProperties() {
+        if (properties == null) {
+            properties = GlobalProperties.getInstance();
+        }
+        return properties;
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -90,11 +84,18 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     protected Parent              parent;
     @Attribute(required = false)
     protected String              name;
+    @Attribute(required = false)
+    private String                comment;
     protected UUID                uuid      = UUID.randomUUID();
     @Element(required = false, name = "type")
     protected Type                type;
     protected boolean             editable  = true;
-    private String                tag;
+    private ArrayList<String>     entityNames = new ArrayList<String>();
+    private String                oldName;
+
+    public String getOldName() {
+        return oldName;
+    }
 
     public Type getType() {
         return type;
@@ -106,17 +107,26 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     }
 
     @Override
-    public String getTag() {
-        return tag;
+    public ArrayList<String> getEntityNames() {
+        return entityNames;
     }
 
     @Override
-    public Model setTag(String tag) {
-        this.tag = tag;
-        firePropertyChange(TAG);
+    public Model setEntityNames(ArrayList<String> entityNames){
+        this.entityNames = new ArrayList<String>(entityNames);
+        firePropertyChange(ENTITY);
+        validateOnTheFly();
         return (Model) this;
     }
 
+    @Override
+    public Model deleteAllEntityNames() {
+        entityNames.removeAll(null);
+        firePropertyChange(ENTITY);
+        validateOnTheFly();
+        return (Model) this;
+    }
+    
     @Override
     public String exportToString() {
         try {
@@ -145,6 +155,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     @Override
     public Model setName(String newName) {
+        this.oldName = this.name;
         this.name = newName;
         firePropertyChange(NAME);
         return (Model) this;
@@ -163,6 +174,17 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     }
 
     @Override
+    public String getComment() {
+        return comment;
+    }
+
+    @Override
+    public Model setComment(String comment) {
+        this.comment = comment;
+        return (Model) this;
+    }
+
+    @Override
     public Parent getParent() {
         return parent;
     }
@@ -170,6 +192,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public Model setParent(Parent parent) {
         this.parent = parent;
+        // firePropertyChange(PARENT);
         return (Model) this;
     }
 
@@ -223,7 +246,15 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     @Override
     public Model copy() {
-        return (Model) ((IType) getType().copy()).getInstance().setName(getName()).resetID();
+        if (getType() != null) {
+            return (Model) ((IType) getType().copy()).getInstance().setName(getName()).resetID();
+        }
+        try {
+            return (Model) this.getClass().getConstructor().newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return (Model) this;
+        }
     }
 
     @Override
@@ -238,5 +269,56 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    @Override
+    public boolean validateOnTheFly() {
+        try {
+            for (Rule rule : getProperties().getRules()) {
+                for (Validator validator : getValidators()) {
+                    validator.validateOnTheFly(this, rule);
+                }
+            }
+            return true;
+        } catch (BIPModelingException e) {
+            MessageDialog.ShowErrorDialog(e.getMessage(), "Error");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean validate() {
+        try {
+            for (Rule rule : getProperties().getRules()) {
+                for (Validator validator : getValidators()) {
+                    validator.validate(this, rule);
+                }
+            }
+            return true;
+        } catch (BIPModelingException e) {
+            MessageDialog.ShowErrorDialog(e.getMessage(), "Error");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean validateFull() {
+        if (this.getType() instanceof IContainer) {
+            for (Object child : ((IContainer) this.getType()).getChildren()) {
+                if (child instanceof IModel) {
+                    if (!((IModel) child).validateFull()) {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return validate();
+        }
+    }
+
+    @Override
+    public List<Validator> getValidators() {
+        return getProperties().getValidators();
     }
 }

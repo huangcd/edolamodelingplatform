@@ -18,9 +18,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorT
 @Root
 @SuppressWarnings("rawtypes")
 public class InteractionModel
-                extends
-                BaseInstanceModel<InteractionModel, InteractionTypeModel, ConnectorTypeModel> {
+                extends BaseInstanceModel<InteractionModel, BaseTypeModel, ConnectorTypeModel> {
 
+    private static final long   serialVersionUID = 6862102301754364886L;
     @Element
     private ActionModel         upAction;
     @Element
@@ -101,8 +101,8 @@ public class InteractionModel
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder("on ");
         buffer.append(getInteractionString());
-        buffer.append("\n\t\tup{\n\t\t").append(upAction.getAction()).append("\n\t\t}");
-        buffer.append("\n\t\tdown{\n\t\t").append(downAction.getAction()).append("\n\t\t}\n");
+        buffer.append("\n\t\tup{\n\t\t\t").append(upAction.exportToBip()).append("\n\t\t}");
+        buffer.append("\n\t\tdown{\n\t\t\t").append(downAction.exportToBip()).append("\n\t\t}\n");
         return buffer.toString();
     }
 

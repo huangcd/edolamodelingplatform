@@ -27,7 +27,7 @@ public class CopyComponentAction extends SelectionAction {
     protected void init() {
         super.init();
         setText("复制");
-        setToolTipText("复制当前组件");
+        setToolTipText("复制当前构件");
         setId(id);
         setEnabled(false);
     }
@@ -39,6 +39,7 @@ public class CopyComponentAction extends SelectionAction {
         if (list.isEmpty()) {
             return false;
         }
+        // 只对最后一个被选择的对象进行处理，判断是否可以复制
         Object obj = list.get(list.size() - 1);
         if (obj instanceof AtomicTypeEditPart || obj instanceof CompoundTypeEditPart
                         || obj instanceof AtomicEditPart || obj instanceof CompoundEditPart) {
@@ -55,7 +56,6 @@ public class CopyComponentAction extends SelectionAction {
         if (obj instanceof AtomicTypeEditPart || obj instanceof CompoundTypeEditPart
                         || obj instanceof AtomicEditPart || obj instanceof CompoundEditPart) {
             BIPEditor.setCopyObject((IModel) ((BaseGraphicalEditPart) obj).getModel());
-            System.out.println("copy " + obj);
         }
     }
 }

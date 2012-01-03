@@ -77,16 +77,21 @@ public class DataTypeManageDialog extends AbstractEditDialog {
         initValues();
         return container;
     }
-
     private void removeTypes() {
-        String[] seletions = listDataTypes.getSelection();
+        String[] selections = listDataTypes.getSelection();
         boolean containsDefaultType = false;
-        for (String selection : seletions) {
+        for (String selection : selections) {
             if (selection.equals("int") || selection.equals("bool")) {
                 containsDefaultType = true;
                 continue;
             }
-            listDataTypes.remove(selection);
+            if(DataTypeModel.isRemovable(selection)){
+                DataTypeModel.removeType(selection);
+                listDataTypes.remove(selection);
+            }else
+            {
+                MessageDialog.ShowDeleteDataTypeErrorDialog(selection);
+            }
         }
         if (containsDefaultType) {
             handleError("内置类型不能被删除");

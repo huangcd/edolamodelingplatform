@@ -22,17 +22,15 @@ public class PlatformApplication implements IApplication {
                 return IApplication.EXIT_RESTART;
             else
                 return IApplication.EXIT_OK;
-            
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw ex;
         } finally {
             display.dispose();
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.equinox.app.IApplication#stop()
-     */
     public void stop() {
         if (!PlatformUI.isWorkbenchRunning()) return;
         final IWorkbench workbench = PlatformUI.getWorkbench();

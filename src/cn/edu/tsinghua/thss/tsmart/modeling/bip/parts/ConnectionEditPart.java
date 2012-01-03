@@ -124,8 +124,6 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
         refreshVisuals();
         if (TransitionModel.BEND_POINTS.equals(propertyName)) {
             refreshVisuals();
-        } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
-            refreshVisuals();
         } else if (IModel.SOURCE.equals(propertyName) || IModel.TARGET.equals(propertyName)) {
             refreshVisuals();
         }

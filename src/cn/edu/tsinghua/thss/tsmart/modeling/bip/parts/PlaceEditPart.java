@@ -26,6 +26,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 
@@ -104,6 +105,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         refreshVisuals();
+        getParent().refresh();
         // 位置变更，同时重定位标签的位置
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
@@ -116,11 +118,17 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
                 transition.firePropertyChange(IModel.TARGET);
             }
         }
-        // 名字变更，同时修改标签和toolTip的名字,并重定位标签的位置
+        // 名字变更，先判断是否重名，同时修改标签和toolTip的名字,并重定位标签的位置
         else if (IModel.NAME.equals(evt.getPropertyName())) {
-            nameLabel.setText(getModel().getName());
-            tooltipLabel.setText(getModel().getName());
-            labelLocator.relocate();
+            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                            getModel().getName())) {
+                nameLabel.setText(getModel().getName());
+                tooltipLabel.setText(getModel().getName());
+                labelLocator.relocate();
+            } else {
+                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                getModel().setName(getModel().getOldName());
+            }
         } else if (IModel.ATOMIC_INIT_PLACE.equals(evt.getPropertyName())) {
             PlaceModel model = getModel();
             if (model.isInitialPlace()) {
@@ -134,9 +142,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             refreshSourceConnections();
         } else if (IModel.TARGET.equals(evt.getPropertyName())) {
             refreshTargetConnections();
-        } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
-            refresh();
-        }
+        } 
     }
 
     @Override

@@ -14,7 +14,6 @@ public interface IInstance<M extends IInstance, T extends IType, P extends ICont
                     IModel<M, P> {
 
     /**
-     * 
      * @return 返回实例的类型
      */
     T getType();

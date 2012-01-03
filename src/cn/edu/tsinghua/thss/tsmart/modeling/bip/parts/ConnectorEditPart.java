@@ -4,7 +4,6 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import org.eclipse.draw2d.ChopboxAnchor;
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.Graphics;
@@ -25,6 +24,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorM
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InvisibleBulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditPart {
@@ -38,6 +38,10 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
         getParent().getFigure().remove(nameLabel);
     }
 
+    private String getTooltipText() {
+        return getModel().getType().exportToBip().replaceAll("[\r\n]+\t", "\n");
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         refreshVisuals();
@@ -49,13 +53,17 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
                 transition.firePropertyChange(IModel.SOURCE);
             }
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            nameLabel.setText(getModel().getName());
-            tooltipLabel.setText(getModel().getFriendlyString());
-            labelLocator.relocate();
+            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                            getModel().getName())) {
+                nameLabel.setText(getModel().getName());
+                labelLocator.relocate();
+            } else {
+                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                getModel().setName(getModel().getOldName());
+            }
+
         } else if (IModel.SOURCE.equals(evt.getPropertyName())) {
             refreshSourceConnections();
-        } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
-            refresh();
         } else if (ConnectorModel.LINE_COLOR.equals(evt.getPropertyName())) {
             refreshSourceConnections();
         }
@@ -90,8 +98,8 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
 
     @Override
     protected IFigure createFigure() {
-       // figure = new ConnectorFigure();
-        figure=new Ellipse();
+        // figure = new ConnectorFigure();
+        figure = new Ellipse();
         figure.setForegroundColor(properties.getConnectorOutlineColor());
         figure.setBackgroundColor(properties.getConnectorFillColor());
         figure.setFill(true);
@@ -99,7 +107,7 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
         figure.setLineWidth(3);
         figure.setAntialias(SWT.ON);
 
-        tooltipLabel = new Label(getModel().getFriendlyString());
+        tooltipLabel = new Label(getTooltipText());
         tooltipLabel.setFont(properties.getDefaultEditorFont());
         figure.setToolTip(tooltipLabel);
 
@@ -154,25 +162,9 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
             super();
         }
 
-        private Rectangle getInnerBound() {
-            float lineInset = Math.max(1.0f, getLineWidthFloat()) / 2.0f;
-            int inset1 = (int) Math.floor(lineInset);
-            int inset2 = (int) Math.ceil(lineInset);
-
-            Rectangle rect = Rectangle.SINGLETON.setBounds(getBounds());
-            rect.x += 3 * (inset1 + inset2);
-            rect.y += 3 * (inset1 + inset2);
-            rect.width -= 6 * (inset1 + inset2);
-            rect.height -= 6 * (inset1 + inset2);
-            return rect;
-        }
-
         protected void outlineShape(Graphics graphics) {
             graphics.setAntialias(SWT.ON);
             super.outlineShape(graphics);
-            // Rectangle innerBound = getInnerBound();
-            // graphics.drawOval(innerBound);
-
         }
     }
 }

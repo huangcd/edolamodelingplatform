@@ -2,6 +2,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.editors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditPartViewer;
@@ -45,6 +46,8 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetSorter;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.PasteComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -52,26 +55,51 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     protected static HashMap<EditPartViewer, BIPEditor> viewerMap =
                                                                                   new HashMap<EditPartViewer, BIPEditor>();
     private static IInstance                            copyObject;
 
     public static IInstance getCopyObject() {
-        return copyObject == null ? null : (IInstance) copyObject.copy();
+        if (copyObject == null) {
+            return null;
+        }
+        IInstance newObject = (IInstance) copyObject.copy().setName(copyObject.getName());
+        newObject.getType().setName(copyObject.getType().getName());
+        return newObject;
     }
 
     public static void setCopyObject(IModel obj) {
+        if (obj == null) {
+            copyObject = null;
+            return;
+        }
+        ComponentTypeModel model = null;
         if (obj instanceof IType) {
-            BIPEditor.copyObject = ((IType) obj).getInstance();
+            copyObject = (IInstance) ((IType) obj).getInstance().copy();
+            if (obj instanceof ComponentTypeModel) {
+                model = (ComponentTypeModel) obj;
+            }
         } else {
-            BIPEditor.copyObject = (IInstance) obj;
+            copyObject = (IInstance) obj.copy();
+            if (obj instanceof ComponentModel) {
+                model = (ComponentTypeModel) ((ComponentModel) obj).getType();
+            }
+        }
+        if (model != null) {
+            List<PortModel> ports = model.getExportPorts();
+            for (PortModel port : ports) {
+                port.getBullet().getTargetConnections().clear();
+            }
         }
     }
 
@@ -212,23 +240,21 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         if (type == IContentOutlinePage.class) {
             return new BIPContentOutlinePage(new TreeViewer());
         }
-        if (type.equals(IPropertySheetPage.class)) {   
-            return new PropertySheetPage() {   
-                public void createControl(Composite parent) {   
-                    // super.createControl(parent);   
-                    PropertySheetSorter sorter = new PropertySheetSorter() {   
-                        public int compare(IPropertySheetEntry entryA,   
-                                IPropertySheetEntry entryB) {   
-                            return getCollator().compare(   
-                                    entryA.getDescription(),   
-                                    entryB.getDescription());   
-                        }   
-                    };   
-                    this.setSorter(sorter);   
-                    super.createControl(parent);   
-                }   
-            };   
-        } 
+        if (type.equals(IPropertySheetPage.class)) {
+            return new PropertySheetPage() {
+                public void createControl(Composite parent) {
+                    // super.createControl(parent);
+                    PropertySheetSorter sorter = new PropertySheetSorter() {
+                        public int compare(IPropertySheetEntry entryA, IPropertySheetEntry entryB) {
+                            return getCollator().compare(entryA.getDescription(),
+                                            entryB.getDescription());
+                        }
+                    };
+                    this.setSorter(sorter);
+                    super.createControl(parent);
+                }
+            };
+        }
         return super.getAdapter(type);
     }
 
@@ -245,6 +271,26 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             sharedKeyHandler = new KeyHandler();
             sharedKeyHandler.put(KeyStroke.getPressed(SWT.F2, 0),
                             getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
+            sharedKeyHandler.put(KeyStroke.getPressed(SWT.DEL, 127, 0), getActionRegistry()
+                            .getAction(ActionFactory.DELETE.getId())); // Delete
+            sharedKeyHandler.put(KeyStroke.getReleased('', 122, SWT.CTRL), getActionRegistry()
+                            .getAction(ActionFactory.UNDO.getId()));// undo
+            sharedKeyHandler.put(KeyStroke.getReleased('', 121, SWT.CTRL), getActionRegistry()
+                            .getAction(ActionFactory.REDO.getId()));// redo
+            sharedKeyHandler.put(KeyStroke.getReleased('', 97, SWT.CTRL), getActionRegistry()
+                            .getAction(ActionFactory.SELECT_ALL.getId()));// Select-all
+            sharedKeyHandler.put(
+                            KeyStroke.getReleased((char) 0x03, 99, SWT.CTRL),
+                            getActionRegistry().getAction(
+                                            CopyComponentAction.class.getCanonicalName())); // ¸´ÖÆ
+                                                                                            // Ctrl+C
+            sharedKeyHandler.put(
+                            KeyStroke.getReleased((char) 0x16, 118, SWT.CTRL),
+                            getActionRegistry().getAction(
+                                            PasteComponentAction.class.getCanonicalName())); // ð¤Ìù
+            // Ctrl+V
+            sharedKeyHandler.put(KeyStroke.getReleased((char) 24, (int) 'x', SWT.CTRL),
+                            getActionRegistry().getAction(ActionFactory.CUT.getId())); // ¼ôÇÐ Ctrl+X
         }
         return sharedKeyHandler;
 
@@ -345,6 +391,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         getGraphicalViewer().setKeyHandler(
                         new GraphicalViewerKeyHandler(getGraphicalViewer())
                                         .setParent(getCommonKeyHandler()));
+
         loadProperties();
     }
 }

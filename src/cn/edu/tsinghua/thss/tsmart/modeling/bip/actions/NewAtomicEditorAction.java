@@ -26,8 +26,8 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
     public NewAtomicEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("原子组件");
-        setToolTipText("新建原子组件");
+        setText("原子构件");
+        setToolTipText("新建原子构件");
         setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png"));
         window.getSelectionService().addSelectionListener(this);
     }

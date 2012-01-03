@@ -25,7 +25,9 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
@@ -46,6 +48,8 @@ public class ConnectorTypeModel
                 implements
                     IDataContainer<ConnectorTypeModel, IDataContainer, IInstance>,
                     IOrderContainer<PortTypeModel> {
+    private static final long                                                        serialVersionUID =
+                                                                                                                      -7637868341840412974L;
     private final static HashMap<String, ConnectorTypeModel>                         typeSources;
     private final static HashMap<String, HashMap<CompoundEditor, CreationToolEntry>> toolMap;
 
@@ -53,12 +57,12 @@ public class ConnectorTypeModel
         typeSources = new HashMap<String, ConnectorTypeModel>();
         toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
         ConnectorTypeModel singleton = new ConnectorTypeModel().setName("singleton");
-        singleton.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p1");
+        singleton.addArgument(PortTypeModel.getModelByName("ePort"), "p1");
         singleton.parseInteractor("p1");
 
         ConnectorTypeModel rendezvous = new ConnectorTypeModel().setName("rendezvous");
-        rendezvous.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p1");
-        rendezvous.addArgument(PortTypeModel.getPortTypeModel("ePort"), "p2");
+        rendezvous.addArgument(PortTypeModel.getModelByName("ePort"), "p1");
+        rendezvous.addArgument(PortTypeModel.getModelByName("ePort"), "p2");
         rendezvous.parseInteractor("p1 p2");
         addTypeSources(singleton.getName(), singleton);
         addTypeSources(rendezvous.getName(), rendezvous);
@@ -136,7 +140,18 @@ public class ConnectorTypeModel
         }
         toolMap.remove(type);
         removeTypeSources(type);
-        // TODO 删除一种类型的时候检查该类型是否被使用
+    }
+
+    public static boolean isRemovable(String type) {
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            CompoundTypeModel model = (CompoundTypeModel) editor.getModel();
+            Map<String, List<ConnectorModel>> map = model.getConnectorsGroupByType();
+            List<ConnectorModel> datas = map.get(type);
+            if (datas != null && datas.size() > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean removeTypeSources(String type) {
@@ -160,19 +175,23 @@ public class ConnectorTypeModel
         return typeSources.entrySet();
     }
 
-    public static ConnectorTypeModel getConnectorTypeModel(String type) {
+    public static ConnectorTypeModel getModelByName(String type) {
         return typeSources.get(type).copy();
     }
 
     static class ArgumentEntry implements Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 9130376378631319683L;
         @Element
-        private int           index;
+        private int               index;
         @Element
-        private boolean       bounded = false;
+        private boolean           bounded          = false;
         @Element
-        private String        name;
+        private String            name;
         @Element
-        private PortTypeModel model;
+        private PortTypeModel     model;
 
         protected ArgumentEntry(String name, PortTypeModel model, int index) {
             super();
@@ -243,10 +262,10 @@ public class ConnectorTypeModel
         exportDatas = new ArrayList<DataModel<ConnectorTypeModel>>();
         interactions = new ArrayList<InteractionModel>();
         arguments = new ArrayList<ArgumentEntry>();
-        setPort((PortModel) PortTypeModel.getPortTypeModel("ePort").getInstance().setParent(this));
+        setPort((PortModel) PortTypeModel.getModelByName("ePort").getInstance().setParent(this));
     }
 
-    protected List<ArgumentEntry> getArguments() {
+    protected List<ArgumentEntry> getArgumentEntries() {
         return arguments;
     }
 
@@ -257,6 +276,7 @@ public class ConnectorTypeModel
     public ConnectorTypeModel setPort(PortModel port) {
         this.port = port;
         this.port.setName("p");
+        this.port.setParent(this);
         return this;
     }
 
@@ -269,6 +289,29 @@ public class ConnectorTypeModel
         arguments.add(entry);
         firePropertyChange(CHILDREN);
         return entry;
+    }
+
+    /**
+     * 返回端口参数，如果参数没有被绑定，直接返回null。
+     * 
+     * @param index
+     * @return
+     */
+    public PortTypeModel getPortArgument(int index) {
+        ArgumentEntry entry = arguments.get(index);
+        if (entry.isBounded()) {
+            return entry.getModel();
+        }
+        return null;
+    }
+
+    /**
+     * 返回端口参数的长度
+     * 
+     * @return
+     */
+    public int getArgumentSize() {
+        return arguments.size();
     }
 
     @Override
@@ -317,15 +360,17 @@ public class ConnectorTypeModel
             buffer.replace(buffer.length() - 2, buffer.length(), "");
         }
         buffer.append(")\n");
-        buffer.append("   define ").append(interactor).append('\n');
+        buffer.append("\t\tdefine ").append(interactor).append('\n');
         for (DataModel<ConnectorTypeModel> data : datas) {
-            buffer.append("    ").append(data.exportToBip()).append('\n');
+            buffer.append("\t\t").append(data.exportToBip()).append('\n');
         }
         for (InteractionModel interaction : interactions) {
-            buffer.append("    ").append(interaction.exportToBip()).append('\n');
+            buffer.append("\t\t").append(interaction.exportToBip()).append('\n');
         }
-        buffer.append("    export port ").append(port.exportToBip()).append('\n');
-        buffer.append("end");
+        buffer.append("\t\texport port ").append(port.getType().getName()).append(' ')
+                        .append(port.getName()).append('(').append(port.getBoundedArguments())
+                        .append(")\n");
+        buffer.append("\tend");
         return buffer.toString();
     }
 
@@ -732,6 +777,12 @@ public class ConnectorTypeModel
     }
 
     @Override
+    public boolean isNewNameKeyword(String newName) {
+        if (GlobalProperties.getKeywords().contains(newName)) return true;
+        return false;
+    }
+
+    @Override
     public Map<String, List<DataModel>> getDatasGroupByType() {
         HashMap<String, List<DataModel>> map = new HashMap<String, List<DataModel>>();
         for (DataModel<ConnectorTypeModel> data : datas) {
@@ -750,12 +801,16 @@ public class ConnectorTypeModel
 @Root
 class Interactor implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5340423309780663860L;
     @Element(required = false, name = "content")
-    private ArgumentEntry content;
+    private ArgumentEntry     content;
     @Element(required = false, name = "trigger")
-    private Interactor    completePort;
+    private Interactor        completePort;
     @ElementArray(required = false, name = "ports")
-    private Interactor[]  incompletePorts;
+    private Interactor[]      incompletePorts;
 
     public Interactor(@Element(name = "content") ArgumentEntry content) {
         this.content = content;

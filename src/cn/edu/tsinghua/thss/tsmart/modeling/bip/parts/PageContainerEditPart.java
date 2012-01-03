@@ -35,7 +35,7 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
         }
     }
 
-    protected void refreshVisuals() {}
+    //protected void refreshVisuals() {}
 
     @Override
     protected IFigure createFigure() {

@@ -10,13 +10,12 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection.ReconnectCon
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.ConnectorEditPart;
 
 @SuppressWarnings("rawtypes")
@@ -35,22 +34,12 @@ public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
     @Override
     protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
         Object type = request.getNewObjectType();
-        if (type.equals(TransitionTypeModel.class)) {
+        if (type.equals(TransitionModel.class)) {
             CreateConnectionCommand command = new CreateConnectionCommand();
-            command.setConnection((IConnection) ((IType) request.getNewObject()).getInstance());
+            command.setConnection((IConnection) request.getNewObject());
             command.setParent((IContainer) getHost().getParent().getModel());
             if (getHost().getModel() instanceof PlaceModel) {
                 command.setSource((PlaceModel) getHost().getModel());
-                request.setStartCommand(command);
-                return command;
-            }
-            return null;
-        } else if (type.equals(ConnectionTypeModel.class)) {
-            CreateConnectionCommand command = new CreateConnectionCommand();
-            command.setConnection((IConnection) ((IType) request.getNewObject()).getInstance());
-            // command.setParent((IContainer) getHost().getParent().getModel());
-            if (getHost().getModel() instanceof ConnectorModel) {
-                command.setSource((IInstance) getHost().getModel());
                 request.setStartCommand(command);
                 return command;
             }
@@ -61,14 +50,23 @@ public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
 
     @Override
     protected Command getReconnectTargetCommand(ReconnectRequest request) {
-        // 检查端口类型和connector参数类型是否一致
         if (getHost().getModel() instanceof BulletModel) {
+            // 检查端口类型和connector参数类型是否一致
             BulletModel bullet = (BulletModel) getHost().getModel();
             ConnectionModel connection =
                             (ConnectionModel) request.getConnectionEditPart().getModel();
-            // TODO 修改connectionModel增加一个方法
-            if (!connection.getTypeName()
-                            .equals(bullet.getPortTypeName())) {
+            if (!connection.getTypeName().equals(bullet.getPortTypeName())) {
+                return null;
+            }
+            // 检查端口是否有同一组件的多个端口同时连接到一个connector的情况
+            ConnectorModel connector = connection.getSource();
+            int index = connection.getArgumentIndex();
+            PortModel port = bullet.getPort();
+            if (connector.portFromSameComponentAlreadyExists(port, index)) {
+                return null;
+            }
+            // 如果validateOnTheFly失败，返回false
+            if (!connector.availableToBound(index, port)) {
                 return null;
             }
         }

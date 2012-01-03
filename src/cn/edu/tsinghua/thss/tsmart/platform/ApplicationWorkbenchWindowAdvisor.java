@@ -37,6 +37,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
         configurer.setInitialSize(new Point(1000, 800));
         configurer.setShowCoolBar(true);
+        configurer.setShowMenuBar(true);
         configurer.setShowStatusLine(true);
         configurer.setTitle("EDOLA Modelling Platform");
     }
@@ -50,7 +51,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         ConnectorTypeModel.loadConnectorTypes();
         try {
             CompoundTypeModel model = new CompoundTypeModel();
-            model.setName("compound");
+            model.setName("aCompound");
             model.getInstance().setName("model");
             page.openEditor(new BIPModuleEditorInput(model), CompoundEditor.id);
         } catch (PartInitException e) {}

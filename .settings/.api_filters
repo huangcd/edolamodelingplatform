@@ -16,4 +16,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/platform/GlobalProperties.java" type="cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="Validator"/>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="registerValidator(Validator)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

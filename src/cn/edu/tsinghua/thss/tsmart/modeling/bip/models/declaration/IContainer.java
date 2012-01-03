@@ -33,11 +33,21 @@ public interface IContainer<Model extends IContainer, Parent extends IContainer,
     boolean removeChild(Child child);
 
     /**
-     * 在改变组件名字之前，判断新的名字是否在容器中存在
+     * 在改变构件名字之前，判断新的名字是否在容器中存在
      * 
-     * @param child 待改名字的组件
+     * @param child 待改名字的构件
      * @param newName 新的名字
-     * @return 如果名字在组件中已经存在，则返回true（表示修改动作不可进行）
+     * @return 如果名字在构件中已经存在，则返回true（表示修改动作不可进行）
      */
     boolean isNewNameAlreadyExistsInParent(Child child, String newName);
+    
+    /**
+     * 在改变构件名字之前，判断新的名字是否是关键字
+     * 
+     * @param child 待改名字的构件
+     * @param newName 新的名字
+     * @return 如果名字是关键字，则返回true（表示修改动作不可进行）
+     */
+    boolean isNewNameKeyword(String newName);
+    
 }

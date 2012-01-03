@@ -3,9 +3,15 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Validator;
 
 /**
  * Created by Huangcd<br/>
@@ -26,49 +32,79 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
                     Serializable,
                     PropertyChangeListener {
 
-    public final static String   CHILDREN                = "children";
-    public final static String   PARENT                  = "parent";
-    public final static String   NAME                    = "name";
-    public final static String   TYPE_NAME               = "typeName";
-    public final static String   CREATION                = "creation";
-    public final static String   REFRESH                 = "refresh";
-    public final static String   CONSTRAINT              = "constraint";
-    public final static String   ATOMIC_INIT_PLACE       = "initPlace";
-    public final static String   ATOMIC_INIT_ACTION      = "initAction";
-    public final static String   PORT                    = "port";
-    public final static String   EXPORT_PORT             = "export";
-    public final static String   SOURCE                  = "source";
-    public final static String   TARGET                  = "target";
-    public final static String   TAG                     = "tag";
-    public static final String   BEND_POINTS             = "bendPoints";
-    public static final String   REMOVE_TRANSITION_LABEL = "removeTransitionLabels";
-    public final static String[] TAGS                    = new String[] {"$UNBOUND$", "sys",
-                    "sensor", "gate"                     };
-    public final static String[] COMPONENT_TAGS          = new String[] {"$UNBOUND$", "SwC", "EC",
-                    "Main", "Constraints", "Functional", "Dev", "User", "HW"};
-    public final static String[] DATA_TAGS               = new String[] {"$UNBOUND$", "SL", "HL",
-                    "Vmin", "Vmax", "Smin", "Smax"       };
-    public final static String[] PORT_TAGS               = new String[] {"$UNBOUND$", "SC", "FC"};
-    public final static String[] CONNECTOR_TAGS          = new String[] {"$UNBOUND$", "TickCon",
-                    "ReadCon", "WriteCon", "StartCycleCon", "FinishCycleCon", "FunctionCallCon",
-                    "DataRequestCon", "DataReplyCon"     };
+    String    CHILDREN           = "children";
+    String    PARENT             = "parent";
+    String    NAME               = "name";
+    String    CONSTRAINT         = "constraint";
+    String    ACTION             = "action";
+    String    GUARD              = "guard";
+    String    TYPE_NAME          = "typeName";
+    String    CREATION           = "creation";
+    String    ATOMIC_INIT_PLACE  = "initPlace";
+    String    ATOMIC_INIT_ACTION = "initAction";
+    String    PORT               = "port";
+    String    EXPORT_PORT        = "export";
+    String    SOURCE             = "source";
+    String    TARGET             = "target";
+    String    ENTITY             = "tag";
+    String    BEND_POINTS        = "bendPoints";
+    String    DATA_TYPE          = "dataType";
+    String    DATA_VALUE         = "dataValue";
+    String    LINE_COLOR         = "lineColor";
+    String[]  TRUE_FALSE_ARRAY   = new String[] {"true", "false"};
+    /**
+     * TODO 是不是应该把这个删除？
+     */
+    String[]  TAGS               = new String[] {"$UNBOUND$", "sys", "sensor", "gate"};
+    String[]  COMPONENT_TAGS     = new String[] {"$UNBOUND$", "SwC", "EC", "Main", "Constraints",
+                    "Functional", "Dev", "User", "HW"};
+    String[]  DATA_TAGS          = new String[] {"$UNBOUND$", "SL", "HL", "Vmin", "Vmax", "Smin",
+                    "Smax"       };
+    String[]  PORT_TAGS          = new String[] {"$UNBOUND$", "SC", "FC"};
+    String[]  CONNECTOR_TAGS     = new String[] {"$UNBOUND$", "TickCon", "ReadCon", "WriteCon",
+                    "StartCycleCon", "FinishCycleCon", "FunctionCallCon", "DataRequestCon",
+                    "DataReplyCon"};
     /**
      * 小圆点的半径
      */
-    public static final int      BULLET_RADIUS           = 8;
-    public final static int      COMPONENT_WIDTH         = 200;
-    public final static int      COMPONENT_HEIGHT        = 124;
+    int       BULLET_RADIUS      = 8;
+    /**
+     * 构件的大小
+     */
+    Dimension COMPONENT_SIZE     = new Dimension(200, 124);
+    /**
+     * 状态的大小
+     */
+    Dimension PLACE_SIZE         = new Dimension(20, 20);
+    /**
+     * 连接子的大小
+     */
+    Dimension CONNECTOR_SIZE     = new Dimension(30, 30);
 
-    /** @return 返回模型的父模型 */
+    /**
+     * @return 返回模型的父模型
+     */
     Parent getParent();
 
     Model setParent(Parent parent);
 
+    /**
+     * @return 返回模型的名字
+     */
     String getName();
 
-    Model setName(String newName);
+    Model setName(String name);
+    
+    /**
+     * @return 返回关于模型的注释
+     */
+    String getComment();
+    
+    Model setComment(String comment);
 
-    /** @return 导出成字符串 */
+    /**
+     * @return 导出成字符串
+     */
     String exportToString();
 
     /**
@@ -79,7 +115,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     byte[] exportToBytes() throws IOException;
 
     /**
-     * 指示实例是否可被导出
+     * 指示实例是否可被导出成BIP代码
      * 
      * @return 如果导出成BIP文件时当前实例会被导出，则返回true；否则返回false
      */
@@ -95,13 +131,27 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     /** @return 导出成BIP的文本 */
     String exportToBip();
 
-    String getTag();
+    /**
+     * 
+     * 模型标签相关接口
+     */
+    ArrayList<String> getEntityNames();
+//    Model addEntityName(String entityName);
+    Model setEntityNames(ArrayList<String> entityNames);
+//    Model deleteEntityName(String entityName);
+    Model deleteAllEntityNames();
+//    String getEntityDisplayName();
 
-    Model setTag(String tag);
-
-    /** @return 返回模型的全局唯一ID */
+    /**
+     * @return 返回模型的全局唯一ID
+     */
     UUID getID();
 
+    /**
+     * 重设模型ID
+     * 
+     * @return
+     */
     Model resetID();
 
     /** @return 返回模型全局唯一ID的字符串表示 */
@@ -117,8 +167,21 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
 
     Model removePropertyChangeListener(PropertyChangeListener listener);
 
-    // void validateOnTheFly() throws ValidationError;
-    // void validate() throws ValidationError;
+    /**
+     * 运行时验证模型是否满足所有规则
+     * 
+     * @return
+     */
+    boolean validateOnTheFly();
+
+    boolean validateFull();
+
+    /**
+     * 生成代码之前验证模型是否满足所有规则
+     */
+    boolean validate();
+
+    List<Validator> getValidators();
 
     /**
      * 深度复制模型，包括所有子模型

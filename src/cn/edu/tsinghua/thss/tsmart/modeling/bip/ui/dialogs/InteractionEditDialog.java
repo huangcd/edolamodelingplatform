@@ -158,7 +158,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
     protected void removeArgument() {
         String[] arguments = listInteractArguments.getSelection();
         if (arguments.length == 0) {
-            getErrorLabel().setText("没有选择任何参数");
+            handleError("没有选择任何参数");
             return;
         }
         for (String argument : arguments) {
@@ -170,7 +170,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
     protected void addArugment() {
         String[] arguments = listArguments.getSelection();
         if (arguments.length == 0) {
-            getErrorLabel().setText("没有选择任何参数");
+            handleError("没有选择任何参数");
             return;
         }
         for (String argument : arguments) {
@@ -228,7 +228,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
     @Override
     protected boolean validateUserInput() {
         if (listInteractArguments.getItemCount() == 0) {
-            getErrorLabel().setText("参与交互的端口不能为空");
+            handleError("参与交互的端口不能为空");
             return false;
         }
         StringBuilder buffer = new StringBuilder();
@@ -243,7 +243,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
         String newInteractionName = buffer.toString().trim();
         if ((interaction == null || !interaction.getInteractionString().equals(newInteractionName))
                         && connector.interactionNameExistsInConnector(newInteractionName)) {
-            getErrorLabel().setText("交互已经存在");
+            handleError("交互已经存在");
             return false;
         }
         return true;

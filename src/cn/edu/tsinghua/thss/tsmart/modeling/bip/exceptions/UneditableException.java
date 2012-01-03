@@ -5,6 +5,11 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions;
  * 
  * @author huangcd
  */
-public class UneditableException extends BIPModelException {
+public class UneditableException extends BIPModelingException {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 605159315824907723L;
 
 }

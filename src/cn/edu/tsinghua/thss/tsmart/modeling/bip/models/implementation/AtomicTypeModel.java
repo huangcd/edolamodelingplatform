@@ -1,11 +1,22 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -13,11 +24,16 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.platform.Activator;
+import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.*;
 
 
 /**
@@ -29,32 +45,141 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
  */
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
-public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel, IContainer>
+public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicModel>
                 implements
-                    IDataContainer<AtomicTypeModel, IContainer, IInstance>,
-                    IComponentType<AtomicTypeModel, AtomicModel, IContainer, IInstance> {
+                    IDataContainer<AtomicTypeModel, IContainer, IInstance> {
+
+    private static final long                                                        serialVersionUID =
+                                                                                                                      6729458252836818786L;
+    private final static HashMap<String, AtomicTypeModel>                            typeSources;
+    private final static HashMap<String, HashMap<CompoundEditor, CreationToolEntry>> toolMap;
+
+    static {
+        typeSources = new HashMap<String, AtomicTypeModel>();
+        toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
+    }
+
+    public static void saveTypes() {
+        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.ATOMIC_TYPE_FILE);
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            for (Map.Entry<String, AtomicTypeModel> entry : getTypeEntries()) {
+                out.writeObject(entry.getValue());
+                out.flush();
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadTypes() {
+        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.ATOMIC_TYPE_FILE);
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            while (true) {
+                AtomicTypeModel model = (AtomicTypeModel) in.readObject();
+                if (!getTypes().contains(model.getName())) {
+                    addType(model.getName(), model);
+                }
+            }
+        } catch (EOFException e) {} catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void addType(String type, AtomicTypeModel model) {
+        if (!addTypeSources(type, model)) {
+            MessageDialog.ShowErrorDialog("已存在同名的组件", "错误");
+            return;
+        }
+        HashMap<CompoundEditor, CreationToolEntry> map =
+                        new HashMap<CompoundEditor, CreationToolEntry>();
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            CreationToolEntry entry =
+                            new CreationToolEntry(type, model.getComment(), new CopyFactory(model),
+                                            BIPEditor.getImage("icons/atomic_16.png"),
+                                            BIPEditor.getImage("icons/atomic_32.png"));
+            editor.addAtomicCreationToolEntry(entry);
+            map.put(editor, entry);
+        }
+        toolMap.put(type, map);
+    }
+
+    public static boolean addTypeSources(String type, AtomicTypeModel connector) {
+        if (typeSources.containsKey(type)) return false;
+        typeSources.put(type, connector);
+        return true;
+    }
+
+    public static void addToolEntry(String type, CompoundEditor editor, CreationToolEntry entry) {
+        if (!toolMap.containsKey(type)) {
+            toolMap.put(type, new HashMap<CompoundEditor, CreationToolEntry>());
+        }
+        toolMap.get(type).put(editor, entry);
+    }
+
+    public static void removeType(String type) {
+        HashMap<CompoundEditor, CreationToolEntry> map = toolMap.get(type);
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            editor.removeConnectorCreationToolEntry(map.get(editor));
+        }
+        toolMap.remove(type);
+        removeTypeSources(type);
+    }
+
+    private static boolean removeTypeSources(String type) {
+        if (!typeSources.containsKey(type)) {
+            return false;
+        }
+        typeSources.remove(type);
+        return true;
+    }
+
+    public static Set<String> getTypes() {
+        return typeSources.keySet();
+    }
+
+    public static String[] getTypeNamesAsArray() {
+        ArrayList<String> array = new ArrayList<String>(typeSources.keySet());
+        Collections.sort(array);
+        return array.toArray(new String[array.size()]);
+    }
+
+    public static Set<Map.Entry<String, AtomicTypeModel>> getTypeEntries() {
+        return typeSources.entrySet();
+    }
+
+    public static AtomicTypeModel getModelByName(String type) {
+        return typeSources.get(type).copy();
+    }
 
     @Element(name = "initialPlace")
-    private PlaceModel                                      initPlace;
+    private PlaceModel                           initPlace;
     @Element(name = "initialAction", required = false)
-    private ActionModel                                     initAction;
-    @ElementList(entry = "place")
-    private List<PlaceModel>                                places;
-    @ElementList(entry = "data")
-    private List<DataModel<AtomicTypeModel>>                datas;
-    @ElementList(entry = "port")
-    private List<PortModel>                                 ports;
-    @ElementList(entry = "priority")
-    private List<PriorityModel<AtomicTypeModel, PortModel>> priorities;
+    private ActionModel                          initAction;
+    @ElementList(entry = "places")
+    private List<PlaceModel>                     places;
+    @ElementList(entry = "datas")
+    private List<DataModel<AtomicTypeModel>>     datas;
+    @ElementList(entry = "ports")
+    private List<PortModel>                      ports;
+    @ElementList(entry = "priorities")
+    private List<PriorityModel<AtomicTypeModel>> priorities;
 
     public AtomicTypeModel() {
         places = new ArrayList<PlaceModel>();
         datas = new ArrayList<DataModel<AtomicTypeModel>>();
         ports = new ArrayList<PortModel>();
-        priorities = new ArrayList<PriorityModel<AtomicTypeModel, PortModel>>();
-        initPlace = new PlaceTypeModel().getInstance();
-        initPlace.setName("init").setPositionConstraint(new Rectangle(100, 100, 30, 30))
+        priorities = new ArrayList<PriorityModel<AtomicTypeModel>>();
+        initPlace = new PlaceModel();
+        initPlace.setName("INIT").setPositionConstraint(new Rectangle(100, 100, 30, 30))
                         .setParent(this);
+        initAction = new ActionModel();
         addChild(initPlace);
     }
 
@@ -64,13 +189,20 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         children.addAll(places);
         children.addAll(ports);
         children.addAll(priorities);
-        if (initAction != null) children.add(initAction);
+        // if (initAction != null) children.add(initAction);
         return children;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public AtomicTypeModel addChild(IInstance child) {
+        while (isNewNameAlreadyExistsInParent(child, child.getName())) {
+            child.setName(child.getName() + "_");
+        }
+        if (this.getInstance().getParent() != null) {
+            addPropertyChangeListener(this.getInstance().getParent());
+            firePropertyChange(CHILDREN);
+        }
+
         if (child instanceof PlaceModel) {
             addPlace((PlaceModel) child);
         } else if (child instanceof DataModel) {
@@ -86,11 +218,6 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    /**
-     * 初始Place不可删除
-     * 如果Place有连着Transition
-     */
     public boolean removeChild(IInstance child) {
         if (child instanceof PlaceModel) {
             return removePlace((PlaceModel) child);
@@ -175,10 +302,11 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
 
     public void addPort(PortModel child) {
         ports.add(child);
+        child.setParent(this);
         firePropertyChange(CHILDREN);
     }
 
-    public AtomicTypeModel addPriority(PriorityModel<AtomicTypeModel, PortModel> child) {
+    public AtomicTypeModel addPriority(PriorityModel<AtomicTypeModel> child) {
         priorities.add(child);
         firePropertyChange(CHILDREN);
         return this;
@@ -226,6 +354,23 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     }
 
     /**
+     * 返回Atomic Type内部的所有端口，按照端口类型做聚类
+     * 
+     * @return
+     */
+    public HashMap<String, List<PortModel>> getPortsGroupByType() {
+        HashMap<String, List<PortModel>> map = new HashMap<String, List<PortModel>>();
+        for (PortModel<AtomicTypeModel> data : ports) {
+            String typeName = data.getType().getName();
+            if (!map.containsKey(typeName)) {
+                map.put(typeName, new ArrayList<PortModel>());
+            }
+            map.get(typeName).add(data);
+        }
+        return map;
+    }
+
+    /**
      * 设置初始状态
      * 
      * @param newInitPlace
@@ -246,7 +391,7 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
     @Override
     public AtomicTypeModel setName(String newName) {
         super.setName(newName);
-        getInstance().firePropertyChange(IModel.TYPE_NAME);
+        getInstance().firePropertyChange(TYPE_NAME);
         return this;
     }
 
@@ -270,28 +415,31 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         StringBuilder buffer = new StringBuilder();
         buffer.append("atomic type ").append(getName()).append('\n');
         for (DataModel<AtomicTypeModel> data : datas) {
-            buffer.append('\t').append(data.exportToBip()).append('\n');
+            buffer.append("\t\t").append(data.exportToBip()).append('\n');
         }
         buffer.append('\n');
         for (PortModel port : ports) {
-            buffer.append('\t').append(port.exportToBip()).append('\n');
+            buffer.append("\t\t").append(port.exportToBip()).append('\n');
         }
         buffer.append('\n');
         for (PlaceModel place : places) {
-            buffer.append('\t').append(place.exportToBip()).append('\n');
+            buffer.append("\t\t").append(place.exportToBip()).append('\n');
         }
         buffer.append('\n');
-        buffer.append('\t').append("initial to ").append(initPlace.getName()).append("do {")
+        buffer.append("\t\t").append("initial to ").append(initPlace.getName()).append(" do {")
                         .append(initAction.exportToBip()).append("}\n\n");
-        // TODO transition
-        // for (TransitionModel transition : transitions) {
-        // buffer.append('\t').append(transition.exportToBip()).append('\n');
-        // }
+
+        for (PlaceModel place : places) {
+            for (TransitionModel transition : place.getSourceConnections()) {
+                buffer.append("\t\t").append(transition.exportToBip()).append('\n');
+            }
+        }
+
         buffer.append('\n');
         for (PriorityModel priority : priorities) {
             buffer.append('\t').append(priority.exportToBip()).append('\n');
         }
-        buffer.append("end\n");
+        buffer.append("\tend\n");
         return buffer.toString();
     }
 
@@ -324,14 +472,15 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
             placeNames[i] = place.getName();
         }
         ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
-        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "原子组件名");
+        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "原子构件名");
         name.setDescription("01");
         properties.add(name);
         ComboBoxPropertyDescriptor init =
                         new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "初始状态", placeNames);
         init.setDescription("02");
         properties.add(init);
-        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", COMPONENT_TAGS);
+        EntitySelectionPropertyDescriptor tag =
+                        new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("03");
         properties.add(tag);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
@@ -345,15 +494,15 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         if (ATOMIC_INIT_PLACE.equals(id)) {
             return places.indexOf(initPlace);
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(COMPONENT_TAGS).indexOf(getTag());
+        if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return TAG.equals(id) || NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id);
+        return ENTITY.equals(id) || NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id);
     }
 
     @Override
@@ -363,12 +512,8 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         } else if (ATOMIC_INIT_PLACE.equals(id)) {
             int index = (Integer) value;
             setInitPlace(places.get(index));
-        } else if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(COMPONENT_TAGS[index]);
+        } else if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>)value);
         }
     }
 
@@ -381,4 +526,11 @@ public class AtomicTypeModel extends BaseTypeModel<AtomicTypeModel, AtomicModel,
         }
         return false;
     }
+
+    @Override
+    public boolean isNewNameKeyword(String newName) {
+        if (GlobalProperties.getKeywords().contains(newName)) return true;
+        return false;
+    }
+
 }

@@ -39,6 +39,8 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IDataContainer>
                 implements
                     IOrderContainer<DataTypeModel> {
+    private static final long                                                      serialVersionUID =
+                                                                                                                    3057282699052209648L;
     private final static HashMap<String, PortTypeModel>                            typeSources;
     private final static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
@@ -46,13 +48,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         toolMap = new HashMap<String, HashMap<AtomicEditor, CreationToolEntry>>();
         typeSources = new HashMap<String, PortTypeModel>();
         PortTypeModel ePortType = new PortTypeModel().setName("ePort");
-        PortTypeModel bPortType = new PortTypeModel().setName("boolPort");
-        PortTypeModel iPortType = new PortTypeModel().setName("intPort");
-        bPortType.addChild(DataTypeModel.getDataTypeModel("bool"));
-        iPortType.addChild(DataTypeModel.getDataTypeModel("int"));
         addTypeSources("ePort", ePortType);
-        addTypeSources("boolPort", bPortType);
-        addTypeSources("intPort", iPortType);
     }
 
     public static void savePortTypes() {
@@ -113,7 +109,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
                 String[] temp = argument.split("\\s+");
                 String dataType = temp[0];
                 String dataName = temp[1];
-                model.addChild(DataTypeModel.getDataTypeModel(dataType), dataName);
+                model.addChild(DataTypeModel.getModelByName(dataType), dataName);
             }
         }
         addType(type, model);
@@ -139,7 +135,18 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         }
         toolMap.remove(type);
         removeTypeSources(type);
-        // TODO 删除一种类型的时候检查该类型是否被使用
+    }
+
+    public static boolean isRemovable(String type) {
+        for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+            AtomicTypeModel model = (AtomicTypeModel) editor.getModel();
+            Map<String, List<PortModel>> map = model.getPortsGroupByType();
+            List<PortModel> datas = map.get(type);
+            if (datas != null && datas.size() > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean removeTypeSources(String type) {
@@ -162,15 +169,19 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         return typeSources.entrySet();
     }
 
-    public static PortTypeModel getPortTypeModel(String type) {
+    public static PortTypeModel getModelByName(String type) {
         return typeSources.get(type).copy();
     }
 
     static class ArgumentEntry implements Serializable {
-        private int           index;
-        private boolean       bounded = false;
-        private String        name;
-        private DataTypeModel model;
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -9063660604830297267L;
+        private int               index;
+        private boolean           bounded          = false;
+        private String            name;
+        private DataTypeModel     model;
 
         protected ArgumentEntry(String name, DataTypeModel model, int index) {
             super();
@@ -251,6 +262,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
             ArgumentEntry child = arguments.get(0);
             buffer.append(child.getTypeName()).append(' ').append(child.getName());
             for (int i = 1, size = arguments.size(); i < size; i++) {
+                child = arguments.get(i);
                 buffer.append(", ").append(child.getTypeName()).append(' ').append(child.getName());
             }
         }
@@ -322,9 +334,6 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     }
 
     public PortTypeModel addChild(DataTypeModel child) {
-        // FIXME 名字可能会重复，应该确保其不重复
-        //点击"增加端口",触发在PortTypeManageDialog的addType(),已确保不会和其他Port重复。
-        //但是仍需保证全局不重复。
         return addChild(child, "d" + (arguments.size() + 1));
     }
 

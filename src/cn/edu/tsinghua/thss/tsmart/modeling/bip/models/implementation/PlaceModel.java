@@ -1,12 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
@@ -16,11 +13,17 @@ import org.simpleframework.xml.Root;
  * Date: 11-9-25<br/>
  * Time: 下午7:07<br/>
  */
+@SuppressWarnings("rawtypes")
 @Root
-public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, AtomicTypeModel> {
-    public final static Dimension PLACE_SIZE = new Dimension(20, 20);
+public class PlaceModel extends BaseInstanceModel<PlaceModel, BaseTypeModel, AtomicTypeModel> {
+    private static final long     serialVersionUID = -6677684634106337453L;
     private List<TransitionModel> sourceConnections;
     private List<TransitionModel> targetConnections;
+
+    @Override
+    public PlaceModel setParent(AtomicTypeModel parent) {
+        return super.setParent(parent);
+    }
 
     public PlaceModel() {
         sourceConnections = new ArrayList<TransitionModel>();
@@ -29,7 +32,7 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public String exportToBip() {
-        return String.format("place %s", getName());
+        return "place " + getName();
     }
 
     @Override
@@ -43,13 +46,10 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
-        TextPropertyDescriptor name= new TextPropertyDescriptor(NAME, "状态名");   
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "状态名");
         name.setDescription("01");
         properties.add(name);
-        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "标签", TAGS);
-        tag.setDescription("02");
-        properties.add(tag);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
@@ -58,28 +58,18 @@ public class PlaceModel extends BaseInstanceModel<PlaceModel, PlaceTypeModel, At
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
-        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return TAG.equals(id) || NAME.equals(id);
+        return NAME.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
-        }
-        if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(TAGS[index]);
         }
     }
 

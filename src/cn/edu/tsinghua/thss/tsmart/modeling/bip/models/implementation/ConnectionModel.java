@@ -19,9 +19,11 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
 public class ConnectionModel
-                extends BaseInstanceModel<ConnectionModel, ConnectionTypeModel, CompoundTypeModel>
+                extends BaseInstanceModel<ConnectionModel, BaseTypeModel, CompoundTypeModel>
                 implements
                     IConnection<ConnectionModel, CompoundTypeModel, ConnectorModel, BulletModel> {
+
+    private static final long    serialVersionUID = 3033446044586077863L;
     @Element
     private ConnectorModel       source;
     @Element
@@ -54,6 +56,10 @@ public class ConnectionModel
 
     public void setTarget(BulletModel target) {
         this.target = target;
+    }
+
+    public int getArgumentIndex() {
+        return argumentIndex;
     }
 
     /**

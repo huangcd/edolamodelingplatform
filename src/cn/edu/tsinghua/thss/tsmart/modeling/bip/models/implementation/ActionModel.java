@@ -1,15 +1,14 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
 
 /**
@@ -19,11 +18,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
  */
 @SuppressWarnings("rawtypes")
 @Root
-public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel, IContainer> {
-
-    public final static String ACTION = "action";
+public class ActionModel extends BaseInstanceModel<ActionModel, BaseTypeModel, IContainer> {
+    private static final long serialVersionUID = 1851129094881910942L;
     @Element(required = false)
-    private String             action = "";
+    private String            action           = "";
 
     public String getAction() {
         return action;
@@ -42,16 +40,16 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
 
     @Override
     public String exportToBip() {
-        return getAction();
+        return getAction().replaceAll("[\r\n]+\t*", "\n\t\t\t");
     }
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
-        TextPropertyDescriptor action= new TextPropertyDescriptor(ACTION, "action");   
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor action = new TextPropertyDescriptor(ACTION, "action");
         action.setDescription("01");
         properties.add(action);
-        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "±Í«©", TAGS);
+        EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "±Í«©");
         tag.setDescription("02");
         properties.add(tag);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
@@ -62,15 +60,15 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
         if (id.equals(ACTION)) {
             return action;
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+        if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return TAG.equals(id) || id.equals(ACTION);
+        return ENTITY.equals(id) || id.equals(ACTION);
     }
 
     @Override
@@ -78,12 +76,8 @@ public class ActionModel extends BaseInstanceModel<ActionModel, ActionTypeModel,
         if (id.equals(ACTION)) {
             setAction((String) value);
         }
-        if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(TAGS[index]);
+        if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>)value);
         }
     }
 }

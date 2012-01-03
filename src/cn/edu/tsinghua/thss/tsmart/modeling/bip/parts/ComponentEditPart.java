@@ -14,14 +14,15 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ComponentChildrenEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.FrameContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class ComponentEditPart extends BaseEditableEditPart {
@@ -29,8 +30,8 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
     private Label instanceLabel;
     private Panel panel;
 
-    public IComponentInstance getModel() {
-        return (IComponentInstance) super.getModel();
+    public ComponentModel getModel() {
+        return (ComponentModel) super.getModel();
     }
 
     @Override
@@ -74,6 +75,8 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
         if (this instanceof AtomicEditPart) {
             typeLabel.setForegroundColor(properties.getAtomicLabelColor());
             instanceLabel.setForegroundColor(properties.getAtomicLabelColor());
+            // getModel().getType().setName("AtomicType");
+
         } else if (this instanceof CompoundEditPart) {
             typeLabel.setForegroundColor(properties.getCompoundLabelColor());
             instanceLabel.setForegroundColor(properties.getCompoundLabelColor());
@@ -99,9 +102,18 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
             typeLabel.setText(getModel().getType().getName());
             centerLabels();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            instanceLabel.setText(getModel().getName());
-            centerLabels();
+            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                            getModel().getName())) {
+                instanceLabel.setText(getModel().getName());
+                centerLabels();
+            } else {
+                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                getModel().setName(getModel().getOldName());
+            }
+
         } else if (IModel.EXPORT_PORT.equals(evt.getPropertyName())) {
+            refreshChildren();
+        } else {
             refreshChildren();
         }
     }
@@ -114,13 +126,13 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
 
     @Override
     protected void performDoubleClick() {
-        IComponentType container = (IComponentType) getModel().getType();
+        ComponentTypeModel container = (ComponentTypeModel) getModel().getType();
         BIPEditor.openBIPEditor(container);
     }
 
     @Override
     protected List<BulletModel> getModelChildren() {
-        List<PortModel> exportPorts = ((IComponentType) getModel().getType()).getExportPorts();
+        List<PortModel> exportPorts = ((ComponentTypeModel) getModel().getType()).getExportPorts();
         List<BulletModel> bullets = new ArrayList<BulletModel>();
         for (PortModel port : exportPorts) {
             BulletModel bullet = port.getBullet();

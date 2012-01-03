@@ -12,8 +12,10 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
 
 /**
@@ -24,12 +26,11 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
 public class TransitionModel
-                extends BaseInstanceModel<TransitionModel, TransitionTypeModel, AtomicTypeModel>
+                extends BaseInstanceModel<TransitionModel, BaseTypeModel, AtomicTypeModel>
                 implements
                     IConnection<TransitionModel, AtomicTypeModel, PlaceModel, PlaceModel> {
 
-    public static final String         BEND_POINTS             = "bendPoints";
-    public static final String         REMOVE_TRANSITION_LABEL = "removeTransitionLabels";
+    private static final long          serialVersionUID = 3752284127183635224L;
     @Element
     private PlaceModel                 source;
     @Element
@@ -43,7 +44,7 @@ public class TransitionModel
     @ElementList
     private ArrayList<Bendpoint>       bendpoints;
 
-    protected TransitionModel() {
+    public TransitionModel() {
         action = new ActionModel();
         guard = new GuardModel();
         bendpoints = new ArrayList<Bendpoint>();
@@ -71,7 +72,9 @@ public class TransitionModel
             port.removePropertyChangeListener(this);
         }
         port = newPort;
-        port.addPropertyChangeListener(this);
+        if (port != null) {
+            port.addPropertyChangeListener(this);
+        }
         firePropertyChange(IModel.PORT);
     }
 
@@ -157,6 +160,11 @@ public class TransitionModel
 
     @Override
     public String exportToBip() {
+        if (getPort() == null) {
+            throw new UnboundedException(String.format(
+                            "transition[%s -> %s in %s] port is unbound", getSource().getName(),
+                            getTarget().getName(), getSource().getParent().getName()));
+        }
         return String.format("on %s from %s to %s provided %s do {%s}", getPort().getName(),
                         getSource().getName(), getTarget().getName(), getGuard().exportToBip(),
                         getAction().exportToBip());
@@ -170,22 +178,22 @@ public class TransitionModel
             values[i] = ports.get(i).getName();
         }
         values[ports.size()] = "$UNBOUNDED$";
-        
-        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
-        TextPropertyDescriptor action= new TextPropertyDescriptor(ActionModel.ACTION, "动作");   
-        action.setDescription("01");
-        properties.add(action);
-        TextPropertyDescriptor guard= new TextPropertyDescriptor(GuardModel.GUARD, "门卫函数");   
-        guard.setDescription("02");
+
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor action = new TextPropertyDescriptor(ActionModel.ACTION, "动作");
+        TextPropertyDescriptor guard = new TextPropertyDescriptor(GuardModel.GUARD, "约束");
+        guard.setDescription("01");
         properties.add(guard);
-        ComboBoxPropertyDescriptor port=new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values);
-        port.setDescription("03");
+        ComboBoxPropertyDescriptor port = new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values);
+        port.setDescription("02");
         properties.add(port);
-        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "标签", TAGS);
-        tag.setDescription("04");
-        properties.add(tag);
+        action.setDescription("03");
+        properties.add(action);
+        /*
+         * EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
+         * tag.setDescription("04"); properties.add(tag);
+         */
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
-        
     }
 
     @Override
@@ -203,8 +211,8 @@ public class TransitionModel
             }
             return ports.indexOf(port);
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(TAGS).indexOf(getTag());
+        if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         return null;
     }
@@ -212,7 +220,7 @@ public class TransitionModel
     @Override
     public boolean isPropertySet(Object id) {
         return ActionModel.ACTION.equals(id) || GuardModel.GUARD.equals(id)
-                        || IModel.PORT.equals(id) || TAG.equals(id);
+                        || IModel.PORT.equals(id) || ENTITY.equals(id);
     }
 
     @Override
@@ -230,12 +238,8 @@ public class TransitionModel
             if (index >= 0 && index < ports.size()) {
                 setPort(ports.get(index));
             }
-        } else if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(TAGS[index]);
+        } else if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>) value);
         }
     }
 

@@ -9,6 +9,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeletePlaceCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
@@ -21,7 +22,10 @@ public class DeleteModelEditPolicy extends ComponentEditPolicy {
     protected Command createDeleteCommand(GroupRequest deleteRequest) {
         if (getHost().getModel() instanceof PlaceModel) {
             DeletePlaceCommand command = new DeletePlaceCommand();
-            command.setParent((AtomicTypeModel) getHost().getParent().getModel());
+            if (getHost().getParent().getModel() instanceof AtomicTypeModel)
+                command.setParent((AtomicTypeModel) getHost().getParent().getModel());
+            else if (getHost().getParent().getModel() instanceof AtomicModel)
+                command.setParent(((AtomicModel) getHost().getParent().getModel()).getType());
             command.setChild((PlaceModel) getHost().getModel());
             return command;
         }

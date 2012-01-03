@@ -9,8 +9,9 @@ import org.eclipse.gef.EditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class PortEditPart extends BaseEditableEditPart {
     private Label label;
 
@@ -19,7 +20,14 @@ public class PortEditPart extends BaseEditableEditPart {
         if (IModel.CONSTRAINT.equals(evt.getPropertyName())) {
             getParent().refresh();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            label.setText(getModel().getFriendlyString());
+            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                            getModel().getName())) {
+                label.setText(getModel().getFriendlyString());
+            } else {
+                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                getModel().setName(getModel().getOldName());
+            }
+
         } else if (PortModel.EXPORT_PORT.equals(evt.getPropertyName())) {
             label.setText(getModel().getFriendlyString());
         } else if (IModel.CHILDREN.equals(evt.getPropertyName())) {

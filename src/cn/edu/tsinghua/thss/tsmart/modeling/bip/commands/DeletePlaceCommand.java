@@ -17,6 +17,14 @@ public class DeletePlaceCommand extends Command {
     private List<TransitionModel> targetConnections = new ArrayList<TransitionModel>();
 
     @Override
+    public boolean canExecute() {
+        if (parent.getInitPlace().equals(child)) {
+            return false;
+        }
+        return super.canExecute();
+    }
+
+    @Override
     public void execute() {
         parent.removeChild(child);
         sourceConnections.addAll(child.getSourceConnections());

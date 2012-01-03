@@ -123,7 +123,7 @@ public class DataEditDialog extends AbstractEditDialog {
     @Override
     protected boolean validateUserInput() {
         if (container.isNewNameAlreadyExistsInParent(instance, textName.getText().trim())) {
-            labelError.setText("组件中存在相同名字的变量");
+            labelError.setText("构件中存在相同名字的变量");
             return false;
         } else if (labelTypeName.getText().toLowerCase().trim().equals("bool")
                         && !textValue.getText().toLowerCase().trim().equals("true")

@@ -17,7 +17,11 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelingException;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
 
 /**
@@ -30,11 +34,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorT
 public class ConnectorModel
                 extends BaseInstanceModel<ConnectorModel, ConnectorTypeModel, CompoundTypeModel> {
 
-    public final static Dimension CONNECTOR_SIZE = new Dimension(30, 30);
-    public final static String    LINE_COLOR     = "lineColor";
+    private static final long     serialVersionUID = -8214893138715118215L;
     private boolean               export;
     private List<ConnectionModel> sourceConnections;
-    private RGB                   lineColor      = ColorConstants.black.getRGB();
+    private RGB                   lineColor        = ColorConstants.black.getRGB();
 
     protected ConnectorModel() {
         sourceConnections = new ArrayList<ConnectionModel>();
@@ -46,7 +49,8 @@ public class ConnectorModel
      * @return export port 的字符串
      */
     public String exportPort() {
-        return String.format("export port %s %s is _%s", getType().getName(), getName(), getName());
+        return String.format("export port %s %s is _%s", getType().getPort().getType().getName(),
+                        getName(), getName());
     }
 
     /**
@@ -55,9 +59,12 @@ public class ConnectorModel
      * @param index 参数位置
      * @param argument 参数
      * @return 模型自身
+     * 
+     *         TODO 绑定之前先validateOnTheFly一下
+     * 
      */
     public ConnectorModel bound(int index, PortModel argument) {
-        ArgumentEntry entry = getType().getArguments().get(index);
+        ArgumentEntry entry = getType().getArgumentEntries().get(index);
         PortModel oldArgument = entry.getModel().getInstance();
         if (oldArgument != null) {
             oldArgument.removePropertyChangeListener(this);
@@ -69,6 +76,23 @@ public class ConnectorModel
             getType().unbound(index);
         }
         return this;
+    }
+
+    public boolean availableToBound(int index, PortModel argument) {
+        ArgumentEntry entry = getType().getArgumentEntries().get(index);
+        boolean oldIsBounded = entry.isBounded();
+        PortTypeModel oldPort = entry.getModel();
+        // bound
+        entry.bound((PortTypeModel) argument.getType());
+        // validate
+        boolean result = validateOnTheFly();
+        // restore
+        if (oldIsBounded) {
+            entry.bound(oldPort);
+        } else {
+            entry.unbound();
+        }
+        return result;
     }
 
     public PortModel getExportPort() {
@@ -99,13 +123,15 @@ public class ConnectorModel
         StringBuilder buffer =
                         new StringBuilder("connector ").append(getType().getName()).append(" _")
                                         .append(getName()).append('(');
-        // TODO 添加参数
-        // if (portEntries.length > 0) {
-        // buffer.append(portEntries[0]);
-        // for (int i = 1, size = portEntries.length; i < size; i++) {
-        // buffer.append(", ").append(portEntries[i]);
-        // }
-        // }
+        if (!getType().getArgumentEntries().isEmpty()) {
+            for (ArgumentEntry entry : getType().getArgumentEntries()) {
+                if (!entry.isBounded())
+                    throw new UnboundedException(getType().getName(), getName(), entry.getIndex());
+                PortModel port = (PortModel) entry.getModel().getInstance();
+                buffer.append(port.getParentName()).append('.').append(port.getName()).append(", ");
+            }
+            buffer.setLength(buffer.length() - 2);
+        }
         return buffer.append(')').toString();
     }
 
@@ -116,15 +142,45 @@ public class ConnectorModel
         return this;
     }
 
+    /**
+     * 判断在当前connector模型里面，待绑定的port所属的component是否与当前connector有多个连线。如果有多个连线，返回false；否则返回true。
+     * （一个connector不能与一个component有多个连线）
+     * 
+     * @param port 待绑定的端口
+     * @param index 待绑定端口的索引位置
+     * @return 是否允许端口绑定
+     */
+    public boolean portFromSameComponentAlreadyExists(PortModel port, int index) {
+        IContainer parent = port.getParent();
+        List<ArgumentEntry> list = getType().getArgumentEntries();
+        for (int i = 0, size = list.size(); i < size; i++) {
+            if (i == index) {
+                continue;
+            }
+            ArgumentEntry entry = list.get(i);
+            if (!entry.isBounded()) {
+                continue;
+            }
+            IContainer entryParent = entry.getModel().getInstance().getParent();
+            if (parent.equals(entryParent)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 将connector添加到CompoundType里面去的同时，添加connector的连线
+     */
     private void addConnections() {
         Point center = getPositionConstraint().getCenter();
-        List<ArgumentEntry> arguments = getType().getArguments();
+        List<ArgumentEntry> arguments = getType().getArgumentEntries();
         int size = arguments.size();
         final int length = 100;
         double degree = 2 * Math.PI / size;
         int index = 0;
         double alpha = 0;
-        for (ArgumentEntry entry : getType().getArguments()) {
+        for (ArgumentEntry entry : getType().getArgumentEntries()) {
             Point point =
                             new PrecisionPoint(center.x + length * Math.cos(alpha) - BULLET_RADIUS,
                                             center.y + length * Math.sin(alpha) - BULLET_RADIUS);
@@ -175,10 +231,11 @@ public class ConnectorModel
         name.setDescription("01");
         properties.add(name);
         ComboBoxPropertyDescriptor export =
-                        new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", trueFalseArray);
+                        new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", TRUE_FALSE_ARRAY);
         export.setDescription("02");
         properties.add(export);
-        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", CONNECTOR_TAGS);
+        EntitySelectionPropertyDescriptor tag =
+                        new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("02");
         properties.add(tag);
         ColorPropertyDescriptor lineColor = new ColorPropertyDescriptor(LINE_COLOR, "连线颜色");
@@ -192,14 +249,14 @@ public class ConnectorModel
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(CONNECTOR_TAGS).indexOf(getTag());
+        if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         if (LINE_COLOR.equals(id)) {
             return lineColor;
         }
         if (EXPORT_PORT.equals(id)) {
-            return Boolean.toString(export).equals(trueFalseArray[0]) ? 0 : 1;
+            return Boolean.toString(export).equals(TRUE_FALSE_ARRAY[0]) ? 0 : 1;
         }
         return null;
     }
@@ -215,7 +272,8 @@ public class ConnectorModel
 
     @Override
     public boolean isPropertySet(Object id) {
-        return TAG.equals(id) || NAME.equals(id) || LINE_COLOR.equals(id) || EXPORT_PORT.equals(id);
+        return ENTITY.equals(id) || NAME.equals(id) || LINE_COLOR.equals(id)
+                        || EXPORT_PORT.equals(id);
     }
 
     @Override
@@ -223,13 +281,9 @@ public class ConnectorModel
         if (NAME.equals(id)) {
             setName((String) value);
         } else if (EXPORT_PORT.equals(id)) {
-            setExport(Boolean.parseBoolean(trueFalseArray[(Integer) value]));
-        } else if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(CONNECTOR_TAGS[index]);
+            setExport(Boolean.parseBoolean(TRUE_FALSE_ARRAY[(Integer) value]));
+        } else if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>) value);
         } else if (LINE_COLOR.equals(id)) {
             setLineColor((RGB) value);
         }

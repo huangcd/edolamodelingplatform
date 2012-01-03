@@ -1,8 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -11,6 +9,7 @@ import org.simpleframework.xml.Element;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.DataValueNotMatchException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
 
 /**
@@ -23,10 +22,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
 public class DataModel<Parent extends IDataContainer>
                 extends BaseInstanceModel<DataModel, DataTypeModel, Parent> {
 
-    public final static String DATA_TYPE  = "dataType";
-    public final static String DATA_VALUE = "dataValue";
+    private static final long serialVersionUID = 5148651288712084524L;
     @Element(required = false)
-    private String             value;
+    private String            value;
 
     protected DataModel() {
         this.value = "";
@@ -37,6 +35,7 @@ public class DataModel<Parent extends IDataContainer>
     }
 
     public boolean setValue(String value) {
+        String oldValue = getValue();
         String typeString = getType().getName();
         if (typeString.equals("int")) {
             try {
@@ -52,6 +51,11 @@ public class DataModel<Parent extends IDataContainer>
             }
         }
         this.value = value;
+        // 如果检测不通过，还原原来的值，并返回false
+        if (!validateOnTheFly()) {
+            this.value = oldValue;
+            return false;
+        }
         firePropertyChange(DATA_VALUE);
         return true;
     }
@@ -63,11 +67,7 @@ public class DataModel<Parent extends IDataContainer>
 
     @Override
     public String exportToBip() {
-        if (value == null || value.isEmpty()) {
-            return String.format("data %s %s", getType().getName(), getName());
-        } else {
-            return String.format("data %s %s = %s", getType().getName(), getName(), getValue());
-        }
+        return "data " + getFriendlyString();
     }
 
     public String getFriendlyString() {
@@ -81,9 +81,9 @@ public class DataModel<Parent extends IDataContainer>
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         IPropertyDescriptor valueDescriptor = null;
-        if (!getProrerties().isMultipleDataTypeAvailble()) {
+        if (!getProperties().isMultipleDataTypeAvailble()) {
             // 如果有bug，把ComboBox改成Text的，并更改getPropertyValue的实现。
-            valueDescriptor = new ComboBoxPropertyDescriptor(DATA_VALUE, "值", trueFalseArray);
+            valueDescriptor = new ComboBoxPropertyDescriptor(DATA_VALUE, "值", TRUE_FALSE_ARRAY);
         } else {
             valueDescriptor = new TextPropertyDescriptor(DATA_VALUE, "值");
 
@@ -94,7 +94,7 @@ public class DataModel<Parent extends IDataContainer>
         properties.add(name);
         ((PropertyDescriptor) valueDescriptor).setDescription("02");
         properties.add(valueDescriptor);
-        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", DATA_TAGS);
+        EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("03");
         properties.add(tag);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
@@ -103,23 +103,23 @@ public class DataModel<Parent extends IDataContainer>
     @Override
     public Object getPropertyValue(Object id) {
         if (DATA_VALUE.equals(id)) {
-            if (!getProrerties().isMultipleDataTypeAvailble()) {
-                return getValue().equals(trueFalseArray[0]) ? 0 : 1;
+            if (!getProperties().isMultipleDataTypeAvailble()) {
+                return getValue().equals(TRUE_FALSE_ARRAY[0]) ? 0 : 1;
             }
             return getValue();
         }
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(DATA_TAGS).indexOf(getTag());
+        if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return DATA_VALUE.equals(id) || NAME.equals(id) || TAG.equals(id);
+        return DATA_VALUE.equals(id) || NAME.equals(id) || ENTITY.equals(id);
     }
 
     @Override
@@ -127,18 +127,14 @@ public class DataModel<Parent extends IDataContainer>
 
         if (DATA_VALUE.equals(id)) {
             if (value instanceof Integer) {
-                setValue(trueFalseArray[(Integer) value]);
+                setValue(TRUE_FALSE_ARRAY[(Integer) value]);
             } else {
                 setValue((String) value);
             }
         } else if (NAME.equals(id)) {
             setName((String) value);
-        } else if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(DATA_TAGS[index]);
+        } else if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>)value);
         }
     }
 }

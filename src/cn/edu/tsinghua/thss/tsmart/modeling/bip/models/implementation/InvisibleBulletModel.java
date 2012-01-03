@@ -9,6 +9,8 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
  */
 @SuppressWarnings("rawtypes")
 public class InvisibleBulletModel extends BulletModel {
+    private static final long serialVersionUID = 1783567716224702420L;
+
     public InvisibleBulletModel() {
         super(null);
     }

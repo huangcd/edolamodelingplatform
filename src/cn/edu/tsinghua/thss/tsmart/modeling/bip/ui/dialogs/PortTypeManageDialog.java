@@ -124,14 +124,20 @@ public class PortTypeManageDialog extends AbstractEditDialog {
     }
 
     private void removeTypes() {
-        String[] seletions = listPortTypes.getSelection();
+        String[] selections = listPortTypes.getSelection();
         boolean containsDefaultType = false;
-        for (String selection : seletions) {
+        for (String selection : selections) {
             if (selection.equals("ePort")) {
                 containsDefaultType = true;
                 continue;
             }
-            listPortTypes.remove(selection);
+            if(PortTypeModel.isRemovable(selection))
+                {
+                listPortTypes.remove(selection);
+                PortTypeModel.removeType(selection);
+                }
+            else
+                MessageDialog.ShowDeletePortTypeErrorDialog(selection);
         }
         if (containsDefaultType) {
             handleError("内置类型不能被删除");
@@ -223,7 +229,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
     protected void initValues() {
         for (String type : PortTypeModel.getTypeNamesAsArray()) {
             listPortTypes.add(type);
-            portMap.put(type, PortTypeModel.getPortTypeModel(type).getArgumentAsString());
+            portMap.put(type, PortTypeModel.getModelByName(type).getArgumentAsString());
         }
     }
 

@@ -1,22 +1,18 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
 @SuppressWarnings("rawtypes")
-public class ComponentModel<Model extends BaseInstanceModel, Type extends IComponentType>
-                extends BaseInstanceModel<Model, Type, CompoundTypeModel>
-                implements
-                    IComponentInstance<Model, Type, CompoundTypeModel> {
+public abstract class ComponentModel<Model extends BaseInstanceModel, Type extends ComponentTypeModel>
+                extends BaseInstanceModel<Model, Type, CompoundTypeModel> {
+
+    private static final long serialVersionUID = -5814929402789410662L;
 
     @Override
     public boolean exportable() {
@@ -30,11 +26,12 @@ public class ComponentModel<Model extends BaseInstanceModel, Type extends ICompo
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();   
-        TextPropertyDescriptor name= new TextPropertyDescriptor(NAME, "组件名");   
+        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
+        TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "构件名");
         name.setDescription("01");
         properties.add(name);
-        ComboBoxPropertyDescriptor tag=new ComboBoxPropertyDescriptor(TAG, "标签", COMPONENT_TAGS);
+        EntitySelectionPropertyDescriptor tag =
+                        new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("02");
         properties.add(tag);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
@@ -44,35 +41,29 @@ public class ComponentModel<Model extends BaseInstanceModel, Type extends ICompo
     public Object getPropertyValue(Object id) {
         if (NAME.equals(id)) {
             return hasName() ? getName() : "";
-        } else if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(COMPONENT_TAGS).indexOf(getTag());
+        } else if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id) || TAG.equals(id);
+        return NAME.equals(id) || ENTITY.equals(id);
     }
 
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (NAME.equals(id)) {
             setName((String) value);
-        } else if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(COMPONENT_TAGS[index]);
+        } else if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>) value);
         }
     }
 
     @Override
     public Model setPositionConstraint(Rectangle positionConstraint) {
-        Rectangle rect =
-                        positionConstraint.getCopy().setSize(IModel.COMPONENT_WIDTH,
-                                        IModel.COMPONENT_HEIGHT);
+        Rectangle rect = positionConstraint.getCopy().setSize(COMPONENT_SIZE);
         return super.setPositionConstraint(rect);
     }
 }

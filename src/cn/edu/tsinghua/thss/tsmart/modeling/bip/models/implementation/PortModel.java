@@ -12,17 +12,20 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IComponentType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel.ArgumentEntry;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
 @SuppressWarnings({"unchecked", "unused", "rawtypes"})
 @Root
-public class PortModel<P extends IComponentType>
-                extends BaseInstanceModel<PortModel, PortTypeModel, P> {
+public class PortModel<P extends IContainer> extends BaseInstanceModel<PortModel, PortTypeModel, P> {
+    private static final long serialVersionUID = -1192079654784887960L;
     @Element
-    private boolean     export;
-    private BulletModel bullet;
+    private boolean           export;
+    private BulletModel       bullet;
 
     protected PortModel() {
         bullet = new BulletModel(this);
@@ -42,13 +45,14 @@ public class PortModel<P extends IComponentType>
         }
         // 如果portModel是export的，需要把AtomicModel添加到portModel的属性变化通知队列中去
         if (export) {
-            addPropertyChangeListener(getParent().getInstance());
+            addPropertyChangeListener(((IType) getParent()).getInstance());
+            addPropertyChangeListener(((IType) getParent()).getInstance()).getParent();
             addPropertyChangeListener(bullet);
         }
         this.export = export;
         firePropertyChange(EXPORT_PORT, !export, export);
         if (!export) {
-            removePropertyChangeListener(getParent().getInstance());
+            removePropertyChangeListener(((BaseTypeModel) getParent()).getInstance());
             removePropertyChangeListener(bullet);
         }
         return this;
@@ -57,6 +61,16 @@ public class PortModel<P extends IComponentType>
     @Override
     public boolean exportable() {
         return true;
+    }
+
+    public String getParentName() {
+        if (getParent() instanceof AtomicTypeModel) {
+            return ((IType) getParent()).getInstance().getName();
+        } else if (getParent() instanceof ConnectorTypeModel) {
+            return ((IType) getParent()).getInstance().getParent().getName();
+        } else {
+            return "$UNKNOWN_COMPONENT$";
+        }
     }
 
     /**
@@ -80,6 +94,21 @@ public class PortModel<P extends IComponentType>
         return this;
     }
 
+    public String getBoundedArguments() {
+        StringBuilder buffer = new StringBuilder();
+
+        if (!getType().getArgumentEntries().isEmpty()) {
+            for (ArgumentEntry entry : getType().getArgumentEntries()) {
+                if (!entry.isBounded())
+                    throw new UnboundedException(getType().getName(), getName(), entry.getIndex());
+                DataModel data = (DataModel) entry.getModel().getInstance();
+                buffer.append(data.getName()).append(", ");
+            }
+            buffer.setLength(buffer.length() - 2);
+        }
+        return buffer.toString();
+    }
+
     @Override
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
@@ -87,13 +116,7 @@ public class PortModel<P extends IComponentType>
             buffer.append("export ");
         }
         buffer.append("port ").append(getName()).append('(');
-        List<DataModel<IDataContainer>> datas = getPortArguments();
-        if (!datas.isEmpty()) {
-            buffer.append(datas.get(0).getName());
-            for (int i = 1, size = datas.size(); i < size; i++) {
-                buffer.append(", ").append(datas.get(i).getName());
-            }
-        }
+        buffer.append(getBoundedArguments());
         buffer.append(")");
         return buffer.toString();
     }
@@ -107,7 +130,7 @@ public class PortModel<P extends IComponentType>
         return arguments;
     }
 
-    private Map<String, List<DataModel>> map;
+    private transient Map<String, List<DataModel>> map;
 
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
@@ -116,7 +139,7 @@ public class PortModel<P extends IComponentType>
         pName.setDescription("01");
         list.add(pName);
         ComboBoxPropertyDescriptor isExport =
-                        new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", trueFalseArray);
+                        new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", TRUE_FALSE_ARRAY);
         isExport.setDescription("02");
         list.add(isExport);
         map = ((AtomicTypeModel) getParent()).getDatasGroupByType();
@@ -138,7 +161,7 @@ public class PortModel<P extends IComponentType>
             arg.setDescription("0" + (i + 2));
             list.add(arg);
         }
-        ComboBoxPropertyDescriptor tag = new ComboBoxPropertyDescriptor(TAG, "标签", PORT_TAGS);
+        EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("0" + (i + 3));
         list.add(tag);
         return list.toArray(new IPropertyDescriptor[list.size()]);
@@ -150,7 +173,7 @@ public class PortModel<P extends IComponentType>
             return getName();
         }
         if (EXPORT_PORT.equals(id)) {
-            return Boolean.toString(export).equals(trueFalseArray[0]) ? 0 : 1;
+            return Boolean.toString(export).equals(TRUE_FALSE_ARRAY[0]) ? 0 : 1;
         }
         if (id instanceof ArgumentEntry) {
             ArgumentEntry entry = (ArgumentEntry) id;
@@ -163,15 +186,15 @@ public class PortModel<P extends IComponentType>
                 return datas.indexOf(entry.getModel().getInstance());
             }
         }
-        if (TAG.equals(id)) {
-            return getTag() == null ? 0 : Arrays.asList(PORT_TAGS).indexOf(getTag());
+        if (ENTITY.equals(id)) {
+            return getEntityNames();
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return NAME.equals(id) || EXPORT_PORT.equals(id) || TAG.equals(id);
+        return NAME.equals(id) || EXPORT_PORT.equals(id) || ENTITY.equals(id);
     }
 
     @Override
@@ -179,7 +202,7 @@ public class PortModel<P extends IComponentType>
         if (NAME.equals(id)) {
             setName((String) value);
         } else if (EXPORT_PORT.equals(id)) {
-            setExport(Boolean.parseBoolean(trueFalseArray[(Integer) value]));
+            setExport(Boolean.parseBoolean(TRUE_FALSE_ARRAY[(Integer) value]));
         } else if (id instanceof ArgumentEntry) {
             ArgumentEntry entry = (ArgumentEntry) id;
             String name = entry.getTypeName();
@@ -191,12 +214,8 @@ public class PortModel<P extends IComponentType>
             } else if (index >= 0 && index < datas.size()) {
                 bound(entry.getIndex(), datas.get(index));
             }
-        } else if (TAG.equals(id)) {
-            int index = (Integer) value;
-            if (index == 0)
-                setTag(null);
-            else
-                setTag(PORT_TAGS[index]);
+        } else if (ENTITY.equals(id)) {
+            setEntityNames((ArrayList<String>)value);
         }
     }
 

@@ -21,7 +21,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicType
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
 
@@ -38,8 +37,8 @@ public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
         if (!(obj instanceof AtomicTypeModel)) return null;
         AtomicTypeModel parent = (AtomicTypeModel) obj;
         command.setParent(parent);
-        if (request.getNewObjectType().equals(PlaceTypeModel.class)) {
-            PlaceModel child = new PlaceTypeModel().createInstance();
+        if (request.getNewObjectType().equals(PlaceModel.class)) {
+            PlaceModel child = new PlaceModel();
             child.setName(getAppropriatePlaceName(parent));
             Point location = request.getLocation().getCopy();
             // œ‡∂‘Œª÷√
@@ -47,6 +46,7 @@ public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
             getHostFigure().translateFromParent(location);
             Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
+            child.setParent(parent);
             command.setChild(child);
             return command;
         } else if (request.getNewObjectType().equals(DataTypeModel.class)) {
@@ -59,6 +59,7 @@ public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
             getHostFigure().translateFromParent(location);
             Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
+            child.setParent(parent);
             command.setChild(child);
             return command;
         } else if (request.getNewObjectType().equals(PortTypeModel.class)) {
@@ -70,6 +71,7 @@ public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
             getHostFigure().translateFromParent(location);
             Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
+            child.setParent(parent);
             command.setChild(child);
             return command;
         }

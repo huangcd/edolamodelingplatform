@@ -15,22 +15,16 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
  */
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root
-public class PriorityModel<Parent extends IContainer, Port extends IModel>
-                extends BaseInstanceModel<PriorityModel, PriorityTypeModel, Parent> {
+public class PriorityModel<Parent extends IContainer>
+                extends BaseInstanceModel<PriorityModel, BaseTypeModel, Parent> {
 
+    private static final long serialVersionUID = -5887302928533148242L;
     @Element(name = "left")
-    private Port       left;
+    private IModel            left;
     @Element(name = "right")
-    private Port       right;
+    private IModel            right;
     @Element(name = "guard")
-    private GuardModel condition = new GuardModel().setGuard("true");
-
-    public PriorityModel<Parent, Port> copy(Port leftPort, Port rightPort) {
-        PriorityModel<Parent, Port> model = this.copy();
-        model.left = leftPort;
-        model.right = rightPort;
-        return model;
-    }
+    private GuardModel        condition        = new GuardModel().setGuard("true");
 
     @Override
     public String exportToBip() {
@@ -43,19 +37,19 @@ public class PriorityModel<Parent extends IContainer, Port extends IModel>
         }
     }
 
-    public Port getLeftPort() {
+    public IModel getLeftPort() {
         return left;
     }
 
-    public void setLeftPort(Port leftPort) {
+    public void setLeftPort(IModel leftPort) {
         this.left = leftPort;
     }
 
-    public Port getRightPort() {
+    public IModel getRightPort() {
         return right;
     }
 
-    public void setRightPort(Port rightPort) {
+    public void setRightPort(IModel rightPort) {
         this.right = rightPort;
     }
 
@@ -83,6 +77,5 @@ public class PriorityModel<Parent extends IContainer, Port extends IModel>
     }
 
     @Override
-    public void setPropertyValue(Object id, Object value) {
-    }
+    public void setPropertyValue(Object id, Object value) {}
 }

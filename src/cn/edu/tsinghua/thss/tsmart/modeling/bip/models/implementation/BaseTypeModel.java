@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,16 +19,16 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.CycleStrategy;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
-import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateNotifier;
-import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateReceiver;
-
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Rule;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Validator;
+import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 
 /**
  * Created by Huangcd<br/>
@@ -41,21 +40,21 @@ import cn.edu.tsinghua.thss.tsmart.modeling.util.UpdateReceiver;
 public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extends IInstance, Parent extends IContainer>
                 implements
                     IType<Model, Instance, Parent>,
-                    IPropertySource,
-                    UpdateNotifier,
-                    UpdateReceiver {
+                    IPropertySource {
 
-    protected static Serializer   serializer      = new Persister(new CycleStrategy());
-    private PropertyChangeSupport listeners       = new PropertyChangeSupport(this);
-    private List<UpdateReceiver>  registerObjects = new ArrayList<UpdateReceiver>();
-    protected Rectangle           positionConstraint;
+    private static final long            serialVersionUID = 4399354235987755192L;
+    private PropertyChangeSupport        listeners        = new PropertyChangeSupport(this);
+    protected Rectangle                  positionConstraint;
     @Element(required = false)
-    private Parent                parent;
+    private Parent                       parent;
     @Attribute(required = false)
-    private String                name;
-    protected Instance            instance;
-    private UUID                  uuid            = UUID.randomUUID();
-    private boolean               editable        = true;
+    private String                       name;
+    @Attribute(required = false)
+    private String                       comment;
+    protected Instance                   instance;
+    private UUID                         uuid             = UUID.randomUUID();
+    private boolean                      editable         = true;
+    protected transient GlobalProperties properties;
 
     public BaseTypeModel() {}
 
@@ -64,6 +63,13 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
             instance = createInstance();
         }
         return instance;
+    }
+
+    public GlobalProperties getProperties() {
+        if (properties == null) {
+            properties = GlobalProperties.getInstance();
+        }
+        return properties;
     }
 
     public String getStringID() {
@@ -80,16 +86,25 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     }
 
     @Override
-    public String getTag() {
-        return getInstance().getTag();
+    public ArrayList<String> getEntityNames() {
+        return getInstance().getEntityNames();
     }
-
-    @Override
-    public Model setTag(String tag) {
-        getInstance().setTag(tag);
+    
+    public Model setEntityNames(ArrayList<String> entityNames){
+        getInstance().setEntityNames(entityNames);
+        firePropertyChange(ENTITY);
+        validateOnTheFly();
         return (Model) this;
     }
 
+    @Override
+    public Model deleteAllEntityNames() {
+        getInstance().deleteAllEntityNames();
+        firePropertyChange(ENTITY);
+        validateOnTheFly();
+        return (Model) this;
+    }
+    
     public boolean hasName() {
         return name != null;
     }
@@ -110,6 +125,17 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     }
 
     @Override
+    public String getComment() {
+        return comment;
+    }
+
+    @Override
+    public Model setComment(String comment) {
+        this.comment = comment;
+        return (Model) this;
+    }
+
+    @Override
     public Parent getParent() {
         return parent;
     }
@@ -117,7 +143,6 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     @Override
     public Model setParent(Parent parent) {
         this.parent = parent;
-        firePropertyChange(PARENT);
         return (Model) this;
     }
 
@@ -202,14 +227,6 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         return (M) in.readObject();
     }
 
-    protected static <T extends IInstance> HashMap<T, T> copyList(List<T> list) {
-        HashMap<T, T> map = new HashMap<T, T>();
-        for (T t : list) {
-            map.put(t, (T) t.copy());
-        }
-        return map;
-    }
-
     public Model copy() {
         try {
             byte[] bytes = exportToBytes();
@@ -233,33 +250,6 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     }
 
     @Override
-    public void updated() {
-        firePropertyChange(REFRESH);
-    }
-
-    @Override
-    public List<UpdateReceiver> getRegisterObjects() {
-        return registerObjects;
-    }
-
-    @Override
-    public void register(UpdateReceiver obj) {
-        if (obj != null) registerObjects.add(obj);
-    }
-
-    @Override
-    public void unRegister(UpdateReceiver obj) {
-        if (obj != null) registerObjects.remove(obj);
-    }
-
-    @Override
-    public void notifyRegisterObjects() {
-        for (UpdateReceiver receiver : getRegisterObjects()) {
-            receiver.updated();
-        }
-    }
-
-    @Override
     public boolean editable() {
         return editable;
     }
@@ -268,72 +258,54 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         this.editable = editable;
     }
 
-    public static void main(String[] args) throws Exception {
-        // Serializer serializer = new Persister(new CycleStrategy());
-        //
-        // // empty port
-        // PortTypeModel ePort = new PortTypeModel();
-        // ePort.setName("ePort");
-        // ePort.getInstance().setName("p1");
-        //
-        // // int port
-        // PortTypeModel intPort = new PortTypeModel();
-        // intPort.setName("intPort");
-        // intPort.getInstance().setName("p2");
-        //
-        // // data
-        // DataTypeModel intDataType = new DataTypeModel("int");
-        // intDataType.getInstance().setName("a");
-        // intPort.setOrderModelChild(intDataType, 0);
-        //
-        // // connector type
-        // ConnectorTypeModel synchronizedInt = new ConnectorTypeModel();
-        // synchronizedInt.getInstance();
-        // synchronizedInt.setName("synchronizedInt");
-        // synchronizedInt.setOrderModelChild(ePort, 0);
-        // synchronizedInt.setOrderModelChild(intPort, 1);
-        // synchronizedInt.parseInteractor("p1' p2");
-        //
-        // // atomic
-        // AtomicTypeModel machineType = new AtomicTypeModel().setName("Machine");
-        // machineType.getInstance().setName("mac");
-        // machineType.setInitAction(new ActionTypeModel().getInstance().setAction(""));
-        //
-        // // atomic data
-        // DataTypeModel intInMachine = (DataTypeModel) intDataType.copy().setName("int");
-        // machineType.addData((DataModel<AtomicTypeModel>) intInMachine.createInstance().setName(
-        // "counter"));
-        //
-        // // atomic port
-        // PortModel runPort = (PortModel) intPort.getInstance().copy().setName("run");
-        // machineType.addPort(runPort);
-        //
-        // // atomic place
-        // PlaceModel idle = new PlaceTypeModel().getInstance().setName("IDLE");
-        // PlaceModel busy = idle.copy().setName("BUSY");
-        // machineType.addPlace(idle);
-        // machineType.addPlace(busy);
-        // machineType.setInitPlace(idle);
-        //
-        // // atomic transition
-        // TransitionModel run = new TransitionTypeModel().getInstance();
-        // // run.setActionString(new ActionTypeModel().getInstance().setAction("counter += 1;"));
-        // // run.setGuardString(new GuardTypeModel().getInstance().setGuard("count >= 0"));
-        // run.setPort(runPort);
-        // run.setSource(idle);
-        // run.setTarget(busy);
-        // run.attachSource();
-        // run.attachTarget();
-        // // machineType.addTransition(run);
-        //
-        // // atomic priority
-        //
-        // // CompoundTypeModel all = new CompoundTypeModel().setName("all");
-        //
-        // ByteArrayOutputStream out = new ByteArrayOutputStream();
-        // serializer.write(machineType.getInstance(), out);
-        // System.out.println(new String(out.toByteArray()));
-        // System.out.println(serializer.read(AtomicModel.class,
-        // new ByteArrayInputStream(out.toByteArray())));
+    @Override
+    public boolean validateOnTheFly() {
+        try {
+            for (Rule rule : getProperties().getRules()) {
+                for (Validator validator : getValidators()) {
+                    validator.validateOnTheFly(this, rule);
+                }
+            }
+            return true;
+        } catch (BIPModelingException e) {
+            MessageDialog.ShowErrorDialog(e.getMessage(), "Error");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean validate() {
+        try {
+            for (Rule rule : getProperties().getRules()) {
+                for (Validator validator : getValidators()) {
+                    validator.validate(this, rule);
+                }
+            }
+            return true;
+        } catch (BIPModelingException e) {
+            MessageDialog.ShowErrorDialog(e.getMessage(), "Error");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean validateFull() {
+        if (this instanceof IContainer) {
+            for (Object child : ((IContainer) this).getChildren()) {
+                if (child instanceof IModel) {
+                    if (!((IModel) child).validateFull()) {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return validate();
+        }
+    }
+
+    @Override
+    public List<Validator> getValidators() {
+        return getProperties().getValidators();
     }
 }

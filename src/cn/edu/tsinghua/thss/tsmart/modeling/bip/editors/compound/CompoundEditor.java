@@ -5,7 +5,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.palette.ConnectionCreationToolEntry;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.ToolEntry;
@@ -21,12 +20,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.PasteComponentAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentToPaletteAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPFileEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 
@@ -56,30 +56,24 @@ public class CompoundEditor extends BIPEditor {
 
     private void initCompoundPalette() {
         ToolEntry entry =
-                        new CreationToolEntry("原子组件", "新建一个空白的原子组件", new SimpleFactory(
+                        new CreationToolEntry("原子构件", "新建一个空白的原子构件", new SimpleFactory(
                                         AtomicTypeModel.class), getImage("icons/atomic_16.png"),
                                         getImage("icons/atomic_32.png"));
         getToolGroup().add(entry);
         entry =
-                        new CreationToolEntry("复合组件", "新建一个空白的复合组件", new SimpleFactory(
+                        new CreationToolEntry("复合构件", "新建一个空白的复合构件", new SimpleFactory(
                                         CompoundTypeModel.class),
                                         getImage("icons/compound_16.png"),
                                         getImage("icons/compound_32.png"));
-        getToolGroup().add(entry);
-        entry =
-                        new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
-                                        ConnectionTypeModel.class),
-                                        getImage("icons/transition_16.png"),
-                                        getImage("icons/transition_32.png"));
         getToolGroup().add(entry);
 
         connectorPalette = new PaletteDrawer("连接子");
         getPaletteRoot().add(connectorPalette);
 
-        atomicPalette = new PaletteDrawer("原子组件库");
+        atomicPalette = new PaletteDrawer("原子构件库");
         getPaletteRoot().add(atomicPalette);
 
-        compoundPalette = new PaletteDrawer("复合组件库");
+        compoundPalette = new PaletteDrawer("复合构件库");
         getPaletteRoot().add(compoundPalette);
         initConnectorCreationEntry();
     }
@@ -104,6 +98,22 @@ public class CompoundEditor extends BIPEditor {
         connectorPalette.add(entry);
     }
 
+    public void removeAtomicCreationToolEntry(CreationToolEntry entry) {
+        atomicPalette.remove(entry);
+    }
+
+    public void addAtomicCreationToolEntry(CreationToolEntry entry) {
+        atomicPalette.add(entry);
+    }
+
+    public void removeCompoundCreationToolEntry(CreationToolEntry entry) {
+        compoundPalette.remove(entry);
+    }
+
+    public void addCompoundCreationToolEntry(CreationToolEntry entry) {
+        compoundPalette.add(entry);
+    }
+
     @Override
     public void doSave(IProgressMonitor monitor) {
         saveProperties();
@@ -124,6 +134,14 @@ public class CompoundEditor extends BIPEditor {
         IAction action;
 
         action = new SaveComponentTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
+        action = new SaveComponentToPaletteAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
+        action = new VariableSelectionAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 

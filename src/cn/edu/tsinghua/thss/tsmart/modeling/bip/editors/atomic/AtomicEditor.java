@@ -23,13 +23,15 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentToPaletteAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPFileEditorInput;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.PlaceCreationTool;
 import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
@@ -98,14 +100,14 @@ public class AtomicEditor extends BIPEditor {
     private void initDataCreationEntry() {
         CreationToolEntry boolCreationEntry =
                         new CreationToolEntry("布尔", "增加一个布尔变量", new CopyFactory(
-                                        DataTypeModel.getDataTypeModel("bool")),
+                                        DataTypeModel.getModelByName("bool")),
                                         getImage("icons/bool_16.png"),
                                         getImage("icons/bool_32.png"));
         addDataCreationToolEntry(boolCreationEntry);
         if (GlobalProperties.getInstance().isMultipleDataTypeAvailble()) {
             CreationToolEntry intCreationEntry =
                             new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
-                                            DataTypeModel.getDataTypeModel("int")),
+                                            DataTypeModel.getModelByName("int")),
                                             getImage("icons/int_16.png"),
                                             getImage("icons/int_32.png"));
             addDataCreationToolEntry(intCreationEntry);
@@ -126,8 +128,8 @@ public class AtomicEditor extends BIPEditor {
 
     private void initPortCreationEntry() {
         CreationToolEntry ePortCreationEntry =
-                        new CreationToolEntry("ePort", "增加一个空端口", new CopyFactory(
-                                        PortTypeModel.getPortTypeModel("ePort")),
+                        new CreationToolEntry("ePort", "增加端口: port type ePort()", new CopyFactory(
+                                        PortTypeModel.getModelByName("ePort")),
                                         getImage("icons/port_16.png"),
                                         getImage("icons/port_32.png"));
         addPortCreationToolEntry(ePortCreationEntry);
@@ -136,8 +138,9 @@ public class AtomicEditor extends BIPEditor {
                 continue;
             }
             CreationToolEntry creationToolEntry =
-                            new CreationToolEntry(entry.getKey(), "新建一个" + entry.getKey() + "端口",
-                                            new CopyFactory(entry.getValue()),
+                            new CreationToolEntry(entry.getKey(), "增加端口: "
+                                            + entry.getValue().exportToBip(), new CopyFactory(
+                                            entry.getValue()),
                                             BIPEditor.getImage("icons/port_16.png"),
                                             BIPEditor.getImage("icons/port_32.png"));
             addPortCreationToolEntry(creationToolEntry);
@@ -148,12 +151,12 @@ public class AtomicEditor extends BIPEditor {
     private void initAtomicPalette() {
         PlaceCreationToolEntry placeCreationEntry =
                         new PlaceCreationToolEntry("状态", "新建一个状态", new SimpleFactory(
-                                        PlaceTypeModel.class), getImage("icons/place_16.png"),
+                                        PlaceModel.class), getImage("icons/place_16.png"),
                                         getImage("icons/place_32.png"));
 
         ConnectionCreationToolEntry connectionCreationEntry =
                         new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
-                                        TransitionTypeModel.class),
+                                        TransitionModel.class),
                                         getImage("icons/transition_16.png"),
                                         getImage("icons/transition_32.png"));
         getToolGroup().add(placeCreationEntry);
@@ -195,6 +198,14 @@ public class AtomicEditor extends BIPEditor {
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
         
+        action = new SaveComponentToPaletteAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+        
+        action = new VariableSelectionAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
         action = new CopyComponentAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());

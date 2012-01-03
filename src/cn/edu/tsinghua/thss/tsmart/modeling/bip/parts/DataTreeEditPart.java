@@ -40,7 +40,6 @@ public class DataTreeEditPart extends BaseTreeEditPart {
     }
 
     @Override
-    // °²×°edit policy
     protected void createEditPolicies() {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new DeleteModelEditPolicy());
     }

@@ -34,8 +34,8 @@ public class OpenCompoundEditorAction extends Action
     public OpenCompoundEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("复合组件");
-        setToolTipText("打开一个复合组件");
+        setText("复合构件");
+        setToolTipText("打开一个复合构件");
         setImageDescriptor(Activator.getImageDescriptor("icons/compound_16.png"));
         window.getSelectionService().addSelectionListener(this);
     }

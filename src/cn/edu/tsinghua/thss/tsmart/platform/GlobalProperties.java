@@ -1,5 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.platform;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -11,40 +15,48 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.baseline.BaselineDataAccessor;
 import cn.edu.tsinghua.thss.tsmart.modeling.ModelingProperties;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.CompareRelationValidator;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.ConnectRelationValidator;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.HasRelationValidator;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Rule;
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Validator;
 
 @Root
 public class GlobalProperties implements ModelingProperties, PlatformProperties {
     @Attribute(name = "modelchecking")
-    public boolean                  enableModelChecking     = false;
+    private boolean                 enableModelChecking     = false;
     @Attribute(name = "codegeneration")
-    public boolean                  enableCodeGeneration    = false;
+    private boolean                 enableCodeGeneration    = false;
     @Element
-    public String                   defaultEditorFontName   = "Consolas";
+    private String                  defaultEditorFontName   = "Consolas";
     @Element
-    public int                      defaultEditorFontHeight = 10;
+    private int                     defaultEditorFontHeight = 10;
     @Element
-    public int                      defaultEditorFontStyle  = SWT.BOLD;
+    private int                     defaultEditorFontStyle  = SWT.BOLD;
     @Attribute(name = "atomicpriority")
-    public boolean                  allowAtomicPriority     = false;
+    private boolean                 allowAtomicPriority     = false;
     @Attribute(name = "priority")
-    public boolean                  allowPriority           = false;
+    private boolean                 allowPriority           = false;
     @Attribute(name = "broadcast")
-    public boolean                  allowBroadcast          = false;
+    private boolean                 allowBroadcast          = false;
 
-    public Color                    placeLabelColor         = ColorConstants.blue;
-    public Color                    actionLabelColor        = new Color(null, 204, 102, 255);
-    public Color                    guardLabelColor         = new Color(null, 100, 180, 100);
-    public Color                    connectorColor          = new Color(null, 99, 37, 35);
-    public Color                    connectorOutlineColor   = new Color(null, 113, 137, 63);
-    public Color                    connectorFillColor      = new Color(null, 155, 187, 89);
-    public Color                    connectionLabelColor    = new Color(null, 0, 51, 0);
-    public Color                    atomicLabelColor        = new Color(null, 60, 60, 60);
-    public Color                    compoundLabelColor      = new Color(null, 13, 13, 13);
-    public Color                    portLabelColor          = ColorConstants.lightBlue;
-    public Color                    dataLabelColor          = ColorConstants.darkGray;
-    public Font                     defaultEditorFont;
+    private Color                   placeLabelColor         = ColorConstants.blue;
+    private Color                   actionLabelColor        = new Color(null, 204, 102, 255);
+    private Color                   guardLabelColor         = new Color(null, 100, 180, 100);
+    private Color                   connectorColor          = new Color(null, 99, 37, 35);
+    private Color                   connectorOutlineColor   = new Color(null, 113, 137, 63);
+    private Color                   connectorFillColor      = new Color(null, 155, 187, 89);
+    private Color                   connectionLabelColor    = new Color(null, 0, 51, 0);
+    private Color                   atomicLabelColor        = new Color(null, 60, 60, 60);
+    private Color                   compoundLabelColor      = new Color(null, 13, 13, 13);
+    private Color                   portLabelColor          = ColorConstants.lightBlue;
+    private Color                   dataLabelColor          = ColorConstants.darkGray;
+    private List<Validator>         validators;
+    private Font                    defaultEditorFont;
     private static GlobalProperties instance;
+    private static ArrayList<String> keywords;
 
     public final static GlobalProperties getInstance() {
         if (instance == null) {
@@ -54,7 +66,12 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     }
 
     private GlobalProperties() {
-
+        validators = new ArrayList<Validator>();
+        validators.add(HasRelationValidator.getInstance());
+        validators.add(CompareRelationValidator.getInstance());
+        validators.add(ConnectRelationValidator.getInstance());
+        keywords=new ArrayList<String>();
+        keywords.add("place");
     }
 
     public boolean isMultipleDataTypeAvailble() {
@@ -142,4 +159,39 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
         return compoundLabelColor;
     }
 
+    public List<Validator> getValidators() {
+        return validators;
+    }
+
+    public List<Rule> getRules() {
+        try {
+            BaselineDataAccessor bda = new BaselineDataAccessor();
+            java.util.List<cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Rule> arules =
+                            bda.getRules(bda.getBaselines().get(0).getName());
+            java.util.List<Rule> ruleList = new ArrayList<Rule>();
+            for (Iterator<cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Rule> iterator =
+                            arules.iterator(); iterator.hasNext();) {
+                cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Rule arule =
+                                (cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Rule) iterator
+                                                .next();
+                Rule rule = new Rule();
+                rule.setFirstEntity(arule.getSubjectEntityName());
+                rule.setSecondEntity(arule.getObjectEntityName());
+                rule.setRelation(arule.getRelation());
+                rule.setMax(arule.getMax());
+                rule.setMin(arule.getMin());
+            }
+            return ruleList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ArrayList<Rule>();
+        }
+    }
+
+    public void registerValidator(Validator validator) {
+        validators.add(validator);
+    }
+    public static ArrayList<String> getKeywords() {
+        return keywords;
+    }
 }

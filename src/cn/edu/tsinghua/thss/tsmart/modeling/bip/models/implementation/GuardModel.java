@@ -13,11 +13,11 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
  */
 @SuppressWarnings("rawtypes")
 @Root
-public class GuardModel extends BaseInstanceModel<GuardModel, GuardTypeModel, IContainer> {
+public class GuardModel extends BaseInstanceModel<GuardModel, BaseTypeModel, IContainer> {
 
-    public final static String GUARD = "guard";
+    private static final long serialVersionUID = -5027766483277950642L;
     @Element
-    private String             guard = "true";
+    private String            guard            = "true";
 
     public String getGuard() {
         return guard;
@@ -49,6 +49,5 @@ public class GuardModel extends BaseInstanceModel<GuardModel, GuardTypeModel, IC
     }
 
     @Override
-    public void setPropertyValue(Object id, Object value) {
-    }
+    public void setPropertyValue(Object id, Object value) {}
 }

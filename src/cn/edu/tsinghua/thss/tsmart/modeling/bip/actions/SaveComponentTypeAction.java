@@ -31,8 +31,8 @@ public class SaveComponentTypeAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("保存组件");
-        setToolTipText("将当前组件保存到文件");
+        setText("保存构件");
+        setToolTipText("将当前构件保存到文件");
         setId(id);
         setEnabled(false);
     }

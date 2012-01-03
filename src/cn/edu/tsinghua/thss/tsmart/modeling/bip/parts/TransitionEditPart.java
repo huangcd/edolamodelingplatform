@@ -18,9 +18,6 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ActionModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.GuardModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
@@ -130,9 +127,15 @@ public class TransitionEditPart extends BaseConnectionEditPart {
      * 删除Transition的时候移除相应标签
      */
     public void deactivate() {
-        getGraphLayerFigure().remove(actionLabel);
+        if (getGraphLayerFigure().getChildren().contains(actionLabel)) {
+            getGraphLayerFigure().remove(actionLabel);
+        }
+        if (getGraphLayerFigure().getChildren().contains(guardLabel)) {
         getGraphLayerFigure().remove(guardLabel);
+        }
+        if (getGraphLayerFigure().getChildren().contains(portLabel)) {
         getGraphLayerFigure().remove(portLabel);
+        }
         super.deactivate();
     }
 
@@ -141,22 +144,20 @@ public class TransitionEditPart extends BaseConnectionEditPart {
      */
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
-        if (ActionModel.ACTION.equals(propertyName)) {
+        if (IModel.ACTION.equals(propertyName)) {
             setTooltip();
             actionLabel.setText(getModel().getActionString());
             actionLocator.relocate();
-        } else if (GuardModel.GUARD.equals(propertyName)) {
+        } else if (IModel.GUARD.equals(propertyName)) {
             setTooltip();
             guardLabel.setText(getModel().getGuardString());
             guardLocator.relocate();
         } else if (IModel.PORT.equals(propertyName)) {
             setTooltip();
             portLabel.setText(getModel().getPortString());
-        } else if (TransitionModel.BEND_POINTS.equals(propertyName)) {
+        } else if (IModel.BEND_POINTS.equals(propertyName)) {
             refreshVisuals();
-        } else if (IModel.REFRESH.equals(evt.getPropertyName())) {
-            refreshVisuals();
-        } else if (PlaceModel.SOURCE.equals(propertyName) || PlaceModel.TARGET.equals(propertyName)) {
+        } else if (IModel.SOURCE.equals(propertyName) || IModel.TARGET.equals(propertyName)) {
             refreshVisuals();
         }
         setTooltip();
