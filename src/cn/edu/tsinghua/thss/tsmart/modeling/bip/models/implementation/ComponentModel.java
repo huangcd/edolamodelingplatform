@@ -8,7 +8,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class ComponentModel<Model extends BaseInstanceModel, Type extends ComponentTypeModel>
                 extends BaseInstanceModel<Model, Type, CompoundTypeModel> {
 
@@ -30,8 +30,7 @@ public abstract class ComponentModel<Model extends BaseInstanceModel, Type exten
         TextPropertyDescriptor name = new TextPropertyDescriptor(NAME, "构件名");
         name.setDescription("01");
         properties.add(name);
-        EntitySelectionPropertyDescriptor tag =
-                        new EntitySelectionPropertyDescriptor(ENTITY, "标签");
+        EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("02");
         properties.add(tag);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);

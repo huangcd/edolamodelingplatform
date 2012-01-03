@@ -26,36 +26,36 @@ import cn.edu.tsinghua.thss.tsmart.modeling.validation.Validator;
 @Root
 public class GlobalProperties implements ModelingProperties, PlatformProperties {
     @Attribute(name = "modelchecking")
-    private boolean                 enableModelChecking     = false;
+    private boolean                  enableModelChecking     = false;
     @Attribute(name = "codegeneration")
-    private boolean                 enableCodeGeneration    = false;
+    private boolean                  enableCodeGeneration    = false;
     @Element
-    private String                  defaultEditorFontName   = "Consolas";
+    private String                   defaultEditorFontName   = "Consolas";
     @Element
-    private int                     defaultEditorFontHeight = 10;
+    private int                      defaultEditorFontHeight = 10;
     @Element
-    private int                     defaultEditorFontStyle  = SWT.BOLD;
+    private int                      defaultEditorFontStyle  = SWT.BOLD;
     @Attribute(name = "atomicpriority")
-    private boolean                 allowAtomicPriority     = false;
+    private boolean                  allowAtomicPriority     = false;
     @Attribute(name = "priority")
-    private boolean                 allowPriority           = false;
+    private boolean                  allowPriority           = false;
     @Attribute(name = "broadcast")
-    private boolean                 allowBroadcast          = false;
+    private boolean                  allowBroadcast          = false;
 
-    private Color                   placeLabelColor         = ColorConstants.blue;
-    private Color                   actionLabelColor        = new Color(null, 204, 102, 255);
-    private Color                   guardLabelColor         = new Color(null, 100, 180, 100);
-    private Color                   connectorColor          = new Color(null, 99, 37, 35);
-    private Color                   connectorOutlineColor   = new Color(null, 113, 137, 63);
-    private Color                   connectorFillColor      = new Color(null, 155, 187, 89);
-    private Color                   connectionLabelColor    = new Color(null, 0, 51, 0);
-    private Color                   atomicLabelColor        = new Color(null, 60, 60, 60);
-    private Color                   compoundLabelColor      = new Color(null, 13, 13, 13);
-    private Color                   portLabelColor          = ColorConstants.lightBlue;
-    private Color                   dataLabelColor          = ColorConstants.darkGray;
-    private List<Validator>         validators;
-    private Font                    defaultEditorFont;
-    private static GlobalProperties instance;
+    private Color                    placeLabelColor         = ColorConstants.blue;
+    private Color                    actionLabelColor        = new Color(null, 204, 102, 255);
+    private Color                    guardLabelColor         = new Color(null, 100, 180, 100);
+    private Color                    connectorColor          = new Color(null, 99, 37, 35);
+    private Color                    connectorOutlineColor   = new Color(null, 113, 137, 63);
+    private Color                    connectorFillColor      = new Color(null, 155, 187, 89);
+    private Color                    connectionLabelColor    = new Color(null, 0, 51, 0);
+    private Color                    atomicLabelColor        = new Color(null, 60, 60, 60);
+    private Color                    compoundLabelColor      = new Color(null, 13, 13, 13);
+    private Color                    portLabelColor          = ColorConstants.lightBlue;
+    private Color                    dataLabelColor          = ColorConstants.darkGray;
+    private List<Validator>          validators;
+    private Font                     defaultEditorFont;
+    private static GlobalProperties  instance;
     private static ArrayList<String> keywords;
 
     public final static GlobalProperties getInstance() {
@@ -70,7 +70,7 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
         validators.add(HasRelationValidator.getInstance());
         validators.add(CompareRelationValidator.getInstance());
         validators.add(ConnectRelationValidator.getInstance());
-        keywords=new ArrayList<String>();
+        keywords = new ArrayList<String>();
         keywords.add("place");
     }
 
@@ -191,6 +191,7 @@ public class GlobalProperties implements ModelingProperties, PlatformProperties 
     public void registerValidator(Validator validator) {
         validators.add(validator);
     }
+
     public static ArrayList<String> getKeywords() {
         return keywords;
     }

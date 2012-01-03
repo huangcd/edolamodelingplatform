@@ -15,7 +15,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  org.simpleframework,
  commons-codec,
- baselineDAO;bundle-version="1.0.0"
+ baselineDAO,
+ org.eclipse.ui.views.log;bundle-version="1.0.200",
+ org.eclipse.equinox.p2.console;bundle-version="1.0.300",
+ org.eclipse.equinox.p2.core;bundle-version="2.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

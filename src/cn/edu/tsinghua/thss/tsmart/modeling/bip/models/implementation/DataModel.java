@@ -18,7 +18,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPr
  * Time: 下午3:19<br/>
  * DataType 会在 Atomic Type 和 Connector Type 里面出现
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DataModel<Parent extends IDataContainer>
                 extends BaseInstanceModel<DataModel, DataTypeModel, Parent> {
 

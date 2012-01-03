@@ -17,5 +17,6 @@ Bundle-ClassPath: baseline.jar,
  xpp3-1.1.3_8.jar
 Export-Package: cn.edu.tsinghua.thss.tsmart.baseline,
  cn.edu.tsinghua.thss.tsmart.baseline.model,
- cn.edu.tsinghua.thss.tsmart.baseline.model.refined
+ cn.edu.tsinghua.thss.tsmart.baseline.model.refined,
+ com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

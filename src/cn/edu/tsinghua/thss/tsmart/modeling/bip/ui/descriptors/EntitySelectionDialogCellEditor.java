@@ -20,6 +20,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EntitySelectionDialog
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class EntitySelectionDialogCellEditor extends DialogCellEditor {
 
 	/**

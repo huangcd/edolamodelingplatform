@@ -16,7 +16,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPr
  * Date: 11-9-26<br/>
  * Time: обнГ3:14<br/>
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Root
 public class ActionModel extends BaseInstanceModel<ActionModel, BaseTypeModel, IContainer> {
     private static final long serialVersionUID = 1851129094881910942L;
