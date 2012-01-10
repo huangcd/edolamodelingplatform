@@ -53,18 +53,6 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     String    LINE_COLOR         = "lineColor";
     String[]  TRUE_FALSE_ARRAY   = new String[] {"true", "false"};
     /**
-     * TODO 是不是应该把这个删除？
-     */
-    String[]  TAGS               = new String[] {"$UNBOUND$", "sys", "sensor", "gate"};
-    String[]  COMPONENT_TAGS     = new String[] {"$UNBOUND$", "SwC", "EC", "Main", "Constraints",
-                    "Functional", "Dev", "User", "HW"};
-    String[]  DATA_TAGS          = new String[] {"$UNBOUND$", "SL", "HL", "Vmin", "Vmax", "Smin",
-                    "Smax"       };
-    String[]  PORT_TAGS          = new String[] {"$UNBOUND$", "SC", "FC"};
-    String[]  CONNECTOR_TAGS     = new String[] {"$UNBOUND$", "TickCon", "ReadCon", "WriteCon",
-                    "StartCycleCon", "FinishCycleCon", "FunctionCallCon", "DataRequestCon",
-                    "DataReplyCon"};
-    /**
      * 小圆点的半径
      */
     int       BULLET_RADIUS      = 8;
@@ -94,12 +82,12 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     String getName();
 
     Model setName(String name);
-    
+
     /**
      * @return 返回关于模型的注释
      */
     String getComment();
-    
+
     Model setComment(String comment);
 
     /**
@@ -136,11 +124,10 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
      * 模型标签相关接口
      */
     ArrayList<String> getEntityNames();
-//    Model addEntityName(String entityName);
+
     Model setEntityNames(ArrayList<String> entityNames);
-//    Model deleteEntityName(String entityName);
+
     Model deleteAllEntityNames();
-//    String getEntityDisplayName();
 
     /**
      * @return 返回模型的全局唯一ID

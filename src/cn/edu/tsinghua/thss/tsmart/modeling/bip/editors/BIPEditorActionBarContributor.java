@@ -24,8 +24,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.LabelRetargetAction;
 import org.eclipse.ui.actions.RetargetAction;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportRetargetAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ExportRetargetAction;
 
 public class BIPEditorActionBarContributor extends ActionBarContributor {
 

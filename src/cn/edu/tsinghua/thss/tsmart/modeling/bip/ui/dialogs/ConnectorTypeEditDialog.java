@@ -27,6 +27,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeMo
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InteractionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ConnectorTypeEditDialog extends AbstractEditDialog {
@@ -414,29 +415,6 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         Label info = getErrorLabel();
         info.setForeground(ColorConstants.black);
         info.setText("绑定参数成功");
-        // String portType = comboExportPortType.getText();
-        // connector.setPort(PortTypeModel.getPortTypeModel(portType).getInstance());
-        // HashSet<String> portArgumentTypes =
-        // new HashSet<String>(
-        // ((PortTypeModel) connector.getPort().getType())
-        // .getArgumentTypes());
-        // for (DataModel<ConnectorTypeModel> data : connector.getDatas()) {
-        // String type = data.getType().getName();
-        // if (portArgumentTypes.contains(type)) {
-        // portArgumentTypes.remove(type);
-        // }
-        // }
-        // if (!portArgumentTypes.isEmpty()) {
-        // String type = portArgumentTypes.iterator().next();
-        // getErrorLabel().setText("导出端口中包含变量类型" + type + "，而连接子中没有类型为" + type + "的变量");
-        // return;
-        // }
-        // ConnectorExportPortEditDialog dialog =
-        // new ConnectorExportPortEditDialog(getParentShell(), connector);
-        // dialog.setBlockOnOpen(true);
-        // if (OK == dialog.open()) {
-        // // TODO ok
-        // }
     }
 
     protected void removeInteraction() {
@@ -593,7 +571,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
     @Override
     protected void updateValues() {
         connector.setName(textConnectorName.getText().trim());
-        ConnectorTypeModel.addType(connector.getName(), connector);
+        GlobalProperties.getInstance().getTopModel().addChild(connector);
     }
 
     @Override

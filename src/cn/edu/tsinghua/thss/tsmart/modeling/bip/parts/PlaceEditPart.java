@@ -3,6 +3,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.AbsoluteBendpoint;
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.ChopboxAnchor;
@@ -26,7 +27,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 
@@ -117,18 +118,37 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             for (TransitionModel transition : getModel().getTargetConnections()) {
                 transition.firePropertyChange(IModel.TARGET);
             }
+
         }
         // 名字变更，先判断是否重名，同时修改标签和toolTip的名字,并重定位标签的位置
         else if (IModel.NAME.equals(evt.getPropertyName())) {
-            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
-                            getModel().getName())) {
+            if (getModel().getParent() != null) {
+                if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                                getModel().getName())) {
+                    nameLabel.setText(getModel().getName());
+                    tooltipLabel.setText(getModel().getName());
+                    labelLocator.relocate();
+                    try {
+                        MessageUtil.clearProblemMessage();
+                    } catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    MessageUtil.ShowRenameErrorDialog(getModel().getName());
+                    getModel().setName(getModel().getOldName());
+                    try {
+                        MessageUtil.addProblemWarningMessage(getModel().getName());
+                    } catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
                 nameLabel.setText(getModel().getName());
                 tooltipLabel.setText(getModel().getName());
                 labelLocator.relocate();
-            } else {
-                MessageDialog.ShowRenameErrorDialog(getModel().getName());
-                getModel().setName(getModel().getOldName());
+
             }
+
         } else if (IModel.ATOMIC_INIT_PLACE.equals(evt.getPropertyName())) {
             PlaceModel model = getModel();
             if (model.isInitialPlace()) {
@@ -142,7 +162,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             refreshSourceConnections();
         } else if (IModel.TARGET.equals(evt.getPropertyName())) {
             refreshTargetConnections();
-        } 
+        }
     }
 
     @Override

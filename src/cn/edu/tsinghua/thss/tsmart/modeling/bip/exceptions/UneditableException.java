@@ -5,7 +5,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions;
  * 
  * @author huangcd
  */
-public class UneditableException extends BIPModelingException {
+public class UneditableException extends EdolaModelingException {
 
     /**
      * 

@@ -9,14 +9,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
 
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.simpleframework.xml.Element;
@@ -25,8 +29,8 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
@@ -34,7 +38,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContain
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 /**
  * Created by Huangcd<br/>
@@ -46,7 +50,7 @@ import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
 public class ConnectorTypeModel
                 extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IDataContainer>
                 implements
-                    IDataContainer<ConnectorTypeModel, IDataContainer, IInstance>,
+                    IDataContainer<ConnectorTypeModel, ConnectorModel, IDataContainer, IInstance>,
                     IOrderContainer<PortTypeModel> {
     private static final long                                                        serialVersionUID =
                                                                                                                       -7637868341840412974L;
@@ -68,10 +72,27 @@ public class ConnectorTypeModel
         addTypeSources(rendezvous.getName(), rendezvous);
     }
 
-    public static void saveConnectorTypes() {
-        File file =
-                        new File(Activator.getPreferenceDirection(),
-                                        GlobalProperties.CONNECTOR_TYPE_FILE);
+    public static Collection<ConnectorTypeModel> getAllRegisterTypes() {
+        return typeSources.values();
+    }
+
+    public static void saveTypes() {
+        saveTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void loadTypes() {
+        loadTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void clearTypes() {
+        Set<String> typeNames = new HashSet<String>(typeSources.keySet());
+        for (String type : typeNames) {
+            removeType(type);
+        }
+    }
+
+    public static void saveTypes(File directory) {
+        File file = new File(directory, GlobalProperties.CONNECTOR_TYPE_FILE);
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
             for (Map.Entry<String, ConnectorTypeModel> entry : getTypeEntries()) {
@@ -84,10 +105,8 @@ public class ConnectorTypeModel
         }
     }
 
-    public static void loadConnectorTypes() {
-        File file =
-                        new File(Activator.getPreferenceDirection(),
-                                        GlobalProperties.CONNECTOR_TYPE_FILE);
+    public static void loadTypes(File directory) {
+        File file = new File(directory, GlobalProperties.CONNECTOR_TYPE_FILE);
         if (!file.exists()) {
             return;
         }
@@ -96,7 +115,7 @@ public class ConnectorTypeModel
             while (true) {
                 ConnectorTypeModel model = (ConnectorTypeModel) in.readObject();
                 if (!getTypes().contains(model.getName())) {
-                    addType(model.getName(), model);
+                    addType(model);
                 }
             }
         } catch (EOFException e) {} catch (Exception e) {
@@ -104,15 +123,15 @@ public class ConnectorTypeModel
         }
     }
 
-    public static void addType(String type, ConnectorTypeModel connector) {
-        addTypeSources(type, connector);
+    protected static void addType(ConnectorTypeModel model) {
+        String type = model.getName();
+        addTypeSources(type, model);
         HashMap<CompoundEditor, CreationToolEntry> map =
                         new HashMap<CompoundEditor, CreationToolEntry>();
         for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
             CreationToolEntry entry =
                             new CreationToolEntry(type, "新建一个" + type + "连接子", new CopyFactory(
-                                            connector),
-                                            BIPEditor.getImage("icons/connector_16.png"),
+                                            model), BIPEditor.getImage("icons/connector_16.png"),
                                             BIPEditor.getImage("icons/connector_32.png"));
             editor.addConnectorCreationToolEntry(entry);
             map.put(editor, entry);
@@ -120,7 +139,7 @@ public class ConnectorTypeModel
         toolMap.put(type, map);
     }
 
-    public static boolean addTypeSources(String type, ConnectorTypeModel connector) {
+    private static boolean addTypeSources(String type, ConnectorTypeModel connector) {
         if (typeSources.containsKey(type)) return false;
         typeSources.put(type, connector);
         return true;
@@ -133,13 +152,14 @@ public class ConnectorTypeModel
         toolMap.get(type).put(editor, entry);
     }
 
-    public static void removeType(String type) {
-        HashMap<CompoundEditor, CreationToolEntry> map = toolMap.get(type);
-        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
-            editor.removeConnectorCreationToolEntry(map.get(editor));
+    protected static void removeType(String type) {
+        if (removeTypeSources(type)) {
+            HashMap<CompoundEditor, CreationToolEntry> map = toolMap.get(type);
+            for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+                editor.removeConnectorCreationToolEntry(map.get(editor));
+            }
+            toolMap.remove(type);
         }
-        toolMap.remove(type);
-        removeTypeSources(type);
     }
 
     public static boolean isRemovable(String type) {
@@ -224,13 +244,14 @@ public class ConnectorTypeModel
             return bounded;
         }
 
-        protected void bound(PortTypeModel model) {
+        protected void bound(PortTypeModel model, ConnectorTypeModel parent) {
             this.model = model;
             this.bounded = true;
         }
 
         public void unbound() {
             this.bounded = false;
+            this.model.setParent(null);
         }
 
         public int getIndex() {
@@ -262,7 +283,123 @@ public class ConnectorTypeModel
         exportDatas = new ArrayList<DataModel<ConnectorTypeModel>>();
         interactions = new ArrayList<InteractionModel>();
         arguments = new ArrayList<ArgumentEntry>();
-        setPort((PortModel) PortTypeModel.getModelByName("ePort").getInstance().setParent(this));
+        setPort((PortModel) PortTypeModel.getModelByName("ePort").getInstance());
+    }
+
+    /*
+     * true = 纯硬件 connector
+     */
+    public boolean checkOnlyHardwarePorts() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return true;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return true;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+        Set<PortModel> set = getAllRelativePorts();
+        for (PortModel port : set) {
+            if (port.getParent() instanceof AtomicTypeModel) {
+                if (port.getParent().getEntityNames()
+                                .contains(projectModel.getSoftwareEntity()))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * true = 纯软件 connector
+     */
+    public boolean checkOnlySoftwarePorts() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return true;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return true;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+        Set<PortModel> set = getAllRelativePorts();
+        for (PortModel port : set) {
+            if (port.getParent() instanceof AtomicTypeModel) {
+                if (port.getParent().getEntityNames().contains(projectModel.getHardwareEntity()))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+     * true = 同时有硬软 connector
+     */
+    public boolean checkSoftwareHardwarePorts() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return true;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return true;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+        boolean soft = false;
+        boolean hard = false;
+
+        Set<PortModel> set = getAllRelativePorts();
+
+        for (PortModel port : set) {
+            if (port.getParent() instanceof AtomicTypeModel) {
+                if (port.getParent().getEntityNames()
+                                .contains(projectModel.getSoftwareEntity()))
+                    soft = true;
+                if (port.getParent().getEntityNames()
+                                .contains(projectModel.getHardwareEntity()))
+                    hard = true;
+                if (soft && hard) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Set<PortModel> getAllRelativePorts() {
+        HashSet<PortModel> set = new HashSet<PortModel>();
+        for (ArgumentEntry entry : arguments) {
+            if (entry.isBounded()) {
+                PortModel port = entry.getModel().getInstance();
+                if (port.getParent() instanceof ConnectorTypeModel) {
+                    set.addAll(((ConnectorTypeModel) port.getParent()).getAllRelativePorts());
+                } else if (port.getParent() instanceof AtomicTypeModel) {
+                    set.add(port);
+                } else {
+                    throw new EdolaModelingException(
+                                    "Parent of port are neither ConnectorTypeModel nor AtomicTypeModel");
+                }
+            } else {
+                throw new UnboundedException("Connector has an unbounded port");
+            }
+        }
+        return set;
     }
 
     protected List<ArgumentEntry> getArgumentEntries() {
@@ -374,6 +511,86 @@ public class ConnectorTypeModel
         return buffer.toString();
     }
 
+    /*
+     * 代码生成相关，导出Bip模型
+     * 
+     * 需要删除链接硬件组件的port
+     * 
+     * TODO 还没完成 1）删除硬件port 2）如果同步事件只有硬件port的，则删除 3）删除重复例如，p1,p1p2，删除p2后，p1 p1重复了，需要删除一个 4）删除所有up
+     * down 动作
+     * 
+     * 顺序需要保证一致，类型和实例
+     * 
+     * 确认是否只要保留define块？
+     */
+
+    private String hardwareCutName;
+
+    public String getHardwareCutName() {
+        return hardwareCutName;
+    }
+
+    public void setHardwareCutName(String newName) {
+        hardwareCutName = newName;
+    }
+
+    public String exportToBipforCodeGen() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return "";
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return "";
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+        
+        StringBuilder buffer = new StringBuilder();
+        String interactors = "";
+        // 使用新name
+        buffer.append("connector type ").append(getHardwareCutName()).append('(');
+        if (arguments != null && !arguments.isEmpty()) {
+            for (ArgumentEntry entry : arguments) {
+                if (entry.getModel().getInstance() != null)
+                    if (!entry.getModel().getInstance().getParent().getEntityNames()
+                                    .contains(projectModel.getHardwareEntity())) {// 不是硬件才加上
+                        interactors = interactors + entry.getName() + " ";
+                        buffer.append(entry.getTypeName()).append(' ').append(entry.getName())
+                                        .append(", ");
+                    }
+            }
+            // 因为肯定有软件的port，所以这里-2是安全的
+            buffer.replace(buffer.length() - 2, buffer.length(), "");
+        }
+        buffer.append(")\n");
+        // 完成功能2 3
+        buffer.append("\t\tdefine [").append(interactors).append("]\n");
+        buffer.append("\t\ton ").append(interactors).append("\n\t\t\tup{}\n\t\t\tdown{}\n");
+
+
+        /*
+         * 连接子中不能有 data for (DataModel<ConnectorTypeModel> data : datas) {
+         * buffer.append("\t\t").append(data.exportToBip()).append('\n'); }
+         */
+        // 因为connector必须没有动作，所有action忽略
+        /*
+         * for (InteractionModel interaction : interactions) {
+         * buffer.append("\t\t").append(interaction.exportToBipforCodeGen()).append('\n'); }
+         */
+        // 顶层模型不用export
+        /*
+         * buffer.append("\t\texport port ").append(port.getType().getName()).append(' ')
+         * .append(port.getName()).append('(').append(port.getBoundedArguments()) .append(")\n");
+         */
+        buffer.append("\tend");
+        return buffer.toString();
+    }
+
     @Override
     public List<DataModel<ConnectorTypeModel>> getDatas() {
         return datas;
@@ -387,7 +604,7 @@ public class ConnectorTypeModel
     }
 
     protected ConnectorTypeModel bound(int index, PortTypeModel model) {
-        arguments.get(index).bound(model);
+        arguments.get(index).bound(model, this);
         getInstance().firePropertyChange(CHILDREN);
         return this;
     }
@@ -400,6 +617,7 @@ public class ConnectorTypeModel
 
     @Override
     public ConnectorTypeModel addChild(IInstance child) {
+        ensureUniqueName(child);
         if (child instanceof DataModel) {
             addData((DataModel<ConnectorTypeModel>) child);
         }
@@ -777,12 +995,6 @@ public class ConnectorTypeModel
     }
 
     @Override
-    public boolean isNewNameKeyword(String newName) {
-        if (GlobalProperties.getKeywords().contains(newName)) return true;
-        return false;
-    }
-
-    @Override
     public Map<String, List<DataModel>> getDatasGroupByType() {
         HashMap<String, List<DataModel>> map = new HashMap<String, List<DataModel>>();
         for (DataModel<ConnectorTypeModel> data : datas) {
@@ -793,6 +1005,26 @@ public class ConnectorTypeModel
             map.get(typeName).add(data);
         }
         return map;
+    }
+
+    @Override
+    public void ensureUniqueName(IInstance child) {
+        HashSet<String> names = new HashSet<String>();
+        String name = child.getName();
+        for (IInstance model : getChildren()) {
+            names.add(model.getName());
+        }
+        while (names.contains(name)) {
+            Matcher mat = NAME_PREFIX.matcher(name);
+            if (mat.matches()) {
+                String baseName = mat.group(1);
+                String number = mat.group(2);
+                name = baseName + "" + (Integer.parseInt(number) + 1);
+            } else {
+                name = name + "1";
+            }
+            child.setName(name);
+        }
     }
 }
 

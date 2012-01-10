@@ -29,7 +29,9 @@ public class TreeEditPartFactory implements EditPartFactory {
     @Override
     public EditPart createEditPart(EditPart context, Object model) {
         EditPart part = getPartFromModel(model);
-        if (part == null) System.out.println("Part is null");
+        if (part == null) {
+            System.out.println("Part is null");
+        }
         if (model == null) System.out.println("Model is null");
         if (part != null && model != null) part.setModel(model);
 
@@ -44,7 +46,7 @@ public class TreeEditPartFactory implements EditPartFactory {
      * @return
      */
     private EditPart getPartFromModel(Object model) {
-        EditPart part = null;  
+        EditPart part = null;
         String name = model.getClass().getName();
         Matcher matcher = modelPattern.matcher(name);
         if (matcher.matches()) {

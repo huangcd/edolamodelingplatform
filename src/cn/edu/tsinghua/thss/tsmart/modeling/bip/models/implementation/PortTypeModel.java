@@ -9,8 +9,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -26,7 +28,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContaine
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 
 /**
@@ -51,8 +53,27 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         addTypeSources("ePort", ePortType);
     }
 
-    public static void savePortTypes() {
-        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.PORT_TYPE_FILE);
+    public static Collection<PortTypeModel> getAllRegisterTypes() {
+        return typeSources.values();
+    }
+
+    public static void saveTypes() {
+        saveTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void loadTypes() {
+        loadTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void clearTypes() {
+        Set<String> typeNames = new HashSet<String>(typeSources.keySet());
+        for (String type : typeNames) {
+            removeType(type);
+        }
+    }
+
+    public static void saveTypes(File directory) {
+        File file = new File(directory, GlobalProperties.PORT_TYPE_FILE);
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
             for (Map.Entry<String, PortTypeModel> entry : getTypeEntries()) {
@@ -65,8 +86,8 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         }
     }
 
-    public static void loadPortTypes() {
-        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.PORT_TYPE_FILE);
+    public static void loadTypes(File directory) {
+        File file = new File(directory, GlobalProperties.PORT_TYPE_FILE);
         if (!file.exists()) {
             return;
         }
@@ -75,7 +96,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
             while (true) {
                 PortTypeModel model = (PortTypeModel) in.readObject();
                 if (!getTypes().contains(model.getName())) {
-                    addType(model.getName(), model);
+                    addType(model);
                 }
             }
         } catch (EOFException e) {} catch (Exception e) {
@@ -83,7 +104,8 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         }
     }
 
-    public static void addType(String type, PortTypeModel model) {
+    protected static void addType(PortTypeModel model) {
+        String type = model.getName();
         addTypeSources(type, model);
         HashMap<AtomicEditor, CreationToolEntry> map =
                         new HashMap<AtomicEditor, CreationToolEntry>();
@@ -99,7 +121,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         toolMap.put(type, map);
     }
 
-    public static void addType(String type, String arguments) {
+    public static PortTypeModel parsePort(String type, String arguments) {
         PortTypeModel model = new PortTypeModel().setName(type);
         if (!arguments.endsWith(",")) {
             Scanner scan = new Scanner(arguments);
@@ -112,10 +134,10 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
                 model.addChild(DataTypeModel.getModelByName(dataType), dataName);
             }
         }
-        addType(type, model);
+        return model;
     }
 
-    public static boolean addTypeSources(String type, PortTypeModel port) {
+    private static boolean addTypeSources(String type, PortTypeModel port) {
         if (typeSources.containsKey(type)) return false;
         typeSources.put(type, port);
         return true;
@@ -129,12 +151,13 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     }
 
     public static void removeType(String type) {
-        HashMap<AtomicEditor, CreationToolEntry> map = toolMap.get(type);
-        for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
-            editor.removePortCreationToolEntry(map.get(editor));
+        if (removeTypeSources(type)) {
+            HashMap<AtomicEditor, CreationToolEntry> map = toolMap.get(type);
+            for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+                editor.removePortCreationToolEntry(map.get(editor));
+            }
+            toolMap.remove(type);
         }
-        toolMap.remove(type);
-        removeTypeSources(type);
     }
 
     public static boolean isRemovable(String type) {

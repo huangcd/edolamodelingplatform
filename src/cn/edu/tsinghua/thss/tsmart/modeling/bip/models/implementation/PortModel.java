@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import org.simpleframework.xml.Root;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel.ArgumentEntry;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
@@ -63,13 +65,16 @@ public class PortModel<P extends IContainer> extends BaseInstanceModel<PortModel
         return true;
     }
 
-    public String getParentName() {
-        if (getParent() instanceof AtomicTypeModel) {
-            return ((IType) getParent()).getInstance().getName();
-        } else if (getParent() instanceof ConnectorTypeModel) {
-            return ((IType) getParent()).getInstance().getParent().getName();
+    public String getPortStringAsConnectorAgument() {
+        IInstance instance = ((IType) getParent()).getInstance();
+        if (instance instanceof AtomicModel) {
+            return MessageFormat.format("{0}.{1}", instance.getName(), getName());
+        } else if (instance instanceof ConnectorModel) {
+            IInstance parent = instance.getParent().getInstance();
+            return MessageFormat.format("{0}.{1}", instance.getParent().getInstance().getName(),
+                            instance.getName());
         } else {
-            return "$UNKNOWN_COMPONENT$";
+            throw new UnboundedException("port " + getName() + "'s parent is null");
         }
     }
 
@@ -215,8 +220,13 @@ public class PortModel<P extends IContainer> extends BaseInstanceModel<PortModel
                 bound(entry.getIndex(), datas.get(index));
             }
         } else if (ENTITY.equals(id)) {
-            setEntityNames((ArrayList<String>)value);
+            setEntityNames((ArrayList<String>) value);
         }
+    }
+
+    @Override
+    public PortModel setParent(P parent) {
+        return super.setParent(parent);
     }
 
     public String getFriendlyString() {

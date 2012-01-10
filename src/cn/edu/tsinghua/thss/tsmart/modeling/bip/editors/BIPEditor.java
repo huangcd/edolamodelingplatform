@@ -48,9 +48,10 @@ import org.eclipse.ui.views.properties.PropertySheetSorter;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.PasteComponentAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentTypeAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveTopLevelModelInContextMenuAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
@@ -73,7 +74,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         if (copyObject == null) {
             return null;
         }
-        IInstance newObject = (IInstance) copyObject.copy().setName(copyObject.getName());
+        IInstance newObject = (IInstance) copyObject.setName(copyObject.getName());
         newObject.getType().setName(copyObject.getType().getName());
         return newObject;
     }
@@ -86,13 +87,17 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         ComponentTypeModel model = null;
         if (obj instanceof IType) {
             copyObject = (IInstance) ((IType) obj).getInstance().copy();
+            copyObject.setName(((IType) obj).getInstance().getName());
             if (obj instanceof ComponentTypeModel) {
-                model = (ComponentTypeModel) obj;
+                model = (ComponentTypeModel) copyObject.getType();
+                model.setName(obj.getName());
             }
         } else {
             copyObject = (IInstance) obj.copy();
+            copyObject.setName(obj.getName());
             if (obj instanceof ComponentModel) {
-                model = (ComponentTypeModel) ((ComponentModel) obj).getType();
+                model = (ComponentTypeModel) ((ComponentModel) copyObject).getType();
+                model.setName(((ComponentModel) obj).getType().getName());
             }
         }
         if (model != null) {
@@ -119,12 +124,39 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         viewerMap.remove(viewer);
     }
 
+    public static void closeEditor(ComponentTypeModel model) {
+        // TODO 关闭页面
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
+        try {
+            // 如果页面已经打开，则跳转到指定页面
+            for (IEditorReference reference : page.getEditorReferences()) {
+                if (reference.getEditorInput() instanceof BIPModelEditorInput) {
+                    BIPModelEditorInput editorInput =
+                                    (BIPModelEditorInput) reference.getEditorInput();
+                    if (editorInput.getModel().equals(model)) {
+                        page.closeEditor(reference.getEditor(true), false);
+                        return;
+                    }
+                }
+            }
+        } catch (PartInitException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void closeAllEditor() {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
+        page.closeEditors(page.getEditorReferences(), true);
+    }
+
     /**
      * 打开一个编辑模型的页面
      * 
      * @param container 待编辑模型
      */
-    public static void openBIPEditor(IContainer container) {
+    public static void openBIPEditor(ComponentTypeModel container) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
         String editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor";
@@ -136,16 +168,16 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         try {
             // 如果页面已经打开，则跳转到指定页面
             for (IEditorReference reference : page.getEditorReferences()) {
-                if (reference.getEditorInput() instanceof BIPModuleEditorInput) {
-                    BIPModuleEditorInput editorInput =
-                                    (BIPModuleEditorInput) reference.getEditorInput();
+                if (reference.getEditorInput() instanceof BIPModelEditorInput) {
+                    BIPModelEditorInput editorInput =
+                                    (BIPModelEditorInput) reference.getEditorInput();
                     if (editorInput.getModel().equals(container)) {
                         page.openEditor(editorInput, editorID);
                         return;
                     }
                 }
             }
-            page.openEditor(new BIPModuleEditorInput(container), editorID);
+            page.openEditor(new BIPModelEditorInput(container), editorID);
         } catch (PartInitException e) {
             e.printStackTrace();
         }
@@ -183,9 +215,9 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         return Activator.getImageDescriptor(location);
     }
 
-    private IModel       model;
-    private PaletteRoot  paletteRoot;
-    private PaletteGroup toolGroup;
+    private ComponentTypeModel model;
+    private PaletteRoot        paletteRoot;
+    private PaletteGroup       toolGroup;
 
     public BIPEditor() {
         setEditDomain(new DefaultEditDomain(this));
@@ -195,11 +227,11 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         setPartName(title);
     }
 
-    public IModel getModel() {
+    public ComponentTypeModel getModel() {
         if (model == null) {
             IEditorInput iEditorInput = getEditorInput();
-            if (iEditorInput instanceof BIPModuleEditorInput) {
-                BIPModuleEditorInput editorInput = (BIPModuleEditorInput) iEditorInput;
+            if (iEditorInput instanceof BIPModelEditorInput) {
+                BIPModelEditorInput editorInput = (BIPModelEditorInput) iEditorInput;
                 model = editorInput.getModel();
             } else if (iEditorInput instanceof BIPFileEditorInput) {
                 BIPFileEditorInput editorInput = (BIPFileEditorInput) iEditorInput;
@@ -210,7 +242,7 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     }
 
     public boolean isSaveOnCloseNeeded() {
-        if (getEditorInput() instanceof BIPModuleEditorInput) {
+        if (getEditorInput() instanceof BIPModelEditorInput) {
             return false;
         }
         return isDirty();
@@ -288,9 +320,23 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                             KeyStroke.getReleased((char) 0x16, 118, SWT.CTRL),
                             getActionRegistry().getAction(
                                             PasteComponentAction.class.getCanonicalName())); // 黏贴
-            // Ctrl+V
+                                                                                             // Ctrl+V
             sharedKeyHandler.put(KeyStroke.getReleased((char) 24, (int) 'x', SWT.CTRL),
                             getActionRegistry().getAction(ActionFactory.CUT.getId())); // 剪切 Ctrl+X
+
+            sharedKeyHandler.put(
+                            KeyStroke.getReleased((char) 19, (int) 's', SWT.CTRL),
+                            getActionRegistry().getAction(
+                                            SaveComponentTypeAction.class.getCanonicalName())); // 保存
+                                                                                                // CTRL+S
+
+            // TODO Save Project。ctrl+shift+s是自带的，保存当前所有的页面。
+
+            sharedKeyHandler.put(
+                            KeyStroke.getReleased((char) 19, (int) 's', SWT.ALT),
+                            getActionRegistry().getAction(
+                                SaveTopLevelModelInContextMenuAction.class.getCanonicalName())); // 保存
+                                                                                          // ALT+S
         }
         return sharedKeyHandler;
 

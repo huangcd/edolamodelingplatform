@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="EdolaModelingPlatform" version="2">
-    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/actions/ExportRetargetAction.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportRetargetAction">
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/actions/save/ExportRetargetAction.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ExportRetargetAction">
         <filter id="571473929">
             <message_arguments>
                 <message_argument value="RetargetAction"/>
@@ -16,12 +16,101 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/cn/edu/tsinghua/thss/tsmart/platform/GlobalProperties.java" type="cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties">
-        <filter id="643846161">
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/models/implementation/BaseInstanceModel.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BaseInstanceModel">
+        <filter id="627060751">
             <message_arguments>
-                <message_argument value="Validator"/>
                 <message_argument value="GlobalProperties"/>
-                <message_argument value="registerValidator(Validator)"/>
+                <message_argument value="BaseInstanceModel&lt;Model, Type, Parent&gt;"/>
+                <message_argument value="properties"/>
+            </message_arguments>
+        </filter>
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="BaseInstanceModel&lt;Model, Type, Parent&gt;"/>
+                <message_argument value="getProperties()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/models/implementation/BaseTypeModel.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BaseTypeModel">
+        <filter id="627060751">
+            <message_arguments>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="BaseTypeModel&lt;Model, Instance, Parent&gt;"/>
+                <message_argument value="properties"/>
+            </message_arguments>
+        </filter>
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="BaseTypeModel&lt;Model, Instance, Parent&gt;"/>
+                <message_argument value="getProperties()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/parts/BaseConnectionEditPart.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.BaseConnectionEditPart">
+        <filter id="627060751">
+            <message_arguments>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="BaseConnectionEditPart"/>
+                <message_argument value="properties"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/parts/BaseGraphicalEditPart.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.BaseGraphicalEditPart">
+        <filter id="627060751">
+            <message_arguments>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="BaseGraphicalEditPart"/>
+                <message_argument value="properties"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/ui/dialogs/AbstractEditDialog.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.AbstractEditDialog">
+        <filter id="627060751">
+            <message_arguments>
+                <message_argument value="GlobalProperties"/>
+                <message_argument value="AbstractEditDialog"/>
+                <message_argument value="properties"/>
+            </message_arguments>
+        </filter>
+        <filter id="627060751">
+            <message_arguments>
+                <message_argument value="ModelingProperties"/>
+                <message_argument value="AbstractEditDialog"/>
+                <message_argument value="properties"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/ui/dialogs/EditMappingDialog.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EditMappingDialog">
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="Binding"/>
+                <message_argument value="EditMappingDialog"/>
+                <message_argument value="getData()"/>
+            </message_arguments>
+        </filter>
+        <filter id="643850349">
+            <message_arguments>
+                <message_argument value="Binding"/>
+                <message_argument value="EditMappingDialog"/>
+                <message_argument value="EditMappingDialog(Shell, Binding, ComponentTypeModel)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/ui/dialogs/EditOnePeripheralDialog.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EditOnePeripheralDialog">
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="Device"/>
+                <message_argument value="EditOnePeripheralDialog"/>
+                <message_argument value="getData()"/>
+            </message_arguments>
+        </filter>
+        <filter id="643850349">
+            <message_arguments>
+                <message_argument value="Device"/>
+                <message_argument value="EditOnePeripheralDialog"/>
+                <message_argument value="EditOnePeripheralDialog(Shell, Device)"/>
             </message_arguments>
         </filter>
     </resource>

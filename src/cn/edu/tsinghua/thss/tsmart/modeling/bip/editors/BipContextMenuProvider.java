@@ -12,9 +12,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.actions.ActionFactory;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentToPaletteAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentLibraryAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentTypeAction;
 
 public class BipContextMenuProvider extends ContextMenuProvider {
     private ActionRegistry actionRegistry;
@@ -54,7 +54,7 @@ public class BipContextMenuProvider extends ContextMenuProvider {
         action = getActionRegistry().getAction(SaveComponentTypeAction.id);
         menu.appendToGroup(GEFActionConstants.GROUP_SAVE, action);
         
-        action = getActionRegistry().getAction(SaveComponentToPaletteAction.id);
+        action = getActionRegistry().getAction(SaveComponentLibraryAction.id);
         menu.appendToGroup(GEFActionConstants.GROUP_SAVE, action);
 
         action = getActionRegistry().getAction(VariableSelectionAction.id);

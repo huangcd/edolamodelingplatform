@@ -24,14 +24,31 @@ public class FrameContainer extends Panel {
     @Override
     public void paint(Graphics graphics) {
         super.paint(graphics);
+        graphics.setAlpha(20);
         if (owner == null) {
             return;
         }
-        if (owner instanceof AtomicEditPart || owner instanceof CompoundEditPart) {
-            Rectangle rect = owner.getModel().getPositionConstraint();
+        if (owner instanceof AtomicEditPart) {
+            Rectangle constraint = owner.getModel().getPositionConstraint();
             graphics.setForegroundColor(ColorConstants.black);
-            graphics.drawRectangle(rect.x + radius, rect.y + radius, rect.width - (2 * radius),
-                            rect.height - (2 * radius));
+            graphics.setBackgroundColor(ColorConstants.green);
+            Rectangle rect =
+                            new Rectangle(constraint.x + radius, constraint.y + radius,
+                                            constraint.width - (2 * radius), constraint.height
+                                                            - (2 * radius));
+            graphics.fillRectangle(rect);
+            graphics.drawRectangle(rect);
+        } else if (owner instanceof CompoundEditPart) {
+            Rectangle constraint = owner.getModel().getPositionConstraint();
+            graphics.setForegroundColor(ColorConstants.black);
+            graphics.setBackgroundColor(ColorConstants.blue);
+            Rectangle rect =
+                            new Rectangle(constraint.x + radius, constraint.y + radius,
+                                            constraint.width - (2 * radius), constraint.height
+                                                            - (2 * radius));
+            graphics.setLineWidth(3);
+            graphics.fillRectangle(rect);
+            graphics.drawRectangle(rect);
         }
     }
 

@@ -1,25 +1,34 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.wb.swt.SWTResourceManager;
-import java.util.ArrayList;
 
+import cn.edu.tsinghua.thss.tsmart.baseline.EntitySelectDialogInterface;
+import cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Entity;
 
 @SuppressWarnings("rawtypes")
-public class EntitySelectionDialog extends AbstractEditDialog {
-    private Label             labelError;
-    private Tree              tree;
-    private ArrayList<String> entityNames;
+public class EntitySelectionDialog extends AbstractEditDialog
+                implements
+                    EntitySelectDialogInterface {
+    private ArrayList<String>     entityNames;
+    private Label                 labelErr;
+    private List                  list;
 
     /**
      * Create the dialog.
@@ -28,6 +37,7 @@ public class EntitySelectionDialog extends AbstractEditDialog {
      */
     public EntitySelectionDialog(Shell parentShell, ArrayList<String> entityNames) {
         super(parentShell, "选择参数");
+        setTitle("\u6807\u6CE8\u5B9E\u4F53");
         this.entityNames = new ArrayList<String>(entityNames);
     }
 
@@ -39,14 +49,77 @@ public class EntitySelectionDialog extends AbstractEditDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
+        container.setLayout(new FormLayout());
 
-        tree = new Tree(container, SWT.BORDER);
-        tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        list = new List(container, SWT.BORDER);
+        FormData fd_list = new FormData();
+        fd_list.left = new FormAttachment(0, 10);
+        fd_list.top = new FormAttachment(0, 10);
+        list.setLayoutData(fd_list);
 
-        labelError = new Label(container, SWT.NONE);
-        labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-        labelError.setBounds(10, 109, 221, 17);
+        labelErr = new Label(container, SWT.NONE);
+        fd_list.bottom = new FormAttachment(labelErr, -6);
+        FormData fd_labelErr = new FormData();
+        fd_labelErr.top = new FormAttachment(0, 302);
+        fd_labelErr.right = new FormAttachment(0, 553);
+        fd_labelErr.left = new FormAttachment(0, 10);
+        labelErr.setLayoutData(fd_labelErr);
 
+        Button newEntity = new Button(container, SWT.NONE);
+        newEntity.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                Shell shell = new Shell();
+                EntitySelectionFromLibDialog dialog =
+                                new EntitySelectionFromLibDialog(shell);
+                dialog.open();
+
+                if (Arrays.asList(list.getItems()).indexOf(dialog.getSelectEntity()) == -1)
+                    list.add(dialog.getSelectEntity());
+
+            }
+        });
+        fd_list.right = new FormAttachment(newEntity, -13);
+        FormData fd_newEntity = new FormData();
+        fd_newEntity.left = new FormAttachment(0, 469);
+        fd_newEntity.right = new FormAttachment(100, -10);
+        fd_newEntity.top = new FormAttachment(list, -1, SWT.TOP);
+        newEntity.setLayoutData(fd_newEntity);
+        newEntity.setText("\u6DFB\u52A0\u5B9E\u4F53");
+
+        Button deleteEntity = new Button(container, SWT.NONE);
+        deleteEntity.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                String[] selections = list.getSelection();
+                if (selections == null || selections.length == 0) {
+                    handleError("请选择实体。");
+                    return;
+                }
+                for (String selection : selections) {
+                    list.remove(selection);
+                }
+            }
+        });
+        FormData fd_deleteEntity = new FormData();
+        fd_deleteEntity.right = new FormAttachment(labelErr, 0, SWT.RIGHT);
+        deleteEntity.setLayoutData(fd_deleteEntity);
+        deleteEntity.setText("\u5220\u9664\u5B9E\u4F53");
+
+        Button deleteAll = new Button(container, SWT.NONE);
+        deleteAll.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                list.removeAll();
+            }
+        });
+        fd_deleteEntity.bottom = new FormAttachment(deleteAll, -6);
+        fd_deleteEntity.left = new FormAttachment(deleteAll, 0, SWT.LEFT);
+        FormData fd_deleteAll = new FormData();
+        fd_deleteAll.top = new FormAttachment(0, 76);
+        fd_deleteAll.right = new FormAttachment(labelErr, 0, SWT.RIGHT);
+        deleteAll.setLayoutData(fd_deleteAll);
+        deleteAll.setText("\u5220\u9664\u5168\u90E8\u5B9E\u4F53");
 
         initValues();
         return container;
@@ -59,8 +132,8 @@ public class EntitySelectionDialog extends AbstractEditDialog {
      */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-        createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+        createButton(parent, IDialogConstants.OK_ID, "\u786E\u5B9A", true);
+        createButton(parent, IDialogConstants.CANCEL_ID, "\u53D6\u6D88", false);
     }
 
     /**
@@ -68,7 +141,7 @@ public class EntitySelectionDialog extends AbstractEditDialog {
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(450, 300);
+        return new Point(569, 415);
     }
 
     @Override
@@ -76,44 +149,22 @@ public class EntitySelectionDialog extends AbstractEditDialog {
 
     @Override
     protected void initValues() {
-
-        TreeItem item;
-        
-        if (!entityNames.contains("HW")) {
-            item = new TreeItem(tree, SWT.BOLD);
-            item.setText("HW");
-        }
-        
-        if (!entityNames.contains("Functional")) {
-            item = new TreeItem(tree, SWT.BOLD);
-            item.setText("Functional");
-        }
-        
-        if (!entityNames.contains("SwC")) {
-            item = new TreeItem(tree, SWT.BOLD);
-            item.setText("SwC");
+        for (String entity : entityNames) {
+            list.add(entity);
         }
     }
 
-
     @Override
     protected Label getErrorLabel() {
-        labelError.setForeground(ColorConstants.red);
-        return labelError;
+        labelErr.setForeground(ColorConstants.red);
+        return labelErr;
     }
 
     @Override
     protected boolean validateUserInput() {
-        TreeItem[] item = tree.getSelection();
-        if (item.length == 0) {
-            Label label = getErrorLabel();
-            label.setText("请选择一个节点。");
-            return false;
-        }
-
-       
-        if(!entityNames.contains(item[0].getText())){
-            entityNames.add(item[0].getText());
+        entityNames.clear();
+        for (String entity : list.getItems()) {
+            entityNames.add(entity);
         }
 
         return true;
@@ -121,5 +172,10 @@ public class EntitySelectionDialog extends AbstractEditDialog {
 
     public ArrayList<String> getEntityNames() {
         return entityNames;
+    }
+
+    @Override
+    public void updateSelected(Entity entity) {
+        list.add(entity.getName());
     }
 }

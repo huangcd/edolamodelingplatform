@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ProjectModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public class DataTypeManageDialog extends AbstractEditDialog {
     private Text   textType;
@@ -77,6 +79,8 @@ public class DataTypeManageDialog extends AbstractEditDialog {
         initValues();
         return container;
     }
+
+    @SuppressWarnings("unchecked")
     private void removeTypes() {
         String[] selections = listDataTypes.getSelection();
         boolean containsDefaultType = false;
@@ -85,12 +89,11 @@ public class DataTypeManageDialog extends AbstractEditDialog {
                 containsDefaultType = true;
                 continue;
             }
-            if(DataTypeModel.isRemovable(selection)){
-                DataTypeModel.removeType(selection);
+            if (DataTypeModel.isRemovable(selection)) {
+                properties.getTopModel().removeChildByName(selection);
                 listDataTypes.remove(selection);
-            }else
-            {
-                MessageDialog.ShowDeleteDataTypeErrorDialog(selection);
+            } else {
+                MessageUtil.ShowDeleteDataTypeErrorDialog(selection);
             }
         }
         if (containsDefaultType) {
@@ -140,17 +143,20 @@ public class DataTypeManageDialog extends AbstractEditDialog {
             }
         }
         for (String type : temp) {
-            DataTypeModel.removeType(type);
+            properties.getTopModel().removeChildByName(type);
         }
         for (String type : types) {
             if (!DataTypeModel.getTypes().contains(type)) {
-                DataTypeModel.addType(type);
+                properties.getTopModel().addDataType(type);
             }
         }
     }
 
     @Override
     protected void initValues() {
+        if (GlobalProperties.getInstance().getTopModel() instanceof ProjectModel) {
+            buttonDelete.setEnabled(false);
+        }
         for (String type : DataTypeModel.getTypeNamesAsArray()) {
             listDataTypes.add(type);
         }

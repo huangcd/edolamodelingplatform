@@ -22,19 +22,21 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.ExportAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentToPaletteAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.SaveComponentTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ExportAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentLibraryAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentTypeAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveTopLevelModelInContextMenuAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPFileEditorInput;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.PlaceCreationTool;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 @SuppressWarnings("rawtypes")
 public class AtomicEditor extends BIPEditor {
@@ -171,6 +173,7 @@ public class AtomicEditor extends BIPEditor {
 
     public void dispose() {
         removeViewerEditEntry(viewer);
+        GlobalProperties.getInstance().getTopModel().removeOpenModel((ComponentTypeModel) getModel());
         super.dispose();
     }
 
@@ -197,11 +200,15 @@ public class AtomicEditor extends BIPEditor {
         action = new SaveComponentTypeAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-        
-        action = new SaveComponentToPaletteAction(this);
+
+        action = new SaveComponentLibraryAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-        
+
+        action = new SaveTopLevelModelInContextMenuAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
         action = new VariableSelectionAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());

@@ -1,8 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -15,7 +12,6 @@ import org.eclipse.gef.requests.CreateRequest;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.CreateModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveModelCommand;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
@@ -26,9 +22,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeMo
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
-    private final static Pattern placeNamePattern = Pattern.compile("^PLACE(\\d*)$");
-    private final static Pattern dataNamePattern  = Pattern.compile("^data(\\d*)$");
-    private final static Pattern portNamePattern  = Pattern.compile("^port(\\d*)$");
 
     @Override
     protected Command getCreateCommand(CreateRequest request) {
@@ -39,39 +32,36 @@ public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
         command.setParent(parent);
         if (request.getNewObjectType().equals(PlaceModel.class)) {
             PlaceModel child = new PlaceModel();
-            child.setName(getAppropriatePlaceName(parent));
+            child.setName("place0");
             Point location = request.getLocation().getCopy();
             // 相对位置
             getHostFigure().translateToRelative(location);
             getHostFigure().translateFromParent(location);
             Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
-            child.setParent(parent);
             command.setChild(child);
             return command;
         } else if (request.getNewObjectType().equals(DataTypeModel.class)) {
             DataModel<AtomicTypeModel> child =
                             ((DataTypeModel<AtomicTypeModel>) request.getNewObject()).getInstance();
-            child.setName(getAppropriateDataName(parent));
+            child.setName("data0");
             Point location = request.getLocation().getCopy();
             // 相对位置
             getHostFigure().translateToRelative(location);
             getHostFigure().translateFromParent(location);
             Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
-            child.setParent(parent);
             command.setChild(child);
             return command;
         } else if (request.getNewObjectType().equals(PortTypeModel.class)) {
             PortModel child = ((PortTypeModel) request.getNewObject()).getInstance();
-            child.setName(getAppropriatePortName(parent));
+            child.setName("port0");
             Point location = request.getLocation().getCopy();
             // 相对位置
             getHostFigure().translateToRelative(location);
             getHostFigure().translateFromParent(location);
             Rectangle rect = new Rectangle(location, new Dimension(-1, -1));
             child.setPositionConstraint(rect);
-            child.setParent(parent);
             command.setChild(child);
             return command;
         }
@@ -89,42 +79,6 @@ public class AtomicTypeChildrenEditPolicy extends XYLayoutEditPolicy {
             return command;
         }
         return super.createChangeConstraintCommand(request, child, constraint);
-    }
-
-    private String getAppropriatePlaceName(AtomicTypeModel parent) {
-        int maxNumber = 0;
-        for (IInstance model : parent.getChildren()) {
-            Matcher mat = placeNamePattern.matcher(model.getName());
-            if (mat.matches()) {
-                int number = Integer.parseInt(mat.group(1));
-                maxNumber = Math.max(number + 1, maxNumber);
-            }
-        }
-        return "PLACE" + maxNumber;
-    }
-
-    private String getAppropriateDataName(AtomicTypeModel parent) {
-        int maxNumber = 0;
-        for (IInstance model : parent.getChildren()) {
-            Matcher mat = dataNamePattern.matcher(model.getName());
-            if (mat.matches()) {
-                int number = Integer.parseInt(mat.group(1));
-                maxNumber = Math.max(number + 1, maxNumber);
-            }
-        }
-        return "data" + maxNumber;
-    }
-
-    private String getAppropriatePortName(AtomicTypeModel parent) {
-        int maxNumber = 0;
-        for (IInstance model : parent.getChildren()) {
-            Matcher mat = portNamePattern.matcher(model.getName());
-            if (mat.matches()) {
-                int number = Integer.parseInt(mat.group(1));
-                maxNumber = Math.max(number + 1, maxNumber);
-            }
-        }
-        return "port" + maxNumber;
     }
 
     @Override

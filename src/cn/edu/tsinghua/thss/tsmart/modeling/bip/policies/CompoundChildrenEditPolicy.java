@@ -1,8 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -24,7 +21,6 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.InvisibleBulletEditPart;
 
 @SuppressWarnings("rawtypes")
 public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
-    private final static Pattern connectorNamePattern = Pattern.compile("^connector(\\d*)$");
 
     @Override
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child,
@@ -51,22 +47,18 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
         IInstance child = null;
         // Atomic
         if (request.getNewObjectType().equals(AtomicTypeModel.class)) {
-            child =
-                            new AtomicTypeModel().createInstance().setName(
-                                            CompoundTypeModel.getAppropriateAtomicName(parent));
-            child.getType().setName(child.getName() + "Type");
+            child = ((AtomicTypeModel) request.getNewObject()).getInstance();
+            child.setName("atomic0");
         }
         // Compound
         else if (request.getNewObjectType().equals(CompoundTypeModel.class)) {
-            child =
-                            new CompoundTypeModel().createInstance().setName(
-                                            CompoundTypeModel.getAppropriateCompoundName(parent));
-            child.getType().setName(child.getName() + "Type");
+            child = ((CompoundTypeModel) request.getNewObject()).getInstance();
+            child.setName("compound0");
         }
         // Connector
         else if (request.getNewObjectType().equals(ConnectorTypeModel.class)) {
             child = ((ConnectorTypeModel) request.getNewObject()).getInstance();
-            child.setName(getAppropriateConnectorName(parent));
+            child.setName("connector0");
         }
         Point location = request.getLocation().getCopy();
         // COMMENT œ‡∂‘Œª÷√
@@ -77,18 +69,6 @@ public class CompoundChildrenEditPolicy extends XYLayoutEditPolicy {
         command.setChild(child);
         command.setParent(parent);
         return command;
-    }
-
-    private String getAppropriateConnectorName(CompoundTypeModel parent) {
-        int maxNumber = 0;
-        for (IInstance model : parent.getChildren()) {
-            Matcher mat = connectorNamePattern.matcher(model.getName());
-            if (mat.matches()) {
-                int number = Integer.parseInt(mat.group(1));
-                maxNumber = Math.max(number + 1, maxNumber);
-            }
-        }
-        return "connector" + maxNumber;
     }
 
     @Override

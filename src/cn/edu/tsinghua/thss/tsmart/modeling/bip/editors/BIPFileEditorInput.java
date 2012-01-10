@@ -7,19 +7,19 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BaseTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 
 @SuppressWarnings({"rawtypes"})
 public class BIPFileEditorInput implements IEditorInput {
-    private File   path;
-    private IModel model;
+    private File               path;
+    private ComponentTypeModel model;
 
     public BIPFileEditorInput(File path) {
         this.path = path;
     }
 
-    public IModel getModel() {
+    public ComponentTypeModel getModel() {
         if (model == null) {
             try {
                 FileInputStream in = new FileInputStream(path);
@@ -51,6 +51,9 @@ public class BIPFileEditorInput implements IEditorInput {
 
     @Override
     public String getName() {
+        if (getModel().getParent() != null) {
+            return getModel().getParent().getName() + "." + path.getName();
+        }
         return path.getName();
     }
 

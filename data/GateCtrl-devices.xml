@@ -1,0 +1,105 @@
+<deviceDefinition>
+   <devices class="java.util.ArrayList">
+      <device class="cn.edu.tsinghua.thss.virtualenv.plc.devices.devs.PushButton" name="Start Button" desc="Push this button to start.">
+         <linking>
+            <link type="input" variable="pushedInt" addr="0" length="4" bit="0"/>
+         </linking>
+         <initializer>
+            <properties class="java.util.ArrayList">
+               <propertyEntry property="pushed" value="0"/>
+            </properties>
+         </initializer>
+      </device>
+      <device class="cn.edu.tsinghua.thss.virtualenv.plc.devices.devs.PushButton" name="Stop Button" desc="Push this button to stop.">
+         <linking>
+            <link type="input" variable="pushedInt" addr="4" length="4" bit="0"/>
+         </linking>
+         <initializer>
+            <properties class="java.util.ArrayList">
+               <propertyEntry property="pushed" value="0"/>
+            </properties>
+         </initializer>
+      </device>
+      <device class="cn.edu.tsinghua.thss.virtualenv.plc.devices.devs.FixedSpeedMotor" name="Latch#1" desc="This is the latch.">
+         <linking>
+            <link type="input" variable="position" addr="10" length="4" bit="0"/>
+            <link type="input" variable="limitFlag" addr="14" length="4" bit="0"/>
+            <link type="output" variable="direction" addr="10" length="4" bit="0"/>
+         </linking>
+         <initializer>
+            <properties class="java.util.ArrayList">
+               <propertyEntry property="ticktime" value="100"/>
+               <propertyEntry property="fixedSpeed" value="5"/>
+               <propertyEntry property="position" value="185"/>
+               <propertyEntry property="hardDownLimit" value="0"/>
+               <propertyEntry property="softDownLimit" value="20"/>
+               <propertyEntry property="softUpLimit" value="180"/>
+               <propertyEntry property="hardUpLimit" value="200"/>
+            </properties>
+         </initializer>
+      </device>
+      <device class="cn.edu.tsinghua.thss.virtualenv.plc.devices.devs.VariantSpeedMotor" name="Lifting Platform" desc="This is the lifting platform.">
+         <linking>
+			<link type="input" variable="position" addr="20" length="4" bit="0"/>
+			<link type="input" variable="speed" addr="24" length="4" bit="0"/>
+			<link type="input" variable="limitFlag" addr="28" length="4" bit="0"/>
+			<link type="output" variable="targetSpeed" addr="20" length="4" bit="0"/>
+         </linking>
+         <initializer>
+            <properties class="java.util.ArrayList">
+               <propertyEntry property="ticktime" value="100"/>
+               <propertyEntry property="accWork" value="20"/>
+               <propertyEntry property="accStop" value="100"/>
+               <propertyEntry property="targetSpeed" value="0"/>
+               <propertyEntry property="position" value="-4000"/>
+               <propertyEntry property="hardDownLimit" value="-5000"/>
+               <propertyEntry property="softDownLimit" value="-4500"/>
+               <propertyEntry property="softUpLimit" value="500"/>
+               <propertyEntry property="hardUpLimit" value="1000"/>
+            </properties>
+         </initializer>
+      </device>
+      <device class="cn.edu.tsinghua.thss.virtualenv.plc.devices.devs.VariantSpeedMotor" name="Gate#1" desc="G1">
+         <linking>
+			<link type="input" variable="position" addr="40" length="4" bit="0"/>
+			<link type="input" variable="speed" addr="44" length="4" bit="0"/>
+			<link type="input" variable="limitFlag" addr="48" length="4" bit="0"/>
+			<link type="output" variable="targetSpeed" addr="40" length="4" bit="0"/>
+         </linking>
+         <initializer>
+            <properties class="java.util.ArrayList">
+               <propertyEntry property="ticktime" value="100"/>
+               <propertyEntry property="accWork" value="20"/>
+               <propertyEntry property="accStop" value="100"/>
+               <propertyEntry property="targetSpeed" value="0"/>
+               <propertyEntry property="position" value="105"/>
+               <propertyEntry property="hardDownLimit" value="-1000"/>
+               <propertyEntry property="softDownLimit" value="0"/>
+               <propertyEntry property="softUpLimit" value="200500"/>
+               <propertyEntry property="hardUpLimit" value="202000"/>
+            </properties>
+         </initializer>
+      </device>
+      <device class="cn.edu.tsinghua.thss.virtualenv.plc.devices.devs.VariantSpeedMotor" name="Gate#2" desc="G2">
+         <linking>
+			<link type="input" variable="position" addr="60" length="4" bit="0"/>
+			<link type="input" variable="speed" addr="64" length="4" bit="0"/>
+			<link type="input" variable="limitFlag" addr="68" length="4" bit="0"/>
+			<link type="output" variable="targetSpeed" addr="60" length="4" bit="0"/>
+         </linking>
+         <initializer>
+            <properties class="java.util.ArrayList">
+               <propertyEntry property="ticktime" value="100"/>
+               <propertyEntry property="accWork" value="20"/>
+               <propertyEntry property="accStop" value="100"/>
+               <propertyEntry property="targetSpeed" value="0"/>
+               <propertyEntry property="position" value="105"/>
+               <propertyEntry property="hardDownLimit" value="-1000"/>
+               <propertyEntry property="softDownLimit" value="0"/>
+               <propertyEntry property="softUpLimit" value="200500"/>
+               <propertyEntry property="hardUpLimit" value="202000"/>
+            </properties>
+         </initializer>
+      </device>
+   </devices>
+</deviceDefinition>

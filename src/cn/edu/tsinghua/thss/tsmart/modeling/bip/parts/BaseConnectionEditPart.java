@@ -15,7 +15,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureMouseListener;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 @SuppressWarnings("rawtypes")
 public abstract class BaseConnectionEditPart extends AbstractConnectionEditPart

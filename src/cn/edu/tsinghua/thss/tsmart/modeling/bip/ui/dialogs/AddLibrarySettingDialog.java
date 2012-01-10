@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 
 @SuppressWarnings("rawtypes")
 public class AddLibrarySettingDialog extends AbstractEditDialog {
@@ -26,16 +26,15 @@ public class AddLibrarySettingDialog extends AbstractEditDialog {
         titleFormat = new MessageFormat(msg);
     }
     private StyledText                 styledTextComment;
-    private IModel                     model;
+    private ComponentTypeModel         model;
     private Text                       textName;
-    private String                     name;
 
     /**
      * Create the dialog.
      * 
      * @param shell
      */
-    public AddLibrarySettingDialog(Shell shell, IModel model) {
+    public AddLibrarySettingDialog(Shell shell, ComponentTypeModel model) {
         super(shell, titleFormat.format(new Object[] {model.getName()}));
         this.model = model;
     }
@@ -90,8 +89,8 @@ public class AddLibrarySettingDialog extends AbstractEditDialog {
 
     @Override
     protected void updateValues() {
-        name = textName.getText();
         model.setComment(styledTextComment.getText());
+        model.setName(textName.getText());
     }
 
     @Override
@@ -100,10 +99,6 @@ public class AddLibrarySettingDialog extends AbstractEditDialog {
         if (comment != null) {
             styledTextComment.setText(comment);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

@@ -9,12 +9,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.ModelingProperties;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public abstract class AbstractEditDialog extends Dialog {
     private String               title      = "{YOU NEED TO SET TITLE FIRST}";
-    protected ModelingProperties properties = GlobalProperties.getInstance();
+    protected GlobalProperties   properties = GlobalProperties.getInstance();
     private static final Pattern identifier = Pattern.compile("[\\w&&[^0-9]]\\w*");
 
     protected AbstractEditDialog(Shell shell, String title) {

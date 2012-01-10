@@ -9,8 +9,6 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.CompoundTypeEditPart;
 
@@ -62,16 +60,16 @@ public class PasteComponentAction extends SelectionAction {
             IInstance obj = BIPEditor.getCopyObject();
             if (obj != null) {
                 obj.setPositionConstraint(new Rectangle(10, 10, 0, 0));
-                if (obj instanceof AtomicModel) {
-                    obj.setName(CompoundTypeModel.getAppropriateAtomicName(compound));
-                    obj.getType().setName(
-                                    CompoundTypeModel.getAppropriateAtomicName(compound) + "Type");
-                } else if (obj instanceof CompoundModel) {
-                    obj.setName(CompoundTypeModel.getAppropriateCompoundName(compound));
-                    obj.getType()
-                                    .setName(CompoundTypeModel.getAppropriateCompoundName(compound)
-                                                    + "Type");
-                }
+                // if (obj instanceof AtomicModel) {
+                // obj.setName(CompoundTypeModel.getAppropriateAtomicName(compound));
+                // obj.getType().setName(
+                // CompoundTypeModel.getAppropriateAtomicName(compound) + "Type");
+                // } else if (obj instanceof CompoundModel) {
+                // obj.setName(CompoundTypeModel.getAppropriateCompoundName(compound));
+                // obj.getType()
+                // .setName(CompoundTypeModel.getAppropriateCompoundName(compound)
+                // + "Type");
+                // }
                 compound.addChild(obj);
             }
             BIPEditor.setCopyObject(null);

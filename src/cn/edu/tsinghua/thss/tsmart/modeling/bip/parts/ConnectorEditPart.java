@@ -24,7 +24,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorM
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InvisibleBulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditPart {
@@ -58,7 +58,7 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
                 nameLabel.setText(getModel().getName());
                 labelLocator.relocate();
             } else {
-                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                MessageUtil.ShowRenameErrorDialog(getModel().getName());
                 getModel().setName(getModel().getOldName());
             }
 

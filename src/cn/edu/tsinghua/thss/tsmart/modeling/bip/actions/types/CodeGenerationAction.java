@@ -1,9 +1,14 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public class CodeGenerationAction extends OpenDialogFromMenuAction {
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenDialogAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.codegen.CodeGenerateDialog;
+
+public class CodeGenerationAction extends OpenDialogAction {
 
     public static final String ID = CodeGenerationAction.class.getCanonicalName();
 
@@ -17,6 +22,12 @@ public class CodeGenerationAction extends OpenDialogFromMenuAction {
     }
 
     public void run() {
-        // TODO ´úÂëÉú³É
+        Shell shell = Display.getCurrent().getActiveShell();
+        CodeGenerateDialog dialog = new CodeGenerateDialog(shell);
+        dialog.setBlockOnOpen(true);
+        if (Dialog.OK == dialog.open()) {
+
+        }
+
     }
 }

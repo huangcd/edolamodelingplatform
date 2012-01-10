@@ -9,25 +9,35 @@ public class Rule {
     int     min;
 
     public String getDescription() {
-        if (relation.equals(Relation.CONNECT)){
-            return String.format("%s 只能和 %d 到 %d 个 %s 相连", firstEntity, min, max, secondEntity);
+        if (relation.equals(Relation.CONNECT)) {
+            if (max == Integer.MAX_VALUE)
+                return String.format("%s 只能和 %d 个以上的 %s 相连", firstEntity, min, secondEntity);
+            else if (max == min)
+                return String.format("%s 只能和 %d 个 %s 相连", firstEntity, min, secondEntity);
+            else
+                return String.format("%s 只能和 %d 到 %d 个 %s 相连", firstEntity, min, max, secondEntity);
         }
-        if (relation.equals(Relation.EQUAL)){
+        if (relation.equals(Relation.EQUAL)) {
             return String.format("%s 与  %s 相等", firstEntity, secondEntity);
         }
-        if (relation.equals(Relation.GREAT_EQUAL)){
-            return String.format("%s 大于等于  %s", firstEntity, secondEntity);            
+        if (relation.equals(Relation.GREAT_EQUAL)) {
+            return String.format("%s 大于等于  %s", firstEntity, secondEntity);
         }
-        if (relation.equals(Relation.GREAT_THAN)){
-            return String.format("%s 大于  %s", firstEntity, secondEntity);            
+        if (relation.equals(Relation.GREAT_THAN)) {
+            return String.format("%s 大于  %s", firstEntity, secondEntity);
         }
-        if (relation.equals(Relation.HAS)){
-            return String.format("%s 必须包含 %d 到 %d 个 %s 相连", firstEntity, min, max, secondEntity);            
+        if (relation.equals(Relation.HAS)) {
+            if (max == Integer.MAX_VALUE)
+                return String.format("%s 必须包含 %d 个以上的 %s", firstEntity, min, secondEntity);
+            else if (max == min)
+                return String.format("%s 必须包含 %d 个 %s", firstEntity, min, secondEntity);
+            else
+                return String.format("%s 必须包含 %d 到 %d 个 %s", firstEntity, min, max, secondEntity);
         }
-        if (relation.equals(Relation.LESS_EQUAL)){
+        if (relation.equals(Relation.LESS_EQUAL)) {
             return String.format("%s 小于等于  %s", firstEntity, secondEntity);
         }
-        if (relation.equals(Relation.LESS_THAN)){
+        if (relation.equals(Relation.LESS_THAN)) {
             return String.format("%s 小于  %s", firstEntity, secondEntity);
         }
         return "";

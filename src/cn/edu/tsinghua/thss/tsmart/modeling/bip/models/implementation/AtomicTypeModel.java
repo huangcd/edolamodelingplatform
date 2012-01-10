@@ -8,13 +8,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
@@ -26,14 +28,14 @@ import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.ITopModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.*;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 
 /**
@@ -47,7 +49,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.*;
 @Root
 public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicModel>
                 implements
-                    IDataContainer<AtomicTypeModel, IContainer, IInstance> {
+                    IDataContainer<AtomicTypeModel, AtomicModel, ITopModel, IInstance> {
 
     private static final long                                                        serialVersionUID =
                                                                                                                       6729458252836818786L;
@@ -59,8 +61,20 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
     }
 
+    public static Collection<AtomicTypeModel> getAllRegisterTypes() {
+        return typeSources.values();
+    }
+
     public static void saveTypes() {
-        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.ATOMIC_TYPE_FILE);
+        saveTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void loadTypes() {
+        loadTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void saveTypes(File directory) {
+        File file = new File(directory, GlobalProperties.ATOMIC_TYPE_FILE);
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
             for (Map.Entry<String, AtomicTypeModel> entry : getTypeEntries()) {
@@ -73,8 +87,8 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         }
     }
 
-    public static void loadTypes() {
-        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.ATOMIC_TYPE_FILE);
+    public static void loadTypes(File directory) {
+        File file = new File(directory, GlobalProperties.ATOMIC_TYPE_FILE);
         if (!file.exists()) {
             return;
         }
@@ -83,7 +97,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
             while (true) {
                 AtomicTypeModel model = (AtomicTypeModel) in.readObject();
                 if (!getTypes().contains(model.getName())) {
-                    addType(model.getName(), model);
+                    addType(model);
                 }
             }
         } catch (EOFException e) {} catch (Exception e) {
@@ -91,10 +105,22 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         }
     }
 
+    public static void clearTypes() {
+        Set<String> typeNames = new HashSet<String>(typeSources.keySet());
+        for (String type : typeNames) {
+            removeType(type);
+        }
+    }
 
-    public static void addType(String type, AtomicTypeModel model) {
+    public static boolean isRemovable(String selection) {
+        // TODO lynn → 判断AtomicType是否可以删除
+        return true;
+    }
+
+    protected static void addType(AtomicTypeModel model) {
+        String type = model.getName();
         if (!addTypeSources(type, model)) {
-            MessageDialog.ShowErrorDialog("已存在同名的组件", "错误");
+            MessageUtil.ShowErrorDialog("已存在同名的组件", "错误");
             return;
         }
         HashMap<CompoundEditor, CreationToolEntry> map =
@@ -110,7 +136,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         toolMap.put(type, map);
     }
 
-    public static boolean addTypeSources(String type, AtomicTypeModel connector) {
+    private static boolean addTypeSources(String type, AtomicTypeModel connector) {
         if (typeSources.containsKey(type)) return false;
         typeSources.put(type, connector);
         return true;
@@ -123,13 +149,16 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         toolMap.get(type).put(editor, entry);
     }
 
-    public static void removeType(String type) {
-        HashMap<CompoundEditor, CreationToolEntry> map = toolMap.get(type);
-        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
-            editor.removeConnectorCreationToolEntry(map.get(editor));
+    protected static void removeType(String type) {
+        if (removeTypeSources(type) && toolMap.containsKey(type)) {
+            HashMap<CompoundEditor, CreationToolEntry> map = toolMap.get(type);
+            for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+                if (map.containsKey(editor)) {
+                    editor.removeAtomicCreationToolEntry(map.get(editor));
+                }
+            }
+            toolMap.remove(type);
         }
-        toolMap.remove(type);
-        removeTypeSources(type);
     }
 
     private static boolean removeTypeSources(String type) {
@@ -195,9 +224,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
 
     @Override
     public AtomicTypeModel addChild(IInstance child) {
-        while (isNewNameAlreadyExistsInParent(child, child.getName())) {
-            child.setName(child.getName() + "_");
-        }
+        ensureUniqueName(child);
         if (this.getInstance().getParent() != null) {
             addPropertyChangeListener(this.getInstance().getParent());
             firePropertyChange(CHILDREN);
@@ -302,7 +329,6 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
 
     public void addPort(PortModel child) {
         ports.add(child);
-        child.setParent(this);
         firePropertyChange(CHILDREN);
     }
 
@@ -479,10 +505,12 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
                         new ComboBoxPropertyDescriptor(ATOMIC_INIT_PLACE, "初始状态", placeNames);
         init.setDescription("02");
         properties.add(init);
-        EntitySelectionPropertyDescriptor tag =
-                        new EntitySelectionPropertyDescriptor(ENTITY, "标签");
-        tag.setDescription("03");
+        EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
+        tag.setDescription("04");
         properties.add(tag);
+        TextPropertyDescriptor initAction = new TextPropertyDescriptor(ATOMIC_INIT_ACTION, "初始化动作");
+        initAction.setDescription("03");
+        properties.add(initAction);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
     }
 
@@ -497,12 +525,16 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         if (ENTITY.equals(id)) {
             return getEntityNames();
         }
+        if (ATOMIC_INIT_ACTION.equals(id)) {
+            return getInitAction().getAction();
+        }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
-        return ENTITY.equals(id) || NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id);
+        return ENTITY.equals(id) || NAME.equals(id) || ATOMIC_INIT_PLACE.equals(id)
+                        || ATOMIC_INIT_ACTION.equals(id);
     }
 
     @Override
@@ -513,7 +545,9 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
             int index = (Integer) value;
             setInitPlace(places.get(index));
         } else if (ENTITY.equals(id)) {
-            setEntityNames((ArrayList<String>)value);
+            setEntityNames((ArrayList<String>) value);
+        } else if (ATOMIC_INIT_ACTION.equals(id)) {
+            getInitAction().setAction((String) value);
         }
     }
 
@@ -527,10 +561,124 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         return false;
     }
 
-    @Override
-    public boolean isNewNameKeyword(String newName) {
-        if (GlobalProperties.getKeywords().contains(newName)) return true;
+    /*
+     * 检查是否存在名字为name的子组件（名称示例为：model.model.speed）
+     */
+    public boolean checkExistenceByName(String name) {
+        if (name.equals("")) return false;
+
+        String[] names = name.split("\\.", 2);
+
+        if (names.length != 1) return false;
+
+        for (IInstance instance : getChildren()) {
+            if (instance instanceof PlaceModel && instance.getName().equals(names[0])) {
+                return true;
+            } else if (instance instanceof DataModel && instance.getName().equals(names[0])) {
+                return true;
+            } else if (names[0].equals("place")) {
+                return true;
+            }
+        }
+
         return false;
     }
 
+    /*
+     * 返回本模块的类型：软件，硬件，或者软件和硬件（返回空）
+     */
+    public String getHardwareSoftwareType() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return "";
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return "";
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+
+        if (isMarkedHareware() && isMarkedSoftware())
+            return "";
+        else if (isMarkedSoftware())
+            return projectModel.getSoftwareEntity();
+        else if (isMarkedHareware()) return projectModel.getHardwareEntity();
+
+        return "";
+    }
+
+    public boolean checkAllTickSyncSub(Set<PortModel> tickPorts) {
+        boolean result = true;
+
+        for (IInstance child : getChildren()) {
+            if (child instanceof PortModel) {
+                if (((PortModel) child).isMarkedTick()) {
+                    if (!tickPorts.contains(child)) {
+                        result = false;
+
+                        String errMessage =
+                                        String.format("所有标注“tick”的端口必须全同步。原子组件类型 %s 中端口 %s 被标注“tick”，但是没有和其他“tick”同步。",
+                                                        this.getInstance().getName(),
+                                                        child.getName());
+                        try {
+                            MessageUtil.addProblemWarningMessage(errMessage);
+                        } catch (CoreException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public boolean checkIOPortNames() {
+        boolean result = true;
+
+        for (IInstance port : getChildren()) {
+            if (port instanceof PortModel) {
+                if (((PortModel) port).isMarkedIO()) {
+                    if (!port.getName().equals("io")) {// io port 的名称只能是 io
+
+                        String errMessage =
+                                        String.format("原子组件类型 %s 的端口 %s 是 IO 实体，但是名称不是 io", port
+                                                        .getParent().getName(), port.getName());
+                        try {
+                            MessageUtil.addProblemWarningMessage(errMessage);
+                        } catch (CoreException e) {
+                            e.printStackTrace();
+                        }
+
+                        result = false;
+
+                    }
+                } else {
+                    if (port.getName().equals("io")) {// 非 io port 的名称不能是 io
+
+                        String errMessage =
+                                        String.format("原子组件类型 %s 的端口 %s 是不是 IO 实体，但是名称是 io", port
+                                                        .getParent().getName(), port.getName());
+                        try {
+                            MessageUtil.addProblemWarningMessage(errMessage);
+                        } catch (CoreException e) {
+                            e.printStackTrace();
+                        }
+
+                        result = false;
+
+                    }
+                }
+
+            }
+        }
+        return result;
+
+    }
 }

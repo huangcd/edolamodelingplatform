@@ -7,26 +7,24 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.eclipse.gef.palette.CreationToolEntry;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 /**
  * Created by Huangcd<br/>
@@ -51,8 +49,27 @@ public class DataTypeModel<P extends IDataContainer>
         addTypeSources("int", intData);
     }
 
-    public static void saveDataTypes() {
-        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.DATA_TYPE_FILE);
+    public static Collection<DataTypeModel> getAllRegisterTypes() {
+        return typeSources.values();
+    }
+
+    public static void saveTypes() {
+        saveTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void loadTypes() {
+        loadTypes(Activator.getPreferenceDirection());
+    }
+
+    public static void clearTypes() {
+        Set<String> typeNames = new HashSet<String>(typeSources.keySet());
+        for (String type : typeNames) {
+            removeType(type);
+        }
+    }
+
+    public static void saveTypes(File directory) {
+        File file = new File(directory, GlobalProperties.DATA_TYPE_FILE);
         PrintWriter writer;
         try {
             writer = new PrintWriter(file);
@@ -65,8 +82,8 @@ public class DataTypeModel<P extends IDataContainer>
         }
     }
 
-    public static void loadDataTypes() {
-        File file = new File(Activator.getPreferenceDirection(), GlobalProperties.DATA_TYPE_FILE);
+    public static void loadTypes(File directory) {
+        File file = new File(directory, GlobalProperties.DATA_TYPE_FILE);
         if (!file.exists()) {
             return;
         }
@@ -84,7 +101,7 @@ public class DataTypeModel<P extends IDataContainer>
         }
     }
 
-    public static void addType(String type) {
+    protected static DataTypeModel addType(String type) {
         DataTypeModel model = new DataTypeModel(type);
         addTypeSources(type, model);
         HashMap<AtomicEditor, CreationToolEntry> map =
@@ -99,19 +116,21 @@ public class DataTypeModel<P extends IDataContainer>
             map.put(editor, entry);
         }
         toolMap.put(type, map);
+        return model;
     }
 
     public static void addToolEntry(String type, AtomicEditor editor, CreationToolEntry entry) {
         toolMap.get(type).put(editor, entry);
     }
 
-    public static void removeType(String type) {
-        HashMap<AtomicEditor, CreationToolEntry> map = toolMap.get(type);
-        for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
-            editor.removeDataCreationToolEntry(map.get(editor));
+    protected static void removeType(String type) {
+        if (removeTypeSources(type)) {
+            HashMap<AtomicEditor, CreationToolEntry> map = toolMap.get(type);
+            for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+                editor.removeDataCreationToolEntry(map.get(editor));
+            }
+            toolMap.remove(type);
         }
-        toolMap.remove(type);
-        removeTypeSources(type);
     }
 
     public static boolean isRemovable(String type) {

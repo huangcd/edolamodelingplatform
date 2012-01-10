@@ -1,9 +1,9 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -17,12 +17,11 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
-
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 
 /**
  * Created by Huangcd<br/>
@@ -60,8 +59,6 @@ public class ConnectorModel
      * @param argument 参数
      * @return 模型自身
      * 
-     *         TODO 绑定之前先validateOnTheFly一下
-     * 
      */
     public ConnectorModel bound(int index, PortModel argument) {
         ArgumentEntry entry = getType().getArgumentEntries().get(index);
@@ -83,12 +80,19 @@ public class ConnectorModel
         boolean oldIsBounded = entry.isBounded();
         PortTypeModel oldPort = entry.getModel();
         // bound
-        entry.bound((PortTypeModel) argument.getType());
+        entry.bound((PortTypeModel) argument.getType(), getType());
         // validate
+        // 需要清空err box
+        try {
+            MessageUtil.clearProblemMessage();
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+
         boolean result = validateOnTheFly();
         // restore
         if (oldIsBounded) {
-            entry.bound(oldPort);
+            entry.bound(oldPort, getType());
         } else {
             entry.unbound();
         }
@@ -128,7 +132,41 @@ public class ConnectorModel
                 if (!entry.isBounded())
                     throw new UnboundedException(getType().getName(), getName(), entry.getIndex());
                 PortModel port = (PortModel) entry.getModel().getInstance();
-                buffer.append(port.getParentName()).append('.').append(port.getName()).append(", ");
+                buffer.append(port.getPortStringAsConnectorAgument());
+            }
+            buffer.setLength(buffer.length() - 2);
+        }
+        return buffer.append(')').toString();
+    }
+
+    /*
+     * 代码生成相关，导出Bip模型
+     * 
+     * TODO 连接子类型命名的一致性
+     */
+    public String exportToBipforCodeGen() {
+        // 连接子类型新名称
+        StringBuilder buffer =
+                        new StringBuilder("connector ").append(getType().getHardwareCutName())
+                                        .append(" _").append(getName()).append('(');
+        if (!getType().getArgumentEntries().isEmpty()) {
+            for (ArgumentEntry entry : getType().getArgumentEntries()) {
+                if (!entry.isBounded())
+                    throw new UnboundedException(getType().getName(), getName(), entry.getIndex());
+                PortModel port = (PortModel) entry.getModel().getInstance();
+                // 连接到硬件端口的port忽略
+                // 原子组件
+                if (port.getParent() instanceof AtomicTypeModel
+                                && ((AtomicTypeModel) port.getParent()).isMarkedHareware()) {
+                    continue;
+                }
+                // port 的 parent 是 connector，
+                // 如果这个connector只涉及到硬件，则忽略
+                if ((port.getParent() instanceof ConnectorTypeModel)
+                                && ((ConnectorTypeModel) port.getParent()).checkOnlyHardwarePorts()) {
+                    continue;
+                }
+                buffer.append(port.getPortStringAsConnectorAgument());
             }
             buffer.setLength(buffer.length() - 2);
         }
@@ -234,8 +272,7 @@ public class ConnectorModel
                         new ComboBoxPropertyDescriptor(EXPORT_PORT, "是否导出", TRUE_FALSE_ARRAY);
         export.setDescription("02");
         properties.add(export);
-        EntitySelectionPropertyDescriptor tag =
-                        new EntitySelectionPropertyDescriptor(ENTITY, "标签");
+        EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("02");
         properties.add(tag);
         ColorPropertyDescriptor lineColor = new ColorPropertyDescriptor(LINE_COLOR, "连线颜色");

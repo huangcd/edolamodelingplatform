@@ -2,7 +2,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs;
 
 import java.util.List;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -13,7 +12,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
@@ -29,18 +27,20 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.*;
 public class VariableSelectionDialog extends AbstractEditDialog {
     private ComponentTypeModel model;
     private DataModel          selectionData;
-    private Label              labelError;
     private Tree               tree;
     private String             variableName;
+    private Label              labelErr;
+    private boolean            onlyVariables;
 
     /**
      * Create the dialog.
      * 
      * @param parentShell
      */
-    public VariableSelectionDialog(Shell parentShell, ComponentTypeModel model) {
+    public VariableSelectionDialog(Shell parentShell, ComponentTypeModel model, boolean b) {
         super(parentShell, "选择参数");
         this.model = model;
+        onlyVariables = b;
     }
 
     /**
@@ -53,11 +53,14 @@ public class VariableSelectionDialog extends AbstractEditDialog {
         Composite container = (Composite) super.createDialogArea(parent);
 
         tree = new Tree(container, SWT.BORDER);
-        tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        gd_tree.widthHint = 376;
+        tree.setLayoutData(gd_tree);
 
-        labelError = new Label(container, SWT.NONE);
-        labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-        labelError.setBounds(10, 109, 221, 17);
+        labelErr = new Label(container, SWT.HORIZONTAL);
+        GridData gd_labelErr = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_labelErr.widthHint = 422;
+        labelErr.setLayoutData(gd_labelErr);
 
 
         initValues();
@@ -84,8 +87,7 @@ public class VariableSelectionDialog extends AbstractEditDialog {
     }
 
     @Override
-    protected void updateValues() {
-    }
+    protected void updateValues() {}
 
     public void setSelectionData(DataModel data) {
         this.selectionData = data;
@@ -102,9 +104,11 @@ public class VariableSelectionDialog extends AbstractEditDialog {
         item.setText("Variables");
         addVariables(model, item);
 
-        item = new TreeItem(tree, SWT.BOLD);
-        item.setText("Places");
-        addPlaces(model, item);
+        if (!onlyVariables) {
+            item = new TreeItem(tree, SWT.BOLD);
+            item.setText("Places");
+            addPlaces(model, item);
+        }
     }
 
     private void addVariables(ComponentTypeModel ctm, TreeItem item) {
@@ -113,12 +117,13 @@ public class VariableSelectionDialog extends AbstractEditDialog {
         if (ctm instanceof CompoundTypeModel) {
 
             CompoundTypeModel cm = (CompoundTypeModel) ctm;
-            TreeItem cmItem = new TreeItem(item, SWT.BOLD);
-            cmItem.setText(cm.getInstance().getName());
 
             List<IInstance> children = cm.getChildren();
             for (IInstance com : children) {
                 if (com instanceof ComponentModel) {
+                    TreeItem cmItem = new TreeItem(item, SWT.BOLD);
+                    cmItem.setText(com.getName());
+
                     addVariables((ComponentTypeModel) com.getType(), cmItem);
                 }
             }
@@ -126,16 +131,17 @@ public class VariableSelectionDialog extends AbstractEditDialog {
 
         if (ctm instanceof AtomicTypeModel) {
             AtomicTypeModel atm = (AtomicTypeModel) ctm;
-            TreeItem atmItem = new TreeItem(item, SWT.BOLD);
-            atmItem.setText(atm.getInstance().getName());
 
-            TreeItem dataItem = new TreeItem(atmItem, SWT.BOLD);
-            dataItem.setText("place");
-            dataItem.setData(atm);
+            TreeItem dataItem;
+            if (!onlyVariables) {
+                dataItem = new TreeItem(item, SWT.BOLD);
+                dataItem.setText("place");
+                dataItem.setData(atm);
+            }
 
             for (IModel data : atm.getChildren()) {
                 if (data instanceof DataModel) {
-                    dataItem = new TreeItem(atmItem, SWT.BOLD);
+                    dataItem = new TreeItem(item, SWT.BOLD);
                     dataItem.setText(data.getName());
                     dataItem.setData(data);
                 }
@@ -149,12 +155,13 @@ public class VariableSelectionDialog extends AbstractEditDialog {
         if (ctm instanceof CompoundTypeModel) {
 
             CompoundTypeModel cm = (CompoundTypeModel) ctm;
-            TreeItem cmItem = new TreeItem(item, SWT.BOLD);
-            cmItem.setText(cm.getInstance().getName());
 
             List<IInstance> children = cm.getChildren();
             for (IInstance com : children) {
                 if (com instanceof ComponentModel) {
+                    TreeItem cmItem = new TreeItem(item, SWT.BOLD);
+                    cmItem.setText(com.getName());
+
                     addPlaces((ComponentTypeModel) com.getType(), cmItem);
                 }
             }
@@ -162,12 +169,10 @@ public class VariableSelectionDialog extends AbstractEditDialog {
 
         if (ctm instanceof AtomicTypeModel) {
             AtomicTypeModel atm = (AtomicTypeModel) ctm;
-            TreeItem atmItem = new TreeItem(item, SWT.BOLD);
-            atmItem.setText(atm.getInstance().getName());
 
             for (IModel place : atm.getChildren()) {
                 if (place instanceof PlaceModel) {
-                    TreeItem placeItem = new TreeItem(atmItem, SWT.BOLD);
+                    TreeItem placeItem = new TreeItem(item, SWT.BOLD);
                     placeItem.setText(place.getName());
                     placeItem.setData(place);
                 }
@@ -178,23 +183,15 @@ public class VariableSelectionDialog extends AbstractEditDialog {
 
     @Override
     protected Label getErrorLabel() {
-        labelError.setForeground(ColorConstants.red);
-        return labelError;
+        // labelErr.setForeground(ColorConstants.red);
+        return labelErr;
     }
 
     @Override
     protected boolean validateUserInput() {
         TreeItem[] item = tree.getSelection();
-        if (item.length == 0) {
-            Label label = getErrorLabel();
-            label.setText("请选择一个节点。");
-            return false;
-        }
-
-
-        if (item[0].getData() == null) {
-            Label label = getErrorLabel();
-            label.setText("请选择一个叶子节点。");
+        if (item.length == 0 || item[0].getData() == null) {
+            handleError("请选择原子组件上的变量或状态。");
             return false;
         }
 
@@ -205,8 +202,8 @@ public class VariableSelectionDialog extends AbstractEditDialog {
             variableName = it.getText() + "." + variableName;
             it = it.getParentItem();
         }
-        
-//        variableName = ((BaseInstanceModel)item[0].getData()).getFullName();
+
+        // variableName = ((BaseInstanceModel)item[0].getData()).getFullName();
 
         return true;
     }

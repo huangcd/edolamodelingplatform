@@ -1,6 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -10,6 +12,7 @@ import org.simpleframework.xml.Element;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.DataValueNotMatchException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 
 
 /**
@@ -51,6 +54,13 @@ public class DataModel<Parent extends IDataContainer>
             }
         }
         this.value = value;
+        //需要清空err box
+        try {
+            MessageUtil.clearProblemMessage();
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+
         // 如果检测不通过，还原原来的值，并返回false
         if (!validateOnTheFly()) {
             this.value = oldValue;

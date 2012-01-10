@@ -22,7 +22,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ComponentChildrenEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.FrameContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class ComponentEditPart extends BaseEditableEditPart {
@@ -107,7 +107,7 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
                 instanceLabel.setText(getModel().getName());
                 centerLabels();
             } else {
-                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                MessageUtil.ShowRenameErrorDialog(getModel().getName());
                 getModel().setName(getModel().getOldName());
             }
 

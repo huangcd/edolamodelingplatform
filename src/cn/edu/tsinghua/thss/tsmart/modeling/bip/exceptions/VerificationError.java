@@ -1,6 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions;
 
-public class VerificationError extends BIPModelingException {
+public class VerificationError extends EdolaModelingException {
     private static final long serialVersionUID = 7135066354984620659L;
 
     public VerificationError() {

@@ -6,9 +6,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -40,11 +39,22 @@ public class Activator extends AbstractUIPlugin {
         plugin = this;
     }
 
+    @SuppressWarnings("rawtypes")
     public void stop(BundleContext context) throws Exception {
         plugin = null;
-        DataTypeModel.saveDataTypes();
-        PortTypeModel.savePortTypes();
-        ConnectorTypeModel.saveConnectorTypes();
+        // XXX 适当的时候把下面几行去掉(@huangcd)
+        {
+            // DataTypeModel.saveTypes();
+            // PortTypeModel.saveTypes();
+            // ConnectorTypeModel.saveTypes();
+            // AtomicTypeModel.saveTypes();
+            // CompoundTypeModel.saveTypes();
+        }
+        // 退出的时候自动保存构件库/项目
+        TopLevelModel model = GlobalProperties.getInstance().getTopModel();
+        if (model != null) {
+            model.save();
+        }
         super.stop(context);
     }
 

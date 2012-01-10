@@ -5,6 +5,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -20,15 +23,15 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.BIPModelingException;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 import cn.edu.tsinghua.thss.tsmart.modeling.validation.Rule;
 import cn.edu.tsinghua.thss.tsmart.modeling.validation.Validator;
-import cn.edu.tsinghua.thss.tsmart.platform.GlobalProperties;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 /**
  * Created by Huangcd<br/>
@@ -55,6 +58,40 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     private UUID                         uuid             = UUID.randomUUID();
     private boolean                      editable         = true;
     protected transient GlobalProperties properties;
+
+    /**
+     * 从文件读取Atomic模型
+     * 
+     * @param file
+     * @return
+     */
+    public static AtomicTypeModel loadAtomicType(File file) {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            AtomicTypeModel model = (AtomicTypeModel) in.readObject();
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 从文件读取Compound模型
+     * 
+     * @param file
+     * @return
+     */
+    public static CompoundTypeModel loadCompoundType(File file) {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            CompoundTypeModel model = (CompoundTypeModel) in.readObject();
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public BaseTypeModel() {}
 
@@ -89,8 +126,8 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     public ArrayList<String> getEntityNames() {
         return getInstance().getEntityNames();
     }
-    
-    public Model setEntityNames(ArrayList<String> entityNames){
+
+    public Model setEntityNames(ArrayList<String> entityNames) {
         getInstance().setEntityNames(entityNames);
         firePropertyChange(ENTITY);
         validateOnTheFly();
@@ -104,7 +141,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         validateOnTheFly();
         return (Model) this;
     }
-    
+
     public boolean hasName() {
         return name != null;
     }
@@ -261,51 +298,139 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     @Override
     public boolean validateOnTheFly() {
         try {
-            for (Rule rule : getProperties().getRules()) {
+            // 需要清空err box
+            try {
+                MessageUtil.clearProblemMessage();
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
+
+            getProperties();
+            for (Rule rule : properties.getRules()) {
                 for (Validator validator : getValidators()) {
                     validator.validateOnTheFly(this, rule);
                 }
             }
             return true;
-        } catch (BIPModelingException e) {
-            MessageDialog.ShowErrorDialog(e.getMessage(), "Error");
+        } catch (EdolaModelingException e) {
+            MessageUtil.ShowErrorDialog(e.getMessage(), "Error");
             return false;
         }
     }
 
     @Override
     public boolean validate() {
+        boolean result = true;
         try {
-            for (Rule rule : getProperties().getRules()) {
+            getProperties();
+            for (Rule rule : properties.getRules()) {
                 for (Validator validator : getValidators()) {
-                    validator.validate(this, rule);
+                    result = validator.validate(this, rule) && result;
                 }
             }
-            return true;
-        } catch (BIPModelingException e) {
-            MessageDialog.ShowErrorDialog(e.getMessage(), "Error");
+            return result;
+        } catch (EdolaModelingException e) {
+            MessageUtil.ShowErrorDialog(e.getMessage(), "Error");
             return false;
         }
     }
 
     @Override
     public boolean validateFull() {
+        boolean result = true;
+
         if (this instanceof IContainer) {
             for (Object child : ((IContainer) this).getChildren()) {
                 if (child instanceof IModel) {
-                    if (!((IModel) child).validateFull()) {
-                        return false;
-                    }
+                    result = ((IModel) child).validateFull() && result;
                 }
             }
-            return false;
-        } else {
-            return validate();
         }
+
+        return validate() && result;
     }
 
     @Override
     public List<Validator> getValidators() {
         return getProperties().getValidators();
+    }
+
+    /*
+     * 代码生成相关
+     */
+    public boolean isMarkedHareware() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return false;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+        
+        return this.getEntityNames().contains(projectModel.getHardwareEntity());
+    }
+
+    public boolean isMarkedSoftware() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return false;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+
+        return this.getEntityNames().contains(projectModel.getSoftwareEntity());
+    }
+
+    public boolean isMarkedIO() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return false;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+
+        return this.getEntityNames().contains(projectModel.getIoEntity());
+    }
+
+    public boolean isMarkedTick() {
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return false;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
+        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+
+        return this.getEntityNames().contains(projectModel.getTickEntity());
     }
 }

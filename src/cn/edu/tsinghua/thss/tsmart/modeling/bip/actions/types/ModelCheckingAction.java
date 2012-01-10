@@ -3,7 +3,9 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public class ModelCheckingAction extends OpenDialogFromMenuAction {
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenDialogAction;
+
+public class ModelCheckingAction extends OpenDialogAction {
 
     public static final String ID = ModelCheckingAction.class.getCanonicalName();
 

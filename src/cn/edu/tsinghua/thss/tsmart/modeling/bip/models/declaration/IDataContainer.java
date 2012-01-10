@@ -12,8 +12,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
  * Time: обнГ4:15<br/>
  */
 @SuppressWarnings("rawtypes")
-public interface IDataContainer<Model extends IDataContainer, Parent extends IContainer, Child extends IModel>
-    extends IContainer<Model, Parent, Child> {
+public interface IDataContainer<Model extends IDataContainer, Instance extends IInstance, Parent extends IContainer, Child extends IModel>
+    extends IContainer<Model, Instance, Parent, Child> {
 
     List<DataModel<Model>> getDatas();
     

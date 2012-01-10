@@ -1,21 +1,28 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
+import cn.edu.tsinghua.thss.tsmart.modeling.validation.Rule;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 @SuppressWarnings("rawtypes")
 public class BaselineOptionDialog extends AbstractEditDialog {
-    private Button buttonFunctionLayer;
-    private Button buttonNoConnection;
-    private Button buttonOnlySynchronized;
-    private Button buttonHasStartCycle;
+    private Tree                 tree;
+    private BaselineOptionDialog self; // 指向自身，方便关闭窗口
 
     /**
      * Create the dialog.
@@ -25,6 +32,7 @@ public class BaselineOptionDialog extends AbstractEditDialog {
     public BaselineOptionDialog(Shell parentShell) {
         super(parentShell, "\u8BBE\u7F6E\u57FA\u51C6\u7EBF\u68C0\u67E5\u89C4\u5219");
         setTitle("\u8BBE\u7F6E\u57FA\u51C6\u7EBF\u68C0\u67E5\u89C4\u5219");
+        self = this;
     }
 
     /**
@@ -37,34 +45,76 @@ public class BaselineOptionDialog extends AbstractEditDialog {
         Composite container = (Composite) super.createDialogArea(parent);
         container.setLayout(null);
 
-        Group groupModeling = new Group(container, SWT.NONE);
-        groupModeling.setText("\u6A21\u578B\u8BBE\u8BA1");
-        groupModeling.setBounds(15, 10, 189, 324);
+        Group group = new Group(container, SWT.NONE);
+        group.setText("\u89C4\u5219");
+        group.setBounds(10, 10, 534, 595);
 
-        buttonFunctionLayer = new Button(groupModeling, SWT.CHECK);
-        buttonFunctionLayer.setText("\u529F\u80FD\u5C42\u6784\u4EF6\u4E0D\u76F8\u8FDE");
-        buttonFunctionLayer.setBounds(10, 29, 113, 17);
+        tree = new Tree(group, SWT.BORDER | SWT.CHECK | SWT.MULTI);
+        tree.setBounds(10, 22, 524, 573);
 
-        buttonNoConnection = new Button(groupModeling, SWT.CHECK);
-        buttonNoConnection
-                        .setText("\u4E92\u9501\u5C42\u548C\u4E3B\u63A7\u5C42\u6784\u4EF6\u4E0D\u76F8\u8FDE");
-        buttonNoConnection.setBounds(10, 52, 169, 17);
+        Button button = new Button(container, SWT.NONE);
+        button.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TreeItem[] items = tree.getItems();
 
-        Group groupModelChecking = new Group(container, SWT.NONE);
-        groupModelChecking.setText("\u6A21\u578B\u68C0\u6D4B");
-        groupModelChecking.setBounds(219, 10, 189, 324);
+                List<Rule> rules = GlobalProperties.getInstance().getRules();
+                for (int i = 0; i < rules.size(); i++) {
+                    Rule rule = rules.get(i);
+                    // 查看是否该rule被选中
+                    String ruleDipr = rule.getDescription();
+                    if (ruleDipr.isEmpty() == false) {
+                        for (int j = 0; j < items.length; j++) {
+                            if (items[j].getText().equals(ruleDipr)) {
+                                rule.setNeedCheckOnline(items[j].getChecked());
+                            }
+                        }
+                    }
+                    // 把rule检查选项结果写会rules中
+                    rules.set(i, rule);
+                }
+                GlobalProperties.getInstance().setRules(rules);
+                self.close();
+            }
+        });
+        button.setBounds(339, 611, 80, 27);
+        button.setText("\u786E\u8BA4");
 
-        buttonOnlySynchronized = new Button(groupModelChecking, SWT.CHECK);
-        buttonOnlySynchronized.setText("\u53EA\u8003\u8651\u5F3A\u540C\u6B65\u8FDE\u7ED3\u5B50");
-        buttonOnlySynchronized.setBounds(10, 29, 169, 17);
+        Button button_1 = new Button(container, SWT.CANCEL);
+        button_1.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                self.close();
+            }
+        });
+        button_1.setBounds(445, 611, 80, 27);
+        button_1.setText("\u53D6\u6D88");
+        // TreeItem item = new TreeItem(tree, SWT.CHECK );
+        // item.setText("test");
+        // tree.getSelection();
 
-        Group groupCodeGeneration = new Group(container, SWT.NONE);
-        groupCodeGeneration.setText("\u4EE3\u7801\u751F\u6210");
-        groupCodeGeneration.setBounds(423, 10, 189, 324);
+        // Button btnCheckButton = new Button(group, SWT.CHECK);
+        // btnCheckButton.setBounds(10, 21, 514, 17);
+        // btnCheckButton.setText("Check Button");
+        //
+        // Button button = new Button(group, SWT.CHECK);
+        // button.setText("Check Button");
+        // button.setBounds(10, 42, 514, 17);
 
-        buttonHasStartCycle = new Button(groupCodeGeneration, SWT.CHECK);
-        buttonHasStartCycle.setText("\u6A21\u5757\u4E2D\u6709start_cycle\u7AEF\u53E3");
-        buttonHasStartCycle.setBounds(10, 29, 152, 17);
+        List<Rule> rules = GlobalProperties.getInstance().getRules();
+        for (Iterator<Rule> iterator = rules.iterator(); iterator.hasNext();) {
+            Rule rule = iterator.next();
+            String ruleDipr = rule.getDescription();
+            if (ruleDipr.isEmpty() == false) {
+                TreeItem treeItem = new TreeItem(tree, SWT.CHECK);
+                treeItem.setText(ruleDipr);
+                treeItem.setChecked(rule.getNeedCheckOnline());
+            }
+        }
+
+        // Button btnCheckButton = new Button(scrolledComposite, SWT.CHECK);
+        // btnCheckButton.setBounds(10, 20, 514, 17);
+        // btnCheckButton.setText("Check Button");
 
         initValues();
         return container;
@@ -76,24 +126,23 @@ public class BaselineOptionDialog extends AbstractEditDialog {
      * @param parent
      */
     @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-        createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-    }
+    protected void createButtonsForButtonBar(Composite parent) {}
 
     /**
      * Return the initial size of the dialog.
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(633, 429);
+        return new Point(560, 700);
     }
 
     @Override
     protected void updateValues() {}
 
     @Override
-    protected void initValues() {}
+    protected void initValues() {
+
+    }
 
     @Override
     protected Label getErrorLabel() {

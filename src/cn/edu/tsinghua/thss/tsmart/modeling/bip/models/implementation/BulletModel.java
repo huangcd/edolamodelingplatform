@@ -40,7 +40,11 @@ public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContaine
     }
 
     public String getPortTypeName() {
-        return getPort().getType().getName();
+        PortModel port = getPort();
+        if (port == null) {
+            return "";
+        }
+        return port.getType().getName();
     }
 
     public int getDirection() {

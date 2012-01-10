@@ -27,6 +27,8 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ProjectModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public class PortTypeManageDialog extends AbstractEditDialog {
     private Text                    textArgs;
@@ -131,13 +133,11 @@ public class PortTypeManageDialog extends AbstractEditDialog {
                 containsDefaultType = true;
                 continue;
             }
-            if(PortTypeModel.isRemovable(selection))
-                {
+            if (PortTypeModel.isRemovable(selection)) {
                 listPortTypes.remove(selection);
                 PortTypeModel.removeType(selection);
-                }
-            else
-                MessageDialog.ShowDeletePortTypeErrorDialog(selection);
+            } else
+                MessageUtil.ShowDeletePortTypeErrorDialog(selection);
         }
         if (containsDefaultType) {
             handleError("内置类型不能被删除");
@@ -205,6 +205,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
         return new Point(405, 322);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void updateValues() {
         // FIXME 删除再增加一个同名的port会有bug，应该避免
@@ -220,13 +221,17 @@ public class PortTypeManageDialog extends AbstractEditDialog {
         }
         for (String type : types) {
             if (!PortTypeModel.getTypes().contains(type)) {
-                PortTypeModel.addType(type, portMap.get(type));
+                PortTypeModel model = PortTypeModel.parsePort(type, portMap.get(type));
+                GlobalProperties.getInstance().getTopModel().addChild(model);
             }
         }
     }
 
     @Override
     protected void initValues() {
+        if (GlobalProperties.getInstance().getTopModel() instanceof ProjectModel) {
+            buttonDelete.setEnabled(false);
+        }
         for (String type : PortTypeModel.getTypeNamesAsArray()) {
             listPortTypes.add(type);
             portMap.put(type, PortTypeModel.getModelByName(type).getArgumentAsString());

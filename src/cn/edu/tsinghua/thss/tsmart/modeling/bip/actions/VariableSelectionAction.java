@@ -44,7 +44,7 @@ public class VariableSelectionAction extends SelectionAction {
         }
         BIPEditor editor = (BIPEditor) part;
         ComponentTypeModel model = (ComponentTypeModel) editor.getModel();
-        VariableSelectionDialog dialog = new VariableSelectionDialog(shell, model);
+        VariableSelectionDialog dialog = new VariableSelectionDialog(shell, model, false);
         dialog.setBlockOnOpen(true);
         if (Dialog.OK == dialog.open()) {
             MessageBox box =
@@ -53,6 +53,8 @@ public class VariableSelectionAction extends SelectionAction {
             box.setMessage(dialog.getVariableName());
             box.setText("Name");
             box.open();
+            
+            model.checkExistenceByName(dialog.getVariableName());
 
         }
     }

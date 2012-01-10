@@ -2,7 +2,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions;
 
 import java.text.MessageFormat;
 
-public class UnboundedException extends BIPModelingException {
+public class UnboundedException extends EdolaModelingException {
 
     private static final long serialVersionUID = 339470030982167589L;
 

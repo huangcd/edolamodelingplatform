@@ -22,11 +22,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ProjectModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public class CompoundTypeManageDialog extends AbstractEditDialog {
     private Label      labelError;
     private List       listTypes;
     private StyledText styledTextPreview;
+    private Button     buttonDelete;
 
     public CompoundTypeManageDialog(Shell parentShell) {
         super(parentShell, "\u590D\u5408\u6784\u4EF6\u5E93\u7BA1\u7406");
@@ -73,7 +76,7 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
         scrolledComposite.setContent(listTypes);
         scrolledComposite.setMinSize(listTypes.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        Button buttonDelete = new Button(groupView, SWT.NONE);
+        buttonDelete = new Button(groupView, SWT.NONE);
         fd_scrolledComposite.bottom = new FormAttachment(100, -40);
         FormData fd_buttonDelete = new FormData();
         fd_buttonDelete.top = new FormAttachment(scrolledComposite, 6);
@@ -82,7 +85,9 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
         buttonDelete.setLayoutData(fd_buttonDelete);
         buttonDelete.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {}
+            public void widgetSelected(SelectionEvent e) {
+                removeCompoundType();
+            }
         });
         buttonDelete.setText("\u5220\u9664\u7EC4\u4EF6");
 
@@ -104,6 +109,20 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     }
 
+    protected void removeCompoundType() {
+        String[] selections = listTypes.getSelection();
+        if (selections == null || selections.length == 0) {
+            return;
+        }
+        for (String selection : selections) {
+            if (CompoundTypeModel.isRemovable(selection)) {
+                properties.getTopModel().removeChildByName(selection);
+                listTypes.remove(selection);
+            } else
+                MessageUtil.ShowDeleteConnectorTypeErrorDialog(selection);
+        }
+    }
+
     @Override
     protected Point getInitialSize() {
         return new Point(743, 511);
@@ -114,6 +133,9 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
 
     @Override
     protected void initValues() {
+        if (GlobalProperties.getInstance().getTopModel() instanceof ProjectModel) {
+            buttonDelete.setEnabled(false);
+        }
         for (String name : CompoundTypeModel.getTypes()) {
             listTypes.add(name);
         }

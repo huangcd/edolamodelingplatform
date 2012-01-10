@@ -19,11 +19,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ProjectModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public class ConnectorTypeManageDialog extends AbstractEditDialog {
     private Label      labelError;
     private List       listTypes;
     private StyledText styledTextPreview;
+    private Button buttonDelete;
 
     public ConnectorTypeManageDialog(Shell parentShell) {
         super(parentShell, "\u8FDE\u63A5\u5B50\u7C7B\u578B\u7BA1\u7406");
@@ -44,7 +47,8 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
         SashForm sashFormSelection = new SashForm(groupSelection, SWT.VERTICAL);
 
         ScrolledComposite scrolledComposite =
-                        new ScrolledComposite(sashFormSelection, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+                        new ScrolledComposite(sashFormSelection, SWT.BORDER | SWT.H_SCROLL
+                                        | SWT.V_SCROLL);
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
 
@@ -83,7 +87,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
         });
         buttonEdit.setText("\u7F16\u8F91\u8FDE\u63A5\u5B50");
 
-        Button buttonDelete = new Button(sashFormEdit, SWT.NONE);
+        buttonDelete = new Button(sashFormEdit, SWT.NONE);
         buttonDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -137,13 +141,11 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                 getErrorLabel().setText("内置类型不能被删除");
             } else {
                 if (ConnectorTypeModel.isRemovable(selection)) {
-                    ConnectorTypeModel.removeType(selection);
+                    properties.getTopModel().removeChildByName(selection);
                     listTypes.remove(selection);
                 } else
-                    MessageDialog.ShowDeleteConnectorTypeErrorDialog(selection);
-
+                    MessageUtil.ShowDeleteConnectorTypeErrorDialog(selection);
             }
-
         }
     }
 
@@ -171,6 +173,9 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
 
     @Override
     protected void initValues() {
+        if (GlobalProperties.getInstance().getTopModel() instanceof ProjectModel) {
+            buttonDelete.setEnabled(false);
+        }
         for (String connectorName : ConnectorTypeModel.getTypes()) {
             listTypes.add(connectorName);
         }

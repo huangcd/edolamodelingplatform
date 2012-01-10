@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <binding type="input" variable="iohdle.OpenButtonPressed" addr="0" length="4" bit="0"/>
+  <binding type="input" variable="iohdle.StopButtonPressed" addr="4" length="4" bit="0"/>
+  
+  <binding type="input" variable="latchcontrol.CurPos" addr="10" length="4" bit="0"/>
+  <binding type="input" variable="latchcontrol.LmtFlag" addr="14" length="4" bit="0"/>
+  <binding type="output" variable="latchcontrol.ActDir" addr="10" length="4" bit="0"/>
+
+  <binding type="input" variable="lpfcontrol.CurPos" addr="20" length="4" bit="0"/>
+  <binding type="input" variable="lpfcontrol.CurSpeed" addr="24" length="4" bit="0"/>
+  <binding type="input" variable="lpfcontrol.LmtFlag" addr="28" length="4" bit="0"/>
+  <binding type="output" variable="lpfcontrol.ActSpeed" addr="20" length="4" bit="0"/>
+
+  <binding type="input" variable="G1control.CurPos" addr="40" length="4" bit="0"/>
+  <binding type="input" variable="G1control.CurSpeed" addr="44" length="4" bit="0"/>
+  <binding type="input" variable="G1control.LmtFlag" addr="48" length="4" bit="0"/>
+  <binding type="output" variable="G1control.ActSpeed" addr="40" length="4" bit="0"/>
+
+  <binding type="input" variable="G2control.CurPos" addr="60" length="4" bit="0"/>
+  <binding type="input" variable="G2control.CurSpeed" addr="64" length="4" bit="0"/>
+  <binding type="input" variable="G2control.LmtFlag" addr="68" length="4" bit="0"/>
+  <binding type="output" variable="G2control.ActSpeed" addr="60" length="4" bit="0"/>
+</mapping>

@@ -9,7 +9,7 @@ import org.eclipse.gef.EditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PortEditPart extends BaseEditableEditPart {
@@ -24,7 +24,7 @@ public class PortEditPart extends BaseEditableEditPart {
                             getModel().getName())) {
                 label.setText(getModel().getFriendlyString());
             } else {
-                MessageDialog.ShowRenameErrorDialog(getModel().getName());
+                MessageUtil.ShowRenameErrorDialog(getModel().getName());
                 getModel().setName(getModel().getOldName());
             }
 
