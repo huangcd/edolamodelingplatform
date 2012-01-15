@@ -11,7 +11,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.codegen.LinkBind;
 public class VariantSpeedMotor extends Motor {
 
     public void initValues() {
-        initializer.addProperty("ticktime", "0");
+        initializer.addProperty("ticktime", "100");
         initializer.addProperty("accWork", "0");
         initializer.addProperty("accStop", "0");
         initializer.addProperty("targetSpeed", "0");

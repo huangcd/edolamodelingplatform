@@ -26,8 +26,8 @@ public class CopyComponentAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("复制");
-        setToolTipText("复制当前构件");
+        setText(Messages.CopyComponentAction_0);
+        setToolTipText(Messages.CopyComponentAction_1);
         setId(id);
         setEnabled(false);
     }

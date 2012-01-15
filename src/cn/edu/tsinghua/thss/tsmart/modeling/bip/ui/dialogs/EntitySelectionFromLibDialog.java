@@ -22,7 +22,7 @@ public class EntitySelectionFromLibDialog extends AbstractEditDialog {
     private Label             labelErr;
     private List              list;
     private Text              text;
-    private String            entity = "";
+    private String            entity = ""; //$NON-NLS-1$
 
     /**
      * Create the dialog.
@@ -30,8 +30,8 @@ public class EntitySelectionFromLibDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public EntitySelectionFromLibDialog(Shell parentShell) {
-        super(parentShell, "选择参数");
-        setTitle("\u9009\u62E9\u5B9E\u4F53");
+        super(parentShell, Messages.EntitySelectionFromLibDialog_1);
+        setTitle(Messages.EntitySelectionFromLibDialog_2);
     }
 
     /**
@@ -44,7 +44,7 @@ public class EntitySelectionFromLibDialog extends AbstractEditDialog {
         Composite container = (Composite) super.createDialogArea(parent);
         container.setLayout(null);
 
-        list = new List(container, SWT.BORDER);
+        list = new List(container, SWT.BORDER | SWT.V_SCROLL);
         list.setBounds(10, 62, 337, 234);
 
         labelErr = new Label(container, SWT.NONE);
@@ -52,7 +52,7 @@ public class EntitySelectionFromLibDialog extends AbstractEditDialog {
 
         Label lblNewLabel = new Label(container, SWT.NONE);
         lblNewLabel.setBounds(10, 10, 132, 17);
-        lblNewLabel.setText("\u8F93\u5165\u5173\u952E\u5B57\uFF0C\u4EE5\u8FC7\u6EE4\u5B9E\u4F53");
+        lblNewLabel.setText(Messages.EntitySelectionFromLibDialog_3);
 
         text = new Text(container, SWT.BORDER);
         text.setBounds(10, 33, 337, 23);
@@ -68,8 +68,8 @@ public class EntitySelectionFromLibDialog extends AbstractEditDialog {
      */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, "\u786E\u5B9A", true);
-        createButton(parent, IDialogConstants.CANCEL_ID, "\u53D6\u6D88", false);
+        createButton(parent, IDialogConstants.OK_ID, Messages.EntitySelectionFromLibDialog_4, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.EntitySelectionFromLibDialog_5, false);
     }
 
     /**
@@ -109,7 +109,7 @@ public class EntitySelectionFromLibDialog extends AbstractEditDialog {
     protected boolean validateUserInput() {
         String[] selections = list.getSelection();
         if (selections == null || selections.length == 0) {
-            handleError("请选择实体。");
+            handleError(Messages.EntitySelectionFromLibDialog_6);
             return false;
         }
 

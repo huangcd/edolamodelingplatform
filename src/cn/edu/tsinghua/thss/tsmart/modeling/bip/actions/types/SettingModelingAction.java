@@ -10,7 +10,7 @@ public class SettingModelingAction extends OpenDialogAction {
     public static final String ID = SettingModelingAction.class.getCanonicalName();
 
     public SettingModelingAction(IWorkbenchWindow window) {
-        super(window, ID, "建模设置", "设置建模的属性", null);
+        super(window, ID, Messages.SettingModelingAction_0, Messages.SettingModelingAction_1, null);
     }
 
     @Override

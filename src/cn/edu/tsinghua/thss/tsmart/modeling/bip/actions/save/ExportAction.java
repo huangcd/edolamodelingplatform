@@ -3,7 +3,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -19,10 +18,7 @@ import org.eclipse.ui.PlatformUI;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ProjectModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
-import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 /**
  * Created by Huangcd
@@ -32,7 +28,7 @@ import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
  * Time: 下午1:14
  */
 public class ExportAction extends SelectionAction {
-    public final static String ID = "Export to Edola";
+    public final static String ID = Messages.ExportAction_0;
 
     public ExportAction(IWorkbenchPart part) {
         super(part);
@@ -48,30 +44,23 @@ public class ExportAction extends SelectionAction {
     @Override
     public void run() {
         CompoundTypeModel model;
-        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
-        // 项目模式下导出的是startupModel
-        if (topModel instanceof ProjectModel) {
-            model = ((ProjectModel) topModel).getStartupModel();
+        /*
+         * TopLevelModel topModel = GlobalProperties.getInstance().getTopModel(); //
+         * 项目模式下导出的是startupModel if (topModel instanceof ProjectModel) { model = ((ProjectModel)
+         * topModel).getStartupModel(); } // 库模式下导出的是当前页面的视图 else {
+         */
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
+        IEditorPart editor = page.getActiveEditor();
+        if (editor instanceof CompoundEditor) {
+            model = (CompoundTypeModel) ((CompoundEditor) editor).getModel();
+        } else {
+            return;
         }
-        // 库模式下导出的是当前页面的视图
-        else {
-            IWorkbench workbench = PlatformUI.getWorkbench();
-            IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-            IWorkbenchPage page = window.getActivePage();
-            IEditorPart editor = page.getActiveEditor();
-            if (editor instanceof CompoundEditor) {
-                model = (CompoundTypeModel) ((CompoundEditor) editor).getModel();
-            } else {
-                return;
-            }
-        }
-        //需要清空err box
-        try {
-            MessageUtil.clearProblemMessage();
-        } catch (CoreException e) {
-            e.printStackTrace();
-        }
-        
+        // }
+        MessageUtil.clearProblemMessage();
+
         // 如果不通过验证，不能导出模型
         if (!model.validateFull()) {
             return;
@@ -80,12 +69,12 @@ public class ExportAction extends SelectionAction {
             Shell shell = Display.getDefault().getActiveShell();
             FileDialog dialog = new FileDialog(shell, SWT.SAVE);
             dialog.setOverwrite(true);
-            dialog.setFilterExtensions(new String[] {"*.bip"});
+            dialog.setFilterExtensions(new String[] {"*.edola"}); //$NON-NLS-1$
             String path = dialog.open();
             if (path == null) {
                 return;
             }
-            
+
             String bipContext = model.exportAllToBIP();
             FileWriter writer = new FileWriter(path);
             writer.write(bipContext);
@@ -94,7 +83,7 @@ public class ExportAction extends SelectionAction {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (EdolaModelingException e) {
-            MessageUtil.ShowErrorDialog(e.getMessage(), "Error");
+            MessageUtil.ShowErrorDialog(e.getMessage(), Messages.ExportAction_2);
         }
     }
 }

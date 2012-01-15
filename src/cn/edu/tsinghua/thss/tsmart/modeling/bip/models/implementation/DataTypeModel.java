@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
@@ -35,12 +36,12 @@ import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 @Root
 public class DataTypeModel<P extends IDataContainer>
                 extends BaseTypeModel<DataTypeModel, DataModel, P> {
-    private final static long                                                      serialVersionUID =
-                                                                                                                    -5282743296523116195L;
+    private final static long                                                      serialVersionUID;
     private final static HashMap<String, DataTypeModel>                            typeSources;
     private final static HashMap<String, HashMap<AtomicEditor, CreationToolEntry>> toolMap;
 
     static {
+        serialVersionUID = -5282743296523116195L;
         toolMap = new HashMap<String, HashMap<AtomicEditor, CreationToolEntry>>();
         DataTypeModel boolData = new DataTypeModel("bool");
         DataTypeModel intData = new DataTypeModel("int");
@@ -50,15 +51,7 @@ public class DataTypeModel<P extends IDataContainer>
     }
 
     public static Collection<DataTypeModel> getAllRegisterTypes() {
-        return typeSources.values();
-    }
-
-    public static void saveTypes() {
-        saveTypes(Activator.getPreferenceDirection());
-    }
-
-    public static void loadTypes() {
-        loadTypes(Activator.getPreferenceDirection());
+        return Collections.unmodifiableCollection(typeSources.values());
     }
 
     public static void clearTypes() {
@@ -70,15 +63,19 @@ public class DataTypeModel<P extends IDataContainer>
 
     public static void saveTypes(File directory) {
         File file = new File(directory, GlobalProperties.DATA_TYPE_FILE);
-        PrintWriter writer;
         try {
-            writer = new PrintWriter(file);
-            for (String string : getTypes()) {
-                writer.println(string);
+            serializer.write(getAllRegisterTypes(), file);
+        } catch (Exception e) {
+            PrintWriter writer;
+            try {
+                writer = new PrintWriter(file);
+                for (String string : getTypes()) {
+                    writer.println(string);
+                }
+                writer.close();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
             }
-            writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -88,12 +85,21 @@ public class DataTypeModel<P extends IDataContainer>
             return;
         }
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (!getTypes().contains(line)) {
-                    addType(line);
+            try {
+                List<String> list = serializer.read(List.class, file);
+                for (String type : list) {
+                    if (!getTypes().contains(type)) {
+                        addType(type);
+                    }
+                }
+            } catch (Exception e) {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (!getTypes().contains(line)) {
+                        addType(line);
+                    }
                 }
             }
         } catch (IOException e) {

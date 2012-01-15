@@ -30,8 +30,8 @@ public class BaselineOptionDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public BaselineOptionDialog(Shell parentShell) {
-        super(parentShell, "\u8BBE\u7F6E\u57FA\u51C6\u7EBF\u68C0\u67E5\u89C4\u5219");
-        setTitle("\u8BBE\u7F6E\u57FA\u51C6\u7EBF\u68C0\u67E5\u89C4\u5219");
+        super(parentShell, Messages.BaselineOptionDialog_0);
+        setTitle(Messages.BaselineOptionDialog_1);
         self = this;
     }
 
@@ -46,7 +46,7 @@ public class BaselineOptionDialog extends AbstractEditDialog {
         container.setLayout(null);
 
         Group group = new Group(container, SWT.NONE);
-        group.setText("\u89C4\u5219");
+        group.setText(Messages.BaselineOptionDialog_2);
         group.setBounds(10, 10, 534, 595);
 
         tree = new Tree(group, SWT.BORDER | SWT.CHECK | SWT.MULTI);
@@ -78,7 +78,7 @@ public class BaselineOptionDialog extends AbstractEditDialog {
             }
         });
         button.setBounds(339, 611, 80, 27);
-        button.setText("\u786E\u8BA4");
+        button.setText(Messages.BaselineOptionDialog_3);
 
         Button button_1 = new Button(container, SWT.CANCEL);
         button_1.addSelectionListener(new SelectionAdapter() {
@@ -88,7 +88,7 @@ public class BaselineOptionDialog extends AbstractEditDialog {
             }
         });
         button_1.setBounds(445, 611, 80, 27);
-        button_1.setText("\u53D6\u6D88");
+        button_1.setText(Messages.BaselineOptionDialog_4);
         // TreeItem item = new TreeItem(tree, SWT.CHECK );
         // item.setText("test");
         // tree.getSelection();

@@ -3,11 +3,11 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.commands;
 import org.eclipse.gef.commands.Command;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class DeleteModelCommand extends Command {
-    private IInstance  child;
+    private IModel  child;
     private IContainer parent;
 
     @Override
@@ -22,7 +22,7 @@ public class DeleteModelCommand extends Command {
         child.setParent(parent);
     }
 
-    public void setChild(IInstance child) {
+    public void setChild(IModel child) {
         this.child = child;
     }
 

@@ -15,6 +15,7 @@ public interface PlatformProperties {
     String COMPOUND_TYPE_FILE  = "compoundtype";
     String ATOMIC_EXTENSION    = "edolaa";
     String COMPOUND_EXTENSION  = "edolam";
+    String ZIP_EXTENSION       = "edolaz";
 
     Font getDefaultEditorFont();
 

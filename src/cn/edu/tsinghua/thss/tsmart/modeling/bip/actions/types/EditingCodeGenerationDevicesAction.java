@@ -11,7 +11,6 @@ import org.eclipse.ui.PlatformUI;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenDialogAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.codegen.EditPeripheralsDialog;
 
 public class EditingCodeGenerationDevicesAction extends OpenDialogAction {
@@ -19,7 +18,7 @@ public class EditingCodeGenerationDevicesAction extends OpenDialogAction {
     public static final String ID = EditingCodeGenerationDevicesAction.class.getCanonicalName();
 
     public EditingCodeGenerationDevicesAction(IWorkbenchWindow window) {
-        super(window, ID, "编辑外设", "编辑外设", null);
+        super(window, ID, Messages.EditingCodeGenerationDevicesAction_0, Messages.EditingCodeGenerationDevicesAction_1, null);
     }
 
     @Override
@@ -34,16 +33,11 @@ public class EditingCodeGenerationDevicesAction extends OpenDialogAction {
         IWorkbenchPage page = window.getActivePage();
         IEditorPart editor = page.getActiveEditor();
         if (editor instanceof CompoundEditor) {
-            CompoundTypeModel model = (CompoundTypeModel) ((CompoundEditor) editor).getModel();
-            EditPeripheralsDialog dialog = new EditPeripheralsDialog(shell, model);
+            EditPeripheralsDialog dialog = new EditPeripheralsDialog(shell);
             dialog.setBlockOnOpen(true);
             if (Dialog.OK == dialog.open()) {
 
             }
-
         }
-        
-        
-        
     }
 }

@@ -3,7 +3,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.AbsoluteBendpoint;
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.ChopboxAnchor;
@@ -50,7 +49,7 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     protected IFigure createFigure() {
         PlaceModel model = getModel();
 
-        figure = new PlaceFigure();
+        figure = new PlaceFigure(getModel());
         figure.setForegroundColor(ColorConstants.gray);
         if (model.isInitialPlace()) {
             setAsInitialPlace();
@@ -128,19 +127,11 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
                     nameLabel.setText(getModel().getName());
                     tooltipLabel.setText(getModel().getName());
                     labelLocator.relocate();
-                    try {
-                        MessageUtil.clearProblemMessage();
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
+                    MessageUtil.clearProblemMessage();
                 } else {
                     MessageUtil.ShowRenameErrorDialog(getModel().getName());
                     getModel().setName(getModel().getOldName());
-                    try {
-                        MessageUtil.addProblemWarningMessage(getModel().getName());
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
+                    MessageUtil.addProblemWarningMessage(getModel().getName());
                 }
             } else {
                 nameLabel.setText(getModel().getName());
@@ -201,9 +192,12 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     /**
      * place的形状，根据place的状态不同而不一样。
      */
-    class PlaceFigure extends Ellipse {
-        public PlaceFigure() {
+    public class PlaceFigure extends Ellipse {
+        private PlaceModel model;
+
+        public PlaceFigure(PlaceModel model) {
             super();
+            this.model = model;
         }
 
         private Rectangle getInnerBound() {
@@ -225,6 +219,10 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             if (getModel().isInitialPlace()) {
                 graphics.drawOval(getInnerBound());
             }
+        }
+
+        public PlaceModel getModel() {
+            return model;
         }
     }
 }

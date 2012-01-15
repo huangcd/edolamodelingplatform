@@ -1,17 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,21 +14,22 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Entity;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.IncompleteModelException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
-import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 
@@ -77,7 +72,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
     }
 
     public static Collection<CompoundTypeModel> getAllRegisterTypes() {
-        return typeSources.values();
+        return Collections.unmodifiableCollection(typeSources.values());
     }
 
     public static CompoundTypeModel getModelByName(String type) {
@@ -99,54 +94,27 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
     }
 
     public static boolean isRemovable(String selection) {
-        // TODO lynn → 判断CompoundType是否可以删除
+    	for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            CompoundTypeModel model = (CompoundTypeModel) editor.getModel();
+           /* if(model.getName().equals(selection))
+            	return false;*/
+            ArrayList<CompoundTypeModel> compounds = new ArrayList<CompoundTypeModel>();
+            ArrayList<AtomicTypeModel> atomics = new ArrayList<AtomicTypeModel>();
+            model.getAllComponent(compounds, atomics);//compounds包括了model本身
+            compounds.remove(compounds.size()-1);//刪除model本身
+            for(CompoundTypeModel compound:compounds)
+            {             
+           	 if(compound.getName().equals(selection))
+                	return false;
+            }
+        }
         return true;
-    }
-
-    public static void loadTypes() {
-        loadTypes(Activator.getPreferenceDirection());
-    }
-
-    public static void loadTypes(File directory) {
-        File file = new File(directory, GlobalProperties.COMPOUND_TYPE_FILE);
-        if (!file.exists()) {
-            return;
-        }
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-            while (true) {
-                CompoundTypeModel model = (CompoundTypeModel) in.readObject();
-                if (!getTypes().contains(model.getName())) {
-                    addType(model);
-                }
-            }
-        } catch (EOFException e) {} catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void saveTypes() {
-        saveTypes(Activator.getPreferenceDirection());
-    }
-
-    public static void saveTypes(File directory) {
-        File file = new File(directory, GlobalProperties.COMPOUND_TYPE_FILE);
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-            for (Map.Entry<String, CompoundTypeModel> entry : getTypeEntries()) {
-                out.writeObject(entry.getValue());
-                out.flush();
-            }
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     protected static void addType(CompoundTypeModel model) {
         String type = model.getName();
         if (!addTypeSources(type, model)) {
-            MessageUtil.ShowErrorDialog("已存在同名的组件", "错误");
+            MessageUtil.addProblemWarningMessage("已存在同名组件" + type);
             return;
         }
         HashMap<CompoundEditor, CreationToolEntry> map =
@@ -197,6 +165,10 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
     @ElementList
     private List<PriorityModel<CompoundTypeModel>> priorities;
 
+    public List<PriorityModel<CompoundTypeModel>> getPriorities() {
+        return priorities;
+    }
+
     public CompoundTypeModel() {
         components = new ArrayList<ComponentModel>();
         connectors = new ArrayList<ConnectorModel>();
@@ -207,8 +179,8 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
     @Override
     public CompoundTypeModel addChild(IInstance child) {
         ensureUniqueName(child);
+        child.setParent(this);
         if (child instanceof ComponentModel) {
-            child.getType().setName(child.getName() + "type");
             addComponent((ComponentModel) child);
         } else if (child instanceof ConnectorModel) {
             addConnector((ConnectorModel) child);
@@ -220,6 +192,105 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
             System.err.println("Invalidated child type to add:\n" + child);
         }
         return this;
+    }
+
+    public void deleteRelatedPrioritiesWhenDeleteConnector(ConnectorModel con) {
+        Iterator<PriorityModel<CompoundTypeModel>> iter = priorities.iterator();
+        while (iter.hasNext()) {
+            PriorityModel<CompoundTypeModel> model = iter.next();
+            if (model.getLeftPort().equals(con) || model.getRightPort().equals(con)) iter.remove();
+        }
+    }
+
+    /*
+     * 基准线合法性相关
+     */
+    public boolean checkValidateBaseline() {
+        List<Entity> entities = GlobalProperties.getInstance().getEntities();
+
+        for (Object s : getEntityNames()) {
+            boolean contain = false;
+            for (Entity en : entities) {
+                if (en.getName().equals(s)) {
+                    contain = true;
+                    break;
+                }
+            }
+
+            if (!contain) return false;
+        }
+
+        for (IInstance child : getChildren()) {
+            for (Object s : child.getEntityNames()) {
+                boolean contain = false;
+                for (Entity en : entities) {
+                    if (en.getName().equals(s)) {
+                        contain = true;
+                        break;
+                    }
+                }
+
+                if (!contain) return false;
+            }
+
+            if (child instanceof CompoundModel) {
+                if (!((CompoundModel) child).getType().checkValidateBaseline()) return false;
+            }
+
+            if (child instanceof AtomicModel) {
+                if (!((AtomicModel) child).getType().checkValidateBaseline()) return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    public void cleanEntityNames() {
+        List<Entity> entities = GlobalProperties.getInstance().getEntities();
+
+        ArrayList<String> entitiesNames = new ArrayList<String>(getEntityNames());
+
+        for (Object s : entitiesNames) {
+            boolean contain = false;
+            for (Entity en : entities) {
+                if (en.getName().equals(s)) {
+                    contain = true;
+                    break;
+                }
+            }
+
+            if (!contain) {
+                getEntityNames().remove(s);
+            }
+        }
+
+        for (IInstance child : getChildren()) {
+            entitiesNames = new ArrayList<String>(child.getEntityNames());
+
+            for (Object s : entitiesNames) {
+                boolean contain = false;
+                for (Entity en : entities) {
+                    if (en.getName().equals(s)) {
+                        contain = true;
+                        break;
+                    }
+                }
+
+                if (!contain) {
+                    child.getEntityNames().remove(s);
+                }
+            }
+
+            if (child instanceof CompoundModel) {
+                ((CompoundModel) child).getType().checkValidateBaseline();
+            }
+
+            if (child instanceof AtomicModel) {
+                ((AtomicModel) child).getType().checkValidateBaseline();
+            }
+
+        }
     }
 
     /*
@@ -266,6 +337,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         boolean result = true;
         int tickConnectorNum = 0;
         Set<PortModel> ports = new HashSet<PortModel>();
+        Set<PortModel> allPorts = new HashSet<PortModel>();
 
         for (IInstance child : getChildren()) {
             if (child instanceof ConnectorModel) {
@@ -280,6 +352,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                 }
                 if (contain) {
                     tickConnectorNum++;
+                    allPorts = ports;
                 }
             }
         }
@@ -287,15 +360,11 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         if (tickConnectorNum > 1) {
 
             String errMessage = String.format("所有标注“tick”的端口必须全同步。");
-            try {
-                MessageUtil.addProblemWarningMessage(errMessage);
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
+            MessageUtil.addProblemWarningMessage(errMessage);
 
             result = false;
         } else {
-            result = checkAllTickSyncSub(ports) && result;
+            result = checkAllTickSyncSub(allPorts) && result;
         }
 
         return result;
@@ -321,13 +390,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
     }
 
     public boolean checkCodeGenValid() {
-
-        try {
-            MessageUtil.clearProblemMessage();
-        } catch (CoreException e) {
-            e.printStackTrace();
-        }
-
+        MessageUtil.clearProblemMessage();
         if (!checkIOPortNames()) return false;
         if (!checkEntityMappings()) return false;
         if (!checkEntityTagHWorSW()) return false;
@@ -336,7 +399,6 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         if (!checkAllTickSync()) return false;
         if (!checkOnlyContainIO()) return false;
         if (!checkPartitionBreakIOandTickValid()) return false;
-
         return true;
     }
 
@@ -367,12 +429,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                         || projectModel.getTickEntity().equals("")) {
 
             String errMessage = String.format("软件、硬件、IO、tick必须均绑定一个实体。");
-            try {
-                MessageUtil.addProblemWarningMessage(errMessage);
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-
+            MessageUtil.addProblemWarningMessage(errMessage);
             return false;
         }
         return true;
@@ -388,11 +445,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     String errMessage =
                                     String.format("原子组件类型 %s 同时被标注上“软件”和“硬件”实体或者没有标注。", child
                                                     .getType().getName());
-                    try {
-                        MessageUtil.addProblemWarningMessage(errMessage);
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
+                    MessageUtil.addProblemWarningMessage(errMessage);
                 }
             }
             if (child instanceof CompoundModel) {
@@ -458,12 +511,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                             String errMessage =
                                             String.format("连接子 %s 中已有端口被标注上“IO”实体，但是其下端口 %s 没有标注“IO”实体。",
                                                             child.getName(), port.getName());
-                            try {
-                                MessageUtil.addProblemWarningMessage(errMessage);
-                            } catch (CoreException e) {
-                                e.printStackTrace();
-                            }
-
+                            MessageUtil.addProblemWarningMessage(errMessage);
                             result = false;
                         }
                     }
@@ -485,12 +533,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     String errMessage =
                                     String.format("复合组件类型 %s 中有类型冲突，或者其下不包含任何原子组件。", child
                                                     .getType().getName());
-                    try {
-                        MessageUtil.addProblemWarningMessage(errMessage);
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
-
+                    MessageUtil.addProblemWarningMessage(errMessage);
                     result = false;
                 }
             }
@@ -518,12 +561,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                             String errMessage =
                                             String.format("连接子 %s 中已有端口被标注上“tick”实体，但是其下端口 %s 没有标注“tick”实体。",
                                                             child.getName(), port.getName());
-                            try {
-                                MessageUtil.addProblemWarningMessage(errMessage);
-                            } catch (CoreException e) {
-                                e.printStackTrace();
-                            }
-
+                            MessageUtil.addProblemWarningMessage(errMessage);
                             result = false;
                         }
                     }
@@ -551,10 +589,10 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
 
                 for (PortModel port : ports) {
                     if (!port.isMarkedIO() && !port.isMarkedTick()) {// 不是io和tick才考虑
-                        if (((AtomicModel) port.getParent()).isMarkedHareware()) {// port所在的组件是硬件
+                        if (((AtomicTypeModel) port.getParent()).isMarkedHareware()) {// port所在的组件是硬件
                             hardware = true;
                         }
-                        if (((AtomicModel) port.getParent()).isMarkedSoftware()) {// port所在的组件是软件
+                        if (((AtomicTypeModel) port.getParent()).isMarkedSoftware()) {// port所在的组件是软件
                             software = true;
                         }
                     }
@@ -564,11 +602,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     String errMessage =
                                     String.format("连接子 %s 所涉及端口被软硬件分割。只有“tick”和“IO”连接子才能被软硬件分割。",
                                                     child.getName());
-                    try {
-                        MessageUtil.addProblemWarningMessage(errMessage);
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
+                    MessageUtil.addProblemWarningMessage(errMessage);
 
 
                     result = false;
@@ -592,6 +626,53 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         return true;
     }
 
+    void getAllUsedPortAndConnectorType(HashMap<String, PortTypeModel> ports,
+                    HashMap<String, ConnectorTypeModel> connectors) {
+        Stack<CompoundTypeModel> stack = new Stack<CompoundTypeModel>();
+        stack.push(this);
+        while (!stack.isEmpty()) {
+            CompoundTypeModel compound = stack.pop();
+            for (IInstance child : compound.getChildren()) {
+                // 原子组件
+                if (child instanceof AtomicModel) {
+                    AtomicTypeModel atomic = (AtomicTypeModel) child.getType();
+                    for (PortModel port : atomic.getPorts()) {
+                        String typeName = port.getType().getName();
+                        if (ports.containsKey(typeName)) {
+                            continue;
+                        } else {
+                            ports.put(typeName, (PortTypeModel) port.getType());
+                        }
+                    }
+                }
+                // 连接子
+                else if (child instanceof ConnectorModel) {
+                    ConnectorTypeModel connector = (ConnectorTypeModel) child.getType();
+                    PortModel exportPort = connector.getPort();
+                    String typeName = exportPort.getType().getName();
+                    if (!ports.containsKey(typeName)) {
+                        ports.put(typeName, (PortTypeModel) exportPort.getType());
+                    }
+                    for (ArgumentEntry entry : connector.getArgumentEntries()) {
+                        if (entry.isBounded()) {
+                            PortTypeModel port = entry.getModel();
+                            typeName = port.getName();
+                            if (!ports.containsKey(typeName)) {
+                                ports.put(typeName, port);
+                            }
+                        }
+                    }
+                    typeName = connector.getName();
+                    if (!connectors.containsKey(typeName)) {
+                        connectors.put(typeName, connector);
+                    }
+                } else if (child instanceof CompoundModel) {
+                    stack.push((CompoundTypeModel) child.getType());
+                }
+            }
+        }
+    }
+
     /**
      * 将以本模型根节点的所有模块导出成BIP代码
      * 
@@ -605,29 +686,41 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         try {
             getAllComponent(compounds, atomics);
         } catch (IncompleteModelException ex) {
-            MessageUtil.ShowErrorDialog(ex.getMessage(), "模型不完整，不能导出");
+            MessageUtil.addProblemWarningMessage("模型不完整，不能导出：" + ex.getMessage());
+            return "";
         }
 
         StringBuilder buffer = new StringBuilder("model BIP_MODEL\n\n");
-        for (Entry<String, PortTypeModel> entry : PortTypeModel.getTypeEntries()) {
-            buffer.append('\t').append(entry.getValue().exportToBip()).append('\n');
-        }
-        buffer.append('\n');
 
-        for (Entry<String, ConnectorTypeModel> entry : ConnectorTypeModel.getTypeEntries()) {
-            buffer.append('\t').append(entry.getValue().exportToBip()).append("\n\n");
-        }
-        buffer.append('\n');
+        try {
+            HashMap<String, PortTypeModel> ports = new HashMap<String, PortTypeModel>();
+            HashMap<String, ConnectorTypeModel> connectors =
+                            new HashMap<String, ConnectorTypeModel>();
+            getAllUsedPortAndConnectorType(ports, connectors);
+            for (Entry<String, PortTypeModel> entry : ports.entrySet()) {
+                buffer.append('\t').append(entry.getValue().exportToBip()).append('\n');
+            }
+            buffer.append('\n');
 
-        for (AtomicTypeModel atomic : atomics) {
-            buffer.append('\t').append(atomic.exportToBip()).append('\n');
-        }
-        buffer.append('\n');
+            for (Entry<String, ConnectorTypeModel> entry : connectors.entrySet()) {
+                buffer.append('\t').append(entry.getValue().exportToBip()).append("\n\n");
+            }
+            buffer.append('\n');
 
-        for (CompoundTypeModel compound : compounds) {
-            buffer.append('\t').append(compound.exportToBip()).append('\n');
+            for (AtomicTypeModel atomic : atomics) {
+                buffer.append('\t').append(atomic.exportToBip()).append('\n');
+            }
+            buffer.append('\n');
+
+            for (CompoundTypeModel compound : compounds) {
+                buffer.append('\t').append(compound.exportToBip()).append('\n');
+            }
+            buffer.append("\tcomponent ").append(getName()).append(" m\nend");
+        } catch (EdolaModelingException ex) {
+            MessageUtil.addProblemWarningMessage(ex.getMessage());
+            return "";
         }
-        buffer.append("\tcomponent ").append(getName()).append(" m\nend");
+
         return buffer.toString();
     }
 
@@ -659,50 +752,58 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         try {
             getAllComponent(compounds, atomics);
         } catch (IncompleteModelException ex) {
-            MessageUtil.ShowErrorDialog(ex.getMessage(), "模型不完整，不能导出");
+            MessageUtil.addProblemWarningMessage("模型不完整，不能导出：" + ex.getMessage());
+            return "";
         }
 
         StringBuilder buffer = new StringBuilder("model BIP_MODEL\n\n");
 
-        for (Entry<String, PortTypeModel> entry : PortTypeModel.getTypeEntries()) {
-            buffer.append('\t').append(entry.getValue().exportToBip()).append('\n');
+        try {
+            for (Entry<String, PortTypeModel> entry : PortTypeModel.getTypeEntries()) {
+                buffer.append('\t').append(entry.getValue().exportToBip()).append('\n');
+            }
+            buffer.append('\n');
+
+            // 这里只是导出连接子类型，不需要修改,确定类型与实例的关系，因为无法确定连接子是否连接纯硬件port，所以这里就把所有类型都写上了
+            for (Entry<String, ConnectorTypeModel> entry : ConnectorTypeModel.getTypeEntries()) {
+                buffer.append('\t').append(entry.getValue().exportToBip()).append("\n\n");
+            }
+            buffer.append('\n');
+
+            // 给需要分割的连接子重命名
+            buildNewNamesforConnectors();
+
+            // 如果顶层组件中的连接子，如果有涉及到软硬划分，则需要新建一个连接子类型
+            for (ConnectorModel connector : connectors) {
+                if (!connector.getType().checkSoftwareHardwarePorts()) // 只有同时包含软硬件的连接子才导出（同时包含软硬件的连接子才会被分割）
+                    continue;
+                buffer.append("\t").append(connector.getType().exportToBipforCodeGen())
+                                .append('\n');
+            }
+            buffer.append('\n');
+
+
+            for (AtomicTypeModel atomic : atomics) {
+                if (atomic.isMarkedSoftware()) // 只有软件模块才导出
+                    buffer.append('\t').append(atomic.exportToBip()).append('\n');
+            }
+            buffer.append('\n');
+
+            for (CompoundTypeModel compound : compounds) {
+                if (!compound.equals(this)
+                                && compound.getHardwareSoftwareType().equals(
+                                                projectModel.getSoftwareEntity())) // 只有软件模块才能导出,非本模块
+                    buffer.append('\t').append(compound.exportToBip()).append('\n');// 由于条件2，非顶层模块，没有分割问题，直接导出即可，不用特殊处理
+                if (compound.equals(this)) // 本模块是顶层模块，可能涉及到软硬分割，需要调用特殊函数导出
+                    buffer.append('\t').append(compound.exportToBipforCodeGen()).append('\n');
+
+            }
+            buffer.append("\tcomponent ").append(getName()).append(" m\nend");
+        } catch (EdolaModelingException ex) {
+            MessageUtil.addProblemWarningMessage(ex.getMessage());
+            return "";
         }
-        buffer.append('\n');
 
-        // 这里只是导出连接子类型，不需要修改,确定类型与实例的关系，因为无法确定连接子是否连接纯硬件port，所以这里就把所有类型都写上了
-        for (Entry<String, ConnectorTypeModel> entry : ConnectorTypeModel.getTypeEntries()) {
-            buffer.append('\t').append(entry.getValue().exportToBip()).append("\n\n");
-        }
-        buffer.append('\n');
-
-        // 给需要分割的连接子重命名
-        buildNewNamesforConnectors();
-
-        // 如果顶层组件中的连接子，如果有涉及到软硬划分，则需要新建一个连接子类型
-        for (ConnectorModel connector : connectors) {
-            if (!connector.getType().checkSoftwareHardwarePorts()) // 只有同时包含软硬件的连接子才导出（同时包含软硬件的连接子才会被分割）
-                continue;
-            buffer.append("\t").append(connector.getType().exportToBipforCodeGen()).append('\n');
-        }
-        buffer.append('\n');
-
-
-        for (AtomicTypeModel atomic : atomics) {
-            if (atomic.isMarkedSoftware()) // 只有软件模块才导出
-                buffer.append('\t').append(atomic.exportToBip()).append('\n');
-        }
-        buffer.append('\n');
-
-        for (CompoundTypeModel compound : compounds) {
-            if (!compound.equals(this)
-                            && compound.getHardwareSoftwareType().equals(
-                                            projectModel.getSoftwareEntity())) // 只有软件模块才能导出,非本模块
-                buffer.append('\t').append(compound.exportToBip()).append('\n');// 由于条件2，非顶层模块，没有分割问题，直接导出即可，不用特殊处理
-            if (compound.equals(this)) // 本模块是顶层模块，可能涉及到软硬分割，需要调用特殊函数导出
-                buffer.append('\t').append(compound.exportToBipforCodeGen()).append('\n');
-
-        }
-        buffer.append("\tcomponent ").append(getName()).append(" m\nend");
         return buffer.toString();
     }
 
@@ -785,12 +886,53 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         buffer.append('\n');
 
         for (PriorityModel<CompoundTypeModel> priority : priorities) {
-            if (false) // 包含纯硬件connector的priority不导出 TODO need check
-                       // 现在只是port与port之间的优先级，应该connector和connector之间的优先级
-                buffer.append("\t\t").append(priority.exportToBip()).append('\n');
+            buffer.append("\t\t").append(priority.exportToBip()).append('\n');
         }
         buffer.append("\tend\n");
         return buffer.toString();
+    }
+
+    public String getAllTickConnectorName() {
+        Set<PortModel> ports = new HashSet<PortModel>();
+
+        for (IInstance child : getChildren()) {
+            if (child instanceof ConnectorModel) {
+                boolean contain = false;
+
+                ports = (((ConnectorModel) child).getType().getAllRelativePorts());
+                for (PortModel port : ports) {
+                    if (port.isMarkedTick()) {
+                        contain = true;
+                        break;
+                    }
+                }
+                if (contain) {
+                    return child.getName();
+                }
+            }
+        }
+
+        return "";
+    }
+
+    public void getAllComponentWithoutChecking(ArrayList<CompoundTypeModel> compounds,
+                    ArrayList<AtomicTypeModel> atomics) {
+        Stack<CompoundTypeModel> stack = new Stack<CompoundTypeModel>();
+        HashSet<String> typeNames = new HashSet<String>();
+        stack.push(this);
+        typeNames.add(getName());
+        while (!stack.isEmpty()) {
+            CompoundTypeModel item = stack.pop();
+            HashSet<String> names = new HashSet<String>();
+            for (IInstance child : item.getChildren()) {
+                if (child instanceof AtomicModel) {
+                    atomics.add((AtomicTypeModel) child.getType());
+                } else if (child instanceof CompoundModel) {
+                    stack.push((CompoundTypeModel) child.getType());
+                }
+            }
+            compounds.add(0, item);
+        }
     }
 
     /**
@@ -816,6 +958,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     throw new IncompleteModelException("连接子 " + connector.getName() + " 不完整");
                 }
                 // 避免全局类型重名
+                if (child.getType() == null) continue;
                 String name = child.getType().getName();
                 while (typeNames.contains(name)) {
                     Matcher mat = NAME_PREFIX.matcher(name);
@@ -826,7 +969,9 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     } else {
                         name = name + "1";
                     }
-                    child.getType().setName(name);
+                    if (child instanceof AtomicModel || child instanceof CompoundModel) {
+                        child.getType().setName(name);
+                    }
                 }
                 typeNames.add(name);
                 // 避免compound内部构件重名
@@ -860,6 +1005,11 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         children.addAll(connectors);
         children.addAll(priorities);
         children.addAll(bullets);
+        for (IInstance instance : children) {
+            if (instance.getParent() == null || !instance.getParent().equals(this)) {
+                instance.setParent(this);
+            }
+        }
         return children;
     }
 
@@ -910,11 +1060,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                 if (type.equals("") || !childType.equals(type)) {// 类型冲突
 
                     String errMessage = String.format("复合组件类型 %s 同时包含“软件”和“硬件”组件。", getName());
-                    try {
-                        MessageUtil.addProblemWarningMessage(errMessage);
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
+                    MessageUtil.addProblemWarningMessage(errMessage);
 
                     return "";
                 }
@@ -928,12 +1074,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                 if (!type.equals("") && !childType.equals(type)) {// 类型冲突
 
                     String errMessage = String.format("复合组件类型 %s 同时包含“软件”和“硬件”组件。", getName());
-                    try {
-                        MessageUtil.addProblemWarningMessage(errMessage);
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                    }
-
+                    MessageUtil.addProblemWarningMessage(errMessage);
                     return "";
                 }
             }

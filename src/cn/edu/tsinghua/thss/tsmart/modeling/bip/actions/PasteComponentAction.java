@@ -24,8 +24,8 @@ public class PasteComponentAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("粘贴");
-        setToolTipText("粘贴复制的构件");
+        setText(Messages.PasteComponentAction_0);
+        setToolTipText(Messages.PasteComponentAction_1);
         setId(id);
         setEnabled(false);
     }

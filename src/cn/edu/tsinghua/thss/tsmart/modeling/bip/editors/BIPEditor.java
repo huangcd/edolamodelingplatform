@@ -54,15 +54,20 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.ITopModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ProjectModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PartFactory;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.TreeEditPartFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.outline.TreeEditPartFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.project.ProjectEditPartFactory;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.ProjectTreeViewer;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
@@ -87,17 +92,23 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         ComponentTypeModel model = null;
         if (obj instanceof IType) {
             copyObject = (IInstance) ((IType) obj).getInstance().copy();
-            copyObject.setName(((IType) obj).getInstance().getName());
+            if (((IType) obj).getInstance().hasName()) {
+                copyObject.setName(((IType) obj).getInstance().getName());
+            } else {
+                copyObject.setName("aComponent"); //$NON-NLS-1$
+            }
             if (obj instanceof ComponentTypeModel) {
                 model = (ComponentTypeModel) copyObject.getType();
-                model.setName(obj.getName());
             }
         } else {
             copyObject = (IInstance) obj.copy();
-            copyObject.setName(obj.getName());
+            if (obj.hasName()) {
+                copyObject.setName(obj.getName());
+            } else {
+                copyObject.setName("aComponent"); //$NON-NLS-1$
+            }
             if (obj instanceof ComponentModel) {
                 model = (ComponentTypeModel) ((ComponentModel) copyObject).getType();
-                model.setName(((ComponentModel) obj).getType().getName());
             }
         }
         if (model != null) {
@@ -147,6 +158,9 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
 
     public static void closeAllEditor() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (window == null) {
+            return;
+        }
         IWorkbenchPage page = window.getActivePage();
         page.closeEditors(page.getEditorReferences(), true);
     }
@@ -154,15 +168,15 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
     /**
      * 打开一个编辑模型的页面
      * 
-     * @param container 待编辑模型
+     * @param model 待编辑模型
      */
-    public static void openBIPEditor(ComponentTypeModel container) {
+    public static void openBIPEditor(ComponentTypeModel model) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
-        String editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor";
-        if (container instanceof AtomicTypeModel) {
+        String editorID = "cn.edu.tsinghua.thss.tsmart.modeling.bip.BIPEditor"; //$NON-NLS-1$
+        if (model instanceof AtomicTypeModel) {
             editorID = AtomicEditor.id;
-        } else if (container instanceof CompoundTypeModel) {
+        } else if (model instanceof CompoundTypeModel) {
             editorID = CompoundEditor.id;
         }
         try {
@@ -171,13 +185,14 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                 if (reference.getEditorInput() instanceof BIPModelEditorInput) {
                     BIPModelEditorInput editorInput =
                                     (BIPModelEditorInput) reference.getEditorInput();
-                    if (editorInput.getModel().equals(container)) {
+                    if (editorInput.getModel().equals(model)) {
                         page.openEditor(editorInput, editorID);
                         return;
                     }
                 }
             }
-            page.openEditor(new BIPModelEditorInput(container), editorID);
+            GlobalProperties.getInstance().getTopModel().addOpenModel(model);
+            page.openEditor(new BIPModelEditorInput(model), editorID);
         } catch (PartInitException e) {
             e.printStackTrace();
         }
@@ -248,15 +263,22 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
         return isDirty();
     }
 
+    /**
+     * always not dirty (hide star forever)
+     */
+    public boolean isDirty() {
+        return false;
+    }
+
     @Override
     protected PaletteRoot getPaletteRoot() {
         if (paletteRoot == null) {
             paletteRoot = new PaletteRoot();
 
-            toolGroup = new PaletteGroup("选择工具");
-            ToolEntry tool = new SelectionToolEntry("选择");
+            toolGroup = new PaletteGroup(Messages.BIPEditor_3);
+            ToolEntry tool = new SelectionToolEntry(Messages.BIPEditor_4);
             toolGroup.add(tool);
-            tool = new MarqueeToolEntry("选择多个");
+            tool = new MarqueeToolEntry(Messages.BIPEditor_5);
             toolGroup.add(tool);
             paletteRoot.add(toolGroup);
         }
@@ -270,7 +292,10 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                             .getZoomManager();
         }
         if (type == IContentOutlinePage.class) {
-            return new BIPContentOutlinePage(new TreeViewer());
+            return new BIPContentOutlinePage();
+        }
+        if (type == ProjectContentOutlinePage.class) {
+            return new ProjectContentOutlinePage();
         }
         if (type.equals(IPropertySheetPage.class)) {
             return new PropertySheetPage() {
@@ -335,18 +360,67 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
             sharedKeyHandler.put(
                             KeyStroke.getReleased((char) 19, (int) 's', SWT.ALT),
                             getActionRegistry().getAction(
-                                SaveTopLevelModelInContextMenuAction.class.getCanonicalName())); // 保存
-                                                                                          // ALT+S
+                                            SaveTopLevelModelInContextMenuAction.class
+                                                            .getCanonicalName())); // 保存
+            // ALT+S
         }
         return sharedKeyHandler;
 
     }
 
+    public class ProjectContentOutlinePage extends ContentOutlinePage {
+        public ProjectContentOutlinePage() {
+            super(new ProjectTreeViewer());
+        }
+
+        public ProjectContentOutlinePage(EditPartViewer viewer) {
+            super(viewer);
+        }
+
+        public void init(IPageSite pageSite) {
+            super.init(pageSite);
+            ActionRegistry registry = getActionRegistry();
+            IActionBars bars = pageSite.getActionBars();
+
+            String id = ActionFactory.UNDO.getId();
+            bars.setGlobalActionHandler(id, registry.getAction(id));
+
+            id = ActionFactory.REDO.getId();
+            bars.setGlobalActionHandler(id, registry.getAction(id));
+
+            id = ActionFactory.DELETE.getId();
+            bars.setGlobalActionHandler(id, registry.getAction(id));
+            bars.updateActionBars();
+        }
+
+        @Override
+        public void createControl(Composite parent) {
+            getViewer().createControl(parent);
+            getViewer().setEditDomain(getEditDomain());
+            getViewer().setEditPartFactory(ProjectEditPartFactory.getInstance());
+            ITopModel model = GlobalProperties.getInstance().getTopModel();
+            if (model != null && model instanceof ProjectModel) {
+                getViewer().setContents(model);
+            }
+            getSelectionSynchronizer().addViewer(getViewer());
+        }
+
+        @Override
+        public Control getControl() {
+            return getViewer().getControl();
+        }
+
+        public void dispose() {
+            getSelectionSynchronizer().removeViewer(getViewer());
+            super.dispose();
+        }
+    }
+
+
     // 创建 ContentOutlinePage 类
-    class BIPContentOutlinePage extends ContentOutlinePage {
+    public class BIPContentOutlinePage extends ContentOutlinePage {
 
         public BIPContentOutlinePage() {
-            // 使用 GEF 的 TreeViewer
             super(new TreeViewer());
         }
 
@@ -380,7 +454,6 @@ public abstract class BIPEditor extends GraphicalEditorWithFlyoutPalette {
                 getViewer().setContents(model);
             }
             getSelectionSynchronizer().addViewer(getViewer());
-
         }
 
         @Override

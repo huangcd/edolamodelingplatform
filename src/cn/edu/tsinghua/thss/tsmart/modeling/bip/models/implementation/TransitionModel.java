@@ -1,13 +1,12 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -15,7 +14,7 @@ import org.simpleframework.xml.Root;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.MultilineTextPropertyDescriptor;
 
 
 /**
@@ -90,6 +89,22 @@ public class TransitionModel
         return action == null ? "" : action.getAction();
     }
 
+    public String getOneLineActionString() {
+        if (action == null) {
+            return "";
+        }
+        String str = action.getAction();
+        if (str == null) {
+            return "";
+        }
+        str = str.replaceAll("\r", "\n");
+        int index = str.indexOf('\n');
+        if (index == -1) {
+            return str;
+        }
+        return str.substring(0, index) + "...";
+    }
+
     public ActionModel getAction() {
         return action;
     }
@@ -162,7 +177,7 @@ public class TransitionModel
     public String exportToBip() {
         if (getPort() == null) {
             throw new UnboundedException(String.format(
-                            "transition[%s -> %s in %s] port is unbound", getSource().getName(),
+                            "变迁 [%s -> %s， 原子组件 %s] 没有端口关联。", getSource().getName(),
                             getTarget().getName(), getSource().getParent().getName()));
         }
         return String.format("on %s from %s to %s provided %s do {%s}", getPort().getName(),
@@ -179,9 +194,11 @@ public class TransitionModel
         }
         values[ports.size()] = "$UNBOUNDED$";
 
-        ArrayList<IPropertyDescriptor> properties = new ArrayList<IPropertyDescriptor>();
-        TextPropertyDescriptor action = new TextPropertyDescriptor(ActionModel.ACTION, "动作");
-        TextPropertyDescriptor guard = new TextPropertyDescriptor(GuardModel.GUARD, "约束");
+        ArrayList<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+        PropertyDescriptor action =
+                        new MultilineTextPropertyDescriptor(ActionModel.ACTION, "动作");
+        PropertyDescriptor guard =
+                        new MultilineTextPropertyDescriptor(GuardModel.GUARD, "约束");
         guard.setDescription("01");
         properties.add(guard);
         ComboBoxPropertyDescriptor port = new ComboBoxPropertyDescriptor(IModel.PORT, "端口", values);
@@ -190,10 +207,10 @@ public class TransitionModel
         action.setDescription("03");
         properties.add(action);
         /*
-         * EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
-         * tag.setDescription("04"); properties.add(tag);
+         * EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY,
+         * "标签"); tag.setDescription("04"); properties.add(tag);
          */
-        return properties.toArray(new IPropertyDescriptor[properties.size()]);
+        return properties.toArray(new PropertyDescriptor[properties.size()]);
     }
 
     @Override

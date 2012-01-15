@@ -109,10 +109,12 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
     }
 
     /**
-     * 删除Transition的时候移除相应标签
+     * 删除Connection的时候移除相应标签
      */
     public void deactivate() {
-        getGraphLayerFigure().remove(infoLabel);
+        if (getGraphLayerFigure().getChildren().contains(infoLabel)) {
+            getGraphLayerFigure().remove(infoLabel);
+        }
         super.deactivate();
     }
 

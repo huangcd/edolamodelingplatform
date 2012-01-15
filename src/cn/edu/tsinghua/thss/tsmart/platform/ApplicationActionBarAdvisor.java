@@ -9,7 +9,6 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
-import cn.edu.tsinghua.thss.tsmart.editors.xml.XMLEditorAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CloseAllAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.create.NewAtomicEditorAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.create.NewCompoundEditorAction;
@@ -20,12 +19,18 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.open.OpenCompoundEditorA
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.open.OpenLibraryAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.open.OpenProjectAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.open.OpenViewAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ExportLibrariesAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ImportLibrariesAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveTopLevelModelAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.CodeGenerationAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.CodeRunAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.EditCodeGenConceptBinding;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.EditModelCheckingProperties;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.EditProritiesAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.EditingCodeGenerationDevicesAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.EditingCodeGenerationMappingAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ManageAtomicTypeAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ManageBaselineAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ManageBaselineOptionAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ManageCompoundTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ManageConnectorTypeAction;
@@ -37,6 +42,8 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.SimulationAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ValidateCodeGenerationAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ValidateModelCheckingAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.ViewBaselineAction;
+import cn.edu.tsinghua.thss.tsmart.platform.language.SwitchChineseAction;
+import cn.edu.tsinghua.thss.tsmart.platform.language.SwitchEnglishAction;
 
 /**
  * 主界面的菜单栏
@@ -47,7 +54,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction                   exitAction;
     private IWorkbenchAction                   aboutAction;
 
-    private XMLEditorAction                    xmlAction;
     private NewAtomicEditorAction              newAtomicAction;
     private NewCompoundEditorAction            newCompoundAction;
     private NewProjectAction                   newProjectAction;
@@ -59,6 +65,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private OpenCompoundEditorAction           openCompoundAction;
 
     private SaveTopLevelModelAction            saveTopLevelModelInMenuAction;
+    private ExportLibrariesAction              exportLibrariesAction;
+    private ImportLibrariesAction              importLibrariesAction;
     private CloseAllAction                     closeAllAction;
 
     private ManageDataTypeAction               manageDataTypeAction;
@@ -67,9 +75,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private ManageAtomicTypeAction             manageAtomicTypeAction;
     private ManageCompoundTypeAction           manageCompoundTypeAction;
     private SettingModelingAction              settingModelingAction;
+    private EditProritiesAction                editProritiesAction;
 
     private ManageBaselineOptionAction         manageBaselineOptionAction;
     private ViewBaselineAction                 viewBaselineAction;
+    private ManageBaselineAction               manageBaselineAction;
 
     private ValidateModelCheckingAction        validateModelCheckingAction;
     private ValidateCodeGenerationAction       validateCodeGenerationAction;
@@ -78,10 +88,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private EditCodeGenConceptBinding          editCodeGenConceptBinding;
 
     private ModelCheckingAction                modelCheckingAction;
+    private EditModelCheckingProperties        editModelCheckingProperties;
     private SimulationAction                   simulationAction;
     private CodeGenerationAction               codeGenerationAction;
+    private CodeRunAction                      codeRunAction;
 
     private OpenViewAction                     openOutlineAction;
+
+    private SwitchChineseAction                switchChineseAction;
+    private SwitchEnglishAction                switchEnglishAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -111,9 +126,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
             newCompoundAction = new NewCompoundEditorAction(window);
             register(newCompoundAction);
 
-            xmlAction = new XMLEditorAction(window);
-            register(xmlAction);
-
             openLibraryAction = new OpenLibraryAction(window);
             register(openLibraryAction);
 
@@ -128,6 +140,12 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
             saveTopLevelModelInMenuAction = new SaveTopLevelModelAction(window);
             register(saveTopLevelModelInMenuAction);
+
+            exportLibrariesAction = new ExportLibrariesAction(window);
+            register(exportLibrariesAction);
+
+            importLibrariesAction = new ImportLibrariesAction(window);
+            register(importLibrariesAction);
 
             closeAllAction = new CloseAllAction(window);
             register(closeAllAction);
@@ -150,6 +168,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
             manageCompoundTypeAction = new ManageCompoundTypeAction(window);
             register(manageCompoundTypeAction);
 
+            editProritiesAction = new EditProritiesAction(window);
+            register(editProritiesAction);
+
             settingModelingAction = new SettingModelingAction(window);
             register(settingModelingAction);
         }
@@ -161,12 +182,18 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
             viewBaselineAction = new ViewBaselineAction(window);
             register(viewBaselineAction);
+
+            manageBaselineAction = new ManageBaselineAction(window);
+            register(manageBaselineAction);
         }
 
         // model checking
         {
             validateModelCheckingAction = new ValidateModelCheckingAction(window);
             register(validateModelCheckingAction);
+
+            editModelCheckingProperties = new EditModelCheckingProperties(window);
+            register(editModelCheckingProperties);
 
             modelCheckingAction = new ModelCheckingAction(window);
             register(modelCheckingAction);
@@ -194,6 +221,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
             codeGenerationAction = new CodeGenerationAction(window);
             register(codeGenerationAction);
+
+            codeRunAction = new CodeRunAction(window);
+            register(codeRunAction);
         }
         // window
         {
@@ -205,14 +235,22 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
              * openConsoleAction=new OpenConsoleAction(); register(openConsoleAction);
              */
         }
+        // language-switch
+        {
+            switchChineseAction = new SwitchChineseAction();
+            register(switchChineseAction);
+            // SwitchEnglishAction
+            switchEnglishAction = new SwitchEnglishAction();
+            register(switchEnglishAction);
+        }
     }
 
     protected void fillMenuBar(IMenuManager menuBar) {
-        MenuManager fileMenu = new MenuManager("文件");
+        MenuManager fileMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_0);
 
-        MenuManager newMenu = new MenuManager("新建");
+        MenuManager newMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_1);
 
-        MenuManager openMenu = new MenuManager("打开");
+        MenuManager openMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_2);
 
         fileMenu.add(newMenu);
         newMenu.add(newLibraryAction);
@@ -227,48 +265,56 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         openMenu.add(openAtomicAction);
         openMenu.add(openCompoundAction);
 
+        fileMenu.add(new Separator());
         fileMenu.add(saveTopLevelModelInMenuAction);
+        fileMenu.add(exportLibrariesAction);
+        fileMenu.add(importLibrariesAction);
 
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
 
-        MenuManager baselineMenu = new MenuManager("基准线");
+        MenuManager baselineMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_3);
         baselineMenu.add(manageBaselineOptionAction);
         baselineMenu.add(viewBaselineAction);
+        baselineMenu.add(manageBaselineAction);
 
-        MenuManager modelCheckingMenu = new MenuManager("模型检测");
+        MenuManager modelCheckingMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_4);
         modelCheckingMenu.add(validateModelCheckingAction);
+        modelCheckingMenu.add(editModelCheckingProperties);
         modelCheckingMenu.add(modelCheckingAction);
 
-        MenuManager simulationMenu = new MenuManager("仿真");
+        MenuManager simulationMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_5);
         simulationMenu.add(simulationAction);
 
-        MenuManager codeGenerationMenu = new MenuManager("代码生成");
+        MenuManager codeGenerationMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_6);
         codeGenerationMenu.add(editCodeGenConceptBinding);
         codeGenerationMenu.add(editingCodeGenerationMappingAction);
         codeGenerationMenu.add(editingCodeGenerationDevicesAction);
         codeGenerationMenu.add(validateCodeGenerationAction);
         codeGenerationMenu.add(codeGenerationAction);
+        codeGenerationMenu.add(codeRunAction);
 
-        MenuManager modelingMenu = new MenuManager("建模");
+        MenuManager modelingMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_7);
         modelingMenu.add(manageDataTypeAction);
         modelingMenu.add(managePortTypeAction);
         modelingMenu.add(manageConnectorTypeAction);
         modelingMenu.add(manageAtomicTypeAction);
         modelingMenu.add(manageCompoundTypeAction);
+        modelingMenu.add(editProritiesAction);
         modelingMenu.add(new Separator());
         modelingMenu.add(settingModelingAction);
 
-        MenuManager windowMenu = new MenuManager("窗口");
+        MenuManager windowMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_8);
 
-        MenuManager showViewMenu = new MenuManager("查看视图");
+        MenuManager showViewMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_9);
         windowMenu.add(showViewMenu);
         // showViewMenu.add(openConsoleAction);
         // showViewMenu.add(openOutlineAction);
 
-
-        MenuManager helpMenu = new MenuManager("帮助");
+        MenuManager helpMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_10);
         helpMenu.add(aboutAction);
+        helpMenu.add(switchChineseAction);
+        helpMenu.add(switchEnglishAction);
 
         menuBar.add(fileMenu);
         menuBar.add(modelingMenu);

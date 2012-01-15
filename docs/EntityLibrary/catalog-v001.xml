@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl" uri="EntityBase-WanhaiTesting.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl" uri="EntityBase.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl" uri="EntityBase_backup.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl" uri="装置控制领域.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl" uri="装置控制领域实体库_zhh测试_0112.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2012/0/Ontology1326286614131.owl" uri="Untitiled-1.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="duplicate:http://www.semanticweb.org/ontologies/2012/0/Ontology1326286614131.owl" uri="Untitled-1.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1326423140989" name="http://www.semanticweb.org/ontologies/2012/0/Ontology1326297601936.owl" uri="TestEntity.owl"/>
+    </group>
+</catalog>

@@ -4,13 +4,14 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenDialogAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.modelchecking.ModelCheckingDialog;
 
 public class ModelCheckingAction extends OpenDialogAction {
 
     public static final String ID = ModelCheckingAction.class.getCanonicalName();
 
     public ModelCheckingAction(IWorkbenchWindow window) {
-        super(window, ID, "模型检测", "模型检测", null);
+        super(window, ID, Messages.ModelCheckingAction_0, Messages.ModelCheckingAction_1, null);
     }
 
     @Override
@@ -19,6 +20,7 @@ public class ModelCheckingAction extends OpenDialogAction {
     }
 
     public void run() {
-        // TODO 模型检测
+        ModelCheckingDialog dialog = new ModelCheckingDialog(getShell());
+        dialog.open();
     }
 }

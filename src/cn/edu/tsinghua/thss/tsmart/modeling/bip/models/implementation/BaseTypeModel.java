@@ -12,16 +12,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.strategy.CycleStrategy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -44,20 +45,24 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
                 implements
                     IType<Model, Instance, Parent>,
                     IPropertySource {
-
-    private static final long            serialVersionUID = 4399354235987755192L;
-    private PropertyChangeSupport        listeners        = new PropertyChangeSupport(this);
-    protected Rectangle                  positionConstraint;
+    private static final long                   serialVersionUID = 4399354235987755192L;
+    protected static final transient Serializer serializer;
+    static {
+        serializer = new Persister(new CycleStrategy());
+    }
+    private PropertyChangeSupport               listeners        = new PropertyChangeSupport(this);
     @Element(required = false)
-    private Parent                       parent;
+    protected Rectangle                         positionConstraint;
+    private Parent                              parent;
     @Attribute(required = false)
-    private String                       name;
+    private String                              name;
     @Attribute(required = false)
-    private String                       comment;
-    protected Instance                   instance;
-    private UUID                         uuid             = UUID.randomUUID();
-    private boolean                      editable         = true;
-    protected transient GlobalProperties properties;
+    private String                              comment;
+    @Element
+    protected Instance                          instance;
+    @Attribute
+    private boolean                             editable         = true;
+    protected transient GlobalProperties        properties;
 
     /**
      * 从文件读取Atomic模型
@@ -66,12 +71,19 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
      * @return
      */
     public static AtomicTypeModel loadAtomicType(File file) {
+        ObjectInputStream in = null;
         try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            in = new ObjectInputStream(new FileInputStream(file));
             AtomicTypeModel model = (AtomicTypeModel) in.readObject();
             return model;
         } catch (Exception e) {
+            System.err.println("error when load file:" + file);
             e.printStackTrace();
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception ex) {}
             return null;
         }
     }
@@ -88,6 +100,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
             CompoundTypeModel model = (CompoundTypeModel) in.readObject();
             return model;
         } catch (Exception e) {
+            System.err.println("Error while loading file:" + file);
             e.printStackTrace();
             return null;
         }
@@ -107,19 +120,6 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
             properties = GlobalProperties.getInstance();
         }
         return properties;
-    }
-
-    public String getStringID() {
-        return uuid.toString().replaceAll("-", "");
-    }
-
-    public UUID getID() {
-        return uuid;
-    }
-
-    public Model resetID() {
-        uuid = UUID.randomUUID();
-        return (Model) this;
     }
 
     @Override
@@ -156,7 +156,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     @Override
     public String getName() {
         if (name == null) {
-            return getStringID();
+            return UNNAMED_NAME;
         }
         return name;
     }
@@ -268,8 +268,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
         try {
             byte[] bytes = exportToBytes();
             Model model = importFromBytes(bytes);
-            model.resetID();
-            model.getInstance().resetID();
+            model.getInstance();
             return model;
         } catch (Exception e) {
             e.printStackTrace();
@@ -298,13 +297,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
     @Override
     public boolean validateOnTheFly() {
         try {
-            // 需要清空err box
-            try {
-                MessageUtil.clearProblemMessage();
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-
+            MessageUtil.clearProblemMessage();
             getProperties();
             for (Rule rule : properties.getRules()) {
                 for (Validator validator : getValidators()) {
@@ -373,7 +366,7 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
             return false;
         }
         CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
-        
+
         return this.getEntityNames().contains(projectModel.getHardwareEntity());
     }
 

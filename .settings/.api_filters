@@ -82,35 +82,11 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/ui/dialogs/EditMappingDialog.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EditMappingDialog">
-        <filter id="643842064">
+    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/ui/navigator/ProjectView.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.navigator.ProjectView">
+        <filter id="571473929">
             <message_arguments>
-                <message_argument value="Binding"/>
-                <message_argument value="EditMappingDialog"/>
-                <message_argument value="getData()"/>
-            </message_arguments>
-        </filter>
-        <filter id="643850349">
-            <message_arguments>
-                <message_argument value="Binding"/>
-                <message_argument value="EditMappingDialog"/>
-                <message_argument value="EditMappingDialog(Shell, Binding, ComponentTypeModel)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/cn/edu/tsinghua/thss/tsmart/modeling/bip/ui/dialogs/EditOnePeripheralDialog.java" type="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EditOnePeripheralDialog">
-        <filter id="643842064">
-            <message_arguments>
-                <message_argument value="Device"/>
-                <message_argument value="EditOnePeripheralDialog"/>
-                <message_argument value="getData()"/>
-            </message_arguments>
-        </filter>
-        <filter id="643850349">
-            <message_arguments>
-                <message_argument value="Device"/>
-                <message_argument value="EditOnePeripheralDialog"/>
-                <message_argument value="EditOnePeripheralDialog(Shell, Device)"/>
+                <message_argument value="ContentOutline"/>
+                <message_argument value="ProjectView"/>
             </message_arguments>
         </filter>
     </resource>

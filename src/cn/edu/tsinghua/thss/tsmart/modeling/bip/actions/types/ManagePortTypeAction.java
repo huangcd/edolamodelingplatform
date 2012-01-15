@@ -10,7 +10,7 @@ public class ManagePortTypeAction extends OpenDialogAction {
     public static final String ID = ManagePortTypeAction.class.getCanonicalName();
 
     public ManagePortTypeAction(IWorkbenchWindow window) {
-        super(window, ID, "管理端口类型", "增加或删除端口类型", "icons/port_16.png");
+        super(window, ID, Messages.ManagePortTypeAction_0, Messages.ManagePortTypeAction_1, "icons/port_16.png"); //$NON-NLS-3$
     }
 
     @Override

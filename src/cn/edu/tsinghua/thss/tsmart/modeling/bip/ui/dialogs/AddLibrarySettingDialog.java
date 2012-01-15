@@ -22,7 +22,7 @@ public class AddLibrarySettingDialog extends AbstractEditDialog {
 
     private final static MessageFormat titleFormat;
     static {
-        String msg = "\u4E3A\u6784\u4EF6{0}\u6DFB\u52A0\u5907\u6CE8\u4FE1\u606F";
+        String msg = Messages.AddLibrarySettingDialog_0;
         titleFormat = new MessageFormat(msg);
     }
     private StyledText                 styledTextComment;
@@ -52,13 +52,13 @@ public class AddLibrarySettingDialog extends AbstractEditDialog {
         SashForm sashForm = new SashForm(container, SWT.VERTICAL);
 
         Group group_1 = new Group(sashForm, SWT.NONE);
-        group_1.setText("\u8BBE\u7F6E\u6784\u4EF6\u540D");
+        group_1.setText(Messages.AddLibrarySettingDialog_1);
         group_1.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         textName = new Text(group_1, SWT.BORDER);
 
         Group group = new Group(sashForm, SWT.NONE);
-        group.setText("\u8BBE\u7F6E\u6784\u4EF6\u5907\u6CE8\u4FE1\u606F");
+        group.setText(Messages.AddLibrarySettingDialog_2);
         group.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         styledTextComment = new StyledText(group, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);

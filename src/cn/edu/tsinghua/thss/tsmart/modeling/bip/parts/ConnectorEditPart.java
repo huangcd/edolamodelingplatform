@@ -49,8 +49,8 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
             getParent().refresh();
             labelLocator.relocate((Rectangle) evt.getNewValue());
             relocateInvisibleBullet((Rectangle) evt.getOldValue(), (Rectangle) evt.getNewValue());
-            for (ConnectionModel transition : getModel().getSourceConnections()) {
-                transition.firePropertyChange(IModel.SOURCE);
+            for (ConnectionModel connection : getModel().getSourceConnections()) {
+                connection.firePropertyChange(IModel.SOURCE);
             }
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
             if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
@@ -85,7 +85,6 @@ public class ConnectorEditPart extends BaseEditableEditPart implements NodeEditP
                 ((InvisibleBulletEditPart) target).refreshVisuals();
             }
         }
-
     }
 
     @Override

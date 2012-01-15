@@ -1,0 +1,446 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#"
+     xml:base="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#速度安全范围最大值 -->
+
+    <rdfs:Datatype rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#速度安全范围最大值">
+        <owl:equivalentClass rdf:resource="&xsd;int"/>
+    </rdfs:Datatype>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#速度安全范围最小值 -->
+
+    <rdfs:Datatype rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#速度安全范围最小值">
+        <owl:equivalentClass rdf:resource="&xsd;int"/>
+    </rdfs:Datatype>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#不包含 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#不包含"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#不相连 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#不相连"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#包含 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#包含"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#大于 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#大于"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#大于等于 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#大于等于"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#小于 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#小于"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#小于等于 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#小于等于"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#是 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#是"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用于 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用于"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#相连 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#相连"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#等于 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#等于"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#hasValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#hasValue"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#PLC -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#PLC">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#PLC数据交换信号 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#PLC数据交换信号">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#PLC时钟同步信号 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#PLC时钟同步信号">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#主控层构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#主控层构件">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#互锁层构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#互锁层构件">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#代码生成过程 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#代码生成过程">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#优化级别 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#优化级别">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#功能层构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#功能层构件">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#常量 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#常量">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#hasValue"/>
+                <owl:someValuesFrom rdf:resource="&rdfs;Literal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#扫描周期 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#扫描周期">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#抽象设计过程 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#抽象设计过程">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#最大值 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#最大值">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#hasValue"/>
+                <owl:someValuesFrom rdf:resource="&rdfs;Literal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#最小值 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#最小值">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#hasValue"/>
+                <owl:someValuesFrom rdf:resource="&rdfs;Literal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#物理时间 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#物理时间">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#环境模型 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#环境模型">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用户构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用户构件">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#目标平台 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#目标平台">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬上限位 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬上限位">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬限位"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬下限位 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬下限位">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬限位"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬限位 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#硬限位">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#系统模型 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#系统模型">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置当前位置 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置当前位置">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置当前速度 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置当前速度">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置构件">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置目标位置 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置目标位置">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置目标速度 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置目标速度">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置运行状态 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#装置运行状态">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软上限位 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软上限位">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软限位"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软下限位 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软下限位">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软限位"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软件模型 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软件模型">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软限位 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#软限位">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#参数"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.2.3.22702) http://owlapi.sourceforge.net -->
+

@@ -4,27 +4,22 @@ import cn.edu.tsinghua.thss.tsmart.modeling.codegen.LinkBind;
 
 
 /**
- * FixedSpeedMotor
- * 1. target speed is a constant which is initialized once, it should be positive
- * 2. 
+ * FixedSpeedMotor 1. target speed is a constant which is initialized once, it should be positive 2.
+ * 
  * @author aleck
- *
+ * 
  */
 public class FixedSpeedMotor extends Motor {
 
-    
-    
     public void initValues() {
-        initializer.addProperty("ticktime", "0");
+        initializer.addProperty("ticktime", "100");
         initializer.addProperty("fixedSpeed", "0");
         initializer.addProperty("position", "0");
         initializer.addProperty("hardDownLimit", "0");
         initializer.addProperty("softDownLimit", "0");
         initializer.addProperty("softUpLimit", "0");
         initializer.addProperty("hardUpLimit", "0");
-
         LinkBind lb;
-        
         lb = new LinkBind();
         lb.var = "position";
         lb.type = "input";
@@ -49,5 +44,4 @@ public class FixedSpeedMotor extends Motor {
         lb.bit = 0;
         linking.links.add(lb);
     }
-
 }

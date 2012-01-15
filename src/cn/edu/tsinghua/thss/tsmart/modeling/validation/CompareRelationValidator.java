@@ -1,7 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.validation;
 
-import org.eclipse.core.runtime.CoreException;
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
@@ -51,12 +49,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getFirstEntity(), "等于", data
                                                                 .getName(), rule.getSecondEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
-
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -66,12 +59,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getFirstEntity(), "大于或等于", data
                                                                 .getName(), rule.getSecondEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
-
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -81,11 +69,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getFirstEntity(), "大于", data
                                                                 .getName(), rule.getSecondEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -95,11 +79,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getFirstEntity(), "小于或等于", data
                                                                 .getName(), rule.getSecondEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -109,11 +89,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getFirstEntity(), "小于", data
                                                                 .getName(), rule.getSecondEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -141,11 +117,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getSecondEntity(), "等于", data
                                                                 .getName(), rule.getFirstEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -155,11 +127,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getSecondEntity(), "小于或等于", data
                                                                 .getName(), rule.getFirstEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -169,11 +137,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getSecondEntity(), "小于", data
                                                                 .getName(), rule.getFirstEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -183,11 +147,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getSecondEntity(), "大于或等于", data
                                                                 .getName(), rule.getFirstEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
 
@@ -197,11 +157,7 @@ public class CompareRelationValidator implements Validator {
                                                                 .getName(), model.getName(), rule
                                                                 .getSecondEntity(), "大于", data
                                                                 .getName(), rule.getFirstEntity());
-                                try {
-                                    MessageUtil.addProblemWarningMessage(errMessage);
-                                } catch (CoreException e) {
-                                    e.printStackTrace();
-                                }
+                                MessageUtil.addProblemWarningMessage(errMessage);
                                 return false;
                             }
                         }

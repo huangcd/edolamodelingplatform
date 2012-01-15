@@ -10,16 +10,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -42,8 +42,9 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
                 implements
                     IInstance<Model, Type, Parent>,
                     IPropertySource {
-    private static final long            serialVersionUID = -7202759073484290135L;
-    protected transient GlobalProperties properties;
+    private static final long                   serialVersionUID = -7202759073484290135L;
+    protected static final transient Serializer serializer       = BaseTypeModel.serializer;
+    protected transient GlobalProperties        properties;
 
     public GlobalProperties getProperties() {
         if (properties == null) {
@@ -87,12 +88,13 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     protected String              name;
     @Attribute(required = false)
     private String                comment;
-    protected UUID                uuid        = UUID.randomUUID();
     @Element(required = false, name = "type")
     protected Type                type;
+    @Element
     protected boolean             editable    = true;
+    @ElementList(required = false)
     private ArrayList<String>     entityNames = new ArrayList<String>();
-    private String                oldName;
+    private transient String      oldName;
 
     public String getOldName() {
         return oldName;
@@ -140,22 +142,11 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     }
 
     @Override
-    public String getStringID() {
-        return uuid.toString().replaceAll("-", "");
-    }
-
-    @Override
-    public UUID getID() {
-        return uuid;
-    }
-
-    public Model resetID() {
-        uuid = UUID.randomUUID();
-        return (Model) this;
-    }
-
-    @Override
     public Model setName(String newName) {
+        if (getParent() != null && getParent().isNewNameAlreadyExistsInParent(this, newName)) {
+            MessageUtil.ShowErrorDialog("已存在同名组件", "");
+            return (Model) this;
+        }
         this.oldName = this.name;
         this.name = newName;
         firePropertyChange(NAME);
@@ -169,7 +160,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public String getName() {
         if (name == null) {
-            return getStringID();
+            return UNNAMED_NAME;
         }
         return name;
     }
@@ -193,7 +184,6 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public Model setParent(Parent parent) {
         this.parent = parent;
-        // firePropertyChange(PARENT);
         return (Model) this;
     }
 
@@ -248,12 +238,11 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public Model copy() {
         if (getType() != null) {
-            return (Model) ((IType) getType().copy()).getInstance().setName(getName()).resetID();
+            return (Model) ((IType) getType().copy()).getInstance().setName(getName());
         }
         try {
             return (Model) this.getClass().getConstructor().newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
             return (Model) this;
         }
     }
@@ -275,13 +264,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     @Override
     public boolean validateOnTheFly() {
         try {
-            // 需要清空err box
-            try {
-                MessageUtil.clearProblemMessage();
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-
+            MessageUtil.clearProblemMessage();
             getProperties();
             for (Rule rule : properties.getRules()) {
                 for (Validator validator : getValidators()) {
@@ -351,7 +334,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
             return false;
         }
         CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
-        
+
         return this.getEntityNames().contains(projectModel.getHardwareEntity());
     }
 

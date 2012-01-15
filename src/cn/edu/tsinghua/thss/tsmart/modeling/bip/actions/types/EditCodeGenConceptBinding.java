@@ -13,7 +13,7 @@ public class EditCodeGenConceptBinding extends OpenDialogAction {
     public static final String ID = EditCodeGenConceptBinding.class.getCanonicalName();
 
     public EditCodeGenConceptBinding(IWorkbenchWindow window) {
-        super(window, ID, "代码生成概念和实体绑定", "代码生成概念和实体绑定", null);
+        super(window, ID, Messages.EditCodeGenConceptBinding_0, Messages.EditCodeGenConceptBinding_1, null);
     }
 
     @Override

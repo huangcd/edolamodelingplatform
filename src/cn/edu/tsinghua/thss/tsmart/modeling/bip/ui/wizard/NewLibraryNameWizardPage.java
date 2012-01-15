@@ -32,12 +32,12 @@ public class NewLibraryNameWizardPage extends WizardPage {
      * Create the wizard.
      */
     public NewLibraryNameWizardPage(CreateWizardData data) {
-        super("set project info");
-        setImageDescriptor(ResourceManager.getPluginImageDescriptor("EdolaModelingPlatform",
-                        "icons/product_wiz.gif"));
+        super(Messages.NewLibraryNameWizardPage_0);
+        setImageDescriptor(ResourceManager.getPluginImageDescriptor("EdolaModelingPlatform", //$NON-NLS-1$
+                        "icons/product_wiz.gif")); //$NON-NLS-1$
         setPageComplete(false);
-        setTitle("\u6784\u4EF6\u5E93\u914D\u7F6E");
-        setDescription("\u8BBE\u7F6E\u6784\u4EF6\u5E93\u540D\u79F0\u53CA\u5B58\u50A8\u4F4D\u7F6E");
+        setTitle(Messages.NewLibraryNameWizardPage_3);
+        setDescription(Messages.NewLibraryNameWizardPage_4);
         this.data = data;
     }
 
@@ -56,7 +56,7 @@ public class NewLibraryNameWizardPage extends WizardPage {
         new Label(container, SWT.NONE);
 
         Label lblNewLabel = new Label(container, SWT.NONE);
-        lblNewLabel.setText("\u6784\u4EF6\u5E93\u540D\u79F0\uFF1A");
+        lblNewLabel.setText(Messages.NewLibraryNameWizardPage_5);
 
         textName = new Text(container, SWT.BORDER);
         textName.addModifyListener(new ModifyListener() {
@@ -76,7 +76,7 @@ public class NewLibraryNameWizardPage extends WizardPage {
 
         Label lblNewLabel_1 = new Label(container, SWT.RIGHT);
         lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblNewLabel_1.setText("\u4FDD\u5B58\u4F4D\u7F6E\uFF1A");
+        lblNewLabel_1.setText(Messages.NewLibraryNameWizardPage_6);
 
         textLocation = new Text(container, SWT.BORDER);
         textLocation.addVerifyListener(new VerifyListener() {
@@ -100,7 +100,7 @@ public class NewLibraryNameWizardPage extends WizardPage {
                 chooseDirection();
             }
         });
-        buttonBrowse.setText("\u6D4F\u89C8...");
+        buttonBrowse.setText(Messages.NewLibraryNameWizardPage_7);
 
         initValues();
     }
@@ -112,8 +112,8 @@ public class NewLibraryNameWizardPage extends WizardPage {
         DirectoryDialog dialog =
                         new DirectoryDialog(Display.getCurrent().getActiveShell(), SWT.SAVE);
         dialog.setFilterPath(Activator.getPreferenceDirection().getAbsolutePath());
-        dialog.setText("选择保存位置");
-        dialog.setText("选择项目保存的位置");
+        dialog.setText(Messages.NewLibraryNameWizardPage_8);
+        dialog.setText(Messages.NewLibraryNameWizardPage_9);
         String path = dialog.open();
         if (path != null && !path.isEmpty()) {
             textLocation.setText(path);
@@ -139,8 +139,8 @@ public class NewLibraryNameWizardPage extends WizardPage {
         }
         String path = textLocation.getText();
         try {
-            if (!path.contains(":")) {
-                path = Activator.getPreferenceDirection() + "/" + path;
+            if (!path.contains(":")) { //$NON-NLS-1$
+                path = Activator.getPreferenceDirection() + "/" + path; //$NON-NLS-1$
             }
             File file = new File(path);
             if (file.createNewFile()) {
@@ -148,16 +148,16 @@ public class NewLibraryNameWizardPage extends WizardPage {
             }
             String fullPath = file.getCanonicalPath();
             String libraryLocation = Activator.getPreferenceDirection().getCanonicalPath();
-            if (!fullPath.startsWith(libraryLocation)) {
-                setErrorMessage("构件库必须保存在目录" + libraryLocation + "下");
-                textLocation.setText(Activator.getPreferenceDirection().getCanonicalPath());
+             if (!fullPath.startsWith(libraryLocation)) {
+                setErrorMessage(Messages.NewLibraryNameWizardPage_12 + libraryLocation + "下"); //$NON-NLS-2$
+                //textLocation.setText(Activator.getPreferenceDirection().getCanonicalPath());
                 return false;
             }
             setErrorMessage(null);
-            setMessage("\u8BBE\u7F6E\u6784\u4EF6\u5E93\u540D\u79F0\u53CA\u5B58\u50A8\u4F4D\u7F6E");
+            setMessage(Messages.NewLibraryNameWizardPage_14);
             getContainer().updateMessage();
         } catch (IOException ex) {
-            setErrorMessage("路径不正确");
+            setErrorMessage(Messages.NewLibraryNameWizardPage_15);
             return false;
         }
         if (textName.getText().isEmpty()) {

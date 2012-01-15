@@ -2,6 +2,7 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs;
 
 import java.util.List;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -16,31 +17,49 @@ import org.eclipse.swt.widgets.TreeItem;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CodeGenProjectModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DataModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.*;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.LibraryModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 
 @SuppressWarnings("rawtypes")
 public class VariableSelectionDialog extends AbstractEditDialog {
-    private ComponentTypeModel model;
-    private DataModel          selectionData;
-    private Tree               tree;
-    private String             variableName;
-    private Label              labelErr;
-    private boolean            onlyVariables;
+    private CodeGenProjectModel cgpm = null;
+    private Tree                tree;
+    private String              variableName;
+    private Label               labelErr;
+    private boolean             onlyVariables;
 
     /**
      * Create the dialog.
      * 
      * @param parentShell
      */
-    public VariableSelectionDialog(Shell parentShell, ComponentTypeModel model, boolean b) {
-        super(parentShell, "选择参数");
-        this.model = model;
-        onlyVariables = b;
+    public VariableSelectionDialog(Shell parentShell, boolean onlyVariables) {
+        super(parentShell, Messages.VariableSelectionDialog_0);
+        setShellStyle(SWT.MAX | SWT.RESIZE);
+        this.onlyVariables = onlyVariables;
+
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+        // 构件库模式下不做检测
+        if (topModel instanceof LibraryModel) {
+            return;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception(Messages.VariableSelectionDialog_1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return;
+        }
+        cgpm = (CodeGenProjectModel) topModel;
     }
 
     /**
@@ -83,31 +102,36 @@ public class VariableSelectionDialog extends AbstractEditDialog {
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(450, 300);
+        return new Point(538, 484);
     }
 
     @Override
-    protected void updateValues() {}
+    protected void updateValues() {
+        TreeItem[] item = tree.getSelection();
+        variableName = item[0].getText();
 
-    public void setSelectionData(DataModel data) {
-        this.selectionData = data;
-    }
-
-    public DataModel getSelectionData() {
-        return selectionData;
+        if (!(item[0].getData() instanceof PlaceModel)) {
+            TreeItem it = item[0].getParentItem();
+            while (it.getParentItem() != null) {
+                variableName = it.getText() + "." + variableName; //$NON-NLS-1$
+                it = it.getParentItem();
+            }
+        }
     }
 
     @Override
     protected void initValues() {
 
+        if (cgpm == null) return;
+
         TreeItem item = new TreeItem(tree, SWT.BOLD);
-        item.setText("Variables");
-        addVariables(model, item);
+        item.setText(Messages.VariableSelectionDialog_3);
+        addVariables(cgpm.getStartupModel(), item);
 
         if (!onlyVariables) {
             item = new TreeItem(tree, SWT.BOLD);
-            item.setText("Places");
-            addPlaces(model, item);
+            item.setText(Messages.VariableSelectionDialog_4);
+            addPlaces(cgpm.getStartupModel(), item);
         }
     }
 
@@ -135,7 +159,7 @@ public class VariableSelectionDialog extends AbstractEditDialog {
             TreeItem dataItem;
             if (!onlyVariables) {
                 dataItem = new TreeItem(item, SWT.BOLD);
-                dataItem.setText("place");
+                dataItem.setText(Messages.VariableSelectionDialog_5);
                 dataItem.setData(atm);
             }
 
@@ -183,7 +207,7 @@ public class VariableSelectionDialog extends AbstractEditDialog {
 
     @Override
     protected Label getErrorLabel() {
-        // labelErr.setForeground(ColorConstants.red);
+        labelErr.setForeground(ColorConstants.red);
         return labelErr;
     }
 
@@ -191,24 +215,17 @@ public class VariableSelectionDialog extends AbstractEditDialog {
     protected boolean validateUserInput() {
         TreeItem[] item = tree.getSelection();
         if (item.length == 0 || item[0].getData() == null) {
-            handleError("请选择原子组件上的变量或状态。");
+            handleError(Messages.VariableSelectionDialog_6);
             return false;
         }
 
-        variableName = item[0].getText();
-
-        TreeItem it = item[0].getParentItem();
-        while (it.getParentItem() != null) {
-            variableName = it.getText() + "." + variableName;
-            it = it.getParentItem();
-        }
 
         // variableName = ((BaseInstanceModel)item[0].getData()).getFullName();
 
         return true;
     }
 
-    public String getVariableName() {
+    public String getData() {
         return variableName;
     }
 }

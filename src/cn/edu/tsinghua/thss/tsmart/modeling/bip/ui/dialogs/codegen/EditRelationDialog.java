@@ -20,10 +20,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CodeGenProjectModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.LibraryModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.codegen.Binding;
 import cn.edu.tsinghua.thss.tsmart.modeling.codegen.CodeGenManager;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 /**
  * 
@@ -31,10 +34,10 @@ import cn.edu.tsinghua.thss.tsmart.modeling.codegen.CodeGenManager;
  */
 @SuppressWarnings("rawtypes")
 public class EditRelationDialog extends AbstractEditDialog {
-    private Table     table;
-    private Label     errorLabel;
-    CodeGenManager    cgm;
-    CompoundTypeModel ctm;
+    private Table       table;
+    private Label       errorLabel;
+    CodeGenManager      cgm;
+    CodeGenProjectModel cgpm = null;
 
 
     /**
@@ -42,10 +45,24 @@ public class EditRelationDialog extends AbstractEditDialog {
      * 
      * @param parentShell
      */
-    public EditRelationDialog(Shell parentShell, CompoundTypeModel ctm) {
-        super(parentShell, "Edit Data Model");
-        setTitle("\u7F16\u8F91\u53D8\u91CF\u6620\u5C04\u5173\u7CFB");
-        this.ctm = ctm;
+    public EditRelationDialog(Shell parentShell) {
+        super(parentShell, Messages.EditRelationDialog_0);
+        setTitle(Messages.EditRelationDialog_1);
+
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
+
+        if (topModel instanceof LibraryModel) {
+            return;
+        }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception(Messages.EditRelationDialog_2);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return;
+        }
+        cgpm = (CodeGenProjectModel) topModel;
     }
 
     /**
@@ -59,7 +76,7 @@ public class EditRelationDialog extends AbstractEditDialog {
         container.setLayout(null);
 
         Button button = new Button(container, SWT.NONE);
-        button.setBounds(504, 15, 96, 20);
+        button.setBounds(522, 15, 96, 27);
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -68,28 +85,26 @@ public class EditRelationDialog extends AbstractEditDialog {
                 for (TableItem item : table.getItems())
                     variables.add(item.getText(0));
 
-
-
                 EditMappingDialog dialog =
                                 new EditMappingDialog(Display.getCurrent().getActiveShell(), null,
-                                                ctm, variables);
+                                                variables);
                 if (Window.OK == dialog.open()) {
                     Binding b = dialog.getData();
-                    
+
                     TableItem tableItem = new TableItem(table, SWT.NONE);
 
-                    tableItem.setText(new String[] {b.var, b.type, String.format("%d", b.addr),
-                                    String.format("%d", b.length), String.format("%d", b.bit)});
+                    tableItem.setText(new String[] {b.var, b.type, String.format("%d", b.addr), //$NON-NLS-1$
+                                    String.format("%d", b.length), String.format("%d", b.bit)}); //$NON-NLS-1$ //$NON-NLS-2$
 
                     tableItem.setData(b);
 
                 }
             }
         });
-        button.setText("\u65B0\u5EFA\u6620\u5C04");
+        button.setText(Messages.EditRelationDialog_6);
 
         Button button_1 = new Button(container, SWT.NONE);
-        button_1.setBounds(504, 50, 96, 27);
+        button_1.setBounds(522, 50, 96, 27);
         button_1.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -98,13 +113,13 @@ public class EditRelationDialog extends AbstractEditDialog {
 
                 EditMappingDialog dialog =
                                 new EditMappingDialog(Display.getCurrent().getActiveShell(),
-                                                (Binding) items[0].getData(), ctm, null);
+                                                (Binding) items[0].getData(), null);
                 dialog.setBlockOnOpen(true);
                 if (Window.OK == dialog.open()) {
                     Binding b = dialog.getData();
-                    items[0].setText(new String[] {b.var, b.type, String.format("%d", b.addr),
-                                    String.format("%d", b.length), String.format("%d", b.bit)});
-                    
+                    items[0].setText(new String[] {b.var, b.type, String.format("%d", b.addr), //$NON-NLS-1$
+                                    String.format("%d", b.length), String.format("%d", b.bit)}); //$NON-NLS-1$ //$NON-NLS-2$
+
                     items[0].setData(b);
                 }
 
@@ -112,58 +127,47 @@ public class EditRelationDialog extends AbstractEditDialog {
 
             }
         });
-        button_1.setText("\u4FEE\u6539\u6620\u5C04");
+        button_1.setText(Messages.EditRelationDialog_10);
 
         Button button_2 = new Button(container, SWT.NONE);
-        button_2.setBounds(504, 92, 96, 27);
+        button_2.setBounds(522, 86, 96, 27);
         button_2.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                TableItem[] items = table.getSelection();
-                if (items.length == 0) return;
-
-                // items[0].get
-                // TODO 林颖，删除选中 items
-                // table.remove(items[0]);
-
-
+                table.remove(table.getSelectionIndices());
             }
         });
-        button_2.setText("\u5220\u9664\u6620\u5C04");
+        button_2.setText(Messages.EditRelationDialog_11);
 
         table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setBounds(11, 15, 487, 307);
+        table.setBounds(10, 15, 504, 307);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
         TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-        tblclmnNewColumn.setWidth(180);
-        tblclmnNewColumn.setText("\u53D8\u91CF\u540D");
+        tblclmnNewColumn.setWidth(100);
+        tblclmnNewColumn.setText(Messages.EditRelationDialog_12);
 
         TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-        tableColumn.setWidth(65);
-        tableColumn.setText("\u8F93\u5165/\u8F93\u51FA");
+        tableColumn.setWidth(100);
+        tableColumn.setText(Messages.EditRelationDialog_13);
 
         TableColumn tableColumn_1 = new TableColumn(table, SWT.NONE);
-        tableColumn_1.setWidth(70);
-        tableColumn_1.setText("\u5730\u5740");
+        tableColumn_1.setWidth(100);
+        tableColumn_1.setText(Messages.EditRelationDialog_14);
 
         TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
-        tblclmnNewColumn_1.setText("\u957F\u5EA6");
-        tblclmnNewColumn_1.setWidth(65);
+        tblclmnNewColumn_1.setText(Messages.EditRelationDialog_15);
+        tblclmnNewColumn_1.setWidth(100);
 
         TableColumn tableColumn_2 = new TableColumn(table, SWT.NONE);
-        tableColumn_2.setWidth(45);
-        tableColumn_2.setText("\u4F4D");
+        tableColumn_2.setWidth(100);
+        tableColumn_2.setText(Messages.EditRelationDialog_16);
 
         errorLabel = new Label(container, SWT.NONE);
         errorLabel.setBounds(10, 332, 591, 17);
 
-        String workplace = System.getProperty("user.dir");
-        String filePathDD = workplace + "/data/GateCtrl-devices.xml";
-        String filePathMapping = workplace + "/data/GateCtrl-mapping.xml";
-
-        cgm = new CodeGenManager(filePathDD, filePathMapping);
+        cgm = new CodeGenManager();
 
         initValues();
         return container;
@@ -188,11 +192,11 @@ public class EditRelationDialog extends AbstractEditDialog {
 
             }
         });
-        button.setText("\u786E\u5B9A");
+        button.setText(Messages.EditRelationDialog_17);
         Button button_1 =
                         createButton(parent, IDialogConstants.CANCEL_ID,
                                         IDialogConstants.CANCEL_LABEL, false);
-        button_1.setText("\u53D6\u6D88");
+        button_1.setText(Messages.EditRelationDialog_18);
     }
 
     /**
@@ -200,7 +204,7 @@ public class EditRelationDialog extends AbstractEditDialog {
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(617, 444);
+        return new Point(634, 444);
     }
 
     @Override
@@ -209,8 +213,8 @@ public class EditRelationDialog extends AbstractEditDialog {
 
             TableItem tableItem = new TableItem(table, SWT.NONE);
 
-            tableItem.setText(new String[] {b.var, b.type, String.format("%d", b.addr),
-                            String.format("%d", b.length), String.format("%d", b.bit)});
+            tableItem.setText(new String[] {b.var, b.type, String.format("%d", b.addr), //$NON-NLS-1$
+                            String.format("%d", b.length), String.format("%d", b.bit)}); //$NON-NLS-1$ //$NON-NLS-2$
 
             tableItem.setData(b);
         }
@@ -226,18 +230,21 @@ public class EditRelationDialog extends AbstractEditDialog {
 
             cgm.m.getBindings().add((Binding) item.getData());
         }
-        
+
         cgm.saveAll();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected boolean validateUserInput() {
+        if (cgpm == null) {
+            handleError(Messages.EditRelationDialog_22);
+            return false;
+        }
 
         for (TableItem item : table.getItems()) {
-
-            if (!ctm.checkExistenceByName(item.getText(0))) {
-                this.handleError("模型中不存在变量：" + item.getText(0));
+            if (!this.cgpm.getStartupModel().checkExistenceByName(item.getText(0))) {
+                this.handleError(Messages.EditRelationDialog_23 + item.getText(0));
                 return false;
             }
 

@@ -1,6 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.platform.properties;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +23,7 @@ import org.simpleframework.xml.Root;
 import cn.edu.tsinghua.thss.tsmart.baseline.BaselineDataAccessor;
 import cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Entity;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.project.ProjectEditPartFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.validation.CompareRelationValidator;
 import cn.edu.tsinghua.thss.tsmart.modeling.validation.ConnectRelationValidator;
 import cn.edu.tsinghua.thss.tsmart.modeling.validation.HasRelationValidator;
@@ -73,9 +76,6 @@ public class GlobalProperties
     private Set<String>             keywords;
     private ArrayList<Rule>         rules;
     private List<Entity>            entities;
-    /*
-     * 针对代码生成所需变量，后期需要改进 TODO 初始化为空串
-     */
 
     private static GlobalProperties instance;
 
@@ -92,7 +92,14 @@ public class GlobalProperties
         validators.add(CompareRelationValidator.getInstance());
         validators.add(ConnectRelationValidator.getInstance());
         keywords = new HashSet<String>();
-        keywords.add("place");
+        initKeywords();
+    }
+
+    private void initKeywords() {
+        keywords.addAll(Arrays.asList(new String[] {"place", "data", "port", "type", "end",
+                        "connector", "define", "export", "on", "from", "provided", "do", "true",
+                        "false", "initial", "atomic", "compound", "component", "model", "up",
+                        "down"}));
     }
 
     public boolean isMultipleDataTypeAvailble() {
@@ -188,7 +195,7 @@ public class GlobalProperties
         rules = new ArrayList<Rule>();
         try {
             BaselineDataAccessor bda = new BaselineDataAccessor();
-            String baselineName = bda.getBaselines().get(0).getName();
+            String baselineName = GlobalProperties.getInstance().getTopModel().getBaseline();// bda.getBaselines().get(0).getName();
             java.util.List<cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Rule> arules =
                             bda.getRules(baselineName);
 
@@ -227,7 +234,7 @@ public class GlobalProperties
         this.rules = new ArrayList<Rule>(rules);
     }
 
-    public void registerValidator(Validator validator) {    
+    public void registerValidator(Validator validator) {
         validators.add(validator);
     }
 
@@ -259,8 +266,18 @@ public class GlobalProperties
     }
 
     @Override
-    public void setTopModel(TopLevelModel model) {
+    public TopLevelModel setTopModel(TopLevelModel model) {
+        TopLevelModel oldModel = this.model;
+        if (this.model != null) {
+            try {
+                this.model.save();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         this.model = model;
+        ProjectEditPartFactory.getTopLevelModelEditPart().setModel(model);
+        ProjectEditPartFactory.getTopLevelModelEditPart().refresh();
+        return oldModel;
     }
-
 }

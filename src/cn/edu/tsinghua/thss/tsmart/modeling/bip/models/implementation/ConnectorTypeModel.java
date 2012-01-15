@@ -35,6 +35,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.ITopModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorTypeModel.ArgumentEntry;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
@@ -48,9 +49,9 @@ import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 @SuppressWarnings({"unused", "unchecked", "rawtypes"})
 @Root(name = "connectorType")
 public class ConnectorTypeModel
-                extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, IDataContainer>
+                extends BaseTypeModel<ConnectorTypeModel, ConnectorModel, ITopModel>
                 implements
-                    IDataContainer<ConnectorTypeModel, ConnectorModel, IDataContainer, IInstance>,
+                    IDataContainer<ConnectorTypeModel, ConnectorModel, ITopModel, IInstance>,
                     IOrderContainer<PortTypeModel> {
     private static final long                                                        serialVersionUID =
                                                                                                                       -7637868341840412974L;
@@ -60,20 +61,24 @@ public class ConnectorTypeModel
     static {
         typeSources = new HashMap<String, ConnectorTypeModel>();
         toolMap = new HashMap<String, HashMap<CompoundEditor, CreationToolEntry>>();
+
         ConnectorTypeModel singleton = new ConnectorTypeModel().setName("singleton");
         singleton.addArgument(PortTypeModel.getModelByName("ePort"), "p1");
         singleton.parseInteractor("p1");
+        singleton.addInteraction(Arrays.asList("p1"), "", "");
 
         ConnectorTypeModel rendezvous = new ConnectorTypeModel().setName("rendezvous");
         rendezvous.addArgument(PortTypeModel.getModelByName("ePort"), "p1");
         rendezvous.addArgument(PortTypeModel.getModelByName("ePort"), "p2");
         rendezvous.parseInteractor("p1 p2");
+        rendezvous.addInteraction(Arrays.asList("p1", "p2"), "", "");
+
         addTypeSources(singleton.getName(), singleton);
         addTypeSources(rendezvous.getName(), rendezvous);
     }
 
     public static Collection<ConnectorTypeModel> getAllRegisterTypes() {
-        return typeSources.values();
+        return Collections.unmodifiableCollection(typeSources.values());
     }
 
     public static void saveTypes() {
@@ -96,8 +101,12 @@ public class ConnectorTypeModel
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
             for (Map.Entry<String, ConnectorTypeModel> entry : getTypeEntries()) {
+                ConnectorTypeModel port = entry.getValue();
+                ITopModel parent = port.getParent();
+                port.setParent(null);
                 out.writeObject(entry.getValue());
                 out.flush();
+                port.setParent(parent);
             }
             out.close();
         } catch (IOException e) {
@@ -200,9 +209,6 @@ public class ConnectorTypeModel
     }
 
     static class ArgumentEntry implements Serializable {
-        /**
-         * 
-         */
         private static final long serialVersionUID = 9130376378631319683L;
         @Element
         private int               index;
@@ -307,12 +313,10 @@ public class ConnectorTypeModel
         Set<PortModel> set = getAllRelativePorts();
         for (PortModel port : set) {
             if (port.getParent() instanceof AtomicTypeModel) {
-                if (port.getParent().getEntityNames()
-                                .contains(projectModel.getSoftwareEntity()))
+                if (port.getParent().getEntityNames().contains(projectModel.getSoftwareEntity()))
                     return false;
             }
         }
-
         return true;
     }
 
@@ -369,11 +373,9 @@ public class ConnectorTypeModel
 
         for (PortModel port : set) {
             if (port.getParent() instanceof AtomicTypeModel) {
-                if (port.getParent().getEntityNames()
-                                .contains(projectModel.getSoftwareEntity()))
+                if (port.getParent().getEntityNames().contains(projectModel.getSoftwareEntity()))
                     soft = true;
-                if (port.getParent().getEntityNames()
-                                .contains(projectModel.getHardwareEntity()))
+                if (port.getParent().getEntityNames().contains(projectModel.getHardwareEntity()))
                     hard = true;
                 if (soft && hard) return true;
             }
@@ -504,9 +506,15 @@ public class ConnectorTypeModel
         for (InteractionModel interaction : interactions) {
             buffer.append("\t\t").append(interaction.exportToBip()).append('\n');
         }
-        buffer.append("\t\texport port ").append(port.getType().getName()).append(' ')
-                        .append(port.getName()).append('(').append(port.getBoundedArguments())
-                        .append(")\n");
+        if (port.isExport()) {
+            buffer.append("\t\texport port ").append(port.getType().getName()).append(' ')
+                            .append(port.getName());
+        }
+
+        if (!port.getBoundedArguments().equals("")) {
+            buffer.append('(').append(port.getBoundedArguments()).append(")\n");
+        }
+
         buffer.append("\tend");
         return buffer.toString();
     }
@@ -549,7 +557,7 @@ public class ConnectorTypeModel
             return "";
         }
         CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
-        
+
         StringBuilder buffer = new StringBuilder();
         String interactors = "";
         // 使用新name
@@ -568,8 +576,9 @@ public class ConnectorTypeModel
             buffer.replace(buffer.length() - 2, buffer.length(), "");
         }
         buffer.append(")\n");
-        // 完成功能2 3
-        buffer.append("\t\tdefine [").append(interactors).append("]\n");
+        // 完成功能2 3 XXX
+        // buffer.append("\t\tdefine [").append(interactors).append("]\n");
+        buffer.append("\t\tdefine ").append(interactors).append("\n");
         buffer.append("\t\ton ").append(interactors).append("\n\t\t\tup{}\n\t\t\tdown{}\n");
 
 
@@ -600,6 +609,11 @@ public class ConnectorTypeModel
     public List<IInstance> getChildren() {
         List<IInstance> list = new ArrayList<IInstance>(interactions);
         list.addAll(datas);
+        for (IInstance instance : list) {
+            if (instance.getParent() == null || !instance.getParent().equals(this)) {
+                instance.setParent(this);
+            }
+        }
         return list;
     }
 
@@ -624,6 +638,13 @@ public class ConnectorTypeModel
         if (child instanceof InteractionModel) {
             addInteraction((InteractionModel) child);
         }
+        return this;
+    }
+
+    /**
+     * ConnectorTypeModel不需要parent
+     */
+    public ConnectorTypeModel setParent(ITopModel parent) {
         return this;
     }
 
@@ -1033,9 +1054,6 @@ public class ConnectorTypeModel
 @Root
 class Interactor implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5340423309780663860L;
     @Element(required = false, name = "content")
     private ArgumentEntry     content;
@@ -1065,7 +1083,8 @@ class Interactor implements Serializable {
         if (content != null) {
             return content.getName();
         }
-        StringBuilder buffer = new StringBuilder("[");
+        // XXX
+        StringBuilder buffer = new StringBuilder("");
         if (completePort != null) {
             buffer.append(completePort).append("\' ");
         }
@@ -1074,6 +1093,7 @@ class Interactor implements Serializable {
                 buffer.append(interactor).append(' ');
             }
         }
-        return buffer.append(']').toString();
+        // XXX
+        return buffer.append("").toString();
     }
 }

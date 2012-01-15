@@ -28,7 +28,7 @@ public class PortEditDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public PortEditDialog(Shell parentShell, PortModel data) {
-        super(parentShell, "Edit Port Model");
+        super(parentShell, Messages.PortEditDialog_0);
         this.instance = data;
         this.container = instance.getParent();
     }
@@ -45,7 +45,7 @@ public class PortEditDialog extends AbstractEditDialog {
 
         Button buttonExport = new Button(container, SWT.CHECK);
         buttonExport.setBounds(278, 18, 59, 17);
-        buttonExport.setText("export");
+        buttonExport.setText(Messages.PortEditDialog_1);
 
         List listAllDatas = new List(container, SWT.BORDER | SWT.MULTI);
         listAllDatas.setBounds(7, 44, 126, 161);
@@ -56,10 +56,10 @@ public class PortEditDialog extends AbstractEditDialog {
 
         Label labelType = new Label(container, SWT.NONE);
         labelType.setBounds(7, 18, 32, 17);
-        labelType.setText("type:");
+        labelType.setText(Messages.PortEditDialog_2);
 
         Label labelName = new Label(container, SWT.NONE);
-        labelName.setText("name:");
+        labelName.setText(Messages.PortEditDialog_3);
         labelName.setBounds(141, 18, 32, 17);
 
         textName = new Text(container, SWT.BORDER);
@@ -71,10 +71,10 @@ public class PortEditDialog extends AbstractEditDialog {
 
         Button buttonAdd = new Button(container, SWT.NONE);
         buttonAdd.setBounds(146, 61, 48, 27);
-        buttonAdd.setText(">>");
+        buttonAdd.setText(">>"); //$NON-NLS-1$
 
         Button buttonRemove = new Button(container, SWT.NONE);
-        buttonRemove.setText("<<");
+        buttonRemove.setText("<<"); //$NON-NLS-1$
         buttonRemove.setBounds(146, 130, 48, 27);
 
         return container;

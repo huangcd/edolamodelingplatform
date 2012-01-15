@@ -1,0 +1,9 @@
+= 安装配置 =
+
+假定：DEPLOY_ROOT表示工具安装的目标文件夹。
+
+* 代码生成部分
+1. 将"tool/CodeGeneration/"的codegen.jar和plc-virtual-env.jar拷贝到"DEPLOY_ROOT/tool/CodeGeneration/"文件夹。
+2. 将"tool/gcc-dep.zip"解压缩开，放置到某个位置，如pathGcc，然后将pathGcc加入到当前的PATH环境变量中。
+3. 将"docs/CodeGen/device-initializer.xml"拷贝到"DEPLOY_ROOT/docs/CodeGen/"。
+

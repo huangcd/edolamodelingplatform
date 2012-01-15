@@ -1,6 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.policies;
 
-import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
@@ -11,7 +10,6 @@ import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.requests.CreateRequest;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.MoveBulletCommand;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.ComponentEditPart;
 
@@ -31,7 +29,7 @@ public class ComponentChildrenEditPolicy extends XYLayoutEditPolicy {
             ComponentEditPart parent = (ComponentEditPart) getHost();
             Rectangle rect = (Rectangle) constraint;
             Point point = rect.getLocation();
-            int direction = ensureInFrame(point, parent.getFigure().getBounds());
+            int direction = parent.getModel().ensureInFrame(point);
             rect.setLocation(point);
             MoveBulletCommand command = new MoveBulletCommand();
             command.setModel(model);
@@ -40,38 +38,6 @@ public class ComponentChildrenEditPolicy extends XYLayoutEditPolicy {
             return command;
         }
         return super.createChangeConstraintCommand(request, child, constraint);
-    }
-
-    /**
-     * 确保bullet在方框之上
-     * 
-     * @param point bullet被拖动到的位置
-     * @param componentBound component的范围
-     * @return
-     */
-    protected int ensureInFrame(Point point, Rectangle componentBound) {
-        int x = point.x;
-        int y = point.y;
-        int direction = PositionConstants.NORTH;
-        int width = componentBound.width - 2 * IModel.BULLET_RADIUS;
-        int height = componentBound.height - 2 * IModel.BULLET_RADIUS;
-        if (x < 0) x = 0;
-        if (y < 0) y = 0;
-        if (x > width) x = width;
-        if (y > height) y = height;
-        boolean xPosition = x < width / 2;
-        boolean yPosition = y < height / 2;
-        int xValue = xPosition ? x : width - x;
-        int yValue = yPosition ? y : height - y;
-        if (xValue < yValue) {
-            x = xPosition ? 0 : width;
-            direction = xPosition ? PositionConstants.WEST : PositionConstants.EAST;
-        } else {
-            y = yPosition ? 0 : height;
-            direction = yPosition ? PositionConstants.NORTH : PositionConstants.SOUTH;
-        }
-        point.setLocation(x, y);
-        return direction;
     }
 
     @Override

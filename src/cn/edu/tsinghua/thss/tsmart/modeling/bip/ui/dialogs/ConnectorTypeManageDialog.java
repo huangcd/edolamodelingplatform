@@ -29,7 +29,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
     private Button buttonDelete;
 
     public ConnectorTypeManageDialog(Shell parentShell) {
-        super(parentShell, "\u8FDE\u63A5\u5B50\u7C7B\u578B\u7BA1\u7406");
+        super(parentShell, Messages.ConnectorTypeManageDialog_0);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
         sashForm.setBounds(10, 10, 717, 329);
 
         Group groupSelection = new Group(sashForm, SWT.NONE);
-        groupSelection.setText("\u9009\u62E9");
+        groupSelection.setText(Messages.ConnectorTypeManageDialog_1);
         groupSelection.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         SashForm sashFormSelection = new SashForm(groupSelection, SWT.VERTICAL);
@@ -76,7 +76,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                 addConnector();
             }
         });
-        buttonCreate.setText("\u589E\u52A0\u8FDE\u63A5\u5B50");
+        buttonCreate.setText(Messages.ConnectorTypeManageDialog_2);
 
         Button buttonEdit = new Button(sashFormEdit, SWT.NONE);
         buttonEdit.addSelectionListener(new SelectionAdapter() {
@@ -85,7 +85,7 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                 editConnectorType();
             }
         });
-        buttonEdit.setText("\u7F16\u8F91\u8FDE\u63A5\u5B50");
+        buttonEdit.setText(Messages.ConnectorTypeManageDialog_3);
 
         buttonDelete = new Button(sashFormEdit, SWT.NONE);
         buttonDelete.addSelectionListener(new SelectionAdapter() {
@@ -94,12 +94,12 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
                 removeConnectorType();
             }
         });
-        buttonDelete.setText("\u5220\u9664\u8FDE\u63A5\u5B50");
+        buttonDelete.setText(Messages.ConnectorTypeManageDialog_4);
         sashFormEdit.setWeights(new int[] {1, 1, 1});
         sashFormSelection.setWeights(new int[] {10, 1});
 
         Group groupPreview = new Group(sashForm, SWT.NONE);
-        groupPreview.setText("\u9884\u89C8");
+        groupPreview.setText(Messages.ConnectorTypeManageDialog_5);
         groupPreview.setLayout(new FillLayout(SWT.HORIZONTAL));
 
 
@@ -137,8 +137,8 @@ public class ConnectorTypeManageDialog extends AbstractEditDialog {
             return;
         }
         for (String selection : selections) {
-            if (selection.equals("singleton") || selection.equals("rendezvous")) {
-                getErrorLabel().setText("内置类型不能被删除");
+            if (selection.equals("singleton") || selection.equals("rendezvous")) { //$NON-NLS-1$ //$NON-NLS-2$
+                getErrorLabel().setText(Messages.ConnectorTypeManageDialog_8);
             } else {
                 if (ConnectorTypeModel.isRemovable(selection)) {
                     properties.getTopModel().removeChildByName(selection);

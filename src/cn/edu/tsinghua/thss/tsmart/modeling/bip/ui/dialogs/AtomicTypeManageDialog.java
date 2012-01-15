@@ -33,7 +33,7 @@ public class AtomicTypeManageDialog extends AbstractEditDialog {
     private Button     buttonDelete;
 
     public AtomicTypeManageDialog(Shell parentShell) {
-        super(parentShell, "\u539F\u5B50\u6784\u4EF6\u5E93\u7BA1\u7406");
+        super(parentShell, Messages.AtomicTypeManageDialog_0);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AtomicTypeManageDialog extends AbstractEditDialog {
         sashForm.setBounds(10, 10, 717, 379);
 
         Group groupView = new Group(sashForm, SWT.NONE);
-        groupView.setText("\u9009\u62E9");
+        groupView.setText(Messages.AtomicTypeManageDialog_1);
         groupView.setLayout(new FormLayout());
 
         ScrolledComposite scrolledComposite =
@@ -74,7 +74,7 @@ public class AtomicTypeManageDialog extends AbstractEditDialog {
                     styledTextPreview.setText(AtomicTypeModel.getModelByName(selections[0])
                                     .exportToBip());
                 } catch (UnboundedException ex) {
-                    MessageUtil.ShowErrorDialog(ex.getMessage(), "生成BIP代码时出现错误");
+                    MessageUtil.ShowErrorDialog(ex.getMessage(), Messages.AtomicTypeManageDialog_2);
                 }
             }
         });
@@ -94,10 +94,10 @@ public class AtomicTypeManageDialog extends AbstractEditDialog {
                 removeAtomicType();
             }
         });
-        buttonDelete.setText("\u5220\u9664\u7EC4\u4EF6");
+        buttonDelete.setText(Messages.AtomicTypeManageDialog_3);
 
         Group group = new Group(sashForm, SWT.NONE);
-        group.setText("\u9884\u89C8");
+        group.setText(Messages.AtomicTypeManageDialog_4);
         group.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         styledTextPreview =

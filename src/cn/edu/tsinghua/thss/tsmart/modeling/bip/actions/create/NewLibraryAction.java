@@ -18,7 +18,7 @@ public class NewLibraryAction extends OpenDialogAction {
     private CreateWizardData         data;
 
     public NewLibraryAction(IWorkbenchWindow window) {
-        super(window, ID, "构件库", "新建一个Edola构件库", null);
+        super(window, ID, Messages.NewLibraryAction_0, Messages.NewLibraryAction_1, null);
     }
 
     @Override

@@ -12,6 +12,8 @@ public class Rule {
         if (relation.equals(Relation.CONNECT)) {
             if (max == Integer.MAX_VALUE)
                 return String.format("%s 只能和 %d 个以上的 %s 相连", firstEntity, min, secondEntity);
+            else if (max == min && min == 0)
+                return String.format("%s 与 %s 不能相连", firstEntity, secondEntity);
             else if (max == min)
                 return String.format("%s 只能和 %d 个 %s 相连", firstEntity, min, secondEntity);
             else

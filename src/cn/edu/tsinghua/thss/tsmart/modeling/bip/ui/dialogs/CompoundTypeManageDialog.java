@@ -32,7 +32,7 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
     private Button     buttonDelete;
 
     public CompoundTypeManageDialog(Shell parentShell) {
-        super(parentShell, "\u590D\u5408\u6784\u4EF6\u5E93\u7BA1\u7406");
+        super(parentShell, Messages.CompoundTypeManageDialog_0);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
         sashForm.setBounds(10, 10, 717, 379);
 
         Group groupView = new Group(sashForm, SWT.NONE);
-        groupView.setText("\u9009\u62E9");
+        groupView.setText(Messages.CompoundTypeManageDialog_1);
         groupView.setLayout(new FormLayout());
 
         ScrolledComposite scrolledComposite =
@@ -89,10 +89,10 @@ public class CompoundTypeManageDialog extends AbstractEditDialog {
                 removeCompoundType();
             }
         });
-        buttonDelete.setText("\u5220\u9664\u7EC4\u4EF6");
+        buttonDelete.setText(Messages.CompoundTypeManageDialog_2);
 
         Group group = new Group(sashForm, SWT.NONE);
-        group.setText("\u9884\u89C8");
+        group.setText(Messages.CompoundTypeManageDialog_3);
         group.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         styledTextPreview =

@@ -35,9 +35,9 @@ public class OpenCompoundEditorAction extends Action
     public OpenCompoundEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("复合构件");
-        setToolTipText("打开一个复合构件");
-        setImageDescriptor(Activator.getImageDescriptor("icons/compound_16.png"));
+        setText(Messages.OpenCompoundEditorAction_0);
+        setToolTipText(Messages.OpenCompoundEditorAction_1);
+        setImageDescriptor(Activator.getImageDescriptor("icons/compound_16.png")); //$NON-NLS-1$
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -53,7 +53,7 @@ public class OpenCompoundEditorAction extends Action
     public void run() {
         Shell shell = Display.getCurrent().getActiveShell();
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-        dialog.setFilterExtensions(new String[] {"*." + GlobalProperties.COMPOUND_EXTENSION});
+        dialog.setFilterExtensions(new String[] {"*." + GlobalProperties.COMPOUND_EXTENSION}); //$NON-NLS-1$
         String path = dialog.open();
         if (path == null) {
             return;

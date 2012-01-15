@@ -31,9 +31,9 @@ public class NewCompoundEditorAction extends Action implements ISelectionListene
     public NewCompoundEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("复合构件");
-        setToolTipText("新建一个复合构件");
-        setImageDescriptor(Activator.getImageDescriptor("icons/compound_16.png"));
+        setText(Messages.NewCompoundEditorAction_0);
+        setToolTipText(Messages.NewCompoundEditorAction_1);
+        setImageDescriptor(Activator.getImageDescriptor("icons/compound_16.png")); //$NON-NLS-1$
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -56,8 +56,8 @@ public class NewCompoundEditorAction extends Action implements ISelectionListene
         // return;
         // }
         if (topModel instanceof LibraryModel) {
-            CompoundTypeModel model = new CompoundTypeModel().setName("compound0");
-            if (MessageUtil.showConfirmDialog("是否将组件添加到当前库？", "确认")) {
+            CompoundTypeModel model = new CompoundTypeModel().setName("compound0"); //$NON-NLS-1$
+            if (MessageUtil.showConfirmDialog(Messages.NewCompoundEditorAction_4, Messages.NewCompoundEditorAction_5)) {
                 AddLibrarySettingDialog dialog =
                                 new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
                                                 model);
@@ -66,13 +66,23 @@ public class NewCompoundEditorAction extends Action implements ISelectionListene
                 if (resultCode == AddLibrarySettingDialog.OK) {
                     topModel.addChild(model);
                 } else {
-                    MessageUtil.showMessageDialog("组件将不被保存到库，您依然可以在以后右键选择将组件保存到库", "");
+                    MessageUtil.showMessageDialog(Messages.NewCompoundEditorAction_6, ""); //$NON-NLS-2$
                 }
             }
             topModel.addOpenModel(model);
             BIPEditor.openBIPEditor(model);
         } else if (topModel instanceof ProjectModel) {
-            CompoundTypeModel model = new CompoundTypeModel().setName("compound0");
+            CompoundTypeModel model = new CompoundTypeModel().setName("compound0"); //$NON-NLS-1$
+            if (MessageUtil.showConfirmDialog(Messages.NewCompoundEditorAction_9, Messages.NewCompoundEditorAction_10)) {
+                AddLibrarySettingDialog dialog =
+                                new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
+                                                model);
+                dialog.setBlockOnOpen(true);
+                int resultCode = dialog.open();
+                if (resultCode == AddLibrarySettingDialog.OK) {
+                    topModel.addChild(model);
+                }
+            }
             topModel.addOpenModel(model);
             BIPEditor.openBIPEditor(model);
         }

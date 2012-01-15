@@ -1,11 +1,13 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.wizard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.LibraryModel;
 
+@SuppressWarnings("unchecked")
 public class CreateWizardData {
     private String                    name;
     private String                    location;
@@ -38,6 +40,9 @@ public class CreateWizardData {
     }
 
     public List<String> getLibs() {
+        if (libs == null) {
+            return Collections.EMPTY_LIST;
+        }
         return libs;
     }
 
@@ -51,7 +56,7 @@ public class CreateWizardData {
 
     public List<LibraryModel> getLibraries() {
         List<LibraryModel> list = new ArrayList<LibraryModel>();
-        for (String libName : libs) {
+        for (String libName : getLibs()) {
             LibraryModel model = libraryMap.get(libName);
             if (model != null) {
                 list.add(model);

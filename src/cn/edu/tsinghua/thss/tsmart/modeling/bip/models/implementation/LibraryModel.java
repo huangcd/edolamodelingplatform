@@ -5,8 +5,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
+import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
 
@@ -16,6 +25,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
  * @author Huangcd
  *
  */
+@Root
 public class LibraryModel extends TopLevelModel<LibraryModel> {
 
     private static final long  serialVersionUID = -4592528530988131833L;
@@ -48,9 +58,21 @@ public class LibraryModel extends TopLevelModel<LibraryModel> {
     }
 
     public static LibraryModel load(File directory) throws InvalidPropertiesFormatException,
-                    FileNotFoundException, IOException, ClassNotFoundException {
+                    FileNotFoundException, IOException {
         Properties properties = new Properties();
         properties.loadFromXML(new FileInputStream(new File(directory, FILE_NAME)));
+        LibraryModel model = new LibraryModel();
+        model.setLocation(directory.getAbsolutePath());
+        model.setBaseline(properties.getProperty("baseline"));
+        model.setName(properties.getProperty("name"));
+        model.setDirectory(directory);
+        return model;
+    }
+
+    public static LibraryModel load(InputStream in, File directory)
+                    throws InvalidPropertiesFormatException, IOException {
+        Properties properties = new Properties();
+        properties.loadFromXML(in);
         LibraryModel model = new LibraryModel();
         model.setLocation(directory.getAbsolutePath());
         model.setBaseline(properties.getProperty("baseline"));
@@ -74,8 +96,26 @@ public class LibraryModel extends TopLevelModel<LibraryModel> {
     }
 
     public void save() {
-        saveBaseInformation();
-        saveTypes();
+        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+        try {
+            progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
+                            new IRunnableWithProgress() {
+                                @Override
+                                public void run(IProgressMonitor monitor)
+                                                throws InvocationTargetException,
+                                                InterruptedException {
+                                    monitor.beginTask("±£´æ¹¹¼þ¿â", 1 + getChildren().size());
+                                    saveBaseInformation();
+                                    monitor.worked(1);
+                                    saveTypes(monitor, 1);
+                                    monitor.done();
+                                }
+                            }, ResourcesPlugin.getWorkspace().getRoot());
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 
     private void saveBaseInformation() {
@@ -83,7 +123,6 @@ public class LibraryModel extends TopLevelModel<LibraryModel> {
             Properties properties = new Properties();
             properties.put("name", getName());
             properties.put("baseline", getBaseline());
-            properties.put("location", getLocation());
             properties.storeToXML(new FileOutputStream(new File(getDirectory(), FILE_NAME)),
                             "library setting file");
         } catch (IOException ex) {

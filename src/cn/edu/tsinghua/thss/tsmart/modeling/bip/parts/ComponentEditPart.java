@@ -18,6 +18,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ComponentChildrenEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.DeleteModelEditPolicy;
@@ -97,18 +98,29 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
                     ((EditPart) child).refresh();
                 }
             }
+            ComponentTypeModel type = (ComponentTypeModel) getModel().getType();
+            for (PortModel exportPort : (List<PortModel>) type.getExportPorts()) {
+                for (ConnectionModel connection : exportPort.getBullet().getTargetConnections()) {
+                    connection.firePropertyChange(IModel.TARGET);
+                }
+            }
         }
         if (IModel.TYPE_NAME.equals(evt.getPropertyName())) {
             typeLabel.setText(getModel().getType().getName());
             centerLabels();
         } else if (IModel.NAME.equals(evt.getPropertyName())) {
-            if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
-                            getModel().getName())) {
+            if (getModel().getParent() != null) {
+                if (!getModel().getParent().isNewNameAlreadyExistsInParent(getModel(),
+                                getModel().getName())) {
+                    instanceLabel.setText(getModel().getName());
+                    centerLabels();
+                } else {
+                    MessageUtil.ShowRenameErrorDialog(getModel().getName());
+                    getModel().setName(getModel().getOldName());
+                }
+            } else {
                 instanceLabel.setText(getModel().getName());
                 centerLabels();
-            } else {
-                MessageUtil.ShowRenameErrorDialog(getModel().getName());
-                getModel().setName(getModel().getOldName());
             }
 
         } else if (IModel.EXPORT_PORT.equals(evt.getPropertyName())) {
@@ -138,6 +150,7 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
             BulletModel bullet = port.getBullet();
             Rectangle rect = bullet.getPositionConstraint();
             if (rect == null) {
+                // 初始化Bullet的位置
                 rect = new Rectangle();
                 bullet.setPositionConstraint(rect);
             }

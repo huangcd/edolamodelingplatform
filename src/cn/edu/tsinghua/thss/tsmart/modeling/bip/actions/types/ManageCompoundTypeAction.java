@@ -10,7 +10,7 @@ public class ManageCompoundTypeAction extends OpenDialogAction {
     public static final String ID = ManageCompoundTypeAction.class.getCanonicalName();
 
     public ManageCompoundTypeAction(IWorkbenchWindow window) {
-        super(window, ID, "管理复合组件类型", "查看或删除复合组件类型", "icons/compound_16.png");
+        super(window, ID, Messages.ManageCompoundTypeAction_0, Messages.ManageCompoundTypeAction_1, "icons/compound_16.png"); //$NON-NLS-3$
     }
 
     @Override

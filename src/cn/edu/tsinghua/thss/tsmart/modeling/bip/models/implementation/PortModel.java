@@ -10,6 +10,7 @@ import java.util.Map;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -25,8 +26,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPr
 @Root
 public class PortModel<P extends IContainer> extends BaseInstanceModel<PortModel, PortTypeModel, P> {
     private static final long serialVersionUID = -1192079654784887960L;
-    @Element
+    @Attribute
     private boolean           export;
+    @Element
     private BulletModel       bullet;
 
     protected PortModel() {
@@ -120,9 +122,14 @@ public class PortModel<P extends IContainer> extends BaseInstanceModel<PortModel
         if (isExport()) {
             buffer.append("export ");
         }
-        buffer.append("port ").append(getName()).append('(');
-        buffer.append(getBoundedArguments());
-        buffer.append(")");
+        buffer.append("port ");
+        buffer.append(getType().getName());
+        buffer.append(' ');
+        buffer.append(getName());
+        if (!getBoundedArguments().equals("")) {
+            buffer.append('(').append(getBoundedArguments()).append(")");
+        }
+
         return buffer.toString();
     }
 

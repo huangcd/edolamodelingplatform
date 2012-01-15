@@ -25,12 +25,12 @@ public class NewLibrarySelectBaselineWizardPage extends WizardPage {
      * Create the wizard.
      */
     public NewLibrarySelectBaselineWizardPage(CreateWizardData data) {
-        super("select baseline");
-        setImageDescriptor(ResourceManager.getPluginImageDescriptor("EdolaModelingPlatform",
-                        "icons/product_wiz.gif"));
+        super(Messages.NewLibrarySelectBaselineWizardPage_0);
+        setImageDescriptor(ResourceManager.getPluginImageDescriptor("EdolaModelingPlatform", //$NON-NLS-1$
+                        "icons/product_wiz.gif")); //$NON-NLS-1$
         setPageComplete(false);
-        setTitle("\u9009\u62E9\u57FA\u51C6\u7EBF");
-        setDescription("\u9009\u62E9\u6307\u5BFC\u6784\u4EF6\u5E93\u7684\u57FA\u51C6\u7EBF");
+        setTitle(Messages.NewLibrarySelectBaselineWizardPage_3);
+        setDescription(Messages.NewLibrarySelectBaselineWizardPage_4);
         this.data = data;
     }
 
@@ -48,8 +48,8 @@ public class NewLibrarySelectBaselineWizardPage extends WizardPage {
         SashForm sashForm = new SashForm(container, SWT.NONE);
 
         Group groupBaseline = new Group(sashForm, SWT.NONE);
-        groupBaseline.setText("\u9009\u62E9\u57FA\u51C6\u7EBF");
-        groupBaseline.setToolTipText("");
+        groupBaseline.setText(Messages.NewLibrarySelectBaselineWizardPage_5);
+        groupBaseline.setToolTipText(""); //$NON-NLS-1$
         groupBaseline.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         ScrolledComposite scrolledCompositeBaseline =

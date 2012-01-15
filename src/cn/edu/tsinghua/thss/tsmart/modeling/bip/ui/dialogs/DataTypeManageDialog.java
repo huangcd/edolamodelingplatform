@@ -31,7 +31,7 @@ public class DataTypeManageDialog extends AbstractEditDialog {
     private List   listDataTypes;
 
     public DataTypeManageDialog(Shell parentShell) {
-        super(parentShell, "变量类型管理");
+        super(parentShell, Messages.DataTypeManageDialog_0);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DataTypeManageDialog extends AbstractEditDialog {
             }
         });
         buttonDelete.setBounds(152, 10, 86, 27);
-        buttonDelete.setText("\u5220\u9664\u9009\u5B9A\u7C7B\u578B");
+        buttonDelete.setText(Messages.DataTypeManageDialog_1);
 
         textType = new Text(container, SWT.BORDER);
         textType.setBounds(152, 149, 86, 23);
@@ -69,7 +69,7 @@ public class DataTypeManageDialog extends AbstractEditDialog {
                 addType();
             }
         });
-        buttonAdd.setText("\u589E\u52A0\u7C7B\u578B");
+        buttonAdd.setText(Messages.DataTypeManageDialog_2);
         buttonAdd.setBounds(152, 178, 86, 27);
 
         labelError = new Label(container, SWT.NONE);
@@ -85,7 +85,7 @@ public class DataTypeManageDialog extends AbstractEditDialog {
         String[] selections = listDataTypes.getSelection();
         boolean containsDefaultType = false;
         for (String selection : selections) {
-            if (selection.equals("int") || selection.equals("bool")) {
+            if (selection.equals("int") || selection.equals("bool")) { //$NON-NLS-1$ //$NON-NLS-2$
                 containsDefaultType = true;
                 continue;
             }
@@ -97,29 +97,29 @@ public class DataTypeManageDialog extends AbstractEditDialog {
             }
         }
         if (containsDefaultType) {
-            handleError("内置类型不能被删除");
+            handleError(Messages.DataTypeManageDialog_5);
         }
     }
 
     private void addType() {
         String newType = textType.getText().trim().toLowerCase();
         if (!isIdentifier(newType)) {
-            handleError(MessageFormat.format("变量类型名\"{0}\"不合法", newType));
+            handleError(MessageFormat.format(Messages.DataTypeManageDialog_6, newType));
             return;
         }
         if (newType.isEmpty()) {
-            handleError("添加的类型不能为空");
+            handleError(Messages.DataTypeManageDialog_7);
             return;
         }
         String[] items = listDataTypes.getItems();
         for (String type : items) {
             if (type.equals(newType)) {
-                handleError("添加的类型已存在");
+                handleError(Messages.DataTypeManageDialog_8);
                 return;
             }
         }
         listDataTypes.add(newType);
-        textType.setText("");
+        textType.setText(""); //$NON-NLS-1$
     }
 
     @Override

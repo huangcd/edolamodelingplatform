@@ -46,13 +46,13 @@ public class BIPFileEditorInput implements IEditorInput {
 
     @Override
     public ImageDescriptor getImageDescriptor() {
-        return BIPEditor.getImage("icons/file_obj.gif");
+        return BIPEditor.getImage("icons/file_obj.gif"); //$NON-NLS-1$
     }
 
     @Override
     public String getName() {
         if (getModel().getParent() != null) {
-            return getModel().getParent().getName() + "." + path.getName();
+            return getModel().getParent().getName() + "." + path.getName(); //$NON-NLS-1$
         }
         return path.getName();
     }

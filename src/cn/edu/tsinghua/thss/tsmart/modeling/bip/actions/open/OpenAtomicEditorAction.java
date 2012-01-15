@@ -32,9 +32,9 @@ public class OpenAtomicEditorAction extends Action implements ISelectionListener
     public OpenAtomicEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("原子构件");
-        setToolTipText("打开原子构件");
-        setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png"));
+        setText(Messages.OpenAtomicEditorAction_0);
+        setToolTipText(Messages.OpenAtomicEditorAction_1);
+        setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png")); //$NON-NLS-1$
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -50,7 +50,7 @@ public class OpenAtomicEditorAction extends Action implements ISelectionListener
     public void run() {
         Shell shell = Display.getCurrent().getActiveShell();
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-        dialog.setFilterExtensions(new String[] {"*." + GlobalProperties.ATOMIC_EXTENSION});
+        dialog.setFilterExtensions(new String[] {"*." + GlobalProperties.ATOMIC_EXTENSION}); //$NON-NLS-1$
         String path = dialog.open();
         if (path == null) {
             return;

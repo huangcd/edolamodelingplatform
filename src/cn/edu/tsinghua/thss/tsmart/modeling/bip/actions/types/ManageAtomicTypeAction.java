@@ -11,7 +11,7 @@ public class ManageAtomicTypeAction extends OpenDialogAction {
     public static final String ID = ManageAtomicTypeAction.class.getCanonicalName();
 
     public ManageAtomicTypeAction(IWorkbenchWindow window) {
-        super(window, ID, "管理原子组件类型", "查看或删除原子组件类型", "icons/atomic_16.png");
+        super(window, ID, Messages.ManageAtomicTypeAction_0, Messages.ManageAtomicTypeAction_1, "icons/atomic_16.png"); //$NON-NLS-3$ //$NON-NLS-1$
     }
 
     @Override

@@ -14,9 +14,9 @@ import cn.edu.tsinghua.thss.tsmart.platform.Activator;
  */
 public class ExportRetargetAction extends RetargetAction {
     public ExportRetargetAction() {
-        super(ExportAction.ID, "Do Export");
-        setToolTipText("Export model as Edola");
-        ImageDescriptor descriptor = Activator.getImageDescriptor("icons/xml.ico");
+        super(ExportAction.ID, Messages.ExportRetargetAction_0);
+        setToolTipText(Messages.ExportRetargetAction_1);
+        ImageDescriptor descriptor = Activator.getImageDescriptor("icons/xml.ico"); //$NON-NLS-1$
         setImageDescriptor(descriptor);
         setDisabledImageDescriptor(descriptor);
     }

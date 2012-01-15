@@ -31,8 +31,8 @@ public class SaveComponentLibraryAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("保存到库");
-        setToolTipText("保存当前组件到库");
+        setText(Messages.SaveComponentLibraryAction_0);
+        setToolTipText(Messages.SaveComponentLibraryAction_1);
         setId(id);
         setEnabled(false);
     }

@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.codegen.CodeGenManager;
 import cn.edu.tsinghua.thss.tsmart.modeling.codegen.Device;
@@ -31,20 +30,18 @@ import cn.edu.tsinghua.thss.tsmart.modeling.codegen.Device;
  */
 @SuppressWarnings("rawtypes")
 public class EditPeripheralsDialog extends AbstractEditDialog {
-    private Table     table;
-    private Label     errorLabel;
-    CodeGenManager    cgm;
-    CompoundTypeModel ctm;
+    private Table  table;
+    private Label  errorLabel;
+    CodeGenManager cgm;
 
     /**
      * Create the dialog.
      * 
      * @param parentShell
      */
-    public EditPeripheralsDialog(Shell parentShell, CompoundTypeModel ctm) {
-        super(parentShell, "Edit Data Model");
-        setTitle("\u7F16\u8F91\u5916\u8BBE\u5217\u8868");
-        this.ctm = ctm;
+    public EditPeripheralsDialog(Shell parentShell) {
+        super(parentShell, Messages.EditPeripheralsDialog_0);
+        setTitle(Messages.EditPeripheralsDialog_1);
     }
 
     /**
@@ -83,7 +80,7 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
 
             }
         });
-        newDevice.setText("\u65B0\u5EFA\u5916\u8BBE");
+        newDevice.setText(Messages.EditPeripheralsDialog_2);
 
         Button modifyDevice = new Button(container, SWT.NONE);
         modifyDevice.setBounds(504, 48, 96, 27);
@@ -107,24 +104,20 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
 
             }
         });
-        modifyDevice.setText("\u4FEE\u6539\u5916\u8BBE");
+        modifyDevice.setText(Messages.EditPeripheralsDialog_3);
 
         Button deleteDevice = new Button(container, SWT.NONE);
         deleteDevice.setBounds(504, 81, 96, 27);
         deleteDevice.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                TableItem[] items = table.getSelection();
+                int[] items = table.getSelectionIndices();
                 if (items.length == 0) return;
-
-                // items[0].get
-                // TODO É¾³ý
-                // table.remove(items[0]);
-
-
+                else
+                    table.remove(items);               
             }
         });
-        deleteDevice.setText("\u5220\u9664\u5916\u8BBE");
+        deleteDevice.setText(Messages.EditPeripheralsDialog_4);
 
         table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION);
         table.setBounds(11, 15, 487, 311);
@@ -133,20 +126,16 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
 
         TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
         tblclmnNewColumn.setWidth(268);
-        tblclmnNewColumn.setText("\u5916\u8BBE\u5217\u8868");
+        tblclmnNewColumn.setText(Messages.EditPeripheralsDialog_5);
 
         TableColumn tableColumn = new TableColumn(table, SWT.NONE);
         tableColumn.setWidth(252);
-        tableColumn.setText("\u63CF\u8FF0");
+        tableColumn.setText(Messages.EditPeripheralsDialog_6);
 
         errorLabel = new Label(container, SWT.NONE);
         errorLabel.setBounds(11, 332, 589, 17);
 
-        String workplace = System.getProperty("user.dir");
-        String filePathDD = workplace + "/data/GateCtrl-devices.xml";
-        String filePathMapping = workplace + "/data/GateCtrl-mapping.xml";
-
-        cgm = new CodeGenManager(filePathDD, filePathMapping);
+        cgm = new CodeGenManager();
 
         initValues();
         return container;
@@ -171,11 +160,11 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
 
             }
         });
-        button.setText("\u786E\u5B9A");
+        button.setText(Messages.EditPeripheralsDialog_7);
         Button button_1 =
                         createButton(parent, IDialogConstants.CANCEL_ID,
                                         IDialogConstants.CANCEL_LABEL, false);
-        button_1.setText("\u53D6\u6D88");
+        button_1.setText(Messages.EditPeripheralsDialog_8);
     }
 
     /**
@@ -203,8 +192,14 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
     @Override
     protected void updateValues() {
 
-        // TODO
+        cgm.dd.clearAllDevices();
 
+        for (TableItem item : table.getItems()) {
+
+            cgm.dd.devices.add((Device) item.getData());
+        }
+
+        cgm.saveAll();
     }
 
     @SuppressWarnings("unchecked")

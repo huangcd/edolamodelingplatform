@@ -26,8 +26,8 @@ public class SelectOpenActionDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public SelectOpenActionDialog(Shell parentShell) {
-        super(parentShell, "Edit Data Model");
-        setTitle("\u9009\u62E9\u64CD\u4F5C");
+        super(parentShell, Messages.SelectOpenActionDialog_0);
+        setTitle(Messages.SelectOpenActionDialog_1);
     }
 
     /**
@@ -48,29 +48,29 @@ public class SelectOpenActionDialog extends AbstractEditDialog {
         labelType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
         labelType.setLocation(10, 23);
         labelType.setSize(67, 18);
-        labelType.setText("\u9879\u76EE\u6A21\u5F0F");
+        labelType.setText(Messages.SelectOpenActionDialog_2);
 
         Label labelName = new Label(group, SWT.NONE);
         labelName.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
         labelName.setLocation(10, 98);
         labelName.setSize(93, 18);
-        labelName.setText("\u6784\u4EF6\u5E93\u6A21\u5F0F");
+        labelName.setText(Messages.SelectOpenActionDialog_3);
 
         button_newProject = new Button(group, SWT.RADIO);
         button_newProject.setBounds(50, 47, 93, 16);
-        button_newProject.setText("\u65B0\u5EFA\u9879\u76EE");
+        button_newProject.setText(Messages.SelectOpenActionDialog_4);
 
         button_openProject = new Button(group, SWT.RADIO);
         button_openProject.setBounds(50, 70, 93, 16);
-        button_openProject.setText("\u6253\u5F00\u9879\u76EE");
+        button_openProject.setText(Messages.SelectOpenActionDialog_5);
 
         button_newLibrary = new Button(group, SWT.RADIO);
         button_newLibrary.setBounds(50, 117, 93, 16);
-        button_newLibrary.setText("\u65B0\u5EFA\u6784\u4EF6\u5E93");
+        button_newLibrary.setText(Messages.SelectOpenActionDialog_6);
 
         button_openLibrary = new Button(group, SWT.RADIO);
         button_openLibrary.setBounds(50, 139, 93, 16);
-        button_openLibrary.setText("\u6253\u5F00\u6784\u4EF6\u5E93");
+        button_openLibrary.setText(Messages.SelectOpenActionDialog_7);
 
         initValues();
         return container;

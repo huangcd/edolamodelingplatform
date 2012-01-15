@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.AlignDataAndTypeAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.ExportAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentLibraryAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.SaveComponentTypeAction;
@@ -101,27 +102,27 @@ public class AtomicEditor extends BIPEditor {
 
     private void initDataCreationEntry() {
         CreationToolEntry boolCreationEntry =
-                        new CreationToolEntry("布尔", "增加一个布尔变量", new CopyFactory(
-                                        DataTypeModel.getModelByName("bool")),
-                                        getImage("icons/bool_16.png"),
-                                        getImage("icons/bool_32.png"));
+                        new CreationToolEntry(Messages.AtomicEditor_0, Messages.AtomicEditor_1, new CopyFactory(
+                                        DataTypeModel.getModelByName("bool")), //$NON-NLS-1$
+                                        getImage("icons/bool_16.png"), //$NON-NLS-1$
+                                        getImage("icons/bool_32.png")); //$NON-NLS-1$
         addDataCreationToolEntry(boolCreationEntry);
         if (GlobalProperties.getInstance().isMultipleDataTypeAvailble()) {
             CreationToolEntry intCreationEntry =
-                            new CreationToolEntry("整数", "增加一个整数变量", new CopyFactory(
-                                            DataTypeModel.getModelByName("int")),
-                                            getImage("icons/int_16.png"),
-                                            getImage("icons/int_32.png"));
+                            new CreationToolEntry(Messages.AtomicEditor_5, Messages.AtomicEditor_6, new CopyFactory(
+                                            DataTypeModel.getModelByName("int")), //$NON-NLS-1$
+                                            getImage("icons/int_16.png"), //$NON-NLS-1$
+                                            getImage("icons/int_32.png")); //$NON-NLS-1$
             addDataCreationToolEntry(intCreationEntry);
             for (Map.Entry<String, DataTypeModel> entry : DataTypeModel.getTypeEntries()) {
-                if (entry.getKey().equals("int") || entry.getKey().equals("bool")) {
+                if (entry.getKey().equals("int") || entry.getKey().equals("bool")) { //$NON-NLS-1$ //$NON-NLS-2$
                     continue;
                 }
                 CreationToolEntry creationToolEntry =
-                                new CreationToolEntry(entry.getKey(), "新建一个" + entry.getKey()
-                                                + "变量", new CopyFactory(entry.getValue()),
-                                                BIPEditor.getImage("icons/new_data_16.png"),
-                                                BIPEditor.getImage("icons/new_data_32.png"));
+                                new CreationToolEntry(entry.getKey(), Messages.AtomicEditor_12 + entry.getKey()
+                                                + Messages.AtomicEditor_13, new CopyFactory(entry.getValue()),
+                                                BIPEditor.getImage("icons/new_data_16.png"), //$NON-NLS-1$
+                                                BIPEditor.getImage("icons/new_data_32.png")); //$NON-NLS-1$
                 addDataCreationToolEntry(creationToolEntry);
                 DataTypeModel.addToolEntry(entry.getKey(), this, creationToolEntry);
             }
@@ -130,21 +131,21 @@ public class AtomicEditor extends BIPEditor {
 
     private void initPortCreationEntry() {
         CreationToolEntry ePortCreationEntry =
-                        new CreationToolEntry("ePort", "增加端口: port type ePort()", new CopyFactory(
-                                        PortTypeModel.getModelByName("ePort")),
-                                        getImage("icons/port_16.png"),
-                                        getImage("icons/port_32.png"));
+                        new CreationToolEntry("ePort", Messages.AtomicEditor_17, new CopyFactory( //$NON-NLS-1$
+                                        PortTypeModel.getModelByName("ePort")), //$NON-NLS-1$
+                                        getImage("icons/port_16.png"), //$NON-NLS-1$
+                                        getImage("icons/port_32.png")); //$NON-NLS-1$
         addPortCreationToolEntry(ePortCreationEntry);
         for (Map.Entry<String, PortTypeModel> entry : PortTypeModel.getTypeEntries()) {
-            if (entry.getKey().equals("ePort")) {
+            if (entry.getKey().equals("ePort")) { //$NON-NLS-1$
                 continue;
             }
             CreationToolEntry creationToolEntry =
-                            new CreationToolEntry(entry.getKey(), "增加端口: "
+                            new CreationToolEntry(entry.getKey(), Messages.AtomicEditor_22
                                             + entry.getValue().exportToBip(), new CopyFactory(
                                             entry.getValue()),
-                                            BIPEditor.getImage("icons/port_16.png"),
-                                            BIPEditor.getImage("icons/port_32.png"));
+                                            BIPEditor.getImage("icons/port_16.png"), //$NON-NLS-1$
+                                            BIPEditor.getImage("icons/port_32.png")); //$NON-NLS-1$
             addPortCreationToolEntry(creationToolEntry);
             PortTypeModel.addToolEntry(entry.getKey(), this, creationToolEntry);
         }
@@ -152,20 +153,20 @@ public class AtomicEditor extends BIPEditor {
 
     private void initAtomicPalette() {
         PlaceCreationToolEntry placeCreationEntry =
-                        new PlaceCreationToolEntry("状态", "新建一个状态", new SimpleFactory(
-                                        PlaceModel.class), getImage("icons/place_16.png"),
-                                        getImage("icons/place_32.png"));
+                        new PlaceCreationToolEntry(Messages.AtomicEditor_25, Messages.AtomicEditor_26, new SimpleFactory(
+                                        PlaceModel.class), getImage("icons/place_16.png"), //$NON-NLS-1$
+                                        getImage("icons/place_32.png")); //$NON-NLS-1$
 
         ConnectionCreationToolEntry connectionCreationEntry =
-                        new ConnectionCreationToolEntry("迁移", "新建一个迁移", new SimpleFactory(
+                        new ConnectionCreationToolEntry(Messages.AtomicEditor_29, Messages.AtomicEditor_30, new SimpleFactory(
                                         TransitionModel.class),
-                                        getImage("icons/transition_16.png"),
-                                        getImage("icons/transition_32.png"));
+                                        getImage("icons/transition_16.png"), //$NON-NLS-1$
+                                        getImage("icons/transition_32.png")); //$NON-NLS-1$
         getToolGroup().add(placeCreationEntry);
         getToolGroup().add(connectionCreationEntry);
 
-        dataPalette = new PaletteDrawer("变量类型");
-        portPalette = new PaletteDrawer("端口类型");
+        dataPalette = new PaletteDrawer(Messages.AtomicEditor_33);
+        portPalette = new PaletteDrawer(Messages.AtomicEditor_34);
 
         getPaletteRoot().add(dataPalette);
         getPaletteRoot().add(portPalette);
@@ -201,6 +202,10 @@ public class AtomicEditor extends BIPEditor {
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
+        action = new AlignDataAndTypeAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());        
+        
         action = new SaveComponentLibraryAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());

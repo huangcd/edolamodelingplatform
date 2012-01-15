@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.VariableSelectionDialog;
 
 @SuppressWarnings("rawtypes")
@@ -24,8 +23,8 @@ public class VariableSelectionAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("选择参数");
-        setToolTipText("选择参数");
+        setText(Messages.VariableSelectionAction_0);
+        setToolTipText(Messages.VariableSelectionAction_1);
         setId(id);
         setEnabled(false);
     }
@@ -42,20 +41,15 @@ public class VariableSelectionAction extends SelectionAction {
         if (!(part instanceof BIPEditor)) {
             return;
         }
-        BIPEditor editor = (BIPEditor) part;
-        ComponentTypeModel model = (ComponentTypeModel) editor.getModel();
-        VariableSelectionDialog dialog = new VariableSelectionDialog(shell, model, false);
+        VariableSelectionDialog dialog = new VariableSelectionDialog(shell, false);
         dialog.setBlockOnOpen(true);
         if (Dialog.OK == dialog.open()) {
             MessageBox box =
-                            new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_INFORMATION
-                                            | SWT.OK);
-            box.setMessage(dialog.getVariableName());
-            box.setText("Name");
+                            new MessageBox(Display.getCurrent().getActiveShell(),
+                                            SWT.ICON_INFORMATION | SWT.OK);
+            box.setMessage(dialog.getData());
+            box.setText(Messages.VariableSelectionAction_2);
             box.open();
-            
-            model.checkExistenceByName(dialog.getVariableName());
-
         }
     }
 }

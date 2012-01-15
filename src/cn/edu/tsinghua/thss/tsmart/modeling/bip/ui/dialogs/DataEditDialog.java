@@ -33,7 +33,7 @@ public class DataEditDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public DataEditDialog(Shell parentShell, DataModel data) {
-        super(parentShell, "Edit Data Model");
+        super(parentShell, Messages.DataEditDialog_0);
         this.instance = data;
         this.container = (IDataContainer) instance.getParent();
     }
@@ -50,15 +50,15 @@ public class DataEditDialog extends AbstractEditDialog {
 
         Label labelType = new Label(container, SWT.NONE);
         labelType.setBounds(15, 5, 40, 18);
-        labelType.setText("type");
+        labelType.setText(Messages.DataEditDialog_1);
 
         Label labelName = new Label(container, SWT.NONE);
         labelName.setBounds(80, 5, 40, 18);
-        labelName.setText("name");
+        labelName.setText(Messages.DataEditDialog_2);
 
         Label labelValue = new Label(container, SWT.NONE);
         labelValue.setBounds(216, 5, 40, 18);
-        labelValue.setText("value");
+        labelValue.setText(Messages.DataEditDialog_3);
 
         labelTypeName = new Label(container, SWT.NONE);
         labelTypeName.setBounds(15, 32, 40, 18);
@@ -123,18 +123,18 @@ public class DataEditDialog extends AbstractEditDialog {
     @Override
     protected boolean validateUserInput() {
         if (container.isNewNameAlreadyExistsInParent(instance, textName.getText().trim())) {
-            labelError.setText("构件中存在相同名字的变量");
+            labelError.setText(Messages.DataEditDialog_4);
             return false;
-        } else if (labelTypeName.getText().toLowerCase().trim().equals("bool")
-                        && !textValue.getText().toLowerCase().trim().equals("true")
-                        && !textValue.getText().toLowerCase().trim().equals("false")) {
-            labelError.setText("bool类型的值只能是true或者false");
+        } else if (labelTypeName.getText().toLowerCase().trim().equals("bool") //$NON-NLS-1$
+                        && !textValue.getText().toLowerCase().trim().equals("true") //$NON-NLS-1$
+                        && !textValue.getText().toLowerCase().trim().equals("false")) { //$NON-NLS-1$
+            labelError.setText(Messages.DataEditDialog_8);
             return false;
-        } else if (labelTypeName.getText().toLowerCase().trim().equals("int")) {
+        } else if (labelTypeName.getText().toLowerCase().trim().equals("int")) { //$NON-NLS-1$
             try {
                 Integer.parseInt(textValue.getText().toLowerCase().trim());
             } catch (NumberFormatException e) {
-                labelError.setText("int类型的值必须是整数");
+                labelError.setText(Messages.DataEditDialog_10);
                 return false;
             }
         }

@@ -42,7 +42,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
     private HashMap<String, String> portMap;
 
     public PortTypeManageDialog(Shell parentShell) {
-        super(parentShell, "端口类型管理");
+        super(parentShell, Messages.PortTypeManageDialog_0);
         portMap = new HashMap<String, String>();
     }
 
@@ -78,7 +78,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
             }
         });
         buttonDelete.setBounds(265, 10, 86, 27);
-        buttonDelete.setText("\u5220\u9664\u9009\u5B9A\u7AEF\u53E3");
+        buttonDelete.setText(Messages.PortTypeManageDialog_1);
 
         labelError = new Label(container, SWT.NONE);
         labelError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
@@ -100,15 +100,15 @@ public class PortTypeManageDialog extends AbstractEditDialog {
                 addType();
             }
         });
-        buttonAdd.setText("\u589E\u52A0\u7AEF\u53E3");
+        buttonAdd.setText(Messages.PortTypeManageDialog_2);
 
         labelPortArgs = new Label(composite, SWT.NONE);
         labelPortArgs.setBounds(10, 71, 141, 17);
-        labelPortArgs.setText("\u7AEF\u53E3\u53C2\u6570\uFF1A");
+        labelPortArgs.setText(Messages.PortTypeManageDialog_3);
 
         labelName = new Label(composite, SWT.NONE);
         labelName.setBounds(10, 10, 141, 17);
-        labelName.setText("\u7AEF\u53E3\u7C7B\u578B\u540D\u79F0\uFF1A");
+        labelName.setText(Messages.PortTypeManageDialog_4);
 
         textName = new Text(composite, SWT.BORDER);
         textName.setBounds(10, 33, 141, 23);
@@ -129,7 +129,7 @@ public class PortTypeManageDialog extends AbstractEditDialog {
         String[] selections = listPortTypes.getSelection();
         boolean containsDefaultType = false;
         for (String selection : selections) {
-            if (selection.equals("ePort")) {
+            if (selection.equals("ePort")) { //$NON-NLS-1$
                 containsDefaultType = true;
                 continue;
             }
@@ -140,49 +140,49 @@ public class PortTypeManageDialog extends AbstractEditDialog {
                 MessageUtil.ShowDeletePortTypeErrorDialog(selection);
         }
         if (containsDefaultType) {
-            handleError("内置类型不能被删除");
+            handleError(Messages.PortTypeManageDialog_6);
         }
     }
 
     private void addType() {
         String newType = textName.getText().trim();
         if (!isIdentifier(newType)) {
-            handleError(MessageFormat.format("端口类型名\"{0}\"不合法", newType));
+            handleError(MessageFormat.format(Messages.PortTypeManageDialog_7, newType));
             return;
         }
         if (newType.isEmpty()) {
-            handleError("添加的类型名字不能为空");
+            handleError(Messages.PortTypeManageDialog_8);
             return;
         }
         String[] items = listPortTypes.getItems();
         for (String type : items) {
             if (type.equals(newType)) {
-                handleError("添加的类型已存在");
+                handleError(Messages.PortTypeManageDialog_9);
                 return;
             }
         }
         String args = textArgs.getText().trim();
         HashSet<String> names = new HashSet<String>();
-        if (!args.endsWith(",")) {
+        if (!args.endsWith(",")) { //$NON-NLS-1$
             Scanner scan = new Scanner(args);
-            scan.useDelimiter(",");
+            scan.useDelimiter(","); //$NON-NLS-1$
             ArrayList<String> arguments = new ArrayList<String>();
             while (scan.hasNext()) {
                 String argument = scan.next().trim();
-                String[] temp = argument.split("\\s+");
+                String[] temp = argument.split("\\s+"); //$NON-NLS-1$
                 if (temp.length != 2) {
-                    handleError("参数类型应该写成 type name, type name 形式");
+                    handleError(Messages.PortTypeManageDialog_13);
                     return;
                 }
                 String type = temp[0].trim();
                 String name = temp[1].trim();
                 if (names.contains(name)) {
-                    handleError("存在同名的参数" + name);
+                    handleError(Messages.PortTypeManageDialog_14 + name);
                     return;
                 }
                 names.add(name);
                 if (!DataTypeModel.getTypes().contains(type)) {
-                    handleError(MessageFormat.format("参数类型\"{0}\"不存在", type));
+                    handleError(MessageFormat.format(Messages.PortTypeManageDialog_15, type));
                     return;
                 }
                 arguments.add(argument);
@@ -190,8 +190,8 @@ public class PortTypeManageDialog extends AbstractEditDialog {
         }
         portMap.put(newType, args);
         listPortTypes.add(newType);
-        textArgs.setText("");
-        textName.setText("");
+        textArgs.setText(""); //$NON-NLS-1$
+        textName.setText(""); //$NON-NLS-1$
     }
 
     @Override

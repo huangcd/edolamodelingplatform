@@ -4,6 +4,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
@@ -41,19 +42,19 @@ public class BIPModelEditorInput implements IEditorInput {
             return null;
         }
         if (model instanceof AtomicTypeModel) {
-            return BIPEditor.getImage("icons/atomic_16.png");
+            return BIPEditor.getImage("icons/atomic_16.png"); //$NON-NLS-1$
         } else if (model instanceof CompoundTypeModel) {
-            return BIPEditor.getImage("icons/compound_16.png");
+            return BIPEditor.getImage("icons/compound_16.png"); //$NON-NLS-1$
         }
         return null;
     }
 
     @Override
     public String getName() {
-        if (model == null || model.getName().equals(model.getStringID())) {
-            return "*untitled";
+        if (model == null || model.getName().equals(IModel.UNNAMED_NAME)) {
+            return Messages.BIPModelEditorInput_1;
         } else if (getModel().getParent() != null) {
-            return getModel().getParent().getName() + "." + model.getName();
+            return getModel().getParent().getName() + "." + model.getName(); //$NON-NLS-1$
         } else {
             return model.getName();
         }

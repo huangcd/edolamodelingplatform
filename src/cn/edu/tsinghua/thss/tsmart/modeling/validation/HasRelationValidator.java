@@ -1,7 +1,5 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.validation;
 
-import org.eclipse.core.runtime.CoreException;
-
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.VerificationError;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -41,11 +39,7 @@ public class HasRelationValidator implements Validator {
                                                 rule.getMax() == Integer.MAX_VALUE ? "+" : String
                                                                 .format("%d", rule.getMax()), rule
                                                                 .getSecondEntity());
-                try {
-                    MessageUtil.addProblemWarningMessage(errMessage);
-                } catch (CoreException e) {
-                    e.printStackTrace();
-                }
+                MessageUtil.addProblemWarningMessage(errMessage);
 
                 return false;
             }

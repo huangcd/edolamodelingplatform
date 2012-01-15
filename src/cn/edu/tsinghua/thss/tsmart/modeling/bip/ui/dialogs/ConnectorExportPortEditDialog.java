@@ -29,7 +29,7 @@ public class ConnectorExportPortEditDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public ConnectorExportPortEditDialog(Shell parentShell, ConnectorTypeModel connector) {
-        super(parentShell, "\u7ED1\u5B9A\u6570\u636E");
+        super(parentShell, Messages.ConnectorExportPortEditDialog_0);
         this.connector = connector;
         this.port = connector.getPort();
     }
@@ -51,11 +51,11 @@ public class ConnectorExportPortEditDialog extends AbstractEditDialog {
 
         TableColumn tableColumn = new TableColumn(table, SWT.CENTER);
         tableColumn.setWidth(163);
-        tableColumn.setText("\u7AEF\u53E3\u53C2\u6570");
+        tableColumn.setText(Messages.ConnectorExportPortEditDialog_1);
 
         TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
         tblclmnNewColumn.setWidth(152);
-        tblclmnNewColumn.setText("\u7ED1\u5B9A\u6570\u636E");
+        tblclmnNewColumn.setText(Messages.ConnectorExportPortEditDialog_2);
 
         initValues();
         return container;

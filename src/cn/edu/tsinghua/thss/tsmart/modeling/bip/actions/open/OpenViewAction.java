@@ -10,12 +10,12 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 public class OpenViewAction extends Action implements ISelectionListener, IWorkbenchAction {
     private final IWorkbenchWindow window;
     public static final String     ID      = OpenViewAction.class.getCanonicalName();
-    private final String           outline = "org.eclipse.ui.views.ContentOutline";
+    private final String           outline = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 
     public OpenViewAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("´ò¿ªÊÓÍ¼");
+        setText(Messages.OpenViewAction_1);
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -25,11 +25,12 @@ public class OpenViewAction extends Action implements ISelectionListener, IWorkb
     }
 
     @Override
-    public void selectionChanged(IWorkbenchPart part, ISelection selection) {      
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 
     }
+
     @Override
     public void run() {
-        
+
     }
 }

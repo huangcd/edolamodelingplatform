@@ -16,8 +16,8 @@ public class CloseAllAction extends Action implements ISelectionListener, IWorkb
     public CloseAllAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("关闭全部");
-        setToolTipText("关闭全部");
+        setText(Messages.CloseAllAction_0);
+        setToolTipText(Messages.CloseAllAction_1);
         window.getSelectionService().addSelectionListener(this);
     }
 

@@ -20,26 +20,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.equinox.p2.console;bundle-version="1.0.300",
  org.eclipse.equinox.p2.core;bundle-version="2.1.0",
  org.eclipse.ui.console;bundle-version="3.5.100",
- org.eclipse.ui.navigator;bundle-version="3.5.100"
+ org.eclipse.ui.navigator;bundle-version="3.5.100",
+ org.eclipse.ui.navigator.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  swing2swt.jar,
  swt-grouplayout.jar
-Export-Package: cn.edu.tsinghua.thss.tsmart.editors.xml;
-  uses:="org.eclipse.jface.text,
-   org.eclipse.core.runtime,
-   org.eclipse.jface.text.source,
-   org.eclipse.jface.resource,
-   org.eclipse.ui,
-   org.eclipse.ui.actions,
-   org.eclipse.jface.text.rules,
-   org.eclipse.jface.action,
-   org.eclipse.jface.text.presentation,
-   org.eclipse.jface.viewers,
-   org.eclipse.swt.graphics,
-   org.eclipse.ui.editors.text",
- cn.edu.tsinghua.thss.tsmart.modeling.bip.actions;
+Export-Package: cn.edu.tsinghua.thss.tsmart.modeling.bip.actions;
   uses:="org.eclipse.jface.action,
    org.eclipse.gef.ui.actions,
    org.eclipse.ui,

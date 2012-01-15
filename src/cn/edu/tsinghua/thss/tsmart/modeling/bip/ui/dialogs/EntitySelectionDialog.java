@@ -36,8 +36,8 @@ public class EntitySelectionDialog extends AbstractEditDialog
      * @param parentShell
      */
     public EntitySelectionDialog(Shell parentShell, ArrayList<String> entityNames) {
-        super(parentShell, "选择参数");
-        setTitle("\u6807\u6CE8\u5B9E\u4F53");
+        super(parentShell, Messages.EntitySelectionDialog_0);
+        setTitle(Messages.EntitySelectionDialog_1);
         this.entityNames = new ArrayList<String>(entityNames);
     }
 
@@ -85,7 +85,7 @@ public class EntitySelectionDialog extends AbstractEditDialog
         fd_newEntity.right = new FormAttachment(100, -10);
         fd_newEntity.top = new FormAttachment(list, -1, SWT.TOP);
         newEntity.setLayoutData(fd_newEntity);
-        newEntity.setText("\u6DFB\u52A0\u5B9E\u4F53");
+        newEntity.setText(Messages.EntitySelectionDialog_2);
 
         Button deleteEntity = new Button(container, SWT.NONE);
         deleteEntity.addSelectionListener(new SelectionAdapter() {
@@ -93,7 +93,7 @@ public class EntitySelectionDialog extends AbstractEditDialog
             public void widgetSelected(SelectionEvent e) {
                 String[] selections = list.getSelection();
                 if (selections == null || selections.length == 0) {
-                    handleError("请选择实体。");
+                    handleError(Messages.EntitySelectionDialog_3);
                     return;
                 }
                 for (String selection : selections) {
@@ -104,7 +104,7 @@ public class EntitySelectionDialog extends AbstractEditDialog
         FormData fd_deleteEntity = new FormData();
         fd_deleteEntity.right = new FormAttachment(labelErr, 0, SWT.RIGHT);
         deleteEntity.setLayoutData(fd_deleteEntity);
-        deleteEntity.setText("\u5220\u9664\u5B9E\u4F53");
+        deleteEntity.setText(Messages.EntitySelectionDialog_4);
 
         Button deleteAll = new Button(container, SWT.NONE);
         deleteAll.addSelectionListener(new SelectionAdapter() {
@@ -119,7 +119,7 @@ public class EntitySelectionDialog extends AbstractEditDialog
         fd_deleteAll.top = new FormAttachment(0, 76);
         fd_deleteAll.right = new FormAttachment(labelErr, 0, SWT.RIGHT);
         deleteAll.setLayoutData(fd_deleteAll);
-        deleteAll.setText("\u5220\u9664\u5168\u90E8\u5B9E\u4F53");
+        deleteAll.setText(Messages.EntitySelectionDialog_5);
 
         initValues();
         return container;
@@ -132,8 +132,8 @@ public class EntitySelectionDialog extends AbstractEditDialog
      */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, "\u786E\u5B9A", true);
-        createButton(parent, IDialogConstants.CANCEL_ID, "\u53D6\u6D88", false);
+        createButton(parent, IDialogConstants.OK_ID, Messages.EntitySelectionDialog_6, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.EntitySelectionDialog_7, false);
     }
 
     /**

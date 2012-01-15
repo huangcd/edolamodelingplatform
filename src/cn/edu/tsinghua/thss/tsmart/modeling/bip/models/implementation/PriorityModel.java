@@ -28,13 +28,29 @@ public class PriorityModel<Parent extends IContainer>
 
     @Override
     public String exportToBip() {
-        if (condition.getGuard().equals("true")) {
-            return String.format("priority %s %s < %s", getName(), getLeftPort().getName(),
-                            getRightPort().getName());
-        } else {
-            return String.format("priority %s %s -> %s < %s", getName(), getCondition().getGuard(),
-                            getLeftPort().getName(), getRightPort().getName());
+        if (left instanceof ConnectorModel) {
+            if (condition.getGuard().equals("true")) {
+
+                return String.format("priority %s _%s < _%s", getName(), getLeftPort().getName(),
+                                getRightPort().getName());
+            } else {
+                return String.format("priority %s %s -> _%s < _%s", getName(), getCondition()
+                                .getGuard(), getLeftPort().getName(), getRightPort().getName());
+            }
         }
+        
+        if (left instanceof PortModel) {
+            if (condition.getGuard().equals("true")) {
+
+                return String.format("priority %s %s < %s", getName(), getLeftPort().getName(),
+                                getRightPort().getName());
+            } else {
+                return String.format("priority %s %s -> %s < %s", getName(), getCondition()
+                                .getGuard(), getLeftPort().getName(), getRightPort().getName());
+            }
+        }
+
+        return "";
     }
 
     public IModel getLeftPort() {

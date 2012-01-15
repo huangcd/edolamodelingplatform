@@ -1,23 +1,22 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.OpenDialogAction;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CodeGenProjectModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.LibraryModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.modelchecking.ModelCheckingManager;
+import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public class ValidateModelCheckingAction extends OpenDialogAction {
 
     public static final String ID = ValidateModelCheckingAction.class.getCanonicalName();
 
     public ValidateModelCheckingAction(IWorkbenchWindow window) {
-        super(window, ID, "验证模型是否满足要求", "验证模型是否满足要求", null);
+        super(window, ID, Messages.ValidateModelCheckingAction_0,
+                        Messages.ValidateModelCheckingAction_1, null);
     }
 
     @Override
@@ -26,17 +25,31 @@ public class ValidateModelCheckingAction extends OpenDialogAction {
     }
 
     public void run() {
-        // TODO 验证模型是否满足要求
 
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-        IWorkbenchPage page = window.getActivePage();
-        IEditorPart editor = page.getActiveEditor();
-        if (editor instanceof CompoundEditor) {
-            CompoundTypeModel model = (CompoundTypeModel) ((CompoundEditor) editor).getModel();
-            // 如果不通过验证，不能导出模型
+        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
 
-            MessageUtil.ShowErrorDialog("模型检测模型验证", "Info");
+        if (topModel instanceof LibraryModel) {
+            return;
         }
+        if (!(topModel instanceof CodeGenProjectModel)) {
+            try {
+                throw new Exception("something seems wrong");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return;
+        }
+        CodeGenProjectModel cgpm = (CodeGenProjectModel) topModel;
+
+        cgpm.getStartupModel().validateFull();
+
+        new Thread() {
+            public void run() {
+                ModelCheckingManager mcm = new ModelCheckingManager();
+                mcm.doChecking(true, "");//$NON-NLS-1$
+            }
+        }.start();
+
+
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 /**
@@ -17,7 +18,9 @@ import org.simpleframework.xml.Root;
 @Root
 public class PlaceModel extends BaseInstanceModel<PlaceModel, BaseTypeModel, AtomicTypeModel> {
     private static final long     serialVersionUID = -6677684634106337453L;
+    @ElementList
     private List<TransitionModel> sourceConnections;
+    @ElementList
     private List<TransitionModel> targetConnections;
 
     @Override

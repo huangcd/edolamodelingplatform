@@ -15,6 +15,9 @@ import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.UnboundedException;
@@ -34,8 +37,11 @@ public class ConnectorModel
                 extends BaseInstanceModel<ConnectorModel, ConnectorTypeModel, CompoundTypeModel> {
 
     private static final long     serialVersionUID = -8214893138715118215L;
+    @Attribute
     private boolean               export;
+    @ElementList
     private List<ConnectionModel> sourceConnections;
+    @Element
     private RGB                   lineColor        = ColorConstants.black.getRGB();
 
     protected ConnectorModel() {
@@ -81,13 +87,7 @@ public class ConnectorModel
         PortTypeModel oldPort = entry.getModel();
         // bound
         entry.bound((PortTypeModel) argument.getType(), getType());
-        // validate
-        // ÐèÒªÇå¿Õerr box
-        try {
-            MessageUtil.clearProblemMessage();
-        } catch (CoreException e) {
-            e.printStackTrace();
-        }
+        MessageUtil.clearProblemMessage();
 
         boolean result = validateOnTheFly();
         // restore
@@ -132,7 +132,7 @@ public class ConnectorModel
                 if (!entry.isBounded())
                     throw new UnboundedException(getType().getName(), getName(), entry.getIndex());
                 PortModel port = (PortModel) entry.getModel().getInstance();
-                buffer.append(port.getPortStringAsConnectorAgument());
+                buffer.append(port.getPortStringAsConnectorAgument()).append(", ");
             }
             buffer.setLength(buffer.length() - 2);
         }
@@ -166,7 +166,7 @@ public class ConnectorModel
                                 && ((ConnectorTypeModel) port.getParent()).checkOnlyHardwarePorts()) {
                     continue;
                 }
-                buffer.append(port.getPortStringAsConnectorAgument());
+                buffer.append(port.getPortStringAsConnectorAgument()).append(", ");
             }
             buffer.setLength(buffer.length() - 2);
         }
@@ -175,6 +175,9 @@ public class ConnectorModel
 
     @Override
     public ConnectorModel setParent(CompoundTypeModel parent) {
+        if (this.parent == parent) {
+            return this;
+        }
         this.parent = parent;
         addConnections();
         return this;
@@ -205,6 +208,28 @@ public class ConnectorModel
             }
         }
         return false;
+    }
+
+    public void reverseConnections(ConnectionModel model) {
+        int index = model.getArgumentIndex();
+        Point center = getPositionConstraint().getCenter();
+        List<ArgumentEntry> arguments = getType().getArgumentEntries();
+        int size = arguments.size();
+        final int length = 100;
+        double degree = 2 * Math.PI / size;
+        double alpha = degree * index;
+        Point point =
+                        new PrecisionPoint(center.x + length * Math.cos(alpha) - BULLET_RADIUS,
+                                        center.y + length * Math.sin(alpha) - BULLET_RADIUS);
+        ArgumentEntry entry = getType().getArgumentEntries().get(index);
+        InvisibleBulletModel bullet = new InvisibleBulletModel();
+        bullet.setPositionConstraint(new Rectangle(point, new Dimension(-1, -1)));
+        getParent().addChild(bullet);
+
+        model.setSource(this);
+        model.setTarget(bullet);
+        model.attachSource();
+        model.attachTarget();
     }
 
     /**

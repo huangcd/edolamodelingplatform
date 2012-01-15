@@ -38,7 +38,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
 
     public InteractionEditDialog(Shell shell, ConnectorTypeModel connector,
                     InteractionModel interaction) {
-        super(shell, "编辑连接子");
+        super(shell, Messages.InteractionEditDialog_0);
         this.connector = connector;
         this.interaction = interaction;
         this.isCreate = interaction == null;
@@ -56,7 +56,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
 
         Group group = new Group(container, SWT.NONE);
         group.setBounds(13, 10, 236, 250);
-        group.setText("\u9009\u62E9\u4EA4\u4E92\u7AEF\u53E3");
+        group.setText(Messages.InteractionEditDialog_1);
 
         ScrolledComposite scrolledComposite =
                         new ScrolledComposite(group, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -94,7 +94,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
             }
         });
         buttonAdd.setBounds(103, 40, 30, 27);
-        buttonAdd.setText("\u2192");
+        buttonAdd.setText("\u2192"); //$NON-NLS-1$
 
         buttonRemove = new Button(group, SWT.NONE);
         buttonRemove.addSelectionListener(new SelectionAdapter() {
@@ -104,11 +104,11 @@ public class InteractionEditDialog extends AbstractEditDialog {
             }
         });
         buttonRemove.setBounds(103, 167, 30, 27);
-        buttonRemove.setText("\u2190");
+        buttonRemove.setText("\u2190"); //$NON-NLS-1$
 
         label = new Label(container, SWT.NONE);
         label.setBounds(272, 10, 61, 17);
-        label.setText("\u4E0A\u52A8\u4F5C");
+        label.setText(Messages.InteractionEditDialog_4);
 
         ScrolledComposite scrolledComposite_2 =
                         new ScrolledComposite(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -117,13 +117,13 @@ public class InteractionEditDialog extends AbstractEditDialog {
         scrolledComposite_2.setBounds(272, 30, 260, 121);
 
         textUpAction = new StyledText(scrolledComposite_2, SWT.BORDER);
-        textUpAction.setText("// up action");
+        textUpAction.setText(Messages.InteractionEditDialog_5);
         scrolledComposite_2.setContent(textUpAction);
         scrolledComposite_2.setMinSize(textUpAction.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         scrolledComposite_2.setMinSize(new Point(73, 21));
 
         label_1 = new Label(container, SWT.NONE);
-        label_1.setText("\u4E0B\u52A8\u4F5C");
+        label_1.setText(Messages.InteractionEditDialog_6);
         label_1.setBounds(272, 157, 61, 17);
 
         ScrolledComposite scrolledComposite_3 =
@@ -133,7 +133,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
         scrolledComposite_3.setBounds(272, 177, 260, 123);
 
         textDownAction = new StyledText(scrolledComposite_3, SWT.BORDER);
-        textDownAction.setText("// down action");
+        textDownAction.setText(Messages.InteractionEditDialog_7);
         scrolledComposite_3.setContent(textDownAction);
         scrolledComposite_3.setMinSize(textDownAction.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
@@ -158,7 +158,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
     protected void removeArgument() {
         String[] arguments = listInteractArguments.getSelection();
         if (arguments.length == 0) {
-            handleError("没有选择任何参数");
+            handleError(Messages.InteractionEditDialog_8);
             return;
         }
         for (String argument : arguments) {
@@ -170,7 +170,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
     protected void addArugment() {
         String[] arguments = listArguments.getSelection();
         if (arguments.length == 0) {
-            handleError("没有选择任何参数");
+            handleError(Messages.InteractionEditDialog_9);
             return;
         }
         for (String argument : arguments) {
@@ -228,7 +228,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
     @Override
     protected boolean validateUserInput() {
         if (listInteractArguments.getItemCount() == 0) {
-            handleError("参与交互的端口不能为空");
+            handleError(Messages.InteractionEditDialog_10);
             return false;
         }
         StringBuilder buffer = new StringBuilder();
@@ -243,7 +243,7 @@ public class InteractionEditDialog extends AbstractEditDialog {
         String newInteractionName = buffer.toString().trim();
         if ((interaction == null || !interaction.getInteractionString().equals(newInteractionName))
                         && connector.interactionNameExistsInConnector(newInteractionName)) {
-            handleError("交互已经存在");
+            handleError(Messages.InteractionEditDialog_11);
             return false;
         }
         return true;

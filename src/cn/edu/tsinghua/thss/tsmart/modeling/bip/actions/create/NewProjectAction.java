@@ -17,7 +17,7 @@ public class NewProjectAction extends OpenDialogAction {
     private CreateWizardData   data;
 
     public NewProjectAction(IWorkbenchWindow window) {
-        super(window, ID, "项目", "新建一个Edola项目", null);
+        super(window, ID, Messages.NewProjectAction_0, Messages.NewProjectAction_1, null);
     }
 
     @Override
@@ -39,5 +39,6 @@ public class NewProjectAction extends OpenDialogAction {
             project.openStartupModel();
             // TODO 切换到项目模式（初始化项目视图）
         }
+        
     }
 }

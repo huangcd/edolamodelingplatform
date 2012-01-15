@@ -37,12 +37,12 @@ public class NewProjectSelectBaselineWizardPage extends WizardPage {
      * Create the wizard.
      */
     public NewProjectSelectBaselineWizardPage(CreateWizardData data) {
-        super("select baseline");
-        setImageDescriptor(ResourceManager.getPluginImageDescriptor("EdolaModelingPlatform",
-                        "icons/product_wiz.gif"));
+        super(Messages.NewProjectSelectBaselineWizardPage_0);
+        setImageDescriptor(ResourceManager.getPluginImageDescriptor("EdolaModelingPlatform", //$NON-NLS-1$
+                        "icons/product_wiz.gif")); //$NON-NLS-1$
         setPageComplete(false);
-        setTitle("\u9009\u62E9\u57FA\u51C6\u7EBF");
-        setDescription("\u9009\u62E9\u6307\u5BFC\u9879\u76EE\u7684\u57FA\u51C6\u7EBF\u53CA\u6784\u4EF6\u5E93");
+        setTitle(Messages.NewProjectSelectBaselineWizardPage_3);
+        setDescription(Messages.NewProjectSelectBaselineWizardPage_4);
         this.data = data;
         loadLibraries();
     }
@@ -93,8 +93,8 @@ public class NewProjectSelectBaselineWizardPage extends WizardPage {
         SashForm sashForm = new SashForm(container, SWT.NONE);
 
         Group groupBaseline = new Group(sashForm, SWT.NONE);
-        groupBaseline.setText("\u9009\u62E9\u57FA\u51C6\u7EBF");
-        groupBaseline.setToolTipText("");
+        groupBaseline.setText(Messages.NewProjectSelectBaselineWizardPage_5);
+        groupBaseline.setToolTipText(""); //$NON-NLS-1$
         groupBaseline.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         ScrolledComposite scrolledCompositeBaseline =
@@ -114,7 +114,7 @@ public class NewProjectSelectBaselineWizardPage extends WizardPage {
         scrolledCompositeBaseline.setMinSize(listBaselines.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
         Group groupLibrary = new Group(sashForm, SWT.NONE);
-        groupLibrary.setText("\u9009\u62E9\u6784\u4EF6\u5E93");
+        groupLibrary.setText(Messages.NewProjectSelectBaselineWizardPage_7);
         groupLibrary.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         ScrolledComposite scrolledCompositeLibrary =

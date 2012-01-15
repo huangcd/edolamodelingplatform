@@ -26,10 +26,10 @@ public class ModelingSettingDialog extends AbstractEditDialog {
     private Label      labelError;
     private List       listTypes;
     private StyledText styledTextPreview;
-    private Button buttonDelete;
+    private Button     buttonDelete;
 
     public ModelingSettingDialog(Shell parentShell) {
-        super(parentShell, "\u8FDE\u63A5\u5B50\u7C7B\u578B\u7BA1\u7406");
+        super(parentShell, Messages.ModelingSettingDialog_0);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ModelingSettingDialog extends AbstractEditDialog {
         sashForm.setBounds(10, 10, 717, 329);
 
         Group groupSelection = new Group(sashForm, SWT.NONE);
-        groupSelection.setText("\u9009\u62E9");
+        groupSelection.setText(Messages.ModelingSettingDialog_1);
         groupSelection.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         SashForm sashFormSelection = new SashForm(groupSelection, SWT.VERTICAL);
@@ -72,31 +72,28 @@ public class ModelingSettingDialog extends AbstractEditDialog {
         Button buttonCreate = new Button(sashFormEdit, SWT.NONE);
         buttonCreate.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-            }
+            public void widgetSelected(SelectionEvent e) {}
         });
-        buttonCreate.setText("\u589E\u52A0\u8FDE\u63A5\u5B50");
+        buttonCreate.setText(Messages.ModelingSettingDialog_2);
 
         Button buttonEdit = new Button(sashFormEdit, SWT.NONE);
         buttonEdit.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-            }
+            public void widgetSelected(SelectionEvent e) {}
         });
-        buttonEdit.setText("\u7F16\u8F91\u8FDE\u63A5\u5B50");
+        buttonEdit.setText(Messages.ModelingSettingDialog_3);
 
         buttonDelete = new Button(sashFormEdit, SWT.NONE);
         buttonDelete.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-            }
+            public void widgetSelected(SelectionEvent e) {}
         });
-        buttonDelete.setText("\u5220\u9664\u8FDE\u63A5\u5B50");
+        buttonDelete.setText(Messages.ModelingSettingDialog_4);
         sashFormEdit.setWeights(new int[] {1, 1, 1});
         sashFormSelection.setWeights(new int[] {10, 1});
 
         Group groupPreview = new Group(sashForm, SWT.NONE);
-        groupPreview.setText("\u9884\u89C8");
+        groupPreview.setText(Messages.ModelingSettingDialog_5);
         groupPreview.setLayout(new FillLayout(SWT.HORIZONTAL));
 
 
@@ -112,6 +109,7 @@ public class ModelingSettingDialog extends AbstractEditDialog {
         initValues();
         return container;
     }
+
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);

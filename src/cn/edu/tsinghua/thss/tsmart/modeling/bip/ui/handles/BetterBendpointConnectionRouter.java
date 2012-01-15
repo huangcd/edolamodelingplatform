@@ -11,6 +11,9 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.PlaceEditPart.PlaceFigure;
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BetterBendpointConnectionRouter extends BendpointConnectionRouter {
     private static final PrecisionPoint A_POINT = new PrecisionPoint();
@@ -26,7 +29,12 @@ public class BetterBendpointConnectionRouter extends BendpointConnectionRouter {
                 bendpoints = new ArrayList<Bendpoint>();
             }
             if (bendpoints.isEmpty()) {
-                A_POINT.setLocation(conn.getSourceAnchor().getReferencePoint());
+                try {
+                    PlaceModel model = ((PlaceFigure) conn.getSourceAnchor().getOwner()).getModel();
+                    A_POINT.setLocation(model.getPositionConstraint().getCenter());
+                } catch (Exception ex) {
+                    A_POINT.setLocation(conn.getSourceAnchor().getReferencePoint());
+                }
                 bezier(A_POINT.getCopy(), new Point(A_POINT.x - 40, A_POINT.y + 40), new Point(
                                 A_POINT.x + 40, A_POINT.y + 40), A_POINT.getCopy(), bendpoints, 3);
             }

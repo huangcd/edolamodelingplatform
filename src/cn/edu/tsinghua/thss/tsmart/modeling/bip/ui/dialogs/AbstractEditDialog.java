@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.Shell;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 public abstract class AbstractEditDialog extends Dialog {
-    private String               title      = "{YOU NEED TO SET TITLE FIRST}";
+    private String               title      = "{YOU NEED TO SET TITLE FIRST}"; //$NON-NLS-1$
     protected GlobalProperties   properties = GlobalProperties.getInstance();
-    private static final Pattern identifier = Pattern.compile("[\\w&&[^0-9]]\\w*");
+    private static final Pattern identifier = Pattern.compile("[\\w&&[^0-9]]\\w*"); //$NON-NLS-1$
 
     protected AbstractEditDialog(Shell shell, String title) {
         super(shell);
@@ -62,9 +62,19 @@ public abstract class AbstractEditDialog extends Dialog {
             return;
         }
         getErrorLabel().setForeground(ColorConstants.red);
-        getErrorLabel().setText(message);
+        String txt=message;;
+        //txt=getErrorLabel().getText()+"\n"+txt;
+        getErrorLabel().setText(txt);
     }
 
+    protected void clearError() {
+        if (getErrorLabel() == null) {            
+            return;
+        }
+        getErrorLabel().setForeground(ColorConstants.red);
+        getErrorLabel().setText(""); //$NON-NLS-1$
+    }
+    
     @Override
     protected void okPressed() {
         if (!validateUserInput()) {

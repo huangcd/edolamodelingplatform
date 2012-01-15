@@ -31,8 +31,8 @@ public class SaveComponentTypeAction extends SelectionAction {
     @Override
     protected void init() {
         super.init();
-        setText("保存构件");
-        setToolTipText("将当前构件保存到文件");
+        setText(Messages.SaveComponentTypeAction_0);
+        setToolTipText(Messages.SaveComponentTypeAction_1);
         setId(id);
         setEnabled(false);
     }
@@ -53,9 +53,9 @@ public class SaveComponentTypeAction extends SelectionAction {
         IModel model = editor.getModel();
         FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         if (model instanceof AtomicTypeModel) {
-            dialog.setFilterExtensions(new String[] {"*.edolaa"});
+            dialog.setFilterExtensions(new String[] {"*.edolaa"}); //$NON-NLS-1$
         } else if (model instanceof CompoundTypeModel) {
-            dialog.setFilterExtensions(new String[] {"*.edolam"});
+            dialog.setFilterExtensions(new String[] {"*.edolam"}); //$NON-NLS-1$
         } else {
             return;
         }
@@ -66,8 +66,8 @@ public class SaveComponentTypeAction extends SelectionAction {
         File file = new File(path);
         if (file.exists()) {
             MessageDialog overwriteDialog =
-                            new MessageDialog(shell, "文件已存在", Display.getCurrent().getSystemImage(
-                                            SWT.ICON_WARNING), "文件已存在，是否覆盖?",
+                            new MessageDialog(shell, Messages.SaveComponentTypeAction_4, Display.getCurrent().getSystemImage(
+                                            SWT.ICON_WARNING), Messages.SaveComponentTypeAction_5,
                                             MessageDialog.WARNING, new String[] {
                                                             IDialogConstants.YES_LABEL,
                                                             IDialogConstants.NO_LABEL}, 1);

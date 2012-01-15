@@ -63,12 +63,12 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
      * @wbp.parser.constructor
      */
     public ConnectorTypeEditDialog(Shell parentShell) {
-        super(parentShell, "创建连接子");
+        super(parentShell, Messages.ConnectorTypeEditDialog_0);
         connector = new ConnectorTypeModel();
     }
 
     public ConnectorTypeEditDialog(Shell parentShell, ConnectorTypeModel connector) {
-        super(parentShell, "创建连接子");
+        super(parentShell, Messages.ConnectorTypeEditDialog_1);
         this.connector = connector;
     }
 
@@ -84,20 +84,20 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
         Label lblNewLabel_1 = new Label(container, SWT.RIGHT);
         lblNewLabel_1.setBounds(10, 23, 87, 17);
-        lblNewLabel_1.setText("\u8FDE\u63A5\u5B50\u540D\u79F0*\uFF1A");
+        lblNewLabel_1.setText(Messages.ConnectorTypeEditDialog_2);
 
         textConnectorName = new Text(container, SWT.BORDER);
         textConnectorName.setBounds(103, 20, 395, 23);
 
         Label label_4 = new Label(container, SWT.RIGHT);
-        label_4.setText("\u4EA4\u4E92\u65B9\u5F0F\uFF1A");
+        label_4.setText(Messages.ConnectorTypeEditDialog_3);
         label_4.setBounds(10, 357, 87, 17);
 
         textInteractor = new Text(container, SWT.BORDER);
         textInteractor.setBounds(103, 354, 395, 23);
 
         Group groupArgument = new Group(container, SWT.SHADOW_ETCHED_IN);
-        groupArgument.setText("1\u3001\u7AEF\u53E3\u53C2\u6570*\uFF08\u81F3\u5C11\u6709\u4E00\u4E2A\u7AEF\u53E3\u53C2\u6570\uFF09");
+        groupArgument.setText(Messages.ConnectorTypeEditDialog_4);
         groupArgument.setBounds(10, 64, 237, 270);
         groupArgument.setLayout(null);
 
@@ -124,14 +124,14 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
         Label label = new Label(group, SWT.NONE);
         label.setBounds(10, 19, 61, 17);
-        label.setText("\u7AEF\u53E3\u7C7B\u578B\uFF1A");
+        label.setText(Messages.ConnectorTypeEditDialog_5);
 
         comboArguments = new Combo(group, SWT.READ_ONLY);
         comboArguments.setBounds(10, 42, 86, 25);
 
         Label lblNewLabel = new Label(group, SWT.NONE);
         lblNewLabel.setBounds(10, 73, 61, 17);
-        lblNewLabel.setText("\u53C2\u6570\u540D\u79F0\uFF1A");
+        lblNewLabel.setText(Messages.ConnectorTypeEditDialog_6);
 
         textNewArgumentName = new Text(group, SWT.BORDER);
         textNewArgumentName.setBounds(10, 97, 86, 23);
@@ -144,7 +144,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             }
         });
         buttonAddArgument.setBounds(10, 132, 86, 27);
-        buttonAddArgument.setText("\u589E\u52A0\u53C2\u6570");
+        buttonAddArgument.setText(Messages.ConnectorTypeEditDialog_7);
 
         buttonDeleteArgument = new Button(groupArgument, SWT.NONE);
         buttonDeleteArgument.addSelectionListener(new SelectionAdapter() {
@@ -154,7 +154,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             }
         });
         buttonDeleteArgument.setBounds(119, 232, 106, 27);
-        buttonDeleteArgument.setText("\u5220\u9664\u53C2\u6570");
+        buttonDeleteArgument.setText(Messages.ConnectorTypeEditDialog_8);
 
         buttonMoveArgumentUp = new Button(groupArgument, SWT.NONE);
         buttonMoveArgumentUp.addSelectionListener(new SelectionAdapter() {
@@ -164,7 +164,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             }
         });
         buttonMoveArgumentUp.setBounds(119, 197, 34, 27);
-        buttonMoveArgumentUp.setText("\u2191");
+        buttonMoveArgumentUp.setText("\u2191"); //$NON-NLS-1$
 
         buttonMoveArgumentDown = new Button(groupArgument, SWT.NONE);
         buttonMoveArgumentDown.addSelectionListener(new SelectionAdapter() {
@@ -173,12 +173,12 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 moveArgumentDown();
             }
         });
-        buttonMoveArgumentDown.setText("\u2193");
+        buttonMoveArgumentDown.setText("\u2193"); //$NON-NLS-1$
         buttonMoveArgumentDown.setBounds(191, 197, 34, 27);
 
         Group groupData = new Group(container, SWT.SHADOW_ETCHED_IN);
         groupData.setLayout(null);
-        groupData.setText("2\u3001\u5185\u90E8\u53D8\u91CF");
+        groupData.setText(Messages.ConnectorTypeEditDialog_11);
         groupData.setBounds(261, 64, 237, 270);
 
         ScrolledComposite scrolledComposite_1 =
@@ -205,7 +205,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 removeData();
             }
         });
-        buttonDeleteData.setText("\u5220\u9664\u53D8\u91CF");
+        buttonDeleteData.setText(Messages.ConnectorTypeEditDialog_12);
         buttonDeleteData.setBounds(119, 232, 106, 27);
 
         Group group_2 = new Group(groupData, SWT.NONE);
@@ -215,11 +215,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         comboDatas.setBounds(10, 46, 86, 25);
 
         Label label_1 = new Label(group_2, SWT.NONE);
-        label_1.setText("\u53D8\u91CF\u7C7B\u578B\uFF1A");
+        label_1.setText(Messages.ConnectorTypeEditDialog_13);
         label_1.setBounds(10, 23, 61, 17);
 
         Label label_2 = new Label(group_2, SWT.NONE);
-        label_2.setText("\u53C2\u6570\u540D\u79F0\uFF1A");
+        label_2.setText(Messages.ConnectorTypeEditDialog_14);
         label_2.setBounds(10, 77, 61, 17);
 
         textNewDataName = new Text(group_2, SWT.BORDER);
@@ -232,11 +232,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 addData();
             }
         });
-        buttonAddData.setText("\u589E\u52A0\u53C2\u6570");
+        buttonAddData.setText(Messages.ConnectorTypeEditDialog_15);
         buttonAddData.setBounds(10, 129, 86, 27);
 
         Group groupInteraction = new Group(container, SWT.NONE);
-        groupInteraction.setText("3\u3001\u4EA4\u4E92");
+        groupInteraction.setText(Messages.ConnectorTypeEditDialog_16);
         groupInteraction.setBounds(504, 10, 327, 443);
 
         ScrolledComposite scrolledComposite_2 =
@@ -263,7 +263,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 addInteraction();
             }
         });
-        buttonCreateInteraction.setText("\u589E\u52A0\u4EA4\u4E92");
+        buttonCreateInteraction.setText(Messages.ConnectorTypeEditDialog_17);
         buttonCreateInteraction.setBounds(9, 150, 70, 27);
 
         buttonEditInteraction = new Button(groupInteraction, SWT.NONE);
@@ -273,7 +273,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 editInteraction();
             }
         });
-        buttonEditInteraction.setText("\u7F16\u8F91\u4EA4\u4E92");
+        buttonEditInteraction.setText(Messages.ConnectorTypeEditDialog_18);
         buttonEditInteraction.setBounds(88, 150, 70, 27);
 
         buttonMoveInteractionUp = new Button(groupInteraction, SWT.NONE);
@@ -283,7 +283,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 moveInteractionUp();
             }
         });
-        buttonMoveInteractionUp.setText("\u2191");
+        buttonMoveInteractionUp.setText("\u2191"); //$NON-NLS-1$
         buttonMoveInteractionUp.setBounds(167, 150, 30, 27);
 
         buttonMoveInteractionDown = new Button(groupInteraction, SWT.NONE);
@@ -293,7 +293,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 moveInteractionDown();
             }
         });
-        buttonMoveInteractionDown.setText("\u2193");
+        buttonMoveInteractionDown.setText("\u2193"); //$NON-NLS-1$
         buttonMoveInteractionDown.setBounds(206, 150, 30, 27);
 
         buttonDeleteInteraction = new Button(groupInteraction, SWT.NONE);
@@ -303,7 +303,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                 removeInteraction();
             }
         });
-        buttonDeleteInteraction.setText("\u5220\u9664\u4EA4\u4E92");
+        buttonDeleteInteraction.setText(Messages.ConnectorTypeEditDialog_21);
         buttonDeleteInteraction.setBounds(245, 150, 70, 27);
 
         styledTextInteractionPreview =
@@ -312,7 +312,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         styledTextInteractionPreview.setBounds(10, 183, 307, 249);
 
         Group groupExport = new Group(container, SWT.NONE);
-        groupExport.setText("4\u3001\u5BFC\u51FA\u7AEF\u53E3");
+        groupExport.setText(Messages.ConnectorTypeEditDialog_22);
         groupExport.setBounds(10, 395, 488, 58);
 
         buttonExport = new Button(groupExport, SWT.CHECK);
@@ -332,11 +332,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             }
         });
         buttonExport.setBounds(10, 27, 45, 17);
-        buttonExport.setText("\u5BFC\u51FA");
+        buttonExport.setText(Messages.ConnectorTypeEditDialog_23);
 
         Label label_3 = new Label(groupExport, SWT.NONE);
         label_3.setBounds(57, 27, 61, 17);
-        label_3.setText("\u7AEF\u53E3\u7C7B\u578B\uFF1A");
+        label_3.setText(Messages.ConnectorTypeEditDialog_24);
 
         comboExportPortType = new Combo(groupExport, SWT.READ_ONLY);
         comboExportPortType.setBounds(124, 23, 86, 25);
@@ -349,7 +349,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             }
         });
         buttonBoundData.setBounds(378, 22, 100, 27);
-        buttonBoundData.setText("\u7ED1\u5B9A\u7AEF\u53E3\u53C2\u6570");
+        buttonBoundData.setText(Messages.ConnectorTypeEditDialog_25);
 
         textBoundArguments = new Text(groupExport, SWT.BORDER);
         textBoundArguments.setBounds(221, 24, 151, 23);
@@ -392,20 +392,20 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         PortModel port = connector.getPort();
         int size = port.getPortArguments().size();
         boolean emptyString = textBoundArguments.getText().trim().isEmpty();
-        String[] arguments = textBoundArguments.getText().replaceAll("\\s+", "").split(",");
+        String[] arguments = textBoundArguments.getText().replaceAll("\\s+", "").split(","); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         if ((emptyString && size != 0) || (!emptyString && arguments.length != size)) {
-            handleError("绑定的参数与导出端口参数不对应");
+            handleError(Messages.ConnectorTypeEditDialog_29);
             return;
         }
         java.util.List<String> list = ((PortTypeModel) port.getType()).getArgumentTypes();
         for (int i = 0; i < size; i++) {
             DataModel data = connector.getDataByName(arguments[i]);
             if (data == null) {
-                handleError("局部变量" + arguments[i] + "不存在");
+                handleError(Messages.ConnectorTypeEditDialog_30 + arguments[i] + Messages.ConnectorTypeEditDialog_31);
                 return;
             }
             if (!connector.getDataByName(arguments[i]).getType().getName().equals(list.get(i))) {
-                handleError("变量" + list.get(i) + "类型与端口参数类型不对应");
+                handleError(Messages.ConnectorTypeEditDialog_32 + list.get(i) + Messages.ConnectorTypeEditDialog_33);
                 return;
             }
         }
@@ -414,7 +414,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         }
         Label info = getErrorLabel();
         info.setForeground(ColorConstants.black);
-        info.setText("绑定参数成功");
+        info.setText(Messages.ConnectorTypeEditDialog_34);
     }
 
     protected void removeInteraction() {
@@ -424,7 +424,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         }
         listInteractions.remove(index);
         connector.removeInteraction(index);
-        handleError("");
+        handleError(""); //$NON-NLS-1$
     }
 
     protected void moveInteractionDown() {
@@ -489,7 +489,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return;
         }
         listDatas.remove(selections[0]);
-        handleError("");
+        handleError(""); //$NON-NLS-1$
         connector.removeDataByName(selections[0]);
     }
 
@@ -499,24 +499,24 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return;
         }
         listPortArguments.remove(selections[0]);
-        handleError("");
+        handleError(""); //$NON-NLS-1$
         connector.removeArgumentByName(selections[0]);
     }
 
     protected void addData() {
         int index = comboDatas.getSelectionIndex();
         if (index == -1) {
-            getErrorLabel().setText("请先选择数据类型");
+            getErrorLabel().setText(Messages.ConnectorTypeEditDialog_38);
             return;
         }
         String dataType = comboDatas.getItem(index);
         String dataName = textNewDataName.getText().trim();
         if (!isIdentifier(dataName)) {
-            getErrorLabel().setText("请先输入变量名");
+            getErrorLabel().setText(Messages.ConnectorTypeEditDialog_39);
             return;
         }
         if (connector.nameExistsInConnector(dataName)) {
-            getErrorLabel().setText("变量名已存在");
+            getErrorLabel().setText(Messages.ConnectorTypeEditDialog_40);
             return;
         }
         DataModel<ConnectorTypeModel> data =
@@ -524,29 +524,29 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
                                         .getInstance().setName(dataName);
         connector.addData(data);
         listDatas.add(dataName);
-        handleError("");
+        handleError(""); //$NON-NLS-1$
     }
 
     protected void addArgument() {
         int index = comboArguments.getSelectionIndex();
         if (index == -1) {
-            handleError("请先选择参数类型");
+            handleError(Messages.ConnectorTypeEditDialog_42);
             return;
         }
         String portType = comboArguments.getItem(index);
         String portName = textNewArgumentName.getText().trim();
         if (!isIdentifier(portName)) {
-            handleError("请先输入参数名");
+            handleError(Messages.ConnectorTypeEditDialog_43);
             return;
         }
         if (connector.nameExistsInConnector(portName)) {
-            handleError("参数名已存在");
+            handleError(Messages.ConnectorTypeEditDialog_44);
             return;
         }
         PortTypeModel port = PortTypeModel.getModelByName(portType);
         connector.addArgument(port, portName);
         listPortArguments.add(portName);
-        handleError("");
+        handleError(""); //$NON-NLS-1$
     }
 
     /**
@@ -579,14 +579,14 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         for (String portTypeName : PortTypeModel.getTypes()) {
             comboArguments.add(portTypeName);
             comboExportPortType.add(portTypeName);
-            if (portTypeName.equals("ePort")) {
+            if (portTypeName.equals("ePort")) { //$NON-NLS-1$
                 comboArguments.select(comboArguments.getItemCount() - 1);
                 comboExportPortType.select(comboExportPortType.getItemCount() - 1);
             }
         }
         for (String dataTypeName : DataTypeModel.getTypes()) {
             comboDatas.add(dataTypeName);
-            if (dataTypeName.equals("bool")) {
+            if (dataTypeName.equals("bool")) { //$NON-NLS-1$
                 comboDatas.select(comboDatas.getItemCount() - 1);
             }
         }
@@ -609,7 +609,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             String interactor = textInteractor.getText().trim();
             if (interactor.isEmpty()) {
                 for (String str : listPortArguments.getItems()) {
-                    interactor += str + " ";
+                    interactor += str + " "; //$NON-NLS-1$
                 }
                 interactor = interactor.trim();
             }
@@ -617,7 +617,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            handleError("错误的交互方式");
+            handleError(Messages.ConnectorTypeEditDialog_49);
         }
         return false;
     }
@@ -627,11 +627,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
             return true;
         }
         if (comboExportPortType.getSelectionIndex() == -1) {
-            handleError("未选择导出端口类型");
+            handleError(Messages.ConnectorTypeEditDialog_50);
             return false;
         }
         if (!((PortTypeModel) connector.getPort().getType()).allSets()) {
-            handleError("尚未绑定导出端口参数");
+            handleError(Messages.ConnectorTypeEditDialog_51);
             return false;
         }
         return true;
@@ -639,7 +639,7 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
 
     private boolean validateArguments() {
         if (listPortArguments.getItemCount() == 0) {
-            handleError("连接子必须有至少一个端口参数");
+            handleError(Messages.ConnectorTypeEditDialog_52);
             return false;
         }
         return true;
@@ -648,11 +648,11 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
     private boolean validateConnectorName() {
         String connectorName = textConnectorName.getText().trim();
         if (!isIdentifier(connectorName)) {
-            handleError("连接子名称不是合法标示符");
+            handleError(Messages.ConnectorTypeEditDialog_53);
             return false;
         }
         if (ConnectorTypeModel.getTypes().contains(connectorName)) {
-            handleError("连接子名称已存在");
+            handleError(Messages.ConnectorTypeEditDialog_54);
             return false;
         }
         return true;
@@ -674,6 +674,6 @@ public class ConnectorTypeEditDialog extends AbstractEditDialog {
         info.setForeground(ColorConstants.black);
         int index = listDatas.getSelectionIndex();
         DataModel<ConnectorTypeModel> data = connector.getDatas().get(index);
-        info.setText(MessageFormat.format("{0} {1}", data.getType().getName(), data.getName()));
+        info.setText(MessageFormat.format("{0} {1}", data.getType().getName(), data.getName())); //$NON-NLS-1$
     }
 }

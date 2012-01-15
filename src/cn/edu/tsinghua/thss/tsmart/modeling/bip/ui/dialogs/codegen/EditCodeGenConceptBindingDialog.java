@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,11 +32,13 @@ import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
  */
 @SuppressWarnings("rawtypes")
 public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
-    private Text  hardware;
-    private Label errorLabel;
-    private Text  io;
-    private Text  software;
-    private Text  tick;
+    private Text                hardware;
+    private Label               errorLabel;
+    private Text                io;
+    private Text                software;
+    private Text                tick;
+
+    private CodeGenProjectModel cgpm;
 
 
     /**
@@ -44,8 +47,8 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public EditCodeGenConceptBindingDialog(Shell parentShell) {
-        super(parentShell, "Edit Data Model");
-        setTitle("\u8BBE\u8BA1\u4EE3\u7801\u751F\u6210\u6982\u5FF5\u4E0E\u5B9E\u4F53\u7ED1\u5B9A");
+        super(parentShell, Messages.EditCodeGenConceptBindingDialog_0);
+        setTitle(Messages.EditCodeGenConceptBindingDialog_1);
     }
 
     /**
@@ -61,12 +64,12 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
         Label label = new Label(container, SWT.NONE);
         label.setAlignment(SWT.RIGHT);
         label.setBounds(20, 23, 36, 17);
-        label.setText("\u786C\u4EF6");
+        label.setText(Messages.EditCodeGenConceptBindingDialog_2);
 
         Label lblNewLabel = new Label(container, SWT.NONE);
         lblNewLabel.setAlignment(SWT.RIGHT);
         lblNewLabel.setBounds(20, 63, 36, 17);
-        lblNewLabel.setText("\u8F6F\u4EF6");
+        lblNewLabel.setText(Messages.EditCodeGenConceptBindingDialog_3);
 
         hardware = new Text(container, SWT.BORDER);
         hardware.setEnabled(false);
@@ -78,12 +81,12 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
         Label lblNewLabel_2 = new Label(container, SWT.NONE);
         lblNewLabel_2.setAlignment(SWT.RIGHT);
         lblNewLabel_2.setBounds(20, 143, 36, 17);
-        lblNewLabel_2.setText("Tick");
+        lblNewLabel_2.setText("Tick"); //$NON-NLS-1$
 
         Label lblNewLabel_3 = new Label(container, SWT.NONE);
         lblNewLabel_3.setAlignment(SWT.RIGHT);
         lblNewLabel_3.setBounds(20, 103, 36, 17);
-        lblNewLabel_3.setText("I/O");
+        lblNewLabel_3.setText("I/O"); //$NON-NLS-1$
 
         io = new Text(container, SWT.BORDER);
         io.setEnabled(false);
@@ -91,12 +94,12 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
 
         software = new Text(container, SWT.BORDER);
         software.setEnabled(false);
-        software.setText("");
+        software.setText(""); //$NON-NLS-1$
         software.setBounds(69, 57, 183, 23);
 
         tick = new Text(container, SWT.BORDER);
         tick.setEnabled(false);
-        tick.setText("");
+        tick.setText(""); //$NON-NLS-1$
         tick.setBounds(69, 137, 183, 23);
 
         Button btnHardware = new Button(container, SWT.NONE);
@@ -105,14 +108,14 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
             public void widgetSelected(SelectionEvent e) {
                 Shell shell = new Shell();
                 EntitySelectionFromLibDialog dialog = new EntitySelectionFromLibDialog(shell);
-                dialog.open();
-
-                hardware.setText(dialog.getSelectEntity());
+                if (Window.OK == dialog.open()) {
+                    hardware.setText(dialog.getSelectEntity());
+                }
 
             }
         });
         btnHardware.setBounds(276, 18, 72, 22);
-        btnHardware.setText("\u9009\u62E9\u5B9E\u4F53");
+        btnHardware.setText(Messages.EditCodeGenConceptBindingDialog_8);
 
         Button btn = new Button(container, SWT.NONE);
         btn.addSelectionListener(new SelectionAdapter() {
@@ -120,13 +123,13 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
             public void widgetSelected(SelectionEvent e) {
                 Shell shell = new Shell();
                 EntitySelectionFromLibDialog dialog = new EntitySelectionFromLibDialog(shell);
-                dialog.open();
-
-                software.setText(dialog.getSelectEntity());
+                if (Window.OK == dialog.open()) {
+                    software.setText(dialog.getSelectEntity());
+                }
 
             }
         });
-        btn.setText("\u9009\u62E9\u5B9E\u4F53");
+        btn.setText(Messages.EditCodeGenConceptBindingDialog_9);
         btn.setBounds(276, 58, 72, 22);
 
         Button button_1 = new Button(container, SWT.NONE);
@@ -135,13 +138,13 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
             public void widgetSelected(SelectionEvent e) {
                 Shell shell = new Shell();
                 EntitySelectionFromLibDialog dialog = new EntitySelectionFromLibDialog(shell);
-                dialog.open();
-
-                io.setText(dialog.getSelectEntity());
+                if (Window.OK == dialog.open()) {
+                    io.setText(dialog.getSelectEntity());
+                }
 
             }
         });
-        button_1.setText("\u9009\u62E9\u5B9E\u4F53");
+        button_1.setText(Messages.EditCodeGenConceptBindingDialog_10);
         button_1.setBounds(276, 97, 72, 22);
 
         Button button_2 = new Button(container, SWT.NONE);
@@ -150,13 +153,13 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
             public void widgetSelected(SelectionEvent e) {
                 Shell shell = new Shell();
                 EntitySelectionFromLibDialog dialog = new EntitySelectionFromLibDialog(shell);
-                dialog.open();
-
-                tick.setText(dialog.getSelectEntity());
+                if (Window.OK == dialog.open()) {
+                    tick.setText(dialog.getSelectEntity());
+                }
 
             }
         });
-        button_2.setText("\u9009\u62E9\u5B9E\u4F53");
+        button_2.setText(Messages.EditCodeGenConceptBindingDialog_11);
         button_2.setBounds(276, 137, 72, 22);
 
         initValues();
@@ -174,11 +177,11 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
         Button button =
                         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
                                         true);
-        button.setText("\u786E\u5B9A");
+        button.setText(Messages.EditCodeGenConceptBindingDialog_12);
         Button button_1 =
                         createButton(parent, IDialogConstants.CANCEL_ID,
                                         IDialogConstants.CANCEL_LABEL, false);
-        button_1.setText("\u53D6\u6D88");
+        button_1.setText(Messages.EditCodeGenConceptBindingDialog_13);
     }
 
     /**
@@ -198,50 +201,41 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
         }
         if (!(topModel instanceof CodeGenProjectModel)) {
             try {
-                throw new Exception("something seems wrong");
+                throw new Exception(Messages.EditCodeGenConceptBindingDialog_14);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             return;
         }
-        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
+        cgpm = (CodeGenProjectModel) topModel;
 
-        hardware.setText(projectModel.getHardwareEntity());
-        software.setText(projectModel.getSoftwareEntity());
-        io.setText(projectModel.getIoEntity());
-        tick.setText(projectModel.getTickEntity());
+        hardware.setText(cgpm.getHardwareEntity());
+        software.setText(cgpm.getSoftwareEntity());
+        io.setText(cgpm.getIoEntity());
+        tick.setText(cgpm.getTickEntity());
     }
 
 
     @Override
     protected void updateValues() {
-        TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
-        // 构件库模式下不做检测
-        if (topModel instanceof LibraryModel) {
-            return;
-        }
-        if (!(topModel instanceof CodeGenProjectModel)) {
-            try {
-                throw new Exception("something seems wrong");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return;
-        }
-        CodeGenProjectModel projectModel = (CodeGenProjectModel) topModel;
 
-        projectModel.setHardwareEntity(hardware.getText());
-        projectModel.setSoftwareEntity(software.getText());
-        projectModel.setIoEntity(io.getText());
-        projectModel.setTickEntity(tick.getText());
+        cgpm.setHardwareEntity(hardware.getText());
+        cgpm.setSoftwareEntity(software.getText());
+        cgpm.setIoEntity(io.getText());
+        cgpm.setTickEntity(tick.getText());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected boolean validateUserInput() {
-        if (hardware.getText().equals("") || software.getText().equals("")
-                        || io.getText().equals("") || tick.getText().equals("")) {
-            handleError("必须为每一个概念选择一个实体。");
+        if (cgpm == null) {
+            handleError(Messages.EditCodeGenConceptBindingDialog_15);
+            return false;
+        }
+
+        if (hardware.getText().equals("") || software.getText().equals("") //$NON-NLS-1$ //$NON-NLS-2$
+                        || io.getText().equals("") || tick.getText().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+            handleError(Messages.EditCodeGenConceptBindingDialog_20);
             return false;
         }
 
@@ -256,7 +250,7 @@ public class EditCodeGenConceptBindingDialog extends AbstractEditDialog {
 
         for (String s : names) {
             if (ns.contains(s)) {
-                handleError("有重复项。");
+                handleError(Messages.EditCodeGenConceptBindingDialog_21);
                 return false;
             }
             ns.add(s);

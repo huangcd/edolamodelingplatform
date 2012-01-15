@@ -4,14 +4,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.*;
 
-/**
- * @author Administrator
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class EntitySelectionPropertyDescriptor extends PropertyDescriptor {
 
 	/**
@@ -24,9 +16,6 @@ public class EntitySelectionPropertyDescriptor extends PropertyDescriptor {
 		super(id, displayName);
 	}
 	
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertyDescriptor#createPropertyEditor(Composite)
-	 */
 	public CellEditor createPropertyEditor(Composite parent) {
 		CellEditor editor = new EntitySelectionDialogCellEditor(parent);
 		if (getValidator() != null)

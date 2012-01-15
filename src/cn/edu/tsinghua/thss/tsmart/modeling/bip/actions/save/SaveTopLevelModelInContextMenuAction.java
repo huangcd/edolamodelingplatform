@@ -14,8 +14,8 @@ public class SaveTopLevelModelInContextMenuAction extends SelectionAction {
     public SaveTopLevelModelInContextMenuAction(IWorkbenchPart part) {
         super(part);
         setLazyEnablementCalculation(false);
-        setText("保存项目/构件库");
-        setToolTipText("保存当前编辑的项目或构件库");
+        setText(Messages.SaveTopLevelModelInContextMenuAction_0);
+        setToolTipText(Messages.SaveTopLevelModelInContextMenuAction_1);
     }
 
     @Override

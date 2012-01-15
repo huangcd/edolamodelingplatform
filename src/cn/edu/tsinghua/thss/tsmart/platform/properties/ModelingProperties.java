@@ -12,7 +12,13 @@ public interface ModelingProperties {
 
     TopLevelModel getTopModel();
 
-    void setTopModel(TopLevelModel model);
+    /**
+     * 设置新的顶级模型，返回老的顶级模型
+     * 
+     * @param model
+     * @return
+     */
+    TopLevelModel setTopModel(TopLevelModel model);
 
     /**
      * 建模的时候是否允许多种数据类型

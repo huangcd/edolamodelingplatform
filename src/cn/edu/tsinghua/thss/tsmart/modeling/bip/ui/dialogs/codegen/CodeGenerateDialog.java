@@ -14,17 +14,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.AbstractEditDialog;
 import cn.edu.tsinghua.thss.tsmart.modeling.codegen.CodeGenManager;
+import org.eclipse.swt.widgets.Spinner;
 
 
 /**
@@ -33,6 +27,9 @@ import cn.edu.tsinghua.thss.tsmart.modeling.codegen.CodeGenManager;
  */
 @SuppressWarnings("rawtypes")
 public class CodeGenerateDialog extends AbstractEditDialog {
+    private Combo   platform;
+    private Spinner ticktime;
+    private Combo   opti;
 
     /**
      * Create the dialog.
@@ -40,8 +37,8 @@ public class CodeGenerateDialog extends AbstractEditDialog {
      * @param parentShell
      */
     public CodeGenerateDialog(Shell parentShell) {
-        super(parentShell, "Edit Data Model");
-        setTitle("\u4EE3\u7801\u751F\u6210");
+        super(parentShell, Messages.CodeGenerateDialog_0);
+        setTitle(Messages.CodeGenerateDialog_1);
     }
 
     /**
@@ -55,89 +52,69 @@ public class CodeGenerateDialog extends AbstractEditDialog {
         container.setLayout(null);
 
         Group group = new Group(container, SWT.NONE);
-        group.setBounds(10, 0, 228, 144);
+        group.setBounds(10, 0, 228, 170);
         group.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
         group.setLayout(null);
 
         Label lblNewLabel = new Label(group, SWT.NONE);
         lblNewLabel.setBounds(10, 17, 48, 22);
         lblNewLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
-        lblNewLabel.setText("\u76EE\u6807\u5E73\u53F0");
+        lblNewLabel.setText(Messages.CodeGenerateDialog_2);
 
-        Combo combo = new Combo(group, SWT.READ_ONLY);
-        combo.setBounds(98, 14, 100, 25);
-        combo.setItems(new String[] {"PLC"});
-        combo.setText("PLC");
+        platform = new Combo(group, SWT.READ_ONLY);
+        platform.setBounds(98, 14, 100, 25);
+        platform.setItems(new String[] {"PLC"}); //$NON-NLS-1$
+        platform.setText("PLC"); //$NON-NLS-1$
 
         Label label = new Label(group, SWT.NONE);
-        label.setBounds(10, 47, 48, 17);
+        label.setBounds(10, 54, 48, 17);
         label.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
-        label.setText("\u4F18\u5316\u9009\u9879");
+        label.setText(Messages.CodeGenerateDialog_5);
 
-        Combo combo_1 = new Combo(group, SWT.READ_ONLY);
-        combo_1.setBounds(98, 43, 100, 25);
-        combo_1.setItems(new String[] {"1"});
-        combo_1.setText("1");
-
-        Label label_1 = new Label(group, SWT.NONE);
-        label_1.setBounds(10, 75, 48, 22);
-        label_1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
-        label_1.setText("\u8C03\u8BD5\u4FE1\u606F");
-
-        Combo combo_2 = new Combo(group, SWT.READ_ONLY);
-        combo_2.setBounds(98, 72, 100, 25);
-        combo_2.setItems(new String[] {"1"});
-        combo_2.setText("1");
+        Label lblTick = new Label(group, SWT.NONE);
+        lblTick.setBounds(10, 89, 82, 22);
+        lblTick.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
+        lblTick.setText(Messages.CodeGenerateDialog_6);
 
         Button editMapping = new Button(group, SWT.NONE);
         editMapping.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 Shell shell = Display.getCurrent().getActiveShell();
-                IWorkbench workbench = PlatformUI.getWorkbench();
-                IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-                IWorkbenchPage page = window.getActivePage();
-                IEditorPart editor = page.getActiveEditor();
-                if (editor instanceof CompoundEditor) {
-                    CompoundTypeModel model =
-                                    (CompoundTypeModel) ((CompoundEditor) editor).getModel();
-                    EditRelationDialog dialog = new EditRelationDialog(shell, model);
-                    dialog.setBlockOnOpen(true);
-                    if (Dialog.OK == dialog.open()) {
-
-                    }
+                EditRelationDialog dialog = new EditRelationDialog(shell);
+                dialog.setBlockOnOpen(true);
+                if (Dialog.OK == dialog.open()) {
 
                 }
-
             }
         });
-        editMapping.setBounds(52, 108, 80, 27);
-        editMapping.setText("\u7F16\u8F91\u6620\u5C04\u5173\u7CFB");
+        editMapping.setBounds(10, 130, 80, 27);
+        editMapping.setText(Messages.CodeGenerateDialog_7);
 
         Button editDevices = new Button(group, SWT.NONE);
         editDevices.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 Shell shell = Display.getCurrent().getActiveShell();
-                IWorkbench workbench = PlatformUI.getWorkbench();
-                IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-                IWorkbenchPage page = window.getActivePage();
-                IEditorPart editor = page.getActiveEditor();
-                if (editor instanceof CompoundEditor) {
-                    CompoundTypeModel model =
-                                    (CompoundTypeModel) ((CompoundEditor) editor).getModel();
-                    EditPeripheralsDialog dialog = new EditPeripheralsDialog(shell, model);
-                    dialog.setBlockOnOpen(true);
-                    if (Dialog.OK == dialog.open()) {
-
-                    }
+                EditPeripheralsDialog dialog = new EditPeripheralsDialog(shell);
+                dialog.setBlockOnOpen(true);
+                if (Dialog.OK == dialog.open()) {
 
                 }
-
             }
         });
-        editDevices.setBounds(138, 108, 80, 27);
-        editDevices.setText("\u7F16\u8F91\u5916\u8BBE");
+        editDevices.setBounds(118, 130, 80, 27);
+        editDevices.setText(Messages.CodeGenerateDialog_8);
+
+        ticktime = new Spinner(group, SWT.BORDER);
+        ticktime.setMaximum(1000);
+        ticktime.setSelection(100);
+        ticktime.setBounds(98, 86, 100, 23);
+
+        opti = new Combo(group, SWT.READ_ONLY);
+        opti.setItems(new String[] {"0", "1"}); //$NON-NLS-1$ //$NON-NLS-2$
+        opti.setBounds(98, 51, 100, 25);
+        opti.select(0);
 
 
         initValues();
@@ -152,28 +129,16 @@ public class CodeGenerateDialog extends AbstractEditDialog {
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
-        Button button =
-                        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-                                        true);
-        button.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                String workplace = System.getProperty("user.dir");
-                String filePathDD = workplace + "/data/test-dd.xml";
-                String filePathMapping = workplace + "/data/test-mapping.xml";
-
-                CodeGenManager cgm = new CodeGenManager(filePathDD, filePathMapping);
-
-                if (!cgm.checkValid()) {
-                    return;
-                }
-            }
-        });
-        button.setText("\u4EE3\u7801\u751F\u6210");
-        Button button_1 =
-                        createButton(parent, IDialogConstants.CANCEL_ID,
-                                        IDialogConstants.CANCEL_LABEL, false);
-        button_1.setText("\u53D6\u6D88");
+        Button button = createButton(parent, 
+        		IDialogConstants.OK_ID, 
+        		IDialogConstants.OK_LABEL,
+        		true);
+        button.setText(Messages.CodeGenerateDialog_11);
+        Button button_1 = createButton(parent, 
+        		IDialogConstants.CANCEL_ID,
+        		IDialogConstants.CANCEL_LABEL, 
+        		false);
+        button_1.setText(Messages.CodeGenerateDialog_12);
     }
 
     /**
@@ -181,7 +146,7 @@ public class CodeGenerateDialog extends AbstractEditDialog {
      */
     @Override
     protected Point getInitialSize() {
-        return new Point(262, 239);
+        return new Point(262, 262);
     }
 
     @Override
@@ -191,7 +156,10 @@ public class CodeGenerateDialog extends AbstractEditDialog {
 
     @Override
     protected void updateValues() {
-
+        CodeGenManager cgm = new CodeGenManager();
+        cgm.setOptimization(Integer.parseInt(opti.getText()));
+        cgm.setPlatForm(platform.getText());
+        cgm.setTickTime(ticktime.getSelection());
     }
 
     @SuppressWarnings("unchecked")

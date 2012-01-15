@@ -6,7 +6,7 @@ public class NewProjectWizard extends Wizard {
     private CreateWizardData data;
 
     public NewProjectWizard(CreateWizardData data) {
-        setWindowTitle("新建项目向导");
+        setWindowTitle(Messages.NewProjectWizard_0);
         this.data = data;
     }
 

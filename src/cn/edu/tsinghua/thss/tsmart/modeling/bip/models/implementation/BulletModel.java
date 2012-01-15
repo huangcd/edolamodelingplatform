@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
@@ -15,10 +19,14 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
  * 
  */
 @SuppressWarnings("rawtypes")
+@Root
 public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContainer> {
     private static final long     serialVersionUID = -3202298194927737177L;
+    @Element
     private PortModel             port;
+    @Attribute
     private int                   direction;
+    @ElementList
     private List<ConnectionModel> targetConnections;
 
     public BulletModel(PortModel portModel) {

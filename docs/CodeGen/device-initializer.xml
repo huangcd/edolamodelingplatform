@@ -1,0 +1,34 @@
+<initializerDefinition>
+   <initializers class="java.util.ArrayList">
+      <deviceInitializer devType="PushButton">
+         <items class="java.util.ArrayList">
+            <initializeItem devProperty="pushed" defaultValue="0"/>
+         </items>
+      </deviceInitializer>
+      <deviceInitializer devType="FixedSpeedMotor">
+         <items class="java.util.ArrayList">
+            <initializeItem devProperty="ticktime" defaultValue="100"/>
+            <initializeItem devProperty="fixedSpeed" modelVar="SPEED_CONSTANT"/>
+            <initializeItem devProperty="direction" modelVar="Dir"/>
+            <initializeItem devProperty="position" modelVar="INIT_POS"/>
+            <initializeItem devProperty="hardDownLimit" modelVar="HARD_DOWN_LMT"/>
+            <initializeItem devProperty="softDownLimit" modelVar="SOFT_DOWN_LMT"/>
+            <initializeItem devProperty="softUpLimit" modelVar="SOFT_UP_LMT"/>
+            <initializeItem devProperty="hardUpLimit" modelVar="HARD_UP_LMT"/>
+         </items>
+      </deviceInitializer>
+      <deviceInitializer devType="VariantSpeedMotor">
+         <items class="java.util.ArrayList">
+            <initializeItem devProperty="ticktime" defaultValue="100"/>
+            <initializeItem devProperty="accWork" modelVar="ACC_WORK"/>
+            <initializeItem devProperty="accStop" modelVar="ACC_STOP"/>
+            <initializeItem devProperty="position" modelVar="INIT_POS"/>
+            <initializeItem devProperty="targetSpeed" defaultValue="0"/>
+            <initializeItem devProperty="hardDownLimit" modelVar="HARD_DOWN_LMT"/>
+            <initializeItem devProperty="softDownLimit" modelVar="SOFT_DOWN_LMT"/>
+            <initializeItem devProperty="softUpLimit" modelVar="SOFT_UP_LMT"/>
+            <initializeItem devProperty="hardUpLimit" modelVar="HARD_UP_LMT"/>
+         </items>
+      </deviceInitializer>
+   </initializers>
+</initializerDefinition>

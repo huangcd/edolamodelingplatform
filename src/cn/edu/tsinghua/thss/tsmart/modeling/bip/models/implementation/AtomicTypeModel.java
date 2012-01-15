@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
@@ -26,13 +27,16 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import cn.edu.tsinghua.thss.tsmart.baseline.model.refined.Entity;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.ITopModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.EntitySelectionPropertyDescriptor;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.descriptors.MultilineTextPropertyDescriptor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
@@ -62,47 +66,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
     }
 
     public static Collection<AtomicTypeModel> getAllRegisterTypes() {
-        return typeSources.values();
-    }
-
-    public static void saveTypes() {
-        saveTypes(Activator.getPreferenceDirection());
-    }
-
-    public static void loadTypes() {
-        loadTypes(Activator.getPreferenceDirection());
-    }
-
-    public static void saveTypes(File directory) {
-        File file = new File(directory, GlobalProperties.ATOMIC_TYPE_FILE);
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-            for (Map.Entry<String, AtomicTypeModel> entry : getTypeEntries()) {
-                out.writeObject(entry.getValue());
-                out.flush();
-            }
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void loadTypes(File directory) {
-        File file = new File(directory, GlobalProperties.ATOMIC_TYPE_FILE);
-        if (!file.exists()) {
-            return;
-        }
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-            while (true) {
-                AtomicTypeModel model = (AtomicTypeModel) in.readObject();
-                if (!getTypes().contains(model.getName())) {
-                    addType(model);
-                }
-            }
-        } catch (EOFException e) {} catch (Exception e) {
-            e.printStackTrace();
-        }
+        return Collections.unmodifiableCollection(typeSources.values());
     }
 
     public static void clearTypes() {
@@ -113,14 +77,29 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
     }
 
     public static boolean isRemovable(String selection) {
-        // TODO lynn → 判断AtomicType是否可以删除
+    	/*for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
+            AtomicTypeModel model = (AtomicTypeModel) editor.getModel();
+            if(model.getName().equals(selection))
+            	return false;
+        }*/
+    	 for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+             CompoundTypeModel model = (CompoundTypeModel) editor.getModel();
+             ArrayList<CompoundTypeModel> compounds = new ArrayList<CompoundTypeModel>();
+             ArrayList<AtomicTypeModel> atomics = new ArrayList<AtomicTypeModel>();
+             model.getAllComponent(compounds, atomics);
+             for(AtomicTypeModel atomic:atomics)
+             {
+            	 if(atomic.getName().equals(selection))
+                 	return false;
+             }
+         }
         return true;
     }
 
     protected static void addType(AtomicTypeModel model) {
         String type = model.getName();
         if (!addTypeSources(type, model)) {
-            MessageUtil.ShowErrorDialog("已存在同名的组件", "错误");
+            MessageUtil.addProblemWarningMessage("已存在同名组件" + type);
             return;
         }
         HashMap<CompoundEditor, CreationToolEntry> map =
@@ -218,7 +197,11 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         children.addAll(places);
         children.addAll(ports);
         children.addAll(priorities);
-        // if (initAction != null) children.add(initAction);
+        for (IInstance instance : children) {
+            if (instance.getParent() == null || !instance.getParent().equals(this)) {
+                instance.setParent(this);
+            }
+        }
         return children;
     }
 
@@ -229,7 +212,6 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
             addPropertyChangeListener(this.getInstance().getParent());
             firePropertyChange(CHILDREN);
         }
-
         if (child instanceof PlaceModel) {
             addPlace((PlaceModel) child);
         } else if (child instanceof DataModel) {
@@ -414,6 +396,37 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         return this;
     }
 
+    /**
+     * 以给定的data的位置为左上角，对齐data和port
+     * 
+     * @param data
+     */
+    public void alignDatasAndPorts(DataModel data) {
+        if (data == null) {
+            alignDatasAndPorts();
+            return;
+        }
+        Rectangle rect = data.getPositionConstraint();
+        alignDataAndPorts(rect.x, rect.y);
+    }
+
+    public void alignDatasAndPorts() {
+        alignDataAndPorts(10, 10);
+    }
+
+    private void alignDataAndPorts(int x, int y) {
+        for (DataModel model : getDatas()) {
+            Dimension size = model.getPositionConstraint().getSize();
+            model.setPositionConstraint(new Rectangle(x, y, size.width, size.height));
+            y += 19;
+        }
+        for (PortModel model : getPorts()) {
+            Dimension size = model.getPositionConstraint().getSize();
+            model.setPositionConstraint(new Rectangle(x, y, size.width, size.height));
+            y += 19;
+        }
+    }
+
     @Override
     public AtomicTypeModel setName(String newName) {
         super.setName(newName);
@@ -461,6 +474,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
             }
         }
 
+        // 在原子组件上不能包含优先级 TODO
         buffer.append('\n');
         for (PriorityModel priority : priorities) {
             buffer.append('\t').append(priority.exportToBip()).append('\n');
@@ -508,7 +522,8 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
         EntitySelectionPropertyDescriptor tag = new EntitySelectionPropertyDescriptor(ENTITY, "标签");
         tag.setDescription("04");
         properties.add(tag);
-        TextPropertyDescriptor initAction = new TextPropertyDescriptor(ATOMIC_INIT_ACTION, "初始化动作");
+        MultilineTextPropertyDescriptor initAction =
+                        new MultilineTextPropertyDescriptor(ATOMIC_INIT_ACTION, "初始化动作");
         initAction.setDescription("03");
         properties.add(initAction);
         return properties.toArray(new IPropertyDescriptor[properties.size()]);
@@ -559,6 +574,77 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
             }
         }
         return false;
+    }
+
+    /*
+     * 基准线合法性相关
+     */
+
+    public boolean checkValidateBaseline() {
+        List<Entity> entities = GlobalProperties.getInstance().getEntities();
+
+        for (Object s : getEntityNames()) {
+            boolean contain = false;
+            for (Entity en : entities) {
+                if (en.getName().equals((String) s)) {
+                    contain = true;
+                    break;
+                }
+            }
+            if (!contain) return false;
+        }
+
+        for (IInstance child : getChildren()) {
+            for (Object s : child.getEntityNames()) {
+                boolean contain = false;
+                for (Entity en : entities) {
+                    if (en.getName().equals((String) s)) {
+                        contain = true;
+                        break;
+                    }
+                }
+                if (!contain) return false;
+            }
+        }
+        return true;
+    }
+
+    public void cleanEntityNames() {
+        List<Entity> entities = GlobalProperties.getInstance().getEntities();
+        ArrayList<String> entitiesNames = new ArrayList<String>(getEntityNames());
+
+        for (Object s : entitiesNames) {
+            boolean contain = false;
+            for (Entity en : entities) {
+                if (en.getName().equals(s)) {
+                    contain = true;
+                    break;
+                }
+            }
+
+            if (!contain) {
+                getEntityNames().remove(s);
+            }
+        }
+
+        for (IInstance child : getChildren()) {
+            entitiesNames = new ArrayList<String>(child.getEntityNames());
+
+            for (Object s : entitiesNames) {
+                boolean contain = false;
+                for (Entity en : entities) {
+                    if (en.getName().equals(s)) {
+                        contain = true;
+                        break;
+                    }
+                }
+
+                if (!contain) {
+                    child.getEntityNames().remove(s);
+                }
+            }
+        }
+
     }
 
     /*
@@ -625,12 +711,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
                                         String.format("所有标注“tick”的端口必须全同步。原子组件类型 %s 中端口 %s 被标注“tick”，但是没有和其他“tick”同步。",
                                                         this.getInstance().getName(),
                                                         child.getName());
-                        try {
-                            MessageUtil.addProblemWarningMessage(errMessage);
-                        } catch (CoreException e) {
-                            e.printStackTrace();
-                        }
-
+                        MessageUtil.addProblemWarningMessage(errMessage);
                     }
                 }
             }
@@ -650,29 +731,16 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
                         String errMessage =
                                         String.format("原子组件类型 %s 的端口 %s 是 IO 实体，但是名称不是 io", port
                                                         .getParent().getName(), port.getName());
-                        try {
-                            MessageUtil.addProblemWarningMessage(errMessage);
-                        } catch (CoreException e) {
-                            e.printStackTrace();
-                        }
-
+                        MessageUtil.addProblemWarningMessage(errMessage);
                         result = false;
-
                     }
                 } else {
                     if (port.getName().equals("io")) {// 非 io port 的名称不能是 io
-
                         String errMessage =
                                         String.format("原子组件类型 %s 的端口 %s 是不是 IO 实体，但是名称是 io", port
                                                         .getParent().getName(), port.getName());
-                        try {
-                            MessageUtil.addProblemWarningMessage(errMessage);
-                        } catch (CoreException e) {
-                            e.printStackTrace();
-                        }
-
+                        MessageUtil.addProblemWarningMessage(errMessage);
                         result = false;
-
                     }
                 }
 

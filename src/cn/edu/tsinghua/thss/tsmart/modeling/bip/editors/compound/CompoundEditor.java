@@ -63,7 +63,7 @@ public class CompoundEditor extends BIPEditor {
     }
 
     private void initCompoundPalette() {
-        connectorPalette = new PaletteDrawer("连接子");
+        connectorPalette = new PaletteDrawer(Messages.CompoundEditor_0);
         getPaletteRoot().add(connectorPalette);
         initConnectorCreationEntry();
 
@@ -72,21 +72,21 @@ public class CompoundEditor extends BIPEditor {
             initLibrary();
         } else if (topModel instanceof LibraryModel) {
             ToolEntry entry =
-                            new CreationToolEntry("原子构件", "新建一个空白的原子构件", new SimpleFactory(
+                            new CreationToolEntry(Messages.CompoundEditor_1, Messages.CompoundEditor_2, new SimpleFactory(
                                             AtomicTypeModel.class),
-                                            getImage("icons/atomic_16.png"),
-                                            getImage("icons/atomic_32.png"));
+                                            getImage("icons/atomic_16.png"), //$NON-NLS-1$
+                                            getImage("icons/atomic_32.png")); //$NON-NLS-1$
             getToolGroup().add(entry);
             entry =
-                            new CreationToolEntry("复合构件", "新建一个空白的复合构件", new SimpleFactory(
+                            new CreationToolEntry(Messages.CompoundEditor_5, Messages.CompoundEditor_6, new SimpleFactory(
                                             CompoundTypeModel.class),
-                                            getImage("icons/compound_16.png"),
-                                            getImage("icons/compound_32.png"));
+                                            getImage("icons/compound_16.png"), //$NON-NLS-1$
+                                            getImage("icons/compound_32.png")); //$NON-NLS-1$
             getToolGroup().add(entry);
-            atomicPalette = new PaletteDrawer("原子构件库");
+            atomicPalette = new PaletteDrawer(Messages.CompoundEditor_9);
             getPaletteRoot().add(atomicPalette);
 
-            compoundPalette = new PaletteDrawer("复合构件库");
+            compoundPalette = new PaletteDrawer(Messages.CompoundEditor_10);
             getPaletteRoot().add(compoundPalette);
             initAtomicCreationEntry();
             initCompoundCreationEntry();
@@ -104,10 +104,10 @@ public class CompoundEditor extends BIPEditor {
             // 项目连接子
             for (ConnectorTypeModel connector : project.getConnectorTypes()) {
                 CreationToolEntry toolEntry =
-                                new CreationToolEntry(connector.getName(), "新建一个"
-                                                + connector.getName() + "连接子", new CopyFactory(
-                                                connector), getImage("icons/connector_16.png"),
-                                                getImage("icons/connector_32.png"));
+                                new CreationToolEntry(connector.getName(), Messages.CompoundEditor_11
+                                                + connector.getName() + Messages.CompoundEditor_12, new CopyFactory(
+                                                connector), getImage("icons/connector_16.png"), //$NON-NLS-1$
+                                                getImage("icons/connector_32.png")); //$NON-NLS-1$
                 addConnectorCreationToolEntry(toolEntry);
             }
             // 项目依赖库
@@ -115,12 +115,12 @@ public class CompoundEditor extends BIPEditor {
                 PaletteDrawer drawer = new PaletteDrawer(entry.getName());
                 for (ComponentTypeModel model : entry.getLibs()) {
                     String subImageName =
-                                    (model instanceof AtomicTypeModel) ? "atomic" : "compound";
+                                    (model instanceof AtomicTypeModel) ? "atomic" : "compound"; //$NON-NLS-1$ //$NON-NLS-2$
                     CreationToolEntry toolEntry =
                                     new CreationToolEntry(model.getName(), model.getComment(),
-                                                    new CopyFactory(model), getImage("icons/"
-                                                                    + subImageName + "_16.png"),
-                                                    getImage("icons/" + subImageName + "_32.png"));
+                                                    new CopyFactory(model), getImage("icons/" //$NON-NLS-1$
+                                                                    + subImageName + "_16.png"), //$NON-NLS-1$
+                                                    getImage("icons/" + subImageName + "_32.png")); //$NON-NLS-1$ //$NON-NLS-2$
                     drawer.add(toolEntry);
                 }
                 getPaletteRoot().add(drawer);
@@ -131,10 +131,10 @@ public class CompoundEditor extends BIPEditor {
     private void initConnectorCreationEntry() {
         for (Map.Entry<String, ConnectorTypeModel> entry : ConnectorTypeModel.getTypeEntries()) {
             CreationToolEntry toolEntry =
-                            new CreationToolEntry(entry.getKey(), "新建一个" + entry.getKey() + "连接子",
+                            new CreationToolEntry(entry.getKey(), Messages.CompoundEditor_21 + entry.getKey() + Messages.CompoundEditor_22,
                                             new CopyFactory(entry.getValue()),
-                                            getImage("icons/connector_16.png"),
-                                            getImage("icons/connector_32.png"));
+                                            getImage("icons/connector_16.png"), //$NON-NLS-1$
+                                            getImage("icons/connector_32.png")); //$NON-NLS-1$
             addConnectorCreationToolEntry(toolEntry);
             ConnectorTypeModel.addToolEntry(entry.getKey(), this, toolEntry);
         }
@@ -146,8 +146,8 @@ public class CompoundEditor extends BIPEditor {
             CreationToolEntry toolEntry =
                             new CreationToolEntry(model.getName(), model.getComment(),
                                             new CopyFactory(model),
-                                            getImage("icons/atomic_16.png"),
-                                            getImage("icons/atomic_32.png"));
+                                            getImage("icons/atomic_16.png"), //$NON-NLS-1$
+                                            getImage("icons/atomic_32.png")); //$NON-NLS-1$
             addAtomicCreationToolEntry(toolEntry);
             AtomicTypeModel.addToolEntry(entry.getKey(), this, toolEntry);
         }
@@ -159,34 +159,52 @@ public class CompoundEditor extends BIPEditor {
             CreationToolEntry toolEntry =
                             new CreationToolEntry(model.getName(), model.getComment(),
                                             new CopyFactory(model),
-                                            getImage("icons/compound_16.png"),
-                                            getImage("icons/compound_32.png"));
+                                            getImage("icons/compound_16.png"), //$NON-NLS-1$
+                                            getImage("icons/compound_32.png")); //$NON-NLS-1$
             addCompoundCreationToolEntry(toolEntry);
             CompoundTypeModel.addToolEntry(entry.getKey(), this, toolEntry);
         }
     }
 
     public void removeConnectorCreationToolEntry(CreationToolEntry entry) {
+        if (connectorPalette == null) {
+            return;
+        }
         connectorPalette.remove(entry);
     }
 
     public void addConnectorCreationToolEntry(CreationToolEntry entry) {
+        if (connectorPalette == null) {
+            return;
+        }
         connectorPalette.add(entry);
     }
 
     public void removeAtomicCreationToolEntry(CreationToolEntry entry) {
+        if (atomicPalette == null) {
+            return;
+        }
         atomicPalette.remove(entry);
     }
 
     public void addAtomicCreationToolEntry(CreationToolEntry entry) {
+        if (atomicPalette == null) {
+            return;
+        }
         atomicPalette.add(entry);
     }
 
     public void removeCompoundCreationToolEntry(CreationToolEntry entry) {
+        if (compoundPalette == null) {
+            return;
+        }
         compoundPalette.remove(entry);
     }
 
     public void addCompoundCreationToolEntry(CreationToolEntry entry) {
+        if (compoundPalette == null) {
+            return;
+        }
         compoundPalette.add(entry);
     }
 
@@ -237,7 +255,6 @@ public class CompoundEditor extends BIPEditor {
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
-        //
         action = new AlignmentAction((IWorkbenchPart) this, PositionConstants.LEFT);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
@@ -272,7 +289,12 @@ public class CompoundEditor extends BIPEditor {
     }
 
     public void dispose() {
-        removeViewerEditEntry(viewer);
+        // startupModel is not allow to close
+        // if (properties.getTopModel() instanceof ProjectModel
+        // && getModel().equals(
+        // ((ProjectModel) properties.getTopModel()).getStartupModel())) {
+        // return;
+        // }
         super.dispose();
     }
 

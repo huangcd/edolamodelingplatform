@@ -31,7 +31,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
                 extends
                     Serializable,
                     PropertyChangeListener {
-
+    String    UNNAMED_NAME       = "$UNNAMED$";
     String    CHILDREN           = "children";
     String    PARENT             = "parent";
     String    NAME               = "name";
@@ -50,6 +50,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     String    BEND_POINTS        = "bendPoints";
     String    DATA_TYPE          = "dataType";
     String    DATA_VALUE         = "dataValue";
+    String    DIPOSE             = "dipose";
     String    LINE_COLOR         = "lineColor";
     String[]  TRUE_FALSE_ARRAY   = new String[] {"true", "false"};
     /**
@@ -82,6 +83,8 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     String getName();
 
     Model setName(String name);
+
+    boolean hasName();
 
     /**
      * @return 返回关于模型的注释
@@ -128,21 +131,6 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
     Model setEntityNames(ArrayList<String> entityNames);
 
     Model deleteAllEntityNames();
-
-    /**
-     * @return 返回模型的全局唯一ID
-     */
-    UUID getID();
-
-    /**
-     * 重设模型ID
-     * 
-     * @return
-     */
-    Model resetID();
-
-    /** @return 返回模型全局唯一ID的字符串表示 */
-    String getStringID();
 
     Rectangle getPositionConstraint();
 

@@ -21,12 +21,16 @@ public class MessageUtil {
     public static int DELETE_CONNECTOR_TYPE = 3;
 
     public static void ShowErrorDialog(String errorMessage, String title) {
-        MessageBox box =
-                        new MessageBox(Display.getDefault().getActiveShell(), SWT.ICON_ERROR
-                                        | SWT.OK);
-        box.setMessage(errorMessage);
-        box.setText(title);
-        box.open();
+        try {
+            MessageBox box =
+                            new MessageBox(Display.getDefault().getActiveShell(), SWT.ICON_ERROR
+                                            | SWT.OK);
+            box.setMessage(errorMessage);
+            box.setText(title);
+            box.open();
+        } catch (Exception ex) {
+
+        }
     }
 
     public static void ShowWarningDialog(String errorMessage, String title) {
@@ -61,8 +65,8 @@ public class MessageUtil {
     }
 
     public static void ShowRenameErrorDialog(String name) {
-        String title = "重命名出错";
-        String errorMessage = "无法重命名为 " + name + "：指定的名字与现有名字重复或者是关键字。";
+        String title = Messages.MessageUtil_0;
+        String errorMessage = Messages.MessageUtil_1 + name + Messages.MessageUtil_2;
         ShowErrorDialog(errorMessage, title);
     }
 
@@ -75,30 +79,30 @@ public class MessageUtil {
             case 3:
                 ShowDeleteConnectorTypeErrorDialog(name);
             default:
-                ShowErrorDialog(name, "删除出错");
+                ShowErrorDialog(name, Messages.MessageUtil_3);
         }
     }
 
     public static void ShowDeleteDataTypeErrorDialog(String name) {
-        String title = "删除数据类型出错";
-        String errorMessage = "无法删除数据类型 " + name + "：存在该类型实例。";
+        String title = Messages.MessageUtil_4;
+        String errorMessage = Messages.MessageUtil_5 + name + Messages.MessageUtil_6;
         ShowErrorDialog(errorMessage, title);
     }
 
     public static void ShowDeletePortTypeErrorDialog(String name) {
-        String title = "删除端口类型出错";
-        String errorMessage = "无法删除端口类型 " + name + "：存在该类型实例。";
+        String title = Messages.MessageUtil_7;
+        String errorMessage = Messages.MessageUtil_8 + name + Messages.MessageUtil_9;
         ShowErrorDialog(errorMessage, title);
     }
 
     public static void ShowDeleteConnectorTypeErrorDialog(String name) {
-        String title = "删除连接子类型出错";
-        String errorMessage = "无法删除连接子类型 " + name + "：存在该类型实例。";
+        String title = Messages.MessageUtil_10;
+        String errorMessage = Messages.MessageUtil_11 + name + Messages.MessageUtil_12;
         ShowErrorDialog(errorMessage, title);
     }
 
     public static void showConsoleMessage(String message) {
-        MessageConsole console = new MessageConsole("EdolaModeling Platform", null); // 信息改成需要的名字
+        MessageConsole console = new MessageConsole(Messages.MessageUtil_13, null); // 信息改成需要的名字
         ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IOConsole[] {console});
         try {
             console.activate();
@@ -112,17 +116,21 @@ public class MessageUtil {
     }
 
     public static void addProblemMessage(IResource resource, String message, int lineNumber,
-                    int severity, int priority) throws CoreException {
-        if (resource != null) {
-            IMarker marker = resource.createMarker(IMarker.PROBLEM);
-            if (message != null) marker.setAttribute(IMarker.MESSAGE, message);
-            if (lineNumber >= 0) marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-            marker.setAttribute(IMarker.SEVERITY, severity);
-            marker.setAttribute(IMarker.PRIORITY, priority);
+                    int severity, int priority) {
+        try {
+            if (resource != null) {
+                IMarker marker = resource.createMarker(IMarker.PROBLEM);
+                if (message != null) marker.setAttribute(IMarker.MESSAGE, message);
+                if (lineNumber >= 0) marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+                marker.setAttribute(IMarker.SEVERITY, severity);
+                marker.setAttribute(IMarker.PRIORITY, priority);
+            }
+        } catch (CoreException ex) {
+            ex.printStackTrace();
         }
     }
 
-    public static void addProblemErrorMessage(String message) throws CoreException {
+    public static void addProblemErrorMessage(String message) {
         IResource resource = ResourcesPlugin.getWorkspace().getRoot();
         int lineNumber = -1;
         int severity = IMarker.SEVERITY_ERROR;
@@ -130,7 +138,7 @@ public class MessageUtil {
         addProblemMessage(resource, message, lineNumber, severity, priority);
     }
 
-    public static void addProblemWarningMessage(String message) throws CoreException {
+    public static void addProblemWarningMessage(String message) {
         IResource resource = ResourcesPlugin.getWorkspace().getRoot();
         int lineNumber = -1;
         int severity = IMarker.SEVERITY_WARNING;
@@ -138,9 +146,13 @@ public class MessageUtil {
         addProblemMessage(resource, message, lineNumber, severity, priority);
     }
 
-    public static void clearProblemMessage() throws CoreException {
-        ResourcesPlugin.getWorkspace().getRoot()
-                        .deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE);
+    public static void clearProblemMessage() {
+        try {
+            ResourcesPlugin.getWorkspace().getRoot()
+                            .deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE);
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
     }
 
 }

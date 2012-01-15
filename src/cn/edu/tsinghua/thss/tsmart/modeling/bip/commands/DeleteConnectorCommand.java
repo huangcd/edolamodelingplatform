@@ -20,25 +20,26 @@ public class DeleteConnectorCommand extends Command {
     public void execute() {
         parent.removeChild(child);
         sourceConnections.addAll(child.getSourceConnections());
-        for (ConnectionModel transition : sourceConnections) {
-            transition.detachSource();
-            transition.detachTarget();
-            if (transition.getTarget() instanceof InvisibleBulletModel) {
-                parent.removeBullet((InvisibleBulletModel) transition.getTarget());
+        for (ConnectionModel connection : sourceConnections) {
+            connection.detachSource();
+            connection.detachTarget();
+            if (connection.getTarget() instanceof InvisibleBulletModel) {
+                parent.removeBullet((InvisibleBulletModel) connection.getTarget());
             }
         }
-        child.getSourceConnections().clear();
+        // XXX 删除连接子相关的PriorityModel
+        parent.deleteRelatedPrioritiesWhenDeleteConnector(child);
     }
 
     @Override
     public void undo() {
         parent.addChild(child);
-        child.getSourceConnections().addAll(sourceConnections);
-        for (ConnectionModel transition : sourceConnections) {
-            transition.attachSource();
-            transition.attachTarget();
-            if (transition.getTarget() instanceof InvisibleBulletModel) {
-                parent.addChild((InvisibleBulletModel) transition.getTarget());
+        for (ConnectionModel connection : sourceConnections) {
+            connection.setSource(child);
+            connection.attachSource();
+            connection.attachTarget();
+            if (connection.getTarget() instanceof InvisibleBulletModel) {
+                parent.addChild((InvisibleBulletModel) connection.getTarget());
             }
         }
         sourceConnections.clear();

@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EntitySelectionDialog;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.EntityEditDialog;
 
 
 /**
@@ -40,16 +40,16 @@ public class EntitySelectionDialogCellEditor extends DialogCellEditor {
 	protected Object openDialogBox(Control cellEditorWindow) {
 	    Shell shell = Display.getCurrent().getActiveShell();
 	    
-	    EntitySelectionDialog dialog;
+	    EntityEditDialog dialog;
 	    if(getValue() instanceof ArrayList<?>)
-	        dialog = new EntitySelectionDialog(shell, (ArrayList<String>) getValue());
+	        dialog = new EntityEditDialog(shell, (ArrayList<String>) getValue());
 	    else
-	        dialog = new EntitySelectionDialog(shell, new ArrayList<String>());
+	        dialog = new EntityEditDialog(shell, new ArrayList<String>());
         dialog.setBlockOnOpen(true);
         if (Dialog.OK == dialog.open()) {
             return dialog.getEntityNames();
+        } else {
+            return getValue();
         }
-        return dialog.getEntityNames();
 	}
-
 }

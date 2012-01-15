@@ -13,7 +13,7 @@ public class SaveTopLevelModelAction extends OpenDialogAction {
     public final static String id = SaveTopLevelModelAction.class.getCanonicalName();
 
     public SaveTopLevelModelAction(IWorkbenchWindow window) {
-        super(window, id, "保存项目/构件库", "保存当前编辑的项目或构件库", null);
+        super(window, id, Messages.SaveTopLevelModelAction_0, Messages.SaveTopLevelModelAction_1, null);
     }
 
     @Override

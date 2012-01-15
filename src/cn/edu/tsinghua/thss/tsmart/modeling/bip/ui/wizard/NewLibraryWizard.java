@@ -6,7 +6,7 @@ public class NewLibraryWizard extends Wizard {
     private CreateWizardData data;
 
     public NewLibraryWizard(CreateWizardData data) {
-        setWindowTitle("新建构件库向导");
+        setWindowTitle(Messages.NewLibraryWizard_0);
         this.data = data;
     }
 

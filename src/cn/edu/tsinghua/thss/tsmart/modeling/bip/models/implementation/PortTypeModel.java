@@ -24,10 +24,9 @@ import org.simpleframework.xml.Root;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IDataContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IOrderContainer;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.ITopModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.requests.CopyFactory;
-import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 
@@ -38,7 +37,7 @@ import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Root
-public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IDataContainer>
+public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, ITopModel>
                 implements
                     IOrderContainer<DataTypeModel> {
     private static final long                                                      serialVersionUID =
@@ -54,15 +53,7 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
     }
 
     public static Collection<PortTypeModel> getAllRegisterTypes() {
-        return typeSources.values();
-    }
-
-    public static void saveTypes() {
-        saveTypes(Activator.getPreferenceDirection());
-    }
-
-    public static void loadTypes() {
-        loadTypes(Activator.getPreferenceDirection());
+        return Collections.unmodifiableCollection(typeSources.values());
     }
 
     public static void clearTypes() {
@@ -77,8 +68,12 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
             for (Map.Entry<String, PortTypeModel> entry : getTypeEntries()) {
+                PortTypeModel connector = entry.getValue();
+                ITopModel parent = connector.getParent();
+                connector.setParent(null);
                 out.writeObject(entry.getValue());
                 out.flush();
+                connector.setParent(parent);
             }
             out.close();
         } catch (IOException e) {
@@ -274,8 +269,10 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
      */
     public String exportToBip() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("port type ").append(getName()).append('(').append(getArgumentAsString())
-                        .append(')');
+        buffer.append("port type ").append(getName());
+        if (!getArgumentAsString().equals("")) {
+            buffer.append('(').append(getArgumentAsString()).append(')');
+        }
         return buffer.toString();
     }
 
@@ -290,6 +287,13 @@ public class PortTypeModel extends BaseTypeModel<PortTypeModel, PortModel, IData
             }
         }
         return buffer.toString();
+    }
+
+    /**
+     * PortTypeModel²»ÐèÒªparent
+     */
+    public PortTypeModel setParent(ITopModel parent) {
+        return this;
     }
 
     public String getFriendlyArguments() {

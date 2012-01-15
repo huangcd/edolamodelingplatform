@@ -5,6 +5,8 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.IFigure;
@@ -12,6 +14,7 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.ScrollPane;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -26,8 +29,10 @@ public class TransitionEditPart extends BaseConnectionEditPart {
     private PolylineConnection connection;
     private Label              tooltipLabel;
     private Label              actionLabel;
+    private Label              actionTooltip;
     private Label              portLabel;
     private Label              guardLabel;
+    private Label              guardTooltip;
     // 根据portLabel的位置定位actionLabel
     private FigureLocator      actionLocator;
     // 根据portLabel的位置定位guardLabel
@@ -56,12 +61,21 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         getGraphLayerFigure().add(portLabel);
         addFigureMouseEvent(portLabel);
 
-        actionLabel = new Label(getModel().getActionString());
+        actionLabel = new Label(getModel().getOneLineActionString());
         actionLabel.setFont(properties.getDefaultEditorFont());
         actionLabel.setForegroundColor(properties.getActionLabelColor());
         getGraphLayerFigure().add(actionLabel);
         actionLocator = new FigureLocator(portLabel, actionLabel, PositionConstants.EAST, 5);
         addFigureMouseEvent(actionLabel);
+        actionTooltip = new Label(getModel().getActionString());
+        actionTooltip.setFont(properties.getDefaultEditorFont());
+        actionTooltip.setForegroundColor(properties.getActionLabelColor());
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setHorizontalScrollBarVisibility(ScrollPane.ALWAYS);
+        scrollPane.setVerticalScrollBarVisibility(ScrollPane.ALWAYS);
+        scrollPane.setSize(300, 400);
+        scrollPane.add(actionTooltip);
+        actionLabel.setToolTip(actionTooltip);
 
         guardLabel = new Label(getModel().getGuardString());
         guardLabel.setFont(properties.getDefaultEditorFont());
@@ -69,6 +83,11 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         getGraphLayerFigure().add(guardLabel);
         guardLocator = new FigureLocator(portLabel, guardLabel, PositionConstants.WEST, 5);
         addFigureMouseEvent(guardLabel);
+        guardTooltip = new Label(getModel().getGuardString());
+        guardTooltip.setFont(properties.getDefaultEditorFont());
+        guardTooltip.setForegroundColor(properties.getGuardLabelColor());
+        guardLabel.setToolTip(guardTooltip);
+
         relocateLabels(getBendpoints());
         return connection;
     }
@@ -94,6 +113,16 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         Point location = getRelocateLocation(bendpoints);
         Dimension size = portLabel.getPreferredSize();
         location.translate(-size.width / 2, 0);
+        Set children = new HashSet(getGraphLayerFigure().getChildren());
+        if (!children.contains(portLabel)) {
+            getGraphLayerFigure().add(portLabel);
+        }
+        if (!children.contains(actionLabel)) {
+            getGraphLayerFigure().add(actionLabel);
+        }
+        if (!children.contains(guardLabel)) {
+            getGraphLayerFigure().add(guardLabel);
+        }
         portLabel.setBounds(new Rectangle(location, size));
         guardLocator.relocate();
         actionLocator.relocate();
@@ -111,11 +140,7 @@ public class TransitionEditPart extends BaseConnectionEditPart {
 
     protected void refreshBendpoints() {
         ArrayList<Bendpoint> bendpoints = getBendpoints();
-        if (bendpoints.isEmpty() && getModel().isLoop()) {
-            getConnectionFigure().setRoutingConstraint(bendpoints);
-        } else {
-            getConnectionFigure().setRoutingConstraint(bendpoints);
-        }
+        getConnectionFigure().setRoutingConstraint(bendpoints);
         relocateLabels(bendpoints);
     }
 
@@ -131,10 +156,10 @@ public class TransitionEditPart extends BaseConnectionEditPart {
             getGraphLayerFigure().remove(actionLabel);
         }
         if (getGraphLayerFigure().getChildren().contains(guardLabel)) {
-        getGraphLayerFigure().remove(guardLabel);
+            getGraphLayerFigure().remove(guardLabel);
         }
         if (getGraphLayerFigure().getChildren().contains(portLabel)) {
-        getGraphLayerFigure().remove(portLabel);
+            getGraphLayerFigure().remove(portLabel);
         }
         super.deactivate();
     }
@@ -146,11 +171,13 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         String propertyName = evt.getPropertyName();
         if (IModel.ACTION.equals(propertyName)) {
             setTooltip();
-            actionLabel.setText(getModel().getActionString());
+            actionLabel.setText(getModel().getOneLineActionString());
+            actionTooltip.setText(getModel().getActionString());
             actionLocator.relocate();
         } else if (IModel.GUARD.equals(propertyName)) {
             setTooltip();
             guardLabel.setText(getModel().getGuardString());
+            guardTooltip.setText(getModel().getGuardString());
             guardLocator.relocate();
         } else if (IModel.PORT.equals(propertyName)) {
             setTooltip();
@@ -161,7 +188,7 @@ public class TransitionEditPart extends BaseConnectionEditPart {
             refreshVisuals();
         }
         setTooltip();
-        actionLabel.setText(getModel().getActionString());
+        actionLabel.setText(getModel().getOneLineActionString());
         guardLabel.setText(getModel().getGuardString());
         portLabel.setText(getModel().getPortString());
         refreshVisuals();

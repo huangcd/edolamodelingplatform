@@ -11,7 +11,7 @@ public class ManageDataTypeAction extends OpenDialogAction {
     public static final String ID = ManageDataTypeAction.class.getCanonicalName();
 
     public ManageDataTypeAction(IWorkbenchWindow window) {
-        super(window, ID, "管理数据类型", "增加或删除数据类型", "icons/new_data_16.png");
+        super(window, ID, Messages.ManageDataTypeAction_0, Messages.ManageDataTypeAction_1, "icons/new_data_16.png"); //$NON-NLS-3$
     }
 
     @Override

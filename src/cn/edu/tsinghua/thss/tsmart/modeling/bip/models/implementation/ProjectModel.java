@@ -8,14 +8,22 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
+
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IType;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
 import cn.edu.tsinghua.thss.tsmart.platform.Activator;
 
 @SuppressWarnings("rawtypes")
@@ -121,16 +129,21 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
         usedLibraryEntries = new ArrayList<LibraryEntry>();
     }
 
-    public static ProjectModel load(File directory) throws InvalidPropertiesFormatException,
-                    FileNotFoundException, IOException, ClassNotFoundException {
+    public static ProjectModel load(File directory, IProgressMonitor monitor)
+                    throws InvalidPropertiesFormatException, FileNotFoundException, IOException,
+                    ClassNotFoundException {
+        monitor.beginTask("读取配置文件", 1);
         Properties properties = new Properties();
         properties.loadFromXML(new FileInputStream(new File(directory, FILE_NAME)));
         ProjectModel model = new ProjectModel();
         model.setLocation(directory.getAbsolutePath());
         model.loadProperties(properties);
+        monitor.done();
         model.setDirectory(directory);
+        monitor.beginTask("读取依赖库位置", 1);
         model.loadLibraryLocations();
-        model.loadTypesFromLibraries();
+        monitor.done();
+        model.loadTypesFromLibraries(monitor);
         model.setStartupModelName(properties.getProperty("startup"));
         return model;
     }
@@ -140,11 +153,12 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
         setName(properties.getProperty("name"));
     }
 
-    public void loadTypes() {
-        super.loadTypes();
+    public void loadTypes(IProgressMonitor monitor) {
+        super.loadTypes(monitor);
         for (CompoundTypeModel model : getCompoundTypes()) {
             if (model.getName().equals(startupModelName)) {
-                startupModel = model;
+                setStartupModel(model);
+                BIPEditor.openBIPEditor(model);
             }
         }
     }
@@ -159,6 +173,10 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
             // 绝对路径
             if (!directory.exists()) {
                 directory = new File(line);
+            }
+            if (!directory.exists()) {
+                MessageUtil.ShowErrorDialog("依赖库“" + directory.getName() + "”不存在", "错误");
+                return;
             }
             libraryLocations.add(directory);
             usedLibraryEntries.add(new LibraryEntry(directory));
@@ -180,31 +198,60 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
             libraryLocations.add(library.getDirectory());
             usedLibraryEntries.add(new LibraryEntry(library));
         }
-        loadTypesFromLibraries();
+
+        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+        try {
+            progressService.busyCursorWhile(new IRunnableWithProgress() {
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException,
+                                InterruptedException {
+                    loadTypesFromLibraries(monitor);
+                }
+            });
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 
     /**
      * 读取构件库的所有类型
+     * 
+     * @param monitor
      */
-    protected void loadTypesFromLibraries() {
+    protected void loadTypesFromLibraries(IProgressMonitor monitor) {
         for (File dir : libraryLocations) {
-            DataTypeModel.loadTypes(dir);
-            PortTypeModel.loadTypes(dir);
-            ConnectorTypeModel.loadTypes(dir);
+            if (!dir.exists()) {
+                MessageUtil.ShowErrorDialog("依赖库“" + dir.getName() + "”不存在", "错误");
+                return;
+            }
             File[] atomicFiles = dir.listFiles(atomicFilenameFilter);
+            File[] compoundFiles = dir.listFiles(compoundFilenameFilter);
+            int total = 3 + atomicFiles.length + compoundFiles.length;
+            int count = 0;
+            monitor.beginTask("从构件库中读取类型信息", total);
+            DataTypeModel.loadTypes(dir);
+            monitor.worked(++count);
+            PortTypeModel.loadTypes(dir);
+            monitor.worked(++count);
+            ConnectorTypeModel.loadTypes(dir);
+            monitor.worked(++count);
             for (File file : atomicFiles) {
                 AtomicTypeModel model = loadAtomicType(file);
                 if (model != null) {
                     AtomicTypeModel.addType(model);
                 }
+                monitor.worked(++count);
             }
-            File[] compoundFiles = dir.listFiles(compoundFilenameFilter);
             for (File file : compoundFiles) {
                 CompoundTypeModel model = loadCompoundType(file);
                 if (model != null) {
                     CompoundTypeModel.addType(model);
                 }
+                monitor.worked(++count);
             }
+            monitor.done();
         }
     }
 
@@ -218,6 +265,24 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
 
     public List<LibraryEntry> getUsedLibraryEntries() {
         return Collections.unmodifiableList(usedLibraryEntries);
+    }
+
+    /*
+     * 检查基准线中的实体是否有不一致
+     */
+    public boolean checkValidateBaseline() {
+        if (getStartupModel() == null) {
+            MessageUtil.ShowErrorDialog("startupModel加载失败", "错误");
+            return true;
+        }
+        return getStartupModel().checkValidateBaseline();
+    }
+
+    /*
+     * 删除模型中的无效实体（这些实体在基准线中不存在）
+     */
+    public void cleanEntityNames() {
+        getStartupModel().cleanEntityNames();
     }
 
     @Override
@@ -251,9 +316,29 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
 
     @Override
     public void save() {
-        saveBaseInformation();
-        saveLibraries();
-        saveTypes();
+        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+        try {
+            progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
+                            new IRunnableWithProgress() {
+                                @Override
+                                public void run(IProgressMonitor monitor)
+                                                throws InvocationTargetException,
+                                                InterruptedException {
+                                    monitor.beginTask("保存项目", 2 + getChildren().size());
+                                    int count = 0;
+                                    saveBaseInformation();
+                                    monitor.worked(++count);
+                                    saveLibraries();
+                                    monitor.worked(++count);
+                                    saveTypes(monitor, count);
+                                    monitor.done();
+                                }
+                            }, ResourcesPlugin.getWorkspace().getRoot());
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 
     @Override
@@ -281,8 +366,11 @@ public class ProjectModel extends TopLevelModel<ProjectModel> {
     protected void saveProperties(Properties properties) {
         properties.put("name", getName());
         properties.put("baseline", getBaseline());
-        properties.put("location", getLocation());
-        properties.put("startup", startupModel.getName());
+        if (getStartupModel() != null) {
+            properties.put("startup", getStartupModel().getName());
+        } else {
+            properties.put("startup", "startupModel");
+        }
     }
 
     private void saveLibraries() {

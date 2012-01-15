@@ -41,7 +41,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
         addRetargetAction((RetargetAction) ActionFactory.PASTE.create(window));
 
         addRetargetAction(new LabelRetargetAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY,
-                        "Toggle Grid", IAction.AS_CHECK_BOX));
+                        "Toggle Grid", IAction.AS_CHECK_BOX)); //$NON-NLS-1$
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.LEFT));
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.CENTER));
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.RIGHT));
@@ -88,7 +88,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
     // ²Ëµ¥À¸
     @Override
     public void contributeToMenu(IMenuManager menuManager) {
-        MenuManager editMenu = new MenuManager("±à¼­");
+        MenuManager editMenu = new MenuManager(Messages.BIPEditorActionBarContributor_1);
         menuManager.insertAfter(IWorkbenchActionConstants.M_FILE, editMenu);
         editMenu.add(getActionRegistry().getAction(ActionFactory.UNDO.getId()));
         editMenu.add(getActionRegistry().getAction(ActionFactory.REDO.getId()));
@@ -102,7 +102,7 @@ public class BIPEditorActionBarContributor extends ActionBarContributor {
         editMenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
         editMenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
 
-        IMenuManager viewMenu = new MenuManager("²é¿´");
+        IMenuManager viewMenu = new MenuManager(Messages.BIPEditorActionBarContributor_2);
         menuManager.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);
         viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
         viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));

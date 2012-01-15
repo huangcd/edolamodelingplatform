@@ -31,9 +31,9 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
     public NewAtomicEditorAction(IWorkbenchWindow window) {
         this.window = window;
         setId(ID);
-        setText("原子构件");
-        setToolTipText("新建原子构件");
-        setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png"));
+        setText(Messages.NewAtomicEditorAction_0);
+        setToolTipText(Messages.NewAtomicEditorAction_1);
+        setImageDescriptor(Activator.getImageDescriptor("icons/atomic_16.png")); //$NON-NLS-1$
         window.getSelectionService().addSelectionListener(this);
     }
 
@@ -56,8 +56,8 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
         // return;
         // }
         if (topModel instanceof LibraryModel) {
-            AtomicTypeModel model = new AtomicTypeModel().setName("atomic0");
-            if (MessageUtil.showConfirmDialog("是否将组件添加到当前库？", "确认")) {
+            AtomicTypeModel model = new AtomicTypeModel().setName("atomic0"); //$NON-NLS-1$
+            if (MessageUtil.showConfirmDialog(Messages.NewAtomicEditorAction_4, Messages.NewAtomicEditorAction_5)) {
                 AddLibrarySettingDialog dialog =
                                 new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
                                                 model);
@@ -66,13 +66,23 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
                 if (resultCode == AddLibrarySettingDialog.OK) {
                     topModel.addChild(model);
                 } else {
-                    MessageUtil.showMessageDialog("组件将不被保存到库，您依然可以在以后右键选择将组件保存到库", "");
+                    MessageUtil.showMessageDialog(Messages.NewAtomicEditorAction_6, ""); //$NON-NLS-2$
                 }
             }
             topModel.addOpenModel(model);
             BIPEditor.openBIPEditor(model);
         } else if (topModel instanceof ProjectModel) {
-            AtomicTypeModel model = new AtomicTypeModel().setName("atomic0");
+            AtomicTypeModel model = new AtomicTypeModel().setName("atomic0"); //$NON-NLS-1$
+            if (MessageUtil.showConfirmDialog(Messages.NewAtomicEditorAction_9, Messages.NewAtomicEditorAction_10)) {
+                AddLibrarySettingDialog dialog =
+                                new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
+                                                model);
+                dialog.setBlockOnOpen(true);
+                int resultCode = dialog.open();
+                if (resultCode == AddLibrarySettingDialog.OK) {
+                    topModel.addChild(model);
+                }
+            }
             topModel.addOpenModel(model);
             BIPEditor.openBIPEditor(model);
         }

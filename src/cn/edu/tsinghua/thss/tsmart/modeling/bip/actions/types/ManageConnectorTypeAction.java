@@ -11,7 +11,7 @@ public class ManageConnectorTypeAction extends OpenDialogAction {
     public static final String ID = ManageConnectorTypeAction.class.getCanonicalName();
 
     public ManageConnectorTypeAction(IWorkbenchWindow window) {
-        super(window, ID, "管理连接子类型", "增加或删除连接子类型", "icons/connector_16.png");
+        super(window, ID, Messages.ManageConnectorTypeAction_0, Messages.ManageConnectorTypeAction_1, "icons/connector_16.png"); //$NON-NLS-3$
     }
 
     @Override
