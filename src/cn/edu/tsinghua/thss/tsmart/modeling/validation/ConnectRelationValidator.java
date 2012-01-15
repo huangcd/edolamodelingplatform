@@ -2,7 +2,6 @@ package cn.edu.tsinghua.thss.tsmart.modeling.validation;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.VerificationError;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicModel;

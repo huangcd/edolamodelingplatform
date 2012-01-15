@@ -1,8 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.modelchecking;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -13,12 +16,9 @@ import org.eclipse.ui.console.MessageConsole;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.types.Messages;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CodeGenProjectModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.LibraryModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TopLevelModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.MessageUtil;
-import cn.edu.tsinghua.thss.tsmart.modeling.codegen.utils.ProcessCaller;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
 @SuppressWarnings("rawtypes")
@@ -26,6 +26,11 @@ public class ModelCheckingManager {
     public ModelCheckingProperties mcps;
     CodeGenProjectModel            cgpm;
     String                         fileName;
+    private BufferedReader         serverInReader;
+    private BufferedReader         serverErrReader;
+    boolean                        isCheckOK = false;
+    IOConsoleOutputStream          normalOut;
+    IOConsoleOutputStream          errorOut;
 
     public ModelCheckingManager() {
         TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
@@ -46,6 +51,16 @@ public class ModelCheckingManager {
         fileName = cgpm.getMCPropertiesFilePath();
 
         loadProperties();
+
+        // 准备控制台输出
+        MessageConsole console = new MessageConsole("", null);
+        ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {console});
+        console.activate();
+        normalOut = console.newOutputStream();
+        normalOut.setColor(ColorConstants.black);
+
+        errorOut = console.newOutputStream();
+        errorOut.setColor(ColorConstants.red);
     }
 
     private void loadProperties() {
@@ -148,6 +163,8 @@ public class ModelCheckingManager {
             e.printStackTrace();
         }
 
+        isCheckOK = false;
+
         try {
             // 调用模型检测工具
             String cmd = System.getProperty("user.dir") //$NON-NLS-1$
@@ -159,22 +176,16 @@ public class ModelCheckingManager {
             }
             cmd +=
                             "\""            + tempDir.getAbsolutePath() + "/test\"" + " result.txt" + modelCheckingParamsString; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            ProcessCaller pc = new ProcessCaller();
-            int exitValue = pc.exec(cmd);
-            boolean isCheckOK = dumpMessage(pc.getOutputAsString().split("[\\r\\n]+"));//$NON-NLS-1$
-            if (exitValue != 0) {
-                MessageUtil.addProblemErrorMessage("Error while invoking the model checker: exitValue = "
-                                + exitValue);//$NON-NLS-1$
-            }
-            
-            if (isTypeChecking) {
-                if (isCheckOK) {
-                    MessageUtil.showMessageDialog(Messages.ValidateModelCheckingAction_3, Messages.ValidateModelCheckingAction_4);
-                } else {
-                    MessageUtil.ShowErrorDialog(Messages.ValidateModelCheckingAction_5, Messages.ValidateModelCheckingAction_6);
-                }
-            }
-            
+            Process serverProc = Runtime.getRuntime().exec(cmd);
+            serverInReader =
+                            new BufferedReader(new InputStreamReader(new DataInputStream(
+                                            serverProc.getInputStream())));;
+            serverErrReader =
+                            new BufferedReader(new InputStreamReader(new DataInputStream(
+                                            serverProc.getErrorStream())));;
+            new Thread(new outputServerInputInfo()).start();
+            new Thread(new outputServerErrInfo()).start();
+
             return;
 
         } catch (IOException e) {
@@ -184,35 +195,58 @@ public class ModelCheckingManager {
         return;
     }
 
-    private boolean dumpMessage(String[] lines) {
-        // 准备控制台输出
-        MessageConsole console = new MessageConsole("", null);
-        ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {console});
-        console.activate();
-        IOConsoleOutputStream normalOut = console.newOutputStream();
-        normalOut.setColor(ColorConstants.black);
+    private class outputServerInputInfo implements Runnable {
 
-        IOConsoleOutputStream errorOut = console.newOutputStream();
-        errorOut.setColor(ColorConstants.red);
+        @Override
+        public void run() {
 
-        boolean isCheckOK = false;
-        try {
-            for (String content : lines) {
-                if (content.toLowerCase().contains("error")) { //$NON-NLS-1$
-                    errorOut.write(content + "\r\n");//$NON-NLS-1$
+            String content;
+            try {
+                while ((content = serverInReader.readLine()) != null) {
+                    if (content.toLowerCase().contains("error")) { //$NON-NLS-1$
+                        errorOut.write(content + "\r\n");//$NON-NLS-1$
+                    } else {
+                        normalOut.write(content + "\r\n"); //$NON-NLS-1$
+                    }
+
+                    if (content.contains("YES")) { //$NON-NLS-1$
+                        isCheckOK = true;
+                    }
+                }
+
+                if (isCheckOK) {
+                    normalOut.write("验证通过\r\n");
                 } else {
-                    normalOut.write(content + "\r\n"); //$NON-NLS-1$
+                    errorOut.write("验证未通过\r\n");
                 }
-
-                if (content.contains("YES")) { //$NON-NLS-1$
-                    isCheckOK = true;
-                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
-        return isCheckOK;
+    }
+
+    private class outputServerErrInfo implements Runnable {
+
+        @Override
+        public void run() {
+            String content;
+            try {
+                while ((content = serverErrReader.readLine()) != null) {
+                    if (content.toLowerCase().contains("error")) { //$NON-NLS-1$
+                        errorOut.write(content + "\r\n");//$NON-NLS-1$
+                    } else {
+                        normalOut.write(content + "\r\n"); //$NON-NLS-1$
+                    }
+
+                    if (content.contains("YES")) { //$NON-NLS-1$
+                        isCheckOK = true;
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 }

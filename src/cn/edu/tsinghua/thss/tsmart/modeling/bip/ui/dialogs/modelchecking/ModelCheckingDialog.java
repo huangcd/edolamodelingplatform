@@ -321,12 +321,27 @@ public class ModelCheckingDialog extends AbstractEditDialog {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+            	Shell shell = Display.getCurrent().getActiveShell();
+            	final ModelCheckingRunningDialog mcrd = new ModelCheckingRunningDialog(shell);
+            	mcrd.notifyStarted();
+
                 new Thread() {
                     public void run() {
                         ModelCheckingManager mcm = new ModelCheckingManager();
-                        mcm.doChecking(false, modelCheckingParamsString);
+                        //boolean isCheckOK = mcm.doChecking(true, "");//$NON-NLS-1$
+                        mcm.doChecking(false, modelCheckingParamsString);//$NON-NLS-1$
+                        mcrd.notifyFinished();
+//                        if (isCheckOK) {
+//                            MessageUtil.showMessageDialog(Messages.ValidateModelCheckingAction_3, Messages.ValidateModelCheckingAction_4);
+//                        } else {
+//                            MessageUtil.ShowErrorDialog(Messages.ValidateModelCheckingAction_5, Messages.ValidateModelCheckingAction_6);
+//                        }
                     }
                 }.start();
+
+                if (!mcrd.isFinished()) {
+                	mcrd.open();
+            	}
             }
         });
         button.setText(Messages.ModelCheckingDialog_38);

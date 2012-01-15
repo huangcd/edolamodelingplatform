@@ -16,6 +16,6 @@ public class BaselineEditPart extends AbstractTreeEditPart {
 
     public void refreshVisuals() {
         setWidgetText(getText());
-        setWidgetImage(Activator.getImageDescriptor("icons/baseline_16.png").createImage()); //$NON-NLS-1$
+        setWidgetImage(Activator.getImageDescriptor("icons/workset.gif").createImage()); //$NON-NLS-1$
     }
 }

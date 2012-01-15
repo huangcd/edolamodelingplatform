@@ -17,6 +17,6 @@ public class LibraryEditPart extends AbstractTreeEditPart {
 
     public void refreshVisuals() {
         setWidgetText(getText());
-        setWidgetImage(Activator.getImageDescriptor("icons/library_16.png").createImage());
+        setWidgetImage(Activator.getImageDescriptor("icons/jar_pack_wiz.gif").createImage());
     }
 }

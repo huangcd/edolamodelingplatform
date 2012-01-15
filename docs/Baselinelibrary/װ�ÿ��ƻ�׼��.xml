@@ -1,6 +1,6 @@
 <trustworthy_Baseline>
    <name>装置控制基准线</name>
-   <domain>装置控制领域实体库_zhh测试_0112</domain>
+   <domain>装置控制领域实体库</domain>
    <group_structure>
       <group_introduction>
       存储当前层次下的分类，type标识是条目还是分类。
@@ -58,86 +58,36 @@
    <leaf_node>
       <leaf_introduction></leaf_introduction>
       <node_content>
-         <node_id>1326347650149</node_id>
-         <node_parent_id>3.1</node_parent_id>
-         <node_natural_description>系统模型包括软件模型和环境模型</node_natural_description>
-         <node_rule>
-            <node_entity_subject>系统模型</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>软件模型</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>系统模型</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>环境模型</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
          <node_id>1326347704484</node_id>
          <node_parent_id>3.1</node_parent_id>
-         <node_natural_description>软件模型包括1个主控层构件，1个互锁层构件和至少1个功能层构件</node_natural_description>
+         <node_natural_description>系统模型包括1个主控层构件，1个互锁层构件，至少1个功能层构件，1个用户交互层构件</node_natural_description>
          <node_rule>
-            <node_entity_subject>软件模型</node_entity_subject>
+            <node_entity_subject>系统模型</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>主控层构件</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
             <node_cardinality>1</node_cardinality>
          </node_rule>
          <node_rule>
-            <node_entity_subject>软件模型</node_entity_subject>
+            <node_entity_subject>系统模型</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>互锁层构件</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
             <node_cardinality>1</node_cardinality>
          </node_rule>
          <node_rule>
-            <node_entity_subject>软件模型</node_entity_subject>
+            <node_entity_subject>系统模型</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>功能层构件</node_entity_guest>
             <node_quantifier>min</node_quantifier>
             <node_cardinality>1</node_cardinality>
          </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326347736558</node_id>
-         <node_parent_id>3.1</node_parent_id>
-         <node_natural_description>环境模型包括装置构件、用户构件、平台构件</node_natural_description>
          <node_rule>
-            <node_entity_subject>环境模型</node_entity_subject>
+            <node_entity_subject>系统模型</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>装置构件</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>环境模型</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>用户构件</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>环境模型</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>平台构件</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326347784356</node_id>
-         <node_parent_id>3.1</node_parent_id>
-         <node_natural_description>功能层构件之间不相连</node_natural_description>
-         <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
-            <node_entity_relation>不相连</node_entity_relation>
-            <node_entity_guest>功能层构件</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
+            <node_entity_guest>用户交互层构件</node_entity_guest>
+            <node_quantifier>exactly</node_quantifier>
+            <node_cardinality>1</node_cardinality>
          </node_rule>
       </node_content>
       <node_content>
@@ -162,108 +112,6 @@
             <node_entity_guest>装置构件</node_entity_guest>
             <node_quantifier>some</node_quantifier>
             <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326347938422</node_id>
-         <node_parent_id>3.1</node_parent_id>
-         <node_natural_description>主控层构件与用户构件相连</node_natural_description>
-         <node_rule>
-            <node_entity_subject>主控层构件</node_entity_subject>
-            <node_entity_relation>相连</node_entity_relation>
-            <node_entity_guest>用户构件</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326348017959</node_id>
-         <node_parent_id>3.1</node_parent_id>
-         <node_natural_description>平台构件包含1个PLC周期调度构件</node_natural_description>
-         <node_rule>
-            <node_entity_subject>平台构件</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>PLC周期调度构件</node_entity_guest>
-            <node_quantifier>exactly</node_quantifier>
-            <node_cardinality>1</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326348089532</node_id>
-         <node_parent_id>4.1</node_parent_id>
-         <node_natural_description>用于代码生成的软件模型，任一构件必须包含PLC数据交换信号</node_natural_description>
-         <node_rule>
-            <node_entity_subject>软件模型</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>模型构件</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>软件模型</node_entity_subject>
-            <node_entity_relation>用于</node_entity_relation>
-            <node_entity_guest>代码生成过程</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>模型构件</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>PLC数据交换信号</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326348793098</node_id>
-         <node_parent_id>4.1</node_parent_id>
-         <node_natural_description>功能层构件的装置目标速度参数，必须设置其最大值和最小值</node_natural_description>
-         <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>装置目标速度</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>装置目标速度</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>最大值</node_entity_guest>
-            <node_quantifier>exactly</node_quantifier>
-            <node_cardinality>1</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>装置目标速度</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>最小值</node_entity_guest>
-            <node_quantifier>exactly</node_quantifier>
-            <node_cardinality>1</node_cardinality>
-         </node_rule>
-      </node_content>
-      <node_content>
-         <node_id>1326349044603</node_id>
-         <node_parent_id>4.1</node_parent_id>
-         <node_natural_description>功能层构件的装置目标位置参数，必须设置在其最大值和最小值</node_natural_description>
-         <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>装置目标位置</node_entity_guest>
-            <node_quantifier>some</node_quantifier>
-            <node_cardinality>N/A</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>装置目标位置</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>最大值</node_entity_guest>
-            <node_quantifier>exactly</node_quantifier>
-            <node_cardinality>1</node_cardinality>
-         </node_rule>
-         <node_rule>
-            <node_entity_subject>装置目标位置</node_entity_subject>
-            <node_entity_relation>包含</node_entity_relation>
-            <node_entity_guest>最小值</node_entity_guest>
-            <node_quantifier>exactly</node_quantifier>
-            <node_cardinality>1</node_cardinality>
          </node_rule>
       </node_content>
       <node_content>
@@ -293,7 +141,7 @@
       <node_content>
          <node_id>1326349470551</node_id>
          <node_parent_id>1.2</node_parent_id>
-         <node_natural_description>系统模型必须满足，任何时刻，装置的当前速度在安全范围[minV,maxV]之内</node_natural_description>
+         <node_natural_description>系统模型必须满足，任何时刻，装置的当前速度不能超过最大值maxV。</node_natural_description>
          <node_requirement>
             <node_entity>装置当前速度</node_entity>
             <node_formal_description>AG (v &gt;=minV &amp; v&lt;=maxV)</node_formal_description>
@@ -333,30 +181,30 @@
       <node_content>
          <node_id>1326351269855</node_id>
          <node_parent_id>4.2</node_parent_id>
-         <node_natural_description>功能层构件包含 1 个硬上限位、1个硬下限位、1个软上限位和1个软下限位</node_natural_description>
+         <node_natural_description>装置层构件包含 1 个硬上限位、1个硬下限位、1个软上限位和1个软下限位</node_natural_description>
          <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
+            <node_entity_subject>装置构件</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>硬上限位</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
             <node_cardinality>1</node_cardinality>
          </node_rule>
          <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
+            <node_entity_subject>装置构件</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>硬下限位</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
             <node_cardinality>1</node_cardinality>
          </node_rule>
          <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
+            <node_entity_subject>装置构件</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>软上限位</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
             <node_cardinality>1</node_cardinality>
          </node_rule>
          <node_rule>
-            <node_entity_subject>功能层构件</node_entity_subject>
+            <node_entity_subject>装置构件</node_entity_subject>
             <node_entity_relation>包含</node_entity_relation>
             <node_entity_guest>软下限位</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
@@ -412,19 +260,6 @@
          </node_rule>
       </node_content>
       <node_content>
-         <node_id>1326351983399</node_id>
-         <node_parent_id>1.2</node_parent_id>
-         <node_natural_description>装置在停止的过程中不震荡
-</node_natural_description>
-      </node_content>
-      <node_content>
-         <node_id>1326351998023</node_id>
-         <node_parent_id>1.2</node_parent_id>
-         <node_natural_description>场景自动控制过程中，手动控制优先于自动控制
-
-</node_natural_description>
-      </node_content>
-      <node_content>
          <node_id>1326443018413</node_id>
          <node_parent_id>2.2</node_parent_id>
          <node_natural_description>代码生成过程必须要包含1个PCL时钟同步信号</node_natural_description>
@@ -434,6 +269,49 @@
             <node_entity_guest>PLC时钟同步信号</node_entity_guest>
             <node_quantifier>exactly</node_quantifier>
             <node_cardinality>1</node_cardinality>
+         </node_rule>
+      </node_content>
+      <node_content>
+         <node_id>1326529465775</node_id>
+         <node_parent_id>3.1</node_parent_id>
+         <node_natural_description>系统模型包含至少1个装置构件，1个用户构件</node_natural_description>
+         <node_rule>
+            <node_entity_subject>系统模型</node_entity_subject>
+            <node_entity_relation>包含</node_entity_relation>
+            <node_entity_guest>装置构件</node_entity_guest>
+            <node_quantifier>min</node_quantifier>
+            <node_cardinality>1</node_cardinality>
+         </node_rule>
+         <node_rule>
+            <node_entity_subject>系统模型</node_entity_subject>
+            <node_entity_relation>包含</node_entity_relation>
+            <node_entity_guest>用户构件</node_entity_guest>
+            <node_quantifier>exactly</node_quantifier>
+            <node_cardinality>1</node_cardinality>
+         </node_rule>
+      </node_content>
+      <node_content>
+         <node_id>1326529584569</node_id>
+         <node_parent_id>3.1</node_parent_id>
+         <node_natural_description>主控层构件与用户交互层构件相连</node_natural_description>
+         <node_rule>
+            <node_entity_subject>主控层构件</node_entity_subject>
+            <node_entity_relation>相连</node_entity_relation>
+            <node_entity_guest>用户交互层构件</node_entity_guest>
+            <node_quantifier>some</node_quantifier>
+            <node_cardinality>N/A</node_cardinality>
+         </node_rule>
+      </node_content>
+      <node_content>
+         <node_id>1326529644255</node_id>
+         <node_parent_id>3.1</node_parent_id>
+         <node_natural_description>用户交互层构件与用户构件相连</node_natural_description>
+         <node_rule>
+            <node_entity_subject>用户交互层构件</node_entity_subject>
+            <node_entity_relation>相连</node_entity_relation>
+            <node_entity_guest>用户构件</node_entity_guest>
+            <node_quantifier>some</node_quantifier>
+            <node_cardinality>N/A</node_cardinality>
          </node_rule>
       </node_content>
    </leaf_node>

@@ -313,6 +313,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用户交互层构件 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用户交互层构件">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#模型构件"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用户构件 -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/11/EntityBase.owl#用户构件">

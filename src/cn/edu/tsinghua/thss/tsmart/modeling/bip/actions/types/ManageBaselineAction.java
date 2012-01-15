@@ -23,14 +23,20 @@ public class ManageBaselineAction extends OpenDialogAction {
 
     public void run() {
         Location configArea = Platform.getInstallLocation();
-        String path = configArea.getURL().toExternalForm();
+        final String path = configArea.getURL().toExternalForm();
         // jump file:/
-        String cmd = "java -jar \"" + path.substring(6) + "/BaselineTool.jar\""; //$NON-NLS-1$ //$NON-NLS-2$
-        try {
-            Process process = Runtime.getRuntime().exec(cmd, null, new File(path.substring(6)));
-            process.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        final String cmd = "java -jar \"" + path.substring(6) + "/BaselineTool.jar\""; //$NON-NLS-1$ //$NON-NLS-2$
+        new Thread() {
+            public void run() {
+                try {
+                    Process process = Runtime.getRuntime().exec(cmd, null, new File(path.substring(6)));
+                    process.waitFor();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+        
+        
     }
 }
