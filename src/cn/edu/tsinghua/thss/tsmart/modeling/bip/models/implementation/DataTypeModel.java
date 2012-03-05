@@ -1,9 +1,13 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -64,8 +68,14 @@ public class DataTypeModel<P extends IDataContainer>
     public static void saveTypes(File directory) {
         File file = new File(directory, GlobalProperties.DATA_TYPE_FILE);
         try {
-            serializer.write(getAllRegisterTypes(), file);
+            FileOutputStream out = new FileOutputStream(file);
+            for (DataTypeModel data : getAllRegisterTypes()) {
+                serializer.write(data, out);
+                out.flush();
+            }
+            out.close();
         } catch (Exception e) {
+            e.printStackTrace();
             PrintWriter writer;
             try {
                 writer = new PrintWriter(file);
@@ -86,10 +96,14 @@ public class DataTypeModel<P extends IDataContainer>
         }
         try {
             try {
-                List<String> list = serializer.read(List.class, file);
-                for (String type : list) {
-                    if (!getTypes().contains(type)) {
-                        addType(type);
+                FileInputStream in = new FileInputStream(file);
+                while (true) {
+                    try {
+                        DataTypeModel data = serializer.read(DataTypeModel.class, in);
+                        addType(data.getName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
                     }
                 }
             } catch (Exception e) {
@@ -182,13 +196,21 @@ public class DataTypeModel<P extends IDataContainer>
         return list.toArray(new String[list.size()]);
     }
 
-    public DataTypeModel(@Attribute(name = "typeName") String typeName) {
-        this.setName(typeName);
+    public DataTypeModel(@Attribute(name = "name") String name) {
+        this.setName(name);
     }
 
     public DataTypeModel<P> setName(String name) {
         super.setName(name);
         getInstance().firePropertyChange(DataModel.DATA_TYPE);
+        return this;
+    }
+
+    @Override
+    /**
+     * DataTypeModel不需要有parent
+     */
+    public DataTypeModel setParent(P parent) {
         return this;
     }
 

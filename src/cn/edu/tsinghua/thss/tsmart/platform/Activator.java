@@ -42,14 +42,6 @@ public class Activator extends AbstractUIPlugin {
     @SuppressWarnings("rawtypes")
     public void stop(BundleContext context) throws Exception {
         plugin = null;
-        // XXX 适当的时候把下面几行去掉(@huangcd)
-        {
-            // DataTypeModel.saveTypes();
-            // PortTypeModel.saveTypes();
-            // ConnectorTypeModel.saveTypes();
-            // AtomicTypeModel.saveTypes();
-            // CompoundTypeModel.saveTypes();
-        }
         // 退出的时候自动保存构件库/项目
         TopLevelModel model = GlobalProperties.getInstance().getTopModel();
         if (model != null) {

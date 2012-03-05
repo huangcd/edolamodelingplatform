@@ -47,7 +47,7 @@ public class EditModelCheckingPropertiesDialog extends AbstractEditDialog {
         super(parentShell, Messages.EditModelCheckingPropertiesDialog_0);
         setTitle(Messages.EditModelCheckingPropertiesDialog_1);
 
-        // 需要把其他对话框对model的引用改成这个 TODO
+        // TODO 需要把其他对话框对model的引用改成这个
         TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
         // 构件库模式下不做检测
         if (topModel instanceof LibraryModel) {
@@ -122,7 +122,9 @@ public class EditModelCheckingPropertiesDialog extends AbstractEditDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 TableItem[] items = table.getSelection();
-                if (items.length == 0) return;
+                if (items.length == 0) {
+                    return;
+                }
 
                 // items[0].get
                 // TODO 删除
@@ -223,13 +225,7 @@ public class EditModelCheckingPropertiesDialog extends AbstractEditDialog {
             handleError(Messages.EditModelCheckingPropertiesDialog_10);
             return false;
         }
-
-
-
-        // TODO
-
-
-
+        // XXX
         return true;
     }
 

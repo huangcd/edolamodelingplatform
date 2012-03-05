@@ -103,10 +103,8 @@ public class BulletModel extends BaseInstanceModel<BulletModel, IType, IContaine
     }
 
     public BulletModel removeTargetConnection(ConnectionModel connection) {
-        boolean result = targetConnections.remove(connection);
-        if (result) {
-            firePropertyChange(TARGET);
-        }
+        targetConnections.remove(connection);
+        firePropertyChange(TARGET);
         return this;
     }
 }

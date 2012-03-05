@@ -18,10 +18,14 @@ import org.eclipse.draw2d.ScrollPane;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureLocator;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -38,8 +42,6 @@ public class TransitionEditPart extends BaseConnectionEditPart {
     // 根据portLabel的位置定位guardLabel
     private FigureLocator      guardLocator;
 
-    private void handleLoop() {}
-
     @Override
     protected IFigure createFigure() {
         connection = new PolylineConnection();
@@ -47,10 +49,6 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         decoration.setSize(100, 100);
         connection.setTargetDecoration(decoration);
         connection.setRoutingConstraint(getModel().getBendpoints());
-
-        if (getModel().getSource().equals(getModel().getTarget())) {
-            handleLoop();
-        }
 
         tooltipLabel = new Label(getModel().getFriendlyString());
         connection.setToolTip(tooltipLabel);
@@ -92,6 +90,13 @@ public class TransitionEditPart extends BaseConnectionEditPart {
         return connection;
     }
 
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new BIPConnectionEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_BENDPOINTS_ROLE,
+                        new ConnectionBendpointEditPolicy());
+    }
+    
     private IFigure getGraphLayerFigure() {
         if (getSource() != null) {
             return ((PlaceEditPart) getSource()).getParent().getFigure();
@@ -112,7 +117,7 @@ public class TransitionEditPart extends BaseConnectionEditPart {
     private void relocateLabels(ArrayList<Bendpoint> bendpoints) {
         Point location = getRelocateLocation(bendpoints);
         Dimension size = portLabel.getPreferredSize();
-        location.translate(-size.width / 2, 0);
+        location.translate(-size.width / 2, -size.height / 2);
         Set children = new HashSet(getGraphLayerFigure().getChildren());
         if (!children.contains(portLabel)) {
             getGraphLayerFigure().add(portLabel);

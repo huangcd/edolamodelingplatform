@@ -1,8 +1,11 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -69,6 +72,61 @@ public abstract class ComponentModel<Model extends BaseInstanceModel, Type exten
         return super.setPositionConstraint(rect);
     }
 
+    public void reorderBullets() {
+        List<PortModel> exportPorts = ((ComponentTypeModel) getType()).getExportPorts();
+        List<BulletModel> bullets = new ArrayList<BulletModel>();
+        for (PortModel port : exportPorts) {
+            bullets.add(port.getBullet());
+        }
+        int length = bullets.size();
+        Dimension size = getPositionConstraint().getSize();
+        int width = size.width;
+        int height = size.height;
+        int half = Math.max(0, (length - 4) / 2);
+        Iterator<BulletModel> iter = bullets.iterator();
+        Point point = new Point();
+        final Dimension EMPTY_SIZE = new Dimension(0, 0);
+        if (iter.hasNext()) {
+            point.setLocation(20, 0);
+            BulletModel bullet = iter.next();
+            bullet.setDirection(ensureInFrame(point));
+            bullet.setPositionConstraint(new Rectangle(point, EMPTY_SIZE));
+        }
+        if (iter.hasNext()) {
+            point.setLocation(width - 20 - BULLET_RADIUS * 2, 0);
+            BulletModel bullet = iter.next();
+            bullet.setDirection(ensureInFrame(point));
+            bullet.setPositionConstraint(new Rectangle(point, EMPTY_SIZE));
+        }
+        if (iter.hasNext()) {
+            point.setLocation(20, height);
+            BulletModel bullet = iter.next();
+            bullet.setDirection(ensureInFrame(point));
+            bullet.setPositionConstraint(new Rectangle(point, EMPTY_SIZE));
+        }
+        if (iter.hasNext()) {
+            point.setLocation(width - 20 - BULLET_RADIUS * 2, height);
+            BulletModel bullet = iter.next();
+            bullet.setDirection(ensureInFrame(point));
+            bullet.setPositionConstraint(new Rectangle(point, EMPTY_SIZE));
+        }
+        int delta = height / (half + 1);
+        for (int i = 0, h = delta - BULLET_RADIUS; i < half; i++, h += delta) {
+            point.setLocation(0, h);
+            BulletModel bullet = iter.next();
+            bullet.setDirection(ensureInFrame(point));
+            bullet.setPositionConstraint(new Rectangle(point, EMPTY_SIZE));
+        }
+        int left = Math.max(0, length - 4 - half);
+        delta = height / (left + 1);
+        for (int i = 0, h = delta - BULLET_RADIUS; i < left; i++, h += delta) {
+            point.setLocation(width, h);
+            BulletModel bullet = iter.next();
+            bullet.setDirection(ensureInFrame(point));
+            bullet.setPositionConstraint(new Rectangle(point, EMPTY_SIZE));
+        }
+    }
+
     /**
      * 确保bullet在方框之上
      * 
@@ -99,9 +157,5 @@ public abstract class ComponentModel<Model extends BaseInstanceModel, Type exten
         }
         point.setLocation(x, y);
         return direction;
-    }
-
-    public void reorderBullets() {
-
     }
 }

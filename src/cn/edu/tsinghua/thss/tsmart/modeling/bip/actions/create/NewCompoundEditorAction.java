@@ -50,14 +50,10 @@ public class NewCompoundEditorAction extends Action implements ISelectionListene
     public void run() {
         GlobalProperties properties = GlobalProperties.getInstance();
         TopLevelModel topModel = properties.getTopModel();
-        // XXX 考虑在项目视图下是否允许新建组件
-        // if (topModel instanceof ProjectModel) {
-        // MessageUtil.ShowErrorDialog("项目模式下不能新建组件", "错误");
-        // return;
-        // }
         if (topModel instanceof LibraryModel) {
             CompoundTypeModel model = new CompoundTypeModel().setName("compound0"); //$NON-NLS-1$
-            if (MessageUtil.showConfirmDialog(Messages.NewCompoundEditorAction_4, Messages.NewCompoundEditorAction_5)) {
+            if (MessageUtil.showConfirmDialog(Messages.NewCompoundEditorAction_4,
+                            Messages.NewCompoundEditorAction_5)) {
                 AddLibrarySettingDialog dialog =
                                 new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
                                                 model);
@@ -73,7 +69,8 @@ public class NewCompoundEditorAction extends Action implements ISelectionListene
             BIPEditor.openBIPEditor(model);
         } else if (topModel instanceof ProjectModel) {
             CompoundTypeModel model = new CompoundTypeModel().setName("compound0"); //$NON-NLS-1$
-            if (MessageUtil.showConfirmDialog(Messages.NewCompoundEditorAction_9, Messages.NewCompoundEditorAction_10)) {
+            if (MessageUtil.showConfirmDialog(Messages.NewCompoundEditorAction_9,
+                            Messages.NewCompoundEditorAction_10)) {
                 AddLibrarySettingDialog dialog =
                                 new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
                                                 model);

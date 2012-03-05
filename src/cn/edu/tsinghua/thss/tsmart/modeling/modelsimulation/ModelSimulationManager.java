@@ -100,9 +100,6 @@ public class ModelSimulationManager {
 
     public boolean checkValid() {
         // TODO ¼ì²é
-
-
-
         return true;
     }
     

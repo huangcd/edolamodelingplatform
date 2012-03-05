@@ -1083,7 +1083,6 @@ class Interactor implements Serializable {
         if (content != null) {
             return content.getName();
         }
-        // XXX
         StringBuilder buffer = new StringBuilder("");
         if (completePort != null) {
             buffer.append(completePort).append("\' ");
@@ -1093,7 +1092,6 @@ class Interactor implements Serializable {
                 buffer.append(interactor).append(' ');
             }
         }
-        // XXX
         return buffer.append("").toString();
     }
 }

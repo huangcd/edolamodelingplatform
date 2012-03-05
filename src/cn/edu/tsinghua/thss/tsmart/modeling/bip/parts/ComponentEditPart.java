@@ -31,12 +31,36 @@ public abstract class ComponentEditPart extends BaseEditableEditPart {
     private Label instanceLabel;
     private Panel panel;
 
+    public void setModel(Object model) {
+        List<PortModel> exportPorts =
+                        ((ComponentTypeModel) ((ComponentModel) model).getType()).getExportPorts();
+        List<BulletModel> bullets = new ArrayList<BulletModel>();
+        boolean allNullRect = true;
+        for (PortModel port : exportPorts) {
+            BulletModel bullet = port.getBullet();
+            Rectangle rect = bullet.getPositionConstraint();
+            if (rect == null) {
+                // 初始化Bullet的位置
+                rect = new Rectangle();
+                bullet.setPositionConstraint(rect);
+            } else if (!rect.getLocation().equals(0, 0)) {
+                allNullRect = false;
+            }
+            bullets.add(bullet);
+        }
+        if (allNullRect && bullets.size() > 1) {
+            ((ComponentModel) model).reorderBullets();
+        }
+        super.setModel(model);
+    }
+
     public ComponentModel getModel() {
         return (ComponentModel) super.getModel();
     }
 
     @Override
     protected IFigure createFigure() {
+        // TODO 增加缩略图的tooltip
         panel = new FrameContainer(this, IModel.BULLET_RADIUS);
         panel.setFont(properties.getDefaultEditorFont());
         initLabels();

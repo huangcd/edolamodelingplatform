@@ -61,7 +61,8 @@ public class EntityEditDialog extends AbstractEditDialog {
 			return (v1 - v2);
 		}
 		
-		public void sort(ArrayList<String> unsorted) {
+		@SuppressWarnings("unused")
+        public void sort(ArrayList<String> unsorted) {
 			Collections.sort(unsorted, this);
 		}
 		
@@ -157,7 +158,7 @@ public class EntityEditDialog extends AbstractEditDialog {
 				addSelectedEntities();
 			}
 		});
-		listPossibleEntities.setBounds(41, 93, 248, 266);
+		listPossibleEntities.setBounds(10, 74, 271, 308);
 		
 		listCurrentEntities = new List(container, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		listCurrentEntities.addKeyListener(new KeyAdapter() {
@@ -174,7 +175,7 @@ public class EntityEditDialog extends AbstractEditDialog {
 				removeSelectedEntities();
 			}
 		});
-		listCurrentEntities.setBounds(396, 64, 248, 295);
+		listCurrentEntities.setBounds(399, 74, 276, 308);
 		
 		textKeyword = new Text(container, SWT.BORDER);
 		textKeyword.addMouseListener(new MouseAdapter() {
@@ -204,7 +205,7 @@ public class EntityEditDialog extends AbstractEditDialog {
 				textKeyword.selectAll();
 			}
 		});
-		textKeyword.setBounds(41, 64, 210, 23);
+		textKeyword.setBounds(10, 45, 233, 23);
 		
 		Button btnRemove = new Button(container, SWT.NONE);
 		btnRemove.addSelectionListener(new SelectionAdapter() {
@@ -235,17 +236,17 @@ public class EntityEditDialog extends AbstractEditDialog {
 			}
 		});
 		btnRemoveAll.setText(Messages.EntityEditDialog_6);
-		btnRemoveAll.setBounds(564, 29, 80, 27);
+		btnRemoveAll.setBounds(595, 41, 80, 27);
 		
 		Label label = new Label(container, SWT.NONE);
 		label.setFont(SWTResourceManager.getFont(Messages.EntityEditDialog_7, 12, SWT.NORMAL));
-		label.setBounds(41, 29, 80, 29);
+		label.setBounds(10, 10, 80, 29);
 		label.setText(Messages.EntityEditDialog_8);
 		
 		Label label_1 = new Label(container, SWT.NONE);
 		label_1.setFont(SWTResourceManager.getFont(Messages.EntityEditDialog_9, 12, SWT.NORMAL));
 		label_1.setText(Messages.EntityEditDialog_10);
-		label_1.setBounds(396, 29, 103, 29);
+		label_1.setBounds(399, 39, 103, 29);
 		
 		lblError = new Label(container, SWT.NONE);
 		lblError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
@@ -260,7 +261,7 @@ public class EntityEditDialog extends AbstractEditDialog {
 				updateFilteredPossibleList();
 			}
 		});
-		btnClearKeyword.setBounds(257, 64, 32, 23);
+		btnClearKeyword.setBounds(249, 45, 32, 23);
 		btnClearKeyword.setText(Messages.EntityEditDialog_12);
 
 		initValues();

@@ -57,7 +57,8 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
         // }
         if (topModel instanceof LibraryModel) {
             AtomicTypeModel model = new AtomicTypeModel().setName("atomic0"); //$NON-NLS-1$
-            if (MessageUtil.showConfirmDialog(Messages.NewAtomicEditorAction_4, Messages.NewAtomicEditorAction_5)) {
+            if (MessageUtil.showConfirmDialog(Messages.NewAtomicEditorAction_4,
+                            Messages.NewAtomicEditorAction_5)) {
                 AddLibrarySettingDialog dialog =
                                 new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
                                                 model);
@@ -73,7 +74,8 @@ public class NewAtomicEditorAction extends Action implements ISelectionListener,
             BIPEditor.openBIPEditor(model);
         } else if (topModel instanceof ProjectModel) {
             AtomicTypeModel model = new AtomicTypeModel().setName("atomic0"); //$NON-NLS-1$
-            if (MessageUtil.showConfirmDialog(Messages.NewAtomicEditorAction_9, Messages.NewAtomicEditorAction_10)) {
+            if (MessageUtil.showConfirmDialog(Messages.NewAtomicEditorAction_9,
+                            Messages.NewAtomicEditorAction_10)) {
                 AddLibrarySettingDialog dialog =
                                 new AddLibrarySettingDialog(Display.getCurrent().getActiveShell(),
                                                 model);

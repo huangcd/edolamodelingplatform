@@ -94,18 +94,17 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
     }
 
     public static boolean isRemovable(String selection) {
-    	for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
             CompoundTypeModel model = (CompoundTypeModel) editor.getModel();
-           /* if(model.getName().equals(selection))
-            	return false;*/
+            /*
+             * if(model.getName().equals(selection)) return false;
+             */
             ArrayList<CompoundTypeModel> compounds = new ArrayList<CompoundTypeModel>();
             ArrayList<AtomicTypeModel> atomics = new ArrayList<AtomicTypeModel>();
-            model.getAllComponent(compounds, atomics);//compounds包括了model本身
-            compounds.remove(compounds.size()-1);//刪除model本身
-            for(CompoundTypeModel compound:compounds)
-            {             
-           	 if(compound.getName().equals(selection))
-                	return false;
+            model.getAllComponent(compounds, atomics);// compounds包括了model本身
+            compounds.remove(compounds.size() - 1);// 刪除model本身
+            for (CompoundTypeModel compound : compounds) {
+                if (compound.getName().equals(selection)) return false;
             }
         }
         return true;
@@ -156,6 +155,8 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
 
     private List<InvisibleBulletModel>             bullets;
 
+    private List<DiamondModel>                     diamonds;
+
     @ElementList
     private List<ComponentModel>                   components;
 
@@ -174,6 +175,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         connectors = new ArrayList<ConnectorModel>();
         priorities = new ArrayList<PriorityModel<CompoundTypeModel>>();
         bullets = new ArrayList<InvisibleBulletModel>();
+        diamonds = new ArrayList<DiamondModel>();
     }
 
     @Override
@@ -188,10 +190,20 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
             addPriority((PriorityModel) child);
         } else if (child instanceof InvisibleBulletModel) {
             addBullet((InvisibleBulletModel) child);
+        } else if (child instanceof DiamondModel) {
+            addDiamond((DiamondModel) child);
         } else {
             System.err.println("Invalidated child type to add:\n" + child);
         }
         return this;
+    }
+
+    private void addDiamond(DiamondModel child) {
+        if (diamonds == null) {
+            diamonds = new ArrayList<DiamondModel>();
+        }
+        diamonds.add(child);
+        firePropertyChange(CHILDREN);
     }
 
     public void deleteRelatedPrioritiesWhenDeleteConnector(ConnectorModel con) {
@@ -216,7 +228,6 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     break;
                 }
             }
-
             if (!contain) return false;
         }
 
@@ -229,18 +240,15 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                         break;
                     }
                 }
-
                 if (!contain) return false;
             }
 
             if (child instanceof CompoundModel) {
                 if (!((CompoundModel) child).getType().checkValidateBaseline()) return false;
             }
-
             if (child instanceof AtomicModel) {
                 if (!((AtomicModel) child).getType().checkValidateBaseline()) return false;
             }
-
         }
 
         return true;
@@ -259,7 +267,6 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                     break;
                 }
             }
-
             if (!contain) {
                 getEntityNames().remove(s);
             }
@@ -276,20 +283,16 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
                         break;
                     }
                 }
-
                 if (!contain) {
                     child.getEntityNames().remove(s);
                 }
             }
-
             if (child instanceof CompoundModel) {
                 ((CompoundModel) child).getType().checkValidateBaseline();
             }
-
             if (child instanceof AtomicModel) {
                 ((AtomicModel) child).getType().checkValidateBaseline();
             }
-
         }
     }
 
@@ -314,7 +317,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
             typeNames.add(entry.getValue().getName());
         }
 
-        Pattern NAME_PREFIX = Pattern.compile("^(.*)_(\\d+)$"); // TODO
+        Pattern NAME_PREFIX = Pattern.compile("^(.*)_(\\d+)$");
 
         for (ConnectorModel con : consNeedNewName) {
             String name = con.getType().getHardwareCutName();
@@ -952,10 +955,16 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
             HashSet<String> names = new HashSet<String>();
             for (IInstance child : item.getChildren()) {
                 if (child instanceof InvisibleBulletModel) {
-                    ConnectorModel connector =
+                    String name = "NULL";
+                    BaseInstanceModel source =
                                     ((InvisibleBulletModel) child).getTargetConnections().get(0)
                                                     .getSource();
-                    throw new IncompleteModelException("连接子 " + connector.getName() + " 不完整");
+                    if (source instanceof ConnectorModel) {
+                        name = source.getName();
+                    } else {
+                        // TODO 通过InternalBulletModel得到Connector的名字
+                    }
+                    throw new IncompleteModelException("连接子 " + name + " 不完整");
                 }
                 // 避免全局类型重名
                 if (child.getType() == null) continue;
@@ -1005,6 +1014,7 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
         children.addAll(connectors);
         children.addAll(priorities);
         children.addAll(bullets);
+        children.addAll(diamonds);
         for (IInstance instance : children) {
             if (instance.getParent() == null || !instance.getParent().equals(this)) {
                 instance.setParent(this);
@@ -1144,8 +1154,23 @@ public class CompoundTypeModel extends ComponentTypeModel<CompoundTypeModel, Com
             removePriority((PriorityModel) iInstance);
         } else if (iInstance instanceof InvisibleBulletModel) {
             removeBullet((InvisibleBulletModel) iInstance);
+        } else if (iInstance instanceof DiamondModel) {
+            removeDiamond((DiamondModel) iInstance);
         }
         return false;
+    }
+
+    private boolean removeDiamond(DiamondModel child) {
+        if (child == null) {
+            return false;
+        }
+        int index = diamonds.indexOf(child);
+        if (index < 0) {
+            return false;
+        }
+        diamonds.remove(index);
+        firePropertyChange(CHILDREN);
+        return true;
     }
 
     public boolean removeComponent(ComponentModel child) {

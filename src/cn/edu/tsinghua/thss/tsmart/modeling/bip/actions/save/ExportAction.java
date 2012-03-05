@@ -63,7 +63,7 @@ public class ExportAction extends SelectionAction {
 
         // 如果不通过验证，不能导出模型
         if (!model.validateFull()) {
-            return;
+            //return;
         }
         try {
             Shell shell = Display.getDefault().getActiveShell();

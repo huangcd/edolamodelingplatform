@@ -6,30 +6,25 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 
-public class SwitchEnglishAction extends Action implements ISelectionListener, IWorkbenchAction{
+public class SwitchEnglishAction extends Action implements ISelectionListener, IWorkbenchAction {
 
-    public static final String     ID = SwitchEnglishAction.class.getCanonicalName();
+    public static final String ID = SwitchEnglishAction.class.getCanonicalName();
 
     public SwitchEnglishAction() {
         setId(ID);
         setText(Messages.SwitchEnglishAction_0);
         setToolTipText(Messages.SwitchEnglishAction_1);
     }
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
+    @Override
+    public void dispose() {}
+
+    @Override
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {}
+
+    @Override
     public void run() {
-		LanguageSwitcher.changeLocale("en_US"); //$NON-NLS-1$
-	}
+        LanguageSwitcher.changeLocale("en_US"); //$NON-NLS-1$
+    }
 
 }

@@ -1,7 +1,6 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -21,19 +20,19 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 public class ConnectionModel
                 extends BaseInstanceModel<ConnectionModel, BaseTypeModel, CompoundTypeModel>
                 implements
-                    IConnection<ConnectionModel, CompoundTypeModel, ConnectorModel, BulletModel> {
+                    IConnection<ConnectionModel, CompoundTypeModel, BaseInstanceModel, BaseInstanceModel> {
 
     private static final long    serialVersionUID = 3033446044586077863L;
     @Element
-    private ConnectorModel       source;
+    private BaseInstanceModel    source;
     @Element
-    private BulletModel          target;
+    private BaseInstanceModel    target;
     @ElementList
     private ArrayList<Bendpoint> bendpoints;
     @Element
     private int                  argumentIndex;
 
-    protected ConnectionModel() {
+    public ConnectionModel() {
         bendpoints = new ArrayList<Bendpoint>();
     }
 
@@ -42,19 +41,19 @@ public class ConnectionModel
         argumentIndex = index;
     }
 
-    public ConnectorModel getSource() {
+    public BaseInstanceModel getSource() {
         return source;
     }
 
-    public BulletModel getTarget() {
+    public BaseInstanceModel getTarget() {
         return target;
     }
 
-    public void setSource(ConnectorModel source) {
+    public void setSource(BaseInstanceModel source) {
         this.source = source;
     }
 
-    public void setTarget(BulletModel target) {
+    public void setTarget(BaseInstanceModel target) {
         this.target = target;
     }
 
@@ -68,42 +67,88 @@ public class ConnectionModel
      * @return
      */
     public String getFriendlyString() {
-        if (source == null) return "";
-        ConnectorTypeModel connectorType = source.getType();
+        // source不是Connector时返回""
+        if (source == null || !(source instanceof ConnectorModel)) return "";
+        ConnectorTypeModel connectorType = (ConnectorTypeModel) source.getType();
         return connectorType.getArgumentAsString(argumentIndex).replaceAll("\\(.*\\)", "");
     }
 
-    public ConnectorModel attachSource() {
-        if (!source.getSourceConnections().contains(this)) {
-            source.addSourceConnection(this);
+    public BaseInstanceModel attachSource() {
+        if (source instanceof ConnectorModel) {
+            ConnectorModel connector = (ConnectorModel) source;
+            if (!connector.getSourceConnections().contains(this)) {
+                connector.addSourceConnection(this);
+            }
+        } else if (source instanceof DiamondModel) {
+            DiamondModel diamond = (DiamondModel) source;
+            diamond.setSourceConnection(this);
         }
         return source;
     }
 
     public String getTypeName() {
-        return getSource().getType().getArgumentType(argumentIndex);
+        BaseInstanceModel source = this.source;
+        // DiamondModel: 顺序遍历到ConnectorModel
+        while (source instanceof DiamondModel) {
+            source = ((DiamondModel) source).getTargetConnection().getSource();
+        }
+        if (source instanceof ConnectorModel) {
+            return ((ConnectorTypeModel) source.getType()).getArgumentType(argumentIndex);
+        }
+        return "";
     }
 
-    public BulletModel attachTarget() {
-        if (!target.getTargetConnections().contains(this)) {
-            target.addTargetConnection(this);
-            // 绑定参数
-            if (!(target instanceof InvisibleBulletModel)) {
-                source.bound(argumentIndex, target.getPort());
+    public BaseInstanceModel attachTarget() {
+        if (target instanceof BulletModel) {
+            BulletModel bullet = (BulletModel) target;
+            if (!bullet.getTargetConnections().contains(this)) {
+                bullet.addTargetConnection(this);
+                // 绑定参数
+                if (!(bullet instanceof InvisibleBulletModel)) {
+                    if (source instanceof ConnectorModel) {
+                        ((ConnectorModel) source).bound(argumentIndex, bullet.getPort());
+                    } else {
+                        BaseInstanceModel model = source;
+                        while (model instanceof DiamondModel) {
+                            ConnectionModel connection =
+                                            ((DiamondModel) model).getTargetConnection();
+                            if (connection == null) {
+                                System.err.println("some thing is wrong here");
+                                break;
+                            }
+                            model = connection.getSource();
+                        }
+                        if (model instanceof ConnectorModel) {
+                            ((ConnectorModel) model).bound(argumentIndex, bullet.getPort());
+                        }
+                    }
+                }
             }
+        } else if (target instanceof DiamondModel) {
+            DiamondModel diamond = (DiamondModel) target;
+            ((DiamondModel) target).setTargetConnection(this);
         }
         return target;
     }
 
-    public ConnectorModel detachSource() {
-        source.removeSourceConnection(this);
+    public BaseInstanceModel detachSource() {
+        if (source instanceof ConnectorModel)
+            ((ConnectorModel) source).removeSourceConnection(this);
+        else if (source instanceof DiamondModel) {
+            ((DiamondModel) source).removeSourceConnection(this);
+        }
         return source;
     }
 
-    public BulletModel detachTarget() {
-        target.removeTargetConnection(this);
-        if (target instanceof InvisibleBulletModel) {
-            source.getParent().removeBullet((InvisibleBulletModel) target);
+    public BaseInstanceModel detachTarget() {
+        if (target instanceof BulletModel) {
+            ((BulletModel) target).removeTargetConnection(this);
+            if (target instanceof InvisibleBulletModel) {
+                if (source instanceof ConnectorModel) {
+                    ((CompoundTypeModel) source.getParent())
+                                    .removeBullet((InvisibleBulletModel) target);
+                }
+            }
         }
         return target;
     }

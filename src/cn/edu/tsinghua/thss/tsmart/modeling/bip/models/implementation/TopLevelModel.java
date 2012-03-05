@@ -256,6 +256,7 @@ public abstract class TopLevelModel<Model extends TopLevelModel>
             if (model != null) {
                 addChild(model);
                 map.put(model.getName(), model);
+                System.out.println(model.getName());
             }
             monitor.worked(++count);
         }
@@ -265,6 +266,7 @@ public abstract class TopLevelModel<Model extends TopLevelModel>
             if (model != null) {
                 addChild(model);
                 map.put(model.getName(), model);
+                System.out.println(model.getName());
             }
             monitor.worked(++count);
         }

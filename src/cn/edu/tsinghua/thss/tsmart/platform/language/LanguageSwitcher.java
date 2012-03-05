@@ -17,7 +17,8 @@ import org.eclipse.osgi.service.datalocation.Location;
 
 public class LanguageSwitcher {
 
-	public static void changeLocale(String locale) {
+	@SuppressWarnings("unused")
+    public static void changeLocale(String locale) {
 		Location configArea = Platform.getInstallLocation();
 		String product = Platform.getProduct().getName();
 		if (configArea == null) {

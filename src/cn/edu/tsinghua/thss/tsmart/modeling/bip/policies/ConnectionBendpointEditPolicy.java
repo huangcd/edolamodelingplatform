@@ -68,5 +68,4 @@ public class ConnectionBendpointEditPolicy extends BendpointEditPolicy {
         command.setPoint(location);
         return command;
     }
-
 }

@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EdolaModelingPlatform
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: EdolaModelingPlatform;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cn.edu.tsinghua.thss.tsmart.platform.Activator
-Bundle-Vendor: cn.edu.tsinghua.thss.tsmart
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.gef,

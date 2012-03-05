@@ -96,7 +96,6 @@ public class OpenLibraryAction extends Action implements ISelectionListener, IWo
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // TODO 打开构件库
         }
     }
 }

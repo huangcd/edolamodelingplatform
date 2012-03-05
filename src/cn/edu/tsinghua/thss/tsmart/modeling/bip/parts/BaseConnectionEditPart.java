@@ -6,14 +6,10 @@ import java.util.ArrayList;
 import org.eclipse.draw2d.Bendpoint;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
-import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.ConnectionBendpointEditPolicy;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.FigureMouseListener;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
@@ -26,13 +22,6 @@ public abstract class BaseConnectionEditPart extends AbstractConnectionEditPart
     public void activate() {
         super.activate();
         getModel().addPropertyChangeListener(this);
-    }
-
-    protected void createEditPolicies() {
-        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
-        installEditPolicy(EditPolicy.CONNECTION_ROLE, new BIPConnectionEditPolicy());
-        installEditPolicy(EditPolicy.CONNECTION_BENDPOINTS_ROLE,
-                        new ConnectionBendpointEditPolicy());
     }
 
     protected abstract Point getSourceLocation();

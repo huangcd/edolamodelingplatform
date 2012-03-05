@@ -10,13 +10,18 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.connection.ReconnectCon
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BaseInstanceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.BulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DiamondModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PortModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.BulletEditPart;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.ConnectionEditPart;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.ConnectorEditPart;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.DiamondEditPart;
 
 @SuppressWarnings("rawtypes")
 public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
@@ -50,7 +55,17 @@ public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
 
     @Override
     protected Command getReconnectTargetCommand(ReconnectRequest request) {
-        if (getHost().getModel() instanceof BulletModel) {
+        // 与Diamond相关的连线不能修改
+        if (getHost() instanceof DiamondEditPart) {
+            return null;
+        }
+        if (request.getConnectionEditPart() instanceof ConnectionEditPart) {
+            ConnectionModel conn = (ConnectionModel) request.getConnectionEditPart().getModel();
+            if (conn.getTarget() instanceof DiamondModel) {
+                return null;
+            }
+        }
+        if (getHost() instanceof BulletEditPart) {
             // 检查端口类型和connector参数类型是否一致
             BulletModel bullet = (BulletModel) getHost().getModel();
             ConnectionModel connection =
@@ -59,10 +74,17 @@ public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
                 return null;
             }
             // 检查端口是否有同一组件的多个端口同时连接到一个connector的情况
-            ConnectorModel connector = connection.getSource();
+            BaseInstanceModel source = connection.getSource();
             int index = connection.getArgumentIndex();
             PortModel port = bullet.getPort();
-            if (connector.portFromSameComponentAlreadyExists(port, index)) {
+            ConnectorModel connector = null;
+            while (source instanceof DiamondModel) {
+                source = ((DiamondModel) source).getTargetConnection().getSource();
+            }
+            if (source instanceof ConnectorModel) {
+                connector = (ConnectorModel) source;
+            }
+            if (connector == null || connector.portFromSameComponentAlreadyExists(port, index)) {
                 return null;
             }
             // 如果validateOnTheFly失败，返回false
@@ -78,6 +100,9 @@ public class ConnectionEditPolicy extends GraphicalNodeEditPolicy {
 
     @Override
     protected Command getReconnectSourceCommand(ReconnectRequest request) {
+        if (getHost() instanceof DiamondEditPart) {
+            return null;
+        }
         if (getHost() instanceof ConnectorEditPart) {
             return null;
         }

@@ -6,6 +6,7 @@ import org.eclipse.gef.requests.GroupRequest;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteComponentCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteConnectorCommand;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteDiamondCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeleteModelCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.commands.DeletePlaceCommand;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -15,6 +16,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.AtomicType
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DiamondModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel;
 
 @SuppressWarnings("rawtypes")
@@ -39,6 +41,12 @@ public class DeleteModelEditPolicy extends ComponentEditPolicy {
             DeleteConnectorCommand command = new DeleteConnectorCommand();
             command.setParent((CompoundTypeModel) parentModel);
             command.setChild((ConnectorModel) model);
+            return command;
+        }
+        if (model instanceof DiamondModel) {
+            DeleteDiamondCommand command = new DeleteDiamondCommand();
+            command.setParent((CompoundTypeModel) parentModel);
+            command.setDiamond((DiamondModel) model);
             return command;
         }
         // 删除Component和相关连线

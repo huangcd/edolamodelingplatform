@@ -57,6 +57,7 @@ public interface IModel<Model extends IModel, Parent extends IContainer>
      * 小圆点的半径
      */
     int       BULLET_RADIUS      = 8;
+    int       DIAMOND_SIZE       = 10;
     /**
      * 构件的大小
      */

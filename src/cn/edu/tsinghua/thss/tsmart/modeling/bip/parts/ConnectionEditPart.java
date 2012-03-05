@@ -1,9 +1,8 @@
 package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
 
-import org.eclipse.draw2d.Bendpoint;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
@@ -12,15 +11,17 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 import org.eclipse.swt.SWT;
 
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IConnection;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ComponentModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectionModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.ConnectorModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.TransitionModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.policies.BIPConnectionEditPolicy;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ConnectionEditPart extends BaseConnectionEditPart {
@@ -32,12 +33,16 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
     protected IFigure createFigure() {
         connection = new PolylineConnection();
         if (getSource() != null) {
-            connection.setForegroundColor(((ConnectorModel) getSource().getModel()).getLineColor());
+            if (getSource() instanceof ConnectorEditPart) {
+                connection.setForegroundColor(((ConnectorModel) getSource().getModel())
+                                .getLineColor());
+            } else {
+                connection.setForegroundColor(ColorConstants.black);
+            }
         }
         PolygonDecoration decoration = new PolygonDecoration();
         decoration.setSize(100, 100);
         connection.setTargetDecoration(decoration);
-        connection.setRoutingConstraint(getModel().getBendpoints());
         connection.setAntialias(SWT.ON);
         infoLabel = new Label(getModel().getFriendlyString());
         infoLabel.setFont(properties.getDefaultEditorFont());
@@ -51,17 +56,28 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
         return connection;
     }
 
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new BIPConnectionEditPolicy());
+    }
+
     private IFigure getGraphLayerFigure() {
         EditPart source = getSource();
         EditPart target = getTarget();
         if (source != null) {
-            return ((ConnectorEditPart) source).getParent().getFigure();
+            if (source instanceof ConnectorEditPart) {
+                return ((ConnectorEditPart) source).getParent().getFigure();
+            } else {
+                return ((DiamondEditPart) source).getParent().getFigure();
+            }
         } else if (target != null) {
             if (target instanceof BulletEditPart) {
                 return ((GraphicalEditPart) ((BulletEditPart) target).getParent().getParent())
                                 .getFigure();
             } else if (target instanceof InvisibleBulletEditPart) {
                 return ((InvisibleBulletEditPart) target).getParent().getFigure();
+            } else if (target instanceof DiamondEditPart) {
+                return ((DiamondEditPart) target).getParent().getFigure();
             }
         }
         return null;
@@ -81,27 +97,8 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
         return getModel().getTarget().getPositionConstraint().getLocation();
     }
 
-    private void relocateLabels(ArrayList<Bendpoint> bendpoints) {
-        Point location = getRelocateLocation(bendpoints);
-        Dimension size = infoLabel.getPreferredSize();
-        location.translate(-size.width / 2, 0);
-        infoLabel.setBounds(new Rectangle(location, size));
-    }
-
     private void setTooltip() {
         tooltipLabel.setText(getModel().getFriendlyString());
-    }
-
-    private ArrayList<Bendpoint> getBendpoints() {
-        IConnection conn = getModel();
-        ArrayList<Bendpoint> bendpoints = conn.getBendpoints();
-        return bendpoints;
-    }
-
-    protected void refreshBendpoints() {
-        ArrayList<Bendpoint> bendpoints = getBendpoints();
-        getConnectionFigure().setRoutingConstraint(bendpoints);
-        relocateLabels(bendpoints);
     }
 
     public ConnectionModel getModel() {
@@ -135,10 +132,24 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
     @Override
     protected void refreshVisuals() {
         if (getSource() != null) {
-            connection.setForegroundColor(((ConnectorModel) getSource().getModel()).getLineColor());
+            if (getSource() instanceof ConnectorEditPart) {
+                connection.setForegroundColor(((ConnectorModel) getSource().getModel())
+                                .getLineColor());
+            } else if (getSource() instanceof DiamondEditPart) {
+                connection.setForegroundColor(ColorConstants.black);
+            }
         }
-        refreshBendpoints();
+        relocateLabels();
         super.refreshVisuals();
+    }
+
+    private void relocateLabels() {
+        Point source = getSourceLocation();
+        Point target = getTargetLocation();
+        Point location = new Point((source.x + target.x) >> 1, (source.y + target.y) >> 1);
+        Dimension size = infoLabel.getPreferredSize();
+        location.translate(-size.width / 2, 0);
+        infoLabel.setBounds(new Rectangle(location, size));
     }
 
     // Ë«»÷µ¯³ö¶Ô»°¿ò

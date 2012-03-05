@@ -23,11 +23,8 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     //将工作区里的工程导入进Navigator来显示,待修改
     @Override
     public IAdaptable getDefaultPageInput() {
-
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-
         return workspace.getRoot();
-
     }
     
     @SuppressWarnings("deprecation")

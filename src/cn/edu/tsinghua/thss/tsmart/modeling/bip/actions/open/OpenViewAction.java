@@ -10,7 +10,7 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 public class OpenViewAction extends Action implements ISelectionListener, IWorkbenchAction {
     private final IWorkbenchWindow window;
     public static final String     ID      = OpenViewAction.class.getCanonicalName();
-    private final String           outline = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
+    public final String            outline = "org.eclipse.ui.views.ContentOutline";  //$NON-NLS-1$
 
     public OpenViewAction(IWorkbenchWindow window) {
         this.window = window;

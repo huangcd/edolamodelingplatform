@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.AddBulletAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.PasteComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
@@ -244,6 +245,10 @@ public class CompoundEditor extends BIPEditor {
         getSelectionActions().add(action.getId());
 
         action = new CopyComponentAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+        
+        action = new AddBulletAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 

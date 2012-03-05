@@ -65,7 +65,6 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
                     names.add(item.getText(0));
                 }
 
-
                 EditOnePeripheralDialog dialog =
                                 new EditOnePeripheralDialog(Display.getCurrent().getActiveShell(),
                                                 null, names);
@@ -75,9 +74,6 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
                     tableItem.setText(new String[] {d.name, d.description});
                     tableItem.setData(d);
                 }
-
-
-
             }
         });
         newDevice.setText(Messages.EditPeripheralsDialog_2);
@@ -99,9 +95,6 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
                     items[0].setText(new String[] {d.name, d.description});
                     items[0].setData(d);
                 }
-
-
-
             }
         });
         modifyDevice.setText(Messages.EditPeripheralsDialog_3);
@@ -177,41 +170,26 @@ public class EditPeripheralsDialog extends AbstractEditDialog {
 
     @Override
     protected void initValues() {
-
         for (Device d : cgm.dd.devices) {
-
             TableItem tableItem = new TableItem(table, SWT.NONE);
-
             tableItem.setText(new String[] {d.name, d.description});
-
             tableItem.setData(d);
         }
-
     }
 
     @Override
     protected void updateValues() {
-
         cgm.dd.clearAllDevices();
-
         for (TableItem item : table.getItems()) {
-
             cgm.dd.devices.add((Device) item.getData());
         }
-
         cgm.saveAll();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected boolean validateUserInput() {
-
-
-
         // TODO 放到哪里合适？
-
-
-
         return true;
     }
 

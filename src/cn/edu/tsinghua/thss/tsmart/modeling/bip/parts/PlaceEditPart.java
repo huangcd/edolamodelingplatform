@@ -36,10 +36,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
     private FigureLocator labelLocator;
     private Label         tooltipLabel;
 
-    protected void setAsInitialPlace() {}
-
-    protected void setAsNormalPlace() {}
-
     public void deactivate() {
         super.deactivate();
         getParent().getFigure().remove(nameLabel);
@@ -47,15 +43,8 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
 
     @Override
     protected IFigure createFigure() {
-        PlaceModel model = getModel();
-
         figure = new PlaceFigure(getModel());
         figure.setForegroundColor(ColorConstants.gray);
-        if (model.isInitialPlace()) {
-            setAsInitialPlace();
-        } else {
-            setAsNormalPlace();
-        }
 
         figure.setOpaque(true);
         figure.setLineWidth(2);
@@ -117,7 +106,6 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
             for (TransitionModel transition : getModel().getTargetConnections()) {
                 transition.firePropertyChange(IModel.TARGET);
             }
-
         }
         // 名字变更，先判断是否重名，同时修改标签和toolTip的名字,并重定位标签的位置
         else if (IModel.NAME.equals(evt.getPropertyName())) {
@@ -137,16 +125,8 @@ public class PlaceEditPart extends BaseEditableEditPart implements NodeEditPart 
                 nameLabel.setText(getModel().getName());
                 tooltipLabel.setText(getModel().getName());
                 labelLocator.relocate();
-
             }
-
         } else if (IModel.ATOMIC_INIT_PLACE.equals(evt.getPropertyName())) {
-            PlaceModel model = getModel();
-            if (model.isInitialPlace()) {
-                setAsInitialPlace();
-            } else {
-                setAsNormalPlace();
-            }
             figure.repaint();
             refresh();
         } else if (IModel.SOURCE.equals(evt.getPropertyName())) {

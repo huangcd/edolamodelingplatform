@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -23,6 +24,9 @@ import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.CycleStrategy;
+import org.simpleframework.xml.transform.Matcher;
+import org.simpleframework.xml.transform.Transform;
+import org.simpleframework.xml.transform.Transformer;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.exceptions.EdolaModelingException;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IContainer;
@@ -45,24 +49,48 @@ public abstract class BaseTypeModel<Model extends BaseTypeModel, Instance extend
                 implements
                     IType<Model, Instance, Parent>,
                     IPropertySource {
-    private static final long                   serialVersionUID = 4399354235987755192L;
-    protected static final transient Serializer serializer;
+    private static final long                    serialVersionUID = 4399354235987755192L;
+    protected static final transient Serializer  serializer;
+    protected static final transient Transformer transformer;
+
     static {
+        Matcher matcher = new Matcher() {
+            @Override
+            public Transform match(Class type) throws Exception {
+                return null;
+            }
+        };
+        try {
+            BaseTypeModel.class
+                            .getClassLoader()
+                            .loadClass("cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PlaceModel");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         serializer = new Persister(new CycleStrategy());
+        transformer = new Transformer(matcher);
     }
-    private PropertyChangeSupport               listeners        = new PropertyChangeSupport(this);
+    private PropertyChangeSupport                listeners        = new PropertyChangeSupport(this);
     @Element(required = false)
-    protected Rectangle                         positionConstraint;
-    private Parent                              parent;
+    protected Rectangle                          positionConstraint;
+    private Parent                               parent;
     @Attribute(required = false)
-    private String                              name;
+    private String                               name;
     @Attribute(required = false)
-    private String                              comment;
+    private String                               comment;
     @Element
-    protected Instance                          instance;
+    protected Instance                           instance;
     @Attribute
-    private boolean                             editable         = true;
-    protected transient GlobalProperties        properties;
+    private boolean                              editable         = true;
+    protected transient GlobalProperties         properties;
+
+    public static byte[] readAllBytes(File file) throws IOException {
+        int length = (int) file.length();
+        byte[] bytes = new byte[length];
+        FileInputStream in = new FileInputStream(file);
+        int size = in.read(bytes);
+        return Arrays.copyOf(bytes, size);
+    }
 
     /**
      * 从文件读取Atomic模型

@@ -302,7 +302,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         modelingMenu.add(manageCompoundTypeAction);
         modelingMenu.add(editProritiesAction);
         modelingMenu.add(new Separator());
-        modelingMenu.add(settingModelingAction);
+        //modelingMenu.add(settingModelingAction);
 
         MenuManager windowMenu = new MenuManager(Messages.ApplicationActionBarAdvisor_8);
 

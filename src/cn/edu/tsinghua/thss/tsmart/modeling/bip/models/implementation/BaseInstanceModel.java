@@ -82,7 +82,6 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
 
     private PropertyChangeSupport listeners   = new PropertyChangeSupport(this);
     protected Rectangle           positionConstraint;
-    @Element(required = false)
     protected Parent              parent;
     @Attribute(required = false)
     protected String              name;
@@ -90,7 +89,7 @@ public abstract class BaseInstanceModel<Model extends BaseInstanceModel, Type ex
     private String                comment;
     @Element(required = false, name = "type")
     protected Type                type;
-    @Element
+    @Attribute
     protected boolean             editable    = true;
     @ElementList(required = false)
     private ArrayList<String>     entityNames = new ArrayList<String>();

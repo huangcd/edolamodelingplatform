@@ -13,6 +13,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.dialogs.modelchecking.ModelCh
 import cn.edu.tsinghua.thss.tsmart.modeling.modelchecking.ModelCheckingManager;
 import cn.edu.tsinghua.thss.tsmart.platform.properties.GlobalProperties;
 
+@SuppressWarnings("rawtypes")
 public class ValidateModelCheckingAction extends OpenDialogAction {
 
     public static final String ID = ValidateModelCheckingAction.class.getCanonicalName();
@@ -28,9 +29,7 @@ public class ValidateModelCheckingAction extends OpenDialogAction {
     }
 
     public void run() {
-
         TopLevelModel topModel = GlobalProperties.getInstance().getTopModel();
-
         if (topModel instanceof LibraryModel) {
             return;
         }
@@ -49,11 +48,11 @@ public class ValidateModelCheckingAction extends OpenDialogAction {
         Shell shell = Display.getCurrent().getActiveShell();
         final ModelCheckingRunningDialog mcrd = new ModelCheckingRunningDialog(shell);
         mcrd.notifyStarted();
-        
+
         new Thread() {
             public void run() {
                 ModelCheckingManager mcm = new ModelCheckingManager();
-                mcm.doChecking(true, "");//$NON-NLS-1$
+                mcm.doChecking(true, "");
                 mcrd.notifyFinished();
             }
         }.start();

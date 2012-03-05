@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="RCP Perspective"
+            name="%perspective.name"
             class="cn.edu.tsinghua.thss.tsmart.platform.Perspective"
             id="EdolaModelingPlatform.perspective">
       </perspective>
@@ -39,11 +39,11 @@
          </property>
          <property
                name="startupMessageRect"
-               value="7,252,445,20">
+               value="7,340,660,20">
          </property>
          <property
                name="startupProgressRect"
-               value="5,275,445,15">
+               value="7,360,660,15">
          </property>
          <property
                name="preferenceCustomization"
@@ -59,7 +59,7 @@
             default="false"
             icon="icons/compound_16.png"
             id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.compound.CompoundEditor"
-            name="Compound Editor">
+            name="%editor.name">
       </editor>
       <editor
             class="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
@@ -67,7 +67,7 @@
             default="false"
             icon="icons/atomic_16.png"
             id="cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.atomic.AtomicEditor"
-            name="Atomic Editor">
+            name="%editor.name.0">
       </editor>
    </extension>
    <extension
@@ -76,7 +76,7 @@
             class="cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.navigator.ProjectView"
             icon="icons/projects.gif"
             id="EdolaModelingPlatform.project"
-            name="项目"
+            name="%view.name"
             restorable="true">
       </view>
    </extension>
@@ -125,12 +125,5 @@
                relative="org.eclipse.ui.views.ContentOutline">
          </view>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.markerSupport">
-      <markerContentGenerator
-            id="EdolaModelingPlatform.markerContentGenerator1"
-            name="EdolaModelingPlatform Information Generator">
-      </markerContentGenerator>
    </extension>
 </plugin>

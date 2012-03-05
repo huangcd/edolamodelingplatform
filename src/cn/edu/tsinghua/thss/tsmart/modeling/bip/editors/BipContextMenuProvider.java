@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.actions.ActionFactory;
 
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.AddBulletAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.CopyComponentAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.VariableSelectionAction;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.actions.save.AlignDataAndTypeAction;
@@ -68,5 +69,8 @@ public class BipContextMenuProvider extends ContextMenuProvider {
 
         action = getActionRegistry().getAction(CopyComponentAction.id);
         menu.appendToGroup(GEFActionConstants.GROUP_COPY, action);
+        
+        action = getActionRegistry().getAction(AddBulletAction.id);
+        menu.appendToGroup(GEFActionConstants.GROUP_ADD, action);
     }
 }

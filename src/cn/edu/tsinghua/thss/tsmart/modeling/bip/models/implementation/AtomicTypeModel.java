@@ -77,22 +77,20 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
     }
 
     public static boolean isRemovable(String selection) {
-    	/*for (AtomicEditor editor : BIPEditor.getAtomicEditors()) {
-            AtomicTypeModel model = (AtomicTypeModel) editor.getModel();
-            if(model.getName().equals(selection))
-            	return false;
-        }*/
-    	 for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
-             CompoundTypeModel model = (CompoundTypeModel) editor.getModel();
-             ArrayList<CompoundTypeModel> compounds = new ArrayList<CompoundTypeModel>();
-             ArrayList<AtomicTypeModel> atomics = new ArrayList<AtomicTypeModel>();
-             model.getAllComponent(compounds, atomics);
-             for(AtomicTypeModel atomic:atomics)
-             {
-            	 if(atomic.getName().equals(selection))
-                 	return false;
-             }
-         }
+        /*
+         * for (AtomicEditor editor : BIPEditor.getAtomicEditors()) { AtomicTypeModel model =
+         * (AtomicTypeModel) editor.getModel(); if(model.getName().equals(selection)) return false;
+         * }
+         */
+        for (CompoundEditor editor : BIPEditor.getCompoundEditors()) {
+            CompoundTypeModel model = (CompoundTypeModel) editor.getModel();
+            ArrayList<CompoundTypeModel> compounds = new ArrayList<CompoundTypeModel>();
+            ArrayList<AtomicTypeModel> atomics = new ArrayList<AtomicTypeModel>();
+            model.getAllComponent(compounds, atomics);
+            for (AtomicTypeModel atomic : atomics) {
+                if (atomic.getName().equals(selection)) return false;
+            }
+        }
         return true;
     }
 
@@ -474,7 +472,7 @@ public class AtomicTypeModel extends ComponentTypeModel<AtomicTypeModel, AtomicM
             }
         }
 
-        // 在原子组件上不能包含优先级 TODO
+        // TODO 在原子组件上不能包含优先级
         buffer.append('\n');
         for (PriorityModel priority : priorities) {
             buffer.append('\t').append(priority.exportToBip()).append('\n');

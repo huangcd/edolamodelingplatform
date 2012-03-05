@@ -9,6 +9,7 @@ import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IInstance;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.CompoundTypeModel;
+import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.DiamondModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.InvisibleBulletModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.implementation.PriorityModel;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.parts.project.TopLevelModelEditPart;
@@ -28,7 +29,8 @@ public class CompoundTypeTreeEditPart extends BaseTreeEditPart {
         }
         List<IInstance> modelChildren = new ArrayList<IInstance>();
         for (IInstance instance : getModel().getChildren()) {
-            if (instance instanceof InvisibleBulletModel || instance instanceof PriorityModel) {
+            if (instance instanceof InvisibleBulletModel || instance instanceof PriorityModel
+                            || instance instanceof DiamondModel) {
                 continue;
             }
             modelChildren.add(instance);

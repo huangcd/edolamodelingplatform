@@ -140,6 +140,7 @@ public class CodeGenProjectModel extends ProjectModel {
      * @param defaultValue
      * @return
      */
+    @SuppressWarnings("unused")
     private static <T> T ensureValue(T value, T defaultValue) {
         return (value == null) ? defaultValue : value;
     }

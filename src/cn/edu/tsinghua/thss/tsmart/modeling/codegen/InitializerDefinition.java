@@ -77,7 +77,8 @@ public class InitializerDefinition {
 		// textRead();
 	}
 
-	private static void textRead() {
+	@SuppressWarnings("unused")
+    private static void textRead() {
 		InitializerDefinition id = new InitializerDefinition();
 		Serializer serializer = new Persister();
 		try {

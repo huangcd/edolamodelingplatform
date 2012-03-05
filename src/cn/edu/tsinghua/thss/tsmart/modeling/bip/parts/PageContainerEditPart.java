@@ -2,19 +2,14 @@ package cn.edu.tsinghua.thss.tsmart.modeling.bip.parts;
 
 import java.beans.PropertyChangeEvent;
 
-import org.eclipse.draw2d.ConnectionLayer;
-import org.eclipse.draw2d.FanRouter;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
-import org.eclipse.swt.SWT;
 
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.editors.BIPEditor;
 import cn.edu.tsinghua.thss.tsmart.modeling.bip.models.declaration.IModel;
-import cn.edu.tsinghua.thss.tsmart.modeling.bip.ui.handles.BetterBendpointConnectionRouter;
 
 /**
  * 页面容器类
@@ -42,24 +37,6 @@ public abstract class PageContainerEditPart extends BaseGraphicalEditPart {
         FreeformLayer figure = new FreeformLayer();
         figure.setFont(properties.getDefaultEditorFont());
         figure.setLayoutManager(new FreeformLayout());
-        return figure;
-    }
-
-    public IFigure getFigure() {
-        if (figure == null) {
-            setFigure(createFigure());
-            ConnectionLayer cLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
-            // 反锯齿，连线稍微好看一点
-            if ((getViewer().getControl().getStyle() & SWT.MIRRORED) == 0)
-                cLayer.setAntialias(SWT.ON);
-
-            // 设置Router样式
-            BetterBendpointConnectionRouter bendpointRouter = new BetterBendpointConnectionRouter();
-            FanRouter fanRouter = new FanRouter();
-            fanRouter.setSeparation(20);
-            fanRouter.setNextRouter(bendpointRouter);
-            cLayer.setConnectionRouter(fanRouter);
-        }
         return figure;
     }
 

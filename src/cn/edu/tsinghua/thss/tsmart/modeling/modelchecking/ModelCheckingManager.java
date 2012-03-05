@@ -116,9 +116,6 @@ public class ModelCheckingManager {
 
     public boolean checkValid() {
         // TODO ¼ì²é
-
-
-
         return true;
     }
 
